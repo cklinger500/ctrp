@@ -28,6 +28,7 @@ var helper = function() {
     var retListCurrentValue = '';
     var retTextCurrentValue = '';
     this.header_Page = element(by.css('.sub-title')); //element(by.css('span[style="font-size:large;font-weight:bold;"]'));
+    var self = this;
 
     this.wait = function (element, label) {
         browser.wait(function () {
@@ -56,7 +57,7 @@ var helper = function() {
         }
         else {
             console.log(errorMessage + ' ' + fieldValue + " Value entered");
-            expect(fieldName.getAttribute('value')).to.eventually.equal((fieldValue));
+            expect(fieldName.getAttribute('value')).to.eventually.equal(fieldValue, errorMessage);
         }
     };
 
@@ -77,21 +78,36 @@ var helper = function() {
         console.log(errorMessage + ' ' + fieldValue + " Value selected");
         fieldName.$('option:checked').getText().then(function (value){
             console.log('Value of item selected in list : ' + value.trim());
-            expect(value.trim()).to.equal(fieldValue);
+            expect(value.trim()).to.equal(fieldValue, errorMessage);
         });
+    };
+
+    this.selectDisableValueFromList = function (fieldName, fieldValue, errorMessage) {
+        this.wait(fieldName, errorMessage);
+        fieldName.element(by.cssContainingText('option', fieldValue)).click();
+        console.log(errorMessage + ' ' + fieldValue + " Value selected");
     };
 
     this.selectValue = function (fieldName, fieldValue, errorMessage) {
         this.wait(fieldName, errorMessage);
         fieldName.click();
         console.log(errorMessage + ' ' + fieldValue + " Value selected");
-        expect(fieldName.getText()).to.eventually.equal(fieldValue);
+        expect(fieldName.getText()).to.eventually.equal(fieldValue, errorMessage);
     };
 
     this.clickLink = function (link, errorMessage){
         this.wait(link, errorMessage);
         link.click();
         console.log(errorMessage + " was clicked");
+        self.alertDialog('OK', '');
+        expect(this.header_Page.getText()).to.eventually.equal(header_Page_Text);
+    };
+
+    this.clickLinkByIndex = function (link, index, errorMessage){
+        this.wait(link.get(index), errorMessage);
+        link.get(index).click();
+        console.log(errorMessage + " was clicked");
+        self.alertDialog('OK', '');
         expect(this.header_Page.getText()).to.eventually.equal(header_Page_Text);
     };
 
@@ -129,17 +145,17 @@ var helper = function() {
         if (value === '0') {
             button.get(0).click();
             console.log(errorMessage + " was clicked");
-            expect(button.get(0).isSelected()).to.eventually.equal(true);
+            expect(button.get(0).isSelected()).to.eventually.equal(true, errorMessage);
         }
         else if (value === '1') {
             button.get(1).click();
             console.log(errorMessage + " was clicked");
-            expect(button.get(1).isSelected()).to.eventually.equal(true);
+            expect(button.get(1).isSelected()).to.eventually.equal(true, errorMessage);
         }
         else if (value === '2') {
             button.get(2).click();
             console.log(errorMessage + " was clicked");
-            expect(button.get(2).isSelected()).to.eventually.equal(true);
+            expect(button.get(2).isSelected()).to.eventually.equal(true, errorMessage);
         }
         else {
             assert.fail(value, '0 OR 1 OR 2 OR Yes OR No OR Actual OR Anticipated', 'Value -- ' + value + ' --' + ' not found as Radio option button');
@@ -171,18 +187,6 @@ var helper = function() {
     this.setReadOnlyFieldValue = function (fieldName, fieldValue, errorMessage) {
         this.wait(fieldName, errorMessage);
         fieldName.sendKeys(fieldValue);
-
-        //if(fieldValue == '[object Object]'){
-        //    var store = fieldName.getAttribute('value');
-        //    fieldValue.then(function(value){
-        //        console.log(errorMessage + ' ' + value + " Value entered");
-        //        expect(store).to.eventually.equal(value);});
-        //}
-        //else {
-        //    console.log(errorMessage + ' ' + fieldValue + " Value entered");
-        //    expect(fieldName.getAttribute('value')).to.eventually.equal((fieldValue));
-        //}
-
     };
 
 
@@ -194,38 +198,46 @@ var helper = function() {
 
     this.getVerifyValue = function (fieldName, fieldValue, errorMessage) {
         this.wait(fieldName, errorMessage);
-        expect(fieldName.getAttribute('value')).to.eventually.equal(fieldValue);
+        expect(fieldName.getAttribute('value')).to.eventually.equal(fieldValue, errorMessage);
         console.log(errorMessage + " - Got value");
     };
 
     this.getVerifyListValue = function (fieldName, fieldValue, errorMessage) {
         this.wait(fieldName, errorMessage);
-        expect(fieldName.$('option:checked').getText()).to.eventually.equal(fieldValue);
+        expect(fieldName.$('option:checked').getText()).to.eventually.equal(fieldValue, errorMessage);
         console.log(errorMessage + " - Got value");
     };
 
     this.getVerifyRadioSelection = function(button, fieldValue, errorMessage){
         this.wait(button, errorMessage);
-        expect(button.get(fieldValue).isSelected()).to.eventually.equal(true);
+        expect(button.get(fieldValue).isSelected()).to.eventually.equal(true, errorMessage);
         console.log(errorMessage + " - Got value");
     }
 
     this.getVerifyheader = function (fieldName, fieldValue, errorMessage) {
         this.wait(fieldName, errorMessage);
-        expect(fieldName.getText()).to.eventually.equal(fieldValue);
+        expect(fieldName.getText()).to.eventually.equal(fieldValue, errorMessage);
         console.log(errorMessage + " - header value");
     };
 
     this.getVerifyRequired = function (fieldName, fieldValue, errorMessage) {
         this.wait(fieldName, errorMessage);
-        expect(fieldName.getText()).to.eventually.equal(fieldValue);
+        expect(fieldName.getText()).to.eventually.equal(fieldValue, errorMessage);
         console.log(errorMessage + " - Required field value");
     };
 
     this.getVerifyLabel= function (fieldName, fieldValue, errorMessage) {
         this.wait(fieldName, errorMessage);
-        expect(fieldName.getText()).to.eventually.equal(fieldValue);
+        expect(fieldName.getText()).to.eventually.equal(fieldValue,errorMessage );
         console.log(errorMessage + " - field value");
+    };
+
+    this.getVerifyLabelUP= function (fieldName, fieldValue, errorMessage) {
+        this.wait(fieldName, errorMessage);
+        fieldName.getText().then(function(value){
+        expect(value.toUpperCase()).to.equal(fieldValue.toUpperCase(), errorMessage);
+        console.log(errorMessage + " - field value");
+        });
     };
 
     this.verifyElementPresents =function (fieldName, fieldValueTrueOrFalse) {
@@ -234,6 +246,7 @@ var helper = function() {
 
     this.verifyElementDisplayed =function (fieldName, fieldValueTrueOrFalse) {
         expect(fieldName.isDisplayed()).to.eventually.equal(fieldValueTrueOrFalse);
+        //expect(fieldName.isDisplayed()).to.become(fieldValueTrueOrFalse);
     };
 
     this.verifyElementDisplayedByIndex =function (fieldName, index, fieldValueTrueOrFalse) {
@@ -291,19 +304,27 @@ var helper = function() {
         var alertDialog = browser.switchTo().alert();
             alertDialog.then(
                 function(){
-                    alertDialog.getText().then(function(value){
-                        console.log('value of alert dialog' + value);
-                        expect(value).to.equal(textToVerify);
-                    });
-                    if (action === 'accept') {
+                    if(textToVerify !== '') {
+                        alertDialog.getText().then(function (value) {
+                            console.log('value of alert dialog' + value);
+                            expect(value).to.equal(textToVerify);
+                        });
+                    }
+                    if (action.toUpperCase() === 'ACCEPT') {
                         alertDialog.accept();
                     }
-                    else if (action === 'dismiss') {
+                    else if (action.toUpperCase() === 'OK') {
+                        alertDialog.accept();
+                    }
+                    else if (action.toUpperCase() === 'DISMISS') {
                         alertDialog.dismiss();
+                    }
+                    else   {
+                        assert.fail(0,1,'Option not found');
                     }
             },
                 function (err) {
-                    console.log('There was an error! ' + err);
+                 //   console.log('Alert box' + err);
                 }
             );
     };
@@ -450,7 +471,12 @@ var helper = function() {
         console.log(errorMessage + " was clicked");
     };
 
+    this.writeScreenShot = function (data, filename) {
+        var stream = fs.createWriteStream(filename);
 
+        stream.write(new Buffer(data, 'base64'));
+        stream.end();
+    }
 
 };
 module.exports = helper;

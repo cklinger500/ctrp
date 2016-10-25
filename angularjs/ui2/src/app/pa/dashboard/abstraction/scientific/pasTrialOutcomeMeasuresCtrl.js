@@ -3,10 +3,10 @@
     angular.module('ctrp.app.pa.dashboard')
         .controller('pasTrialOutcomeMeasuresCtrl', pasTrialOutcomeMeasuresCtrl);
 
-    pasTrialOutcomeMeasuresCtrl.$inject = ['$scope', '$filter', 'TrialService', 'PATrialService','OutcomeMeasureService','outcomeTypesObj', 'toastr',
+    pasTrialOutcomeMeasuresCtrl.$inject = ['$scope', '$filter', 'TrialService','UserService', 'PATrialService','OutcomeMeasureService','outcomeTypesObj', '$state', 'toastr',
         'MESSAGES', '_', '$timeout','uiGridConstants','trialDetailObj', '$location','$anchorScroll'];
 
-    function pasTrialOutcomeMeasuresCtrl($scope, $filter, TrialService, PATrialService,OutcomeMeasureService,outcomeTypesObj, toastr,
+    function pasTrialOutcomeMeasuresCtrl($scope, $filter, TrialService,UserService, PATrialService,OutcomeMeasureService,outcomeTypesObj, $state, toastr,
                                          MESSAGES, _, $timeout, uiGridConstants,trialDetailObj, $location, $anchorScroll) {
         var vm = this;
         vm.curTrial = trialDetailObj;
@@ -27,9 +27,17 @@
         vm.trialDetailObj = {};
         vm.om_types = outcomeTypesObj;
         vm.safety_issues=['Yes','No']
-        vm.sortableListener = {};
+
+        vm.isCurationEnabled = UserService.isCurationModeEnabled() || false;
+        vm.sortableListener = {
+            cancel: '.locked'
+        };
         vm.sortableListener.stop = dragItemCallback;
         vm.disableBtn = false;
+
+        $scope.$on(MESSAGES.CURATION_MODE_CHANGED, function() {
+            vm.isCurationEnabled = UserService.isCurationModeEnabled();
+        });
 
         $scope.$on("$destroy", function() {
             for (var i = 0; i < vm.curTrial.outcome_measures.length; i++) {
@@ -137,13 +145,13 @@
                             successMsg = 'Record Updated.';
                         }
                         toastr.clear();
-                        toastr.success(successMsg, 'Operation Successful!', {
-                            extendedTimeOut: 1000,
-                            timeOut: 0
-                        });
+                        toastr.success(successMsg, 'Operation Successful!');
                         vm.setToDefaultMode();
                         PATrialService.setCurrentTrial(vm.curTrial); // update to cache
                     }
+
+                    $scope.om_form.$setPristine();
+
                     vm.selectedAllOM = false;
                 }
             }).catch(function(err) {
@@ -152,6 +160,10 @@
                 vm.disableBtn = false;
             });
         };//saveOutcomeMeasure
+
+        vm.reload = function() {
+            $state.go($state.$current, null, { reload: true });
+        };
 
         function deleteListHandler(outcomeMeasuresSelectedInCheckboxes){
             var deleteList = [];
@@ -191,10 +203,7 @@
                     }
                     PATrialService.setCurrentTrial(vm.curTrial); // update to cache
                     toastr.clear();
-                    toastr.success('Record(s) deleted.', 'Operation Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    });
+                    toastr.success('Record(s) deleted.', 'Operation Successful!');
                 }
             }).catch(function(err) {
                 console.log("error in deleting outcome measure =" + psId);
@@ -245,12 +254,12 @@
 
         function resetOutcomeMeasure() {
             vm.addMode || vm.editMode || vm.copyMode ? angular.copy(vm.copyOM, vm.currentOutcomeMeasure) : vm.currentOutcomeMeasure = {};
+            $scope.om_form.$setPristine();
         }
 
         function getTrialDetailCopy() {
             $timeout(function() {
                 vm.curTrial = PATrialService.getCurrentTrialFromCache();
-                //console.log("vm.curTrial =" + JSON.stringify(vm.curTrial ));
             }, 1);
         } //getTrialDetailCopy
 

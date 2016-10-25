@@ -34,7 +34,38 @@ class MilestoneWrapper < TrialBase
   before_create :save_type
   after_create :recording_triggers
 
-  private
+  ## Audit Trail Callbacks
+  after_save :touch_trial
+  after_destroy :touch_trial
+
+
+  def touch_trial
+
+    if self.trial.edit_type.nil?
+    ##Note down edit_type is null when milestone is being added from abstraction page, so we need to touch trial only in this case
+    ##Since trial edit_type is not nil when it is registering and amending or updating then trial get updated for sure so to avoid dead lock this condition check is essential.
+      find_current_user = nil
+      updated_by = nil
+      last_version_transaction_id = 0
+      last_version = self.versions.last
+      last_version_transaction_id = last_version.transaction_id if last_version
+      user_id = last_version.whodunnit if last_version
+      find_current_user = User.find_by_id(user_id) if user_id
+      if find_current_user
+        updated_by = find_current_user.username
+      end
+      does_trial_modified_during_this_transaction_size = 0
+      does_trial_modified_during_this_transaction = TrialVersion.where("item_type= ? and transaction_id= ?","Trial", last_version_transaction_id)
+      does_trial_modified_during_this_transaction_size = does_trial_modified_during_this_transaction.size if does_trial_modified_during_this_transaction
+      ##If trail has been modified during the same transaction , then there is no need to update Trail again to create another version.
+      if does_trial_modified_during_this_transaction_size == 0
+        self.trial.update(updated_by:updated_by, updated_at:Time.now)
+      end
+
+    end
+
+  end
+
 
   def save_type
     if self.milestone.present?
@@ -55,10 +86,33 @@ class MilestoneWrapper < TrialBase
         if self.submission.present? && stm.present?
           ProcessingStatusWrapper.create(status_date: Date.today, processing_status: stm, submission: self.submission, trial: self.trial)
         end
+      elsif self.milestone.code == 'SAC'
+        acc = ProcessingStatus.find_by_code('ACC')
+        if self.submission.present? && acc.present?
+          ProcessingStatusWrapper.create(status_date: Date.today, processing_status: acc, submission: self.submission, trial: self.trial)
+        end
       elsif self.milestone.code == 'SRE'
         sre = ProcessingStatus.find_by_code('SRE')
         if self.submission.present? && sre.present?
           ProcessingStatusWrapper.create(status_date: Date.today, processing_status: sre, submission: self.submission, trial: self.trial)
+        end
+      elsif self.milestone.code == 'SRJ'
+        if self.submission.present?
+          rej = ProcessingStatus.find_by_code('REJ')
+          if rej.present?
+            ProcessingStatusWrapper.create(status_date: Date.today, processing_status: rej, submission: self.submission, trial: self.trial)
+          end
+          self.submission.status = 'Rejected'
+          self.submission.save
+
+          if self.submission.submission_type.code == 'ORI'
+            self.trial.is_rejected = true
+            self.trial.save
+          elsif self.submission.submission_type.code == 'AMD'
+            # Rollback
+            trial_service = TrialService.new({trial: self.trial})
+            trial_service.rollback(self.submission.id)
+          end
         end
       elsif self.milestone.code == 'APC'
         MilestoneWrapper.create(milestone: Milestone.find_by_code('RAQ'), submission: self.submission, trial: self.trial, created_by: 'CTRP application')
@@ -94,6 +148,10 @@ class MilestoneWrapper < TrialBase
       elsif self.milestone.code == 'IAV'
         self.trial.verification_date = self.created_at
         self.trial.save
+        avr = ProcessingStatus.find_by_code('AVR')
+        if self.submission.present? && avr.present?
+          ProcessingStatusWrapper.create(status_date: Date.today, processing_status: avr, submission: self.submission, trial: self.trial)
+        end
       elsif self.milestone.code == 'ONG'
         avr = ProcessingStatus.find_by_code('AVR')
         sts = Milestone.find_by_code('STS')
@@ -102,6 +160,16 @@ class MilestoneWrapper < TrialBase
         end
         self.trial.verification_date = self.created_at
         self.trial.save
+      elsif self.milestone.code == 'LRD'
+        if self.submission.present?
+          rej = ProcessingStatus.find_by_code('REJ')
+          if rej.present?
+            ProcessingStatusWrapper.create(status_date: Date.today, processing_status: rej, submission: self.submission, trial: self.trial)
+          end
+
+          self.trial.is_rejected = true
+          self.trial.save
+        end
       end
     end
   end

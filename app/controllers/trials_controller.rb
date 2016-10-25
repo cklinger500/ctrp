@@ -1,7 +1,8 @@
 class TrialsController < ApplicationController
-  before_action :set_trial, only: [:show, :edit, :update, :destroy, :validate_milestone]
+  before_action :set_trial, only: [:show, :edit, :update, :destroy, :validate_milestone, :rollback]
   before_filter :wrapper_authenticate_user unless Rails.env.test?
   load_and_authorize_resource unless Rails.env.test?
+  before_action :set_paper_trail_whodunnit, only: [:create,:update, :destroy]
 
   # GET /trials
   # GET /trials.json
@@ -38,6 +39,9 @@ class TrialsController < ApplicationController
       if @trial.save
         format.html { redirect_to @trial, notice: 'Trial was successfully created.' }
         format.json { render :show, status: :created, location: @trial }
+
+        trial_service = TrialService.new({trial: @trial})
+        trial_service.send_email(@trial.edit_type)
       else
         format.html { render :new }
         format.json { render json: @trial.errors, status: :unprocessable_entity }
@@ -53,13 +57,30 @@ class TrialsController < ApplicationController
 
     Rails.logger.info "params in update: #{params}"
 
+    edit_type = params[:trial][:edit_type]
+    if edit_type == 'update'
+      @trial.verification_date = Date.today
+    end
+    trial_service = TrialService.new({trial: @trial})
+    if edit_type == 'amend'
+      trial_json = trial_service.get_json
+    end
+
+
     respond_to do |format|
       if @trial.update(trial_params)
+        @trial = Trial.find(@trial.id)
         format.html { redirect_to @trial, notice: 'Trial was successfully updated.' }
         format.json { render :show, status: :ok, location: @trial }
+
+        if trial_json.present?
+          trial_service.save_history(trial_json)
+        end
+
+        trial_service.send_email(edit_type)
       else
         format.html { render :edit }
-        format.json { render json: @trial.errors, status: :unprocessable_entity }
+        format.json { render json: @trial.errors.full_messages, status: :unprocessable_entity }
       end
     end
   end
@@ -71,6 +92,14 @@ class TrialsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to trials_url, notice: 'Trial was successfully destroyed.' }
       format.json { head :no_content }
+    end
+  end
+
+  def rollback
+    trial_service = TrialService.new({trial: @trial})
+    trial_service.rollback(params[:submission_id])
+    respond_to do |format|
+      format.json { render :json => params }
     end
   end
 
@@ -108,13 +137,13 @@ class TrialsController < ApplicationController
   def search_trial_with_nci_id
 
     if params.has_key?(:nci_id)
-      @search_result = Trial.with_nci_id(params[:nci_id].upcase).first
+      @search_result = Trial.where(nci_id: params[:nci_id].upcase) #Trial.with_nci_id(params[:nci_id].upcase)
+      @search_result = @search_result.filter_rejected.first
       @search_result = @search_result.nil? ? {error_msg: 'Trial is not found'} : @search_result
     else
       # missing nci_id
       @search_result = {error_msg: 'Trial is not found'}
     end
-
   end
 
   def trial_identifier_types
@@ -142,6 +171,13 @@ class TrialsController < ApplicationController
     @perspectives = TimePerspective.all
     respond_to do |format|
       format.json { render :json => {:data => @perspectives} }
+    end
+  end
+
+  def amendment_reasons
+    @amendment_reasons = AmendmentReason.all
+    respond_to do |format|
+      format.json { render :json => {:data => @amendment_reasons} }
     end
   end
 
@@ -256,56 +292,109 @@ class TrialsController < ApplicationController
   def search
     # Pagination/sorting params initialization
     params[:start] = 1 if params[:start].blank?
-    params[:rows] = 20 if params[:rows].blank?
-    params[:sort] = 'lead_protocol_id' if params[:sort].blank?
-    params[:order] = 'asc' if params[:order].blank?
 
-    if params[:protocol_id].present? || params[:official_title].present? || params[:phases].present? || params[:purposes].present? || params[:pilot].present? || params[:pi].present? || params[:org].present?  || params[:study_sources].present?
-      @trials = Trial.all
+    if params[:trial_ownership].blank?
+      params[:rows] = 20 if params[:rows].blank?
+    else
+      params[:rows] = nil
+    end
+
+    if params[:searchType] == "Saved Drafts"
+        params[:sort] = 'lead_protocol_id' if params[:sort].blank?
+        params[:order] = 'asc' if params[:order].blank?
+    else
+      #"My Trials" or "All Trials"
+      params[:sort] = 'nci_id' if params[:sort].blank?
+      params[:order] = 'desc' if params[:order].blank?
+      #@organizations = @organizations.order("#{sortBy} #{params[:order]}")
+    end
+
+    if params[:trial_ownership].present?
+
+      if ['ROLE_ADMIN','ROLE_SUPER','ROLE_ABSTRACTOR'].include? current_user.role
+        if params[:family_id].present?
+          @trials = Trial.in_family(params[:family_id], Date.today).where(nih_nci_prog: nil).filter_rejected.active_submissions
+        elsif params[:organization_id].present?
+          @trials = Trial.matches('lead_org_id', params[:organization_id]).where(nih_nci_prog: nil).filter_rejected.active_submissions
+        end
+      elsif ['ROLE_SITE-SU','ROLE_ACCOUNT-APPROVER'].include? current_user.role
+        family = FamilyMembership.find_by_organization_id(current_user.organization_id)
+        if family
+          @trials = Trial.in_family(family.family_id, Date.today).where(nih_nci_prog: nil).filter_rejected.active_submissions
+        else
+          @trials = Trial.matches('lead_org_id', current_user.organization_id).where(nih_nci_prog: nil).filter_rejected.active_submissions
+        end
+      end
+    elsif params[:org].present? || params[:protocol_id].present? || params[:official_title].present? || params[:phases].present? || params[:purposes].present? || params[:pilot].present? || params[:pi].present? || params[:org].present?  || params[:study_sources].present?
+      @trials = Trial.filter_rejected
       @trials = @trials.with_protocol_id(params[:protocol_id]) if params[:protocol_id].present?
       @trials = @trials.matches_wc('official_title', params[:official_title]) if params[:official_title].present?
       @trials = @trials.with_phases(params[:phases]) if params[:phases].present?
       @trials = @trials.with_purposes(params[:purposes]) if params[:purposes].present?
       @trials = @trials.matches('pilot', params[:pilot]) if params[:pilot].present?
+      @trials = @trials.with_org(params[:org], params[:org_types]) if params[:org].present?
       if params[:pi].present?
         splits = params[:pi].split(',').map(&:strip)
         @trials = @trials.with_pi_lname(splits[0])
         @trials = @trials.with_pi_fname(splits[1]) if splits.length > 1
       end
-      if  params[:no_nih_nci_prog].present?
-        @trials =  @trials.where(nih_nci_prog: nil) unless @trials.blank?
-      end
-
-      if params[:trial_ownership].present?
-        if ['ROLE_ADMIN'].include? current_user.role
-          if params[:family_id].present?
-            @trials = @trials.in_family(params[:family_id], Date.today)
-          elsif params[:organization_id].present?
-            @trials = @trials.matches('lead_org_id', params[:organization_id])
-          end
-        end
-
-        if ['ROLE_SITE-SU','ROLE_ACCOUNT-APPROVER'].include? current_user.role
-          family = FamilyMembership.find_by_organization_id(current_user.organization_id)
-          if family
-            @trials = @trials.in_family(family.family_id, Date.today)
-          else
-            @trials = @trials.matches('lead_org_id', current_user.organization_id)
-          end
-        end
-      end
 
       @trials = @trials.with_internal_sources(params[:internal_sources]) if params[:internal_sources].present?
       @trials = @trials.with_org(params[:org], params[:org_types]) if params[:org].present?
       @trials = @trials.with_study_sources(params[:study_sources]) if params[:study_sources].present?
-      @trials = @trials.with_owner(@current_user.username) if params[:searchType] == 'My Trials'
+
+      if params[:searchType] == 'My Trials'
+        if ['ROLE_SITE-SU'].include? current_user.role
+          @trials = @trials.with_owner_and_with_current_user_in_family_as_ps(@current_user)
+        else
+          @trials = @trials.with_owner_and_with_current_user_org_as_ps(@current_user)
+        end
+
+      end
       @trials = @trials.is_not_draft if params[:searchType] == 'All Trials'
       @trials = @trials.is_draft(@current_user.username) if params[:searchType] == 'Saved Drafts'
-      @trials = @trials.sort_by_col(params).group(:'trials.id').page(params[:start]).per(params[:rows])
+      #@trials = @trials.sort_by_col(params).group(:'trials.id').page(params[:start]).per(params[:rows])
+      @trials = @trials.order("#{params[:sort]} #{params[:order]}").page(params[:start]).per(params[:rows])
+
+       #@trials = @trials.filter(@trials, {:phases => params[:phases], :purposes => params[:purposes]})
+
+
+      #### Write here a join query to avoid the access of db tables from View.
+      ###
+      Rails.logger.info "Started querying multitable with Trials to avoid the access of db tables from View"
+
+      join_clause  = "LEFT OUTER JOIN phases ON trials.phase_id = phases.id LEFT OUTER JOIN primary_purposes ON trials.primary_purpose_id = primary_purposes.id "
+      join_clause += "LEFT JOIN organizations as trial_lead_org ON trial_lead_org.id = trials.lead_org_id "
+      join_clause += "LEFT JOIN organizations as sponsor ON sponsor.id = trials.sponsor_id "
+      join_clause += "LEFT JOIN people as pi ON pi.id = trials.pi_id "
+      join_clause += "LEFT JOIN study_sources as study_source ON study_source.id = trials.study_source_id "
+
+      join_clause += "LEFT JOIN research_categories as research_category ON research_category.id = trials.research_category_id "
+      join_clause += "LEFT JOIN responsible_parties as responsible_party ON responsible_party.id = trials.responsible_party_id "
+      join_clause += "LEFT JOIN accrual_disease_terms as accrual_disease_term ON accrual_disease_term.id = trials.accrual_disease_term_id "
+
+      #join_clause += "LEFT JOIN organizations as trial_lead_org ON trial_lead_org.id = trials.lead_org_id "
+      #join_clause += "LEFT JOIN organizations as trial_lead_org ON trial_lead_org.id = trials.lead_org_id "
+      #join_clause += "LEFT JOIN organizations as trial_lead_org ON trial_lead_org.id = trials.lead_org_id "
+
+
+      @trials = @trials.joins(join_clause).select('trials.*, phases.name as phase_name,primary_purposes.name as purpose,
+                            trial_lead_org.name as lead_org_name,sponsor.name as sponsor_name,
+                            pi.fname  as pi_name, study_source.name as study_source_name ,
+                            research_category.name as research_category_name, responsible_party.name as responsible_party_name,
+                            accrual_disease_term.name as accrual_disease_term_name').group(:'trials.id',:'phases.name',
+                                                                                           :'primary_purposes.name',:'trial_lead_org.name',
+                                                                                           :'sponsor.name',:'pi.fname',
+                                                                                           :'study_source.name',:'research_category.name',
+                                                                                           :'responsible_party.name',:'accrual_disease_term.name')
+
+     # @trials = @trials.uniq
+
 
       @trials.each do |trial|
         trial.current_user = @current_user
       end
+
     else
       @trials = []
     end
@@ -418,10 +507,14 @@ class TrialsController < ApplicationController
         @trials = @trials.with_pi_lname(splits[0])
         @trials = @trials.with_pi_fname(splits[1]) if splits.length > 1
       end
+      @trials = @trials.user_trials(params[:user_id]) if params[:user_id].present?
       @trials = @trials.with_org(params[:org], params[:org_types]) if params[:org].present?
       @trials = @trials.with_study_sources(params[:study_sources]) if params[:study_sources].present?
       @trials = @trials.with_internal_sources(params[:internal_sources]) if params[:internal_sources].present?
       @trials = @trials.sort_by_col(params).group(:'trials.id').page(params[:start]).per(params[:rows])
+
+      nci_protocol_origin_id = ProtocolIdOrigin.find_by_code('NCI').id
+      lead_org_trial_origin_id = ProtocolIdOrigin.find_by_code('LORG').id
 
       # PA fields
       if params[:research_category].present?
@@ -469,8 +562,23 @@ class TrialsController < ApplicationController
         @trials = @trials.select{|trial| !trial.processing_status_wrappers.blank? && search_process_status_ids.include?(trial.processing_status_wrappers.last.processing_status_id)}
         Rails.logger.debug "After @trials = #{@trials.inspect}"
       end
-      if params[:protocol_origin_type].present?
-        @trials = @trials.select{|trial| trial.other_ids.by_value(params[:protocol_origin_type]).size>0}
+
+
+      if params[:protocol_origin_type].present?  # params[:protocol_origin_type] is an array of numerical id
+        @trials_copy = @trials.clone  # create a copy of @trials so as to filter for other_ids
+        @trials = @trials.select { |trial| !trial.lead_protocol_id.nil? } if params[:protocol_origin_type].include?(lead_org_trial_origin_id)
+
+        @trials = @trials.select {|trial| !trial.nci_id.nil?} if params[:protocol_origin_type].include?(nci_protocol_origin_id)
+
+        @trials_copy = @trials_copy.select { |trial| trial.other_ids.pluck(:protocol_id_origin_id).map { |id| params[:protocol_origin_type].include?(id)}.include?(true)}
+        # trials_other_id = @trials.select{|trial| trial.other_ids.by_value_array(params[:protocol_origin_type]).size>0} # unless params[:protocol_origin_type].include?('NCI')
+
+        if params[:protocol_origin_type].include?(lead_org_trial_origin_id) || params[:protocol_origin_type].include?(nci_protocol_origin_id)
+          @trials |= @trials_copy  # concatenate
+        else
+          @trials = @trials_copy
+        end
+
       end
       if params[:admin_checkout].present?
         Rails.logger.info "Admin Checkout Only selected"
@@ -513,8 +621,38 @@ class TrialsController < ApplicationController
           next if sn.nil?
           search_ids << sn.id
         end
-        @trials = @trials.select{|trial| !trial.submissions.blank? &&  search_ids.include?(trial.submissions.last.submission_type.id)}
+
+        upd = SubmissionType.find_by_code('UPD')
+        ori = SubmissionType.find_by_code('ORI')
+        amd = SubmissionType.find_by_code('AMD')
+
+        @trials_upd = []
+        @trials_ori = []
+        @trials_amd = []
+
+        if search_ids.include?(upd.id)
+          @trials_upd = @trials.select{|trial| !trial.submissions.blank?  && trial.has_atleast_one_active_update_sub_with_not_acked}#&&  upd.id == trial.submissions.last.submission_type.id && trial.submissions.last.status ="Active" && trial.submissions.last.acknowledge ="No"
+        end
+
+        if search_ids.include?(ori.id)
+          @trials_ori = @trials.select{|trial| !trial.submissions.blank? && !trial.submissions.pluck(:submission_type_id).include?(amd.id) }
+        end
+
+        if search_ids.include?(amd.id)
+          @trials_amd = @trials.select{|trial| !trial.submissions.blank? && trial.submissions.pluck(:submission_type_id).include?(amd.id) && trial.has_atleast_one_active_amendment_sub }
+        end
+
+        @trials = @trials_upd + @trials_ori + @trials_amd
+        @trials =@trials.uniq
+
+        #Rails.logger.info "following is the union for updates and amendments #{@trials_upd}"
+        #Rails.logger.info "following is the union for updates and amendments #{@trials_ori}"
+        #Rails.logger.info "following is the union for updates and amendments #{@trials_amd}"
+        #@trials = @trials.select{|trial| !trial.submissions.blank? &&  search_ids.include?(trial.submissions.last.submission_type.id)}
+
       end
+
+
       if params[:submission_method].present?
         Rails.logger.debug " Before params[:submission_method] = #{params[:submission_method].inspect}"
         search_ids = []
@@ -549,31 +687,25 @@ class TrialsController < ApplicationController
 
 
 
+
+
   def validate_status
-    @validation_msgs = []
-    transition_matrix = JSON.parse(AppSetting.find_by_code('TRIAL_STATUS_TRANSITION').big_value)
-    statuses = params['statuses']
+    trial_status_service = TrialStatusService.new('TRIAL_STATUS_TRANSITION',params['statuses'])
+    @validation_msgs = trial_status_service.validate_status
+    #Rails.logger.info "vaidation messages are #{@validation_msgs}"
+  end
 
-    if statuses.present? && statuses.size > 0
-      statuses.each_with_index do |e, i|
-        if i == 0
-          from_status_code = 'STATUSZERO'
-        else
-          from_status_code = statuses[i - 1]['trial_status_code']
-        end
-        to_status_code = statuses[i]['trial_status_code']
+  def paa_validate_trial_status
+    trial_status_service = TrialStatusService.new('PA_TRIAL_STATUS_TRANSITION', params['statuses'])
+    @validation_msgs = trial_status_service.validate_status
+    #Rails.logger.info "vaidation messages are #{@validation_msgs}"
+  end
 
-        # Flag that indicates if the two status dates are the same
-        if from_status_code == 'STATUSZERO'
-          same_date = false
-        else
-          same_date = statuses[i - 1]['status_date'] == statuses[i]['status_date']
-        end
-
-        validation_msg = convert_validation_msg(transition_matrix[from_status_code][to_status_code], from_status_code, to_status_code, same_date)
-        @validation_msgs.append(validation_msg)
-      end
-    end
+  ## part of the abstraction validation
+  def abstraction_validate_trial_status
+    trial_status_service = TrialStatusService.new('PA_VALIDATION_TRIAL_STATUS_TRANSITION',params['statuses'])
+    @validation_msgs = trial_status_service.validate_status
+    #Rails.logger.info "vaidation messages are #{@validation_msgs}"
   end
 
   def validate_milestone
@@ -619,7 +751,7 @@ class TrialsController < ApplicationController
   def search_clinical_trials_gov
     @search_result = {}
 
-    existing_nct_ids = OtherId.where('protocol_id = ? AND protocol_id_origin_id = ?', params[:nct_id].upcase, ProtocolIdOrigin.find_by_code('NCT').id)
+    existing_nct_ids = OtherId.joins(:trial).where('protocol_id = ? AND protocol_id_origin_id = ? AND (trials.is_rejected = ? OR trials.is_rejected IS NULL)', params[:nct_id].upcase, ProtocolIdOrigin.find_by_code('NCT').id, FALSE)
     if existing_nct_ids.length > 0
       @search_result[:error_msg] = 'A study with the given identifier already exists in CTRP. To find this trial in CTRP, go to the Search Trials page.'
       return
@@ -636,6 +768,7 @@ class TrialsController < ApplicationController
       org_name = xml.xpath('//sponsors/lead_sponsor/agency').text
 
       dup_trial = Trial.joins(:lead_org).where('organizations.name ilike ? AND lead_protocol_id = ?', org_name, lead_protocol_id)
+      dup_trial = dup_trial.filter_rejected
       if dup_trial.length > 0
         @search_result[:error_msg] = 'Combination of Lead Organization Trial ID and Lead Organization must be unique.'
         return
@@ -664,16 +797,27 @@ class TrialsController < ApplicationController
     url = url.sub('NCT********', params[:nct_id])
     xml = Nokogiri::XML(open(url))
 
-    @trial = Trial.new(import_params(xml))
+    import_trial_service = ImportTrialService.new()
+    @trial = Trial.new(import_trial_service.import_params(xml, @current_user))
     @trial.current_user = @current_user
-
+    import_log_service = ImportTrialLogService.new
+    request_record = import_log_service.request_logging(xml,"Create","request",@current_user,ImportTrialLogDatum)
     respond_to do |format|
       if @trial.save
         format.html { redirect_to @trial, notice: 'Trial was successfully imported.' }
         format.json { render :show, status: :created, location: @trial }
+        import_log_service.response_logging(@trial,"sucess", "Created Sucessfully",ImportTrialLogDatum,request_record)
+        FileUtils.mkdir_p('../../storage/tmp')
+        file_name = "import_#{params[:nct_id]}_#{Date.today.strftime('%d-%b-%Y')}"
+        File.open("../../storage/tmp/#{file_name}.xml", 'wb') do |file|
+          file << open(url).read
+        end
+        TrialDocument.create(document_type: 'Other Document', document_subtype: 'Import XML', trial_id: @trial.id, file: File.open("../../storage/tmp/#{file_name}.xml"))
       else
         format.html { render :new }
         format.json { render json: @trial.errors, status: :unprocessable_entity }
+        import_log_service.response_logging(@trial,"failure", @trial.errors.to_xml,ImportTrialLogDatum,request_record)
+
       end
     end
   end
@@ -716,7 +860,7 @@ class TrialsController < ApplicationController
                                   trial_documents_attributes: [:id, :file_name, :document_type, :document_subtype,:source_document,:deleted_by,:deletion_date, :file, :_destroy, :status, :added_by_id, :why_deleted, :source_document],
                                   interventions_attributes: [:id, :name, :description, :other_name, :trial_id, :intervention_type_id, :index, :c_code, :_destroy],
                                   other_criteria_attributes: [:id, :index, :criteria_type, :trial_id, :lock_version, :criteria_desc, :_destroy],
-                                  submissions_attributes: [:id, :amendment_num, :amendment_date, :_destroy],
+                                  submissions_attributes: [:id, :amendment_num, :amendment_date, :amendment_reason_id, :_destroy],
                                   sub_groups_attributes:[:id,:index,:label,:description,:_destroy],
                                   anatomic_site_wrappers_attributes: [:id, :anatomic_site_id, :_destroy],
                                   outcome_measures_attributes: [:id, :index,:title, :time_frame, :description, :safety_issue, :outcome_measure_type_id, :_destroy],
@@ -728,429 +872,11 @@ class TrialsController < ApplicationController
                                                        marker_biomarker_purpose_associations_attributes:[:id,:biomarker_purpose_id,:_destroy]],
                                   diseases_attributes:[:id, :preferred_name, :code, :thesaurus_id, :display_name, :parent_preferred, :rank, :_destroy],
                                   milestone_wrappers_attributes:[:id, :milestone_id, :milestone_date, :comment, :submission_id, :created_by, :_destroy],
-                                  onholds_attributes:[:id, :onhold_reason_id, :onhold_desc, :onhold_date, :offhold_date, :_destroy])
+                                  processing_status_wrappers_attributes: [:id, :status_date, :processing_status_id, :trial_id, :submission_id],
+                                  onholds_attributes:[:id, :onhold_reason_id, :onhold_desc, :onhold_date, :offhold_date, :_destroy],
+                                  citations_attributes:[:id, :pub_med_id, :description, :results_reference, :_destroy],
+                                  links_attributes:[:id, :url, :description, :_destroy], trial_ownerships_attributes:[:id, :user_id, :_destroy])
   end
 
-  # Convert status code to name in validation messages
-  def convert_validation_msg (msg, from_status_code, to_status_code, same_date)
-    if msg.has_key?('warnings')
-      msg['warnings'].each do |warning|
-        statusObj = TrialStatus.find_by_code(warning['status']) if warning.has_key?('status')
-        warning['status'] = statusObj.name if statusObj.present?
-
-        if warning.has_key?('message')
-          if warning['message'] == 'Invalid Transition'
-            fromStatusObj = TrialStatus.find_by_code(from_status_code)
-            warning['from'] = fromStatusObj.name if fromStatusObj.present?
-            toStatusObj = TrialStatus.find_by_code(to_status_code)
-            warning['to'] = toStatusObj.name if toStatusObj.present?
-          elsif warning['message'] == 'Duplicate'
-            dupStatusObj = TrialStatus.find_by_code(from_status_code)
-            warning['dupStatus'] = dupStatusObj.name if dupStatusObj.present?
-          elsif warning['message'] == 'Same Day'
-            fromStatusObj = TrialStatus.find_by_code(from_status_code)
-            warning['from'] = fromStatusObj.name if fromStatusObj.present?
-            toStatusObj = TrialStatus.find_by_code(to_status_code)
-            warning['to'] = toStatusObj.name if toStatusObj.present?
-            warning['sameDate'] = same_date
-          end
-        end
-      end
-    end
-
-    if msg.has_key?('errors')
-      msg['errors'].each do |error|
-        statusObj = TrialStatus.find_by_code(error['status']) if error.has_key?('status')
-        error['status'] = statusObj.name if statusObj.present?
-
-        if error.has_key?('message')
-          if error['message'] == 'Invalid Transition'
-            fromStatusObj = TrialStatus.find_by_code(from_status_code)
-            error['from'] = fromStatusObj.name if fromStatusObj.present?
-            toStatusObj = TrialStatus.find_by_code(to_status_code)
-            error['to'] = toStatusObj.name if toStatusObj.present?
-          elsif error['message'] == 'Duplicate'
-            dupStatusObj = TrialStatus.find_by_code(from_status_code)
-            error['dupStatus'] = dupStatusObj.name if dupStatusObj.present?
-          end
-        end
-      end
-    end
-
-    return msg
-  end
-
-  def import_params (xml)
-    import_params = {}
-
-    import_params[:edit_type] = 'import'
-    import_params[:is_draft] = false
-    import_params[:study_source_id] = StudySource.find_by_code('IND').id
-    import_params[:lead_protocol_id] = xml.xpath('//org_study_id').text
-
-    import_params[:other_ids_attributes] = []
-    xml.xpath('//secondary_id').each do |other_id|
-      import_params[:other_ids_attributes].push({protocol_id_origin_id: ProtocolIdOrigin.find_by_code('OTH').id, protocol_id: other_id.text})
-    end
-    import_params[:other_ids_attributes].push({protocol_id_origin_id: ProtocolIdOrigin.find_by_code('NCT').id, protocol_id: xml.xpath('//nct_id').text})
-
-    import_params[:brief_title] = xml.xpath('//brief_title').text
-    import_params[:official_title] = xml.xpath('//official_title').text
-
-    org_name = xml.xpath('//sponsors/lead_sponsor/agency').text
-    orgs = Organization.all
-    orgs = orgs.matches_name_wc(org_name, true)
-    orgs = orgs.with_source_status("Active")
-    orgs = orgs.with_source_context("CTRP")
-    if orgs.length > 0
-      import_params[:lead_org_id] = orgs[0].id
-      import_params[:sponsor_id] = orgs[0].id
-      import_params[:trial_funding_sources_attributes] = [{organization_id: orgs[0].id}]
-    end
-
-    import_params[:collaborators_attributes] = []
-    xml.xpath('//collaborator/agency').each do |collaborator|
-      import_params[:collaborators_attributes].push({org_name: collaborator.text})
-    end
-
-    import_params[:oversight_authorities_attributes] = []
-    xml.xpath('//oversight_info/authority').each do |authority|
-      splits = authority.text.split(':')
-      import_params[:oversight_authorities_attributes].push({country: splits[0].strip, organization: splits[1].strip})
-    end
-
-    import_params[:data_monitor_indicator] = xml.xpath('//oversight_info/has_dmc').text if xml.xpath('//oversight_info/has_dmc').present?
-    import_params[:brief_summary] = xml.xpath('//brief_summary').text
-    import_params[:detailed_description] = xml.xpath('//detailed_description').text
-
-    import_params[:trial_status_wrappers_attributes] = []
-    ctrp_status_code = map_status(xml.xpath('//overall_status').text)
-    ctrp_status = TrialStatus.find_by_code(ctrp_status_code)
-    import_params[:trial_status_wrappers_attributes].push({trial_status_id: ctrp_status.id}) if ctrp_status.present?
-
-    import_params[:start_date] = convert_date(xml.xpath('//start_date').text) if xml.xpath('//start_date').present?
-    import_params[:start_date_qual] = 'Actual' if xml.xpath('//start_date').present?
-    import_params[:comp_date] = convert_date(xml.xpath('//completion_date').text) if xml.xpath('//completion_date').present?
-    import_params[:comp_date_qual] = xml.xpath('//completion_date').attr('type') if xml.xpath('//completion_date').present?
-    import_params[:primary_comp_date] = convert_date(xml.xpath('//primary_completion_date').text) if xml.xpath('//primary_completion_date').present?
-    import_params[:primary_comp_date_qual] = xml.xpath('//primary_completion_date').attr('type') if xml.xpath('//primary_completion_date').present?
-
-    ctrp_phase_code = map_phase(xml.xpath('//phase').text)
-    ctrp_phase = Phase.find_by_code(ctrp_phase_code)
-    import_params[:phase_id] = ctrp_phase.id if ctrp_phase.present?
-
-    ctrp_research_category = ResearchCategory.find_by_name(xml.xpath('//study_type').text)
-    import_params[:research_category_id] = ctrp_research_category.id if ctrp_research_category.present?
-
-    xml.xpath('//study_design').text.split(',').each do |study_design|
-      splits = study_design.split(':')
-      case splits[0].strip
-        when 'Allocation'
-          ctrp_allocation_code = map_allocation(splits[1].strip)
-          ctrp_allocation = Allocation.find_by_code(ctrp_allocation_code)
-          import_params[:allocation_id] = ctrp_allocation.id if ctrp_allocation.present?
-        when 'Endpoint Classification'
-          ctrp_study_classification_code = map_study_classification(splits[1].strip)
-          ctrp_study_classification = StudyClassification.find_by_code(ctrp_study_classification_code)
-          import_params[:study_classification_id] = ctrp_study_classification.id if ctrp_study_classification.present?
-        when 'Intervention Model'
-          ctrp_intervention_model_code = map_intervention_model(splits[1].strip)
-          ctrp_intervention_model = InterventionModel.find_by_code(ctrp_intervention_model_code)
-          import_params[:intervention_model_id] = ctrp_intervention_model.id if ctrp_intervention_model.present?
-        when 'Masking'
-          ctrp_masking_code = map_masking(splits[1].strip)
-          ctrp_masking = Masking.find_by_code(ctrp_masking_code)
-          import_params[:masking_id] = ctrp_masking.id if ctrp_masking.present?
-        when 'Primary Purpose'
-          ctrp_primary_purpose_code = map_primary_purpose(splits[1].strip)
-          ctrp_primary_purpose = PrimaryPurpose.find_by_code(ctrp_primary_purpose_code)
-          import_params[:primary_purpose_id] = ctrp_primary_purpose.id if ctrp_primary_purpose.present?
-      end
-    end
-
-    import_params[:outcome_measures_attributes] = []
-    xml.xpath('//primary_outcome').each do |p_outcome|
-      import_params[:outcome_measures_attributes].push({title: p_outcome.xpath('measure').text, time_frame: p_outcome.xpath('time_frame').text, safety_issue: p_outcome.xpath('safety_issue').text, outcome_measure_type_id: OutcomeMeasureType.find_by_code('PRI').id})
-    end
-    xml.xpath('//secondary_outcome').each do |s_outcome|
-      import_params[:outcome_measures_attributes].push({title: s_outcome.xpath('measure').text, time_frame: s_outcome.xpath('time_frame').text, safety_issue: s_outcome.xpath('safety_issue').text, outcome_measure_type_id: OutcomeMeasureType.find_by_code('SEC').id})
-    end
-
-    import_params[:num_of_arms] = xml.xpath('//number_of_arms').text if xml.xpath('//number_of_arms').present?
-    import_params[:target_enrollment] = xml.xpath('//enrollment').text if xml.xpath('//enrollment').present?
-
-    if xml.xpath('//eligibility/criteria').present?
-      import_params[:other_criteria_attributes] = []
-      criteria_text = xml.xpath('//eligibility/criteria').text
-      criteria_text = criteria_text.sub('Inclusion Criteria', 'INCLUSION CRITERIA')
-      criteria_text = criteria_text.sub('Exclusion Criteria', 'EXCLUSION CRITERIA')
-      if criteria_text.include? 'INCLUSION CRITERIA:'
-        inclusion_partition = criteria_text.partition('INCLUSION CRITERIA:')
-        if inclusion_partition[0].include? 'EXCLUSION CRITERIA:'
-          import_params[:other_criteria_attributes].push({criteria_type: 'Inclusion', criteria_desc: inclusion_partition[2]})
-          sub_inclusion_partition = inclusion_partition[0].partition('EXCLUSION CRITERIA:')
-          import_params[:other_criteria_attributes].push({criteria_type: 'Exclusion', criteria_desc: sub_inclusion_partition[2]})
-        elsif inclusion_partition[2].include? 'EXCLUSION CRITERIA:'
-          sub_inclusion_partition = inclusion_partition[2].partition('EXCLUSION CRITERIA:')
-          import_params[:other_criteria_attributes].push({criteria_type: 'Inclusion', criteria_desc: sub_inclusion_partition[0]})
-          import_params[:other_criteria_attributes].push({criteria_type: 'Exclusion', criteria_desc: sub_inclusion_partition[2]})
-        else
-          import_params[:other_criteria_attributes].push({criteria_type: 'Inclusion', criteria_desc: inclusion_partition[2]})
-        end
-      elsif criteria_text.include? 'EXCLUSION CRITERIA:'
-        exclution_partition = criteria_text.partition('EXCLUSION CRITERIA:')
-        import_params[:other_criteria_attributes].push({criteria_type: 'Exclusion', criteria_desc: exclution_partition[2]})
-      else
-        import_params[:other_criteria_attributes].push({criteria_type: 'Inclusion', criteria_desc: criteria_text})
-      end
-    end
-
-    ctrp_gender = Gender.find_by_name(xml.xpath('//eligibility/gender').text)
-    import_params[:gender_id] = ctrp_gender.id if ctrp_gender.present?
-
-    if xml.xpath('//eligibility/minimum_age').present?
-      min_age_text = xml.xpath('//eligibility/minimum_age').text
-      if !(min_age_text.include? 'N/A')
-        splits = min_age_text.split(' ')
-        import_params[:min_age] = splits[0]
-        ctrp_min_age_unit = AgeUnit.find_by_name(splits[1]) if splits[1].present?
-        import_params[:min_age_unit_id] = ctrp_min_age_unit.id if ctrp_min_age_unit.present?
-      end
-    end
-
-    if xml.xpath('//eligibility/maximum_age').present?
-      max_age_text = xml.xpath('//eligibility/maximum_age').text
-      if !(max_age_text.include? 'N/A')
-        splits = max_age_text.split(' ')
-        import_params[:max_age] = splits[0]
-        ctrp_max_age_unit = AgeUnit.find_by_name(splits[1]) if splits[1].present?
-        import_params[:max_age_unit_id] = ctrp_max_age_unit.id if ctrp_max_age_unit.present?
-      end
-    end
-
-    import_params[:accept_vol] = xml.xpath('//healthy_volunteers').text if xml.xpath('//healthy_volunteers').present?
-    import_params[:verification_date] = convert_date(xml.xpath('//verification_date').text) if xml.xpath('//verification_date').present?
-
-    submission_params = {}
-    submission_params[:updated_at] = xml.xpath('//lastchanged_date').text
-    submission_params[:created_at] = xml.xpath('//firstreceived_date').text
-    submission_params[:submission_num] = 1
-    submission_params[:submission_date] = Date.today
-    ori = SubmissionType.find_by_code('ORI')
-    submission_params[:submission_type_id] = ori.id if ori.present?
-    cct = SubmissionSource.find_by_code('CCT')
-    submission_params[:submission_source_id] = cct.id if cct.present?
-    cti = SubmissionMethod.find_by_code('CTI')
-    submission_params[:submission_method_id] = cti.id if cti.present?
-    submission_params[:user_id] = @current_user.id if @current_user.present?
-    import_params[:submissions_attributes] = [submission_params]
-
-    ctrp_responsible_party = ResponsibleParty.find_by_name(xml.xpath('//responsible_party/responsible_party_type').text)
-    import_params[:responsible_party_id] = ctrp_responsible_party.id if ctrp_responsible_party.present?
-
-    ctrp_keywords = ''
-    xml.xpath('//keyword').each_with_index do |keyword, i|
-      ctrp_keywords += ', ' if i > 0
-      ctrp_keywords += keyword
-    end
-    import_params[:keywords] = ctrp_keywords if ctrp_keywords.length > 0
-
-    import_params[:intervention_indicator] = xml.xpath('//is_fda_regulated').text if xml.xpath('//is_fda_regulated').present?
-    import_params[:sec801_indicator] = xml.xpath('//is_section_801').text if xml.xpath('//is_section_801').present?
-
-    return import_params
-  end
-
-  # Maps the ClinicalTrials.gov status to CTRP status code
-  def map_status (ct_status)
-    case ct_status
-      when 'Not yet recruiting'
-        ctrp_status_code = 'INR'
-      when 'Withdrawn'
-        ctrp_status_code = 'WIT'
-      when 'Recruiting'
-        ctrp_status_code = 'ACT'
-      when 'Enrolling by Invitation'
-        ctrp_status_code = 'EBI'
-      when 'Suspended'
-        ctrp_status_code = 'TCL'
-      when 'Active, not recruiting'
-        ctrp_status_code = 'CAC'
-      when 'Terminated'
-        ctrp_status_code = 'ACO'
-      when 'Completed'
-        ctrp_status_code = 'COM'
-      when 'Available'
-        ctrp_status_code = 'AVA'
-      when 'No longer available'
-        ctrp_status_code = 'NLA'
-      when 'Temporarily not available'
-        ctrp_status_code = 'TNA'
-      when 'Approved for marketing'
-        ctrp_status_code = 'AFM'
-      else
-        ctrp_status_code = ''
-    end
-
-    return ctrp_status_code
-  end
-
-  def convert_date (ct_date)
-    splits = ct_date.split(' ')
-
-    case splits[0]
-      when 'January'
-        month = 'Jan'
-      when 'February'
-        month = 'Feb'
-      when 'March'
-        month = 'Mar'
-      when 'April'
-        month = 'Apr'
-      when 'May'
-        month = 'May'
-      when 'June'
-        month = 'Jun'
-      when 'July'
-        month = 'Jul'
-      when 'August'
-        month = 'Aug'
-      when 'September'
-        month = 'Sep'
-      when 'October'
-        month = 'Oct'
-      when 'November'
-        month = 'Nov'
-      when 'December'
-        month = 'Dec'
-      else
-        month = ''
-    end
-
-    return '01-' + month + '-' + splits[1]
-  end
-
-  def map_phase (ct_phase)
-    case ct_phase
-      when 'N/A'
-        ctrp_phase_code = 'N/A'
-      when 'Phase 0'
-        ctrp_phase_code = '0'
-      when 'Phase 1'
-        ctrp_phase_code = 'I'
-      when 'Phase 1/Phase 2'
-        ctrp_phase_code = 'I/II'
-      when 'Phase 2'
-        ctrp_phase_code = 'II'
-      when 'Phase 2/Phase 3'
-        ctrp_phase_code = 'II/III'
-      when 'Phase 3'
-        ctrp_phase_code = 'III'
-      when 'Phase 4'
-        ctrp_phase_code = 'IV'
-      else
-        ctrp_phase_code = ''
-    end
-
-    return ctrp_phase_code
-  end
-
-  def map_allocation (ct_allocation)
-    case ct_allocation
-      when 'N/A'
-        ctrp_allocation_code = 'NA'
-      when 'Randomized'
-        ctrp_allocation_code = 'RCT'
-      when 'Nonrandomized'
-        ctrp_allocation_code = 'NRT'
-      else
-        ctrp_allocation_code = ''
-    end
-
-    return ctrp_allocation_code
-  end
-
-  def map_study_classification (ct_study_classification)
-    case ct_study_classification
-      when 'N/A'
-        ctrp_study_classification_code = 'NA'
-      when 'Safety Study'
-        ctrp_study_classification_code = 'SF'
-      when 'Efficacy Study'
-        ctrp_study_classification_code = 'EFF'
-      when 'Safety/Efficacy Study'
-        ctrp_study_classification_code = 'SFEFF'
-      when 'Bio-equivalence Study'
-        ctrp_study_classification_code = 'BEQ'
-      when 'Bio-availability Study'
-        ctrp_study_classification_code = 'BAV'
-      when 'Pharmacokinetics Study'
-        ctrp_study_classification_code = 'PD'
-      when 'Pharmacodynamics Study'
-        ctrp_study_classification_code = 'PK'
-      when 'Pharmacokinetics/dynamics Study'
-        ctrp_study_classification_code = 'PKPD'
-      else
-        ctrp_study_classification_code = ''
-    end
-
-    return ctrp_study_classification_code
-  end
-
-  def map_intervention_model (ct_intervention_model)
-    case ct_intervention_model
-      when 'Single Group Assignment'
-        ctrp_intervention_model_code = 'SG'
-      when 'Parallel Assignment'
-        ctrp_intervention_model_code = 'PL'
-      when 'Cross-over Assignment'
-        ctrp_intervention_model_code = 'CO'
-      when 'Factorial Assignment'
-        ctrp_intervention_model_code = 'FT'
-      else
-        ctrp_intervention_model_code = ''
-    end
-
-    return ctrp_intervention_model_code
-  end
-
-  def map_masking (ct_masking)
-    if ct_masking.include? 'Open'
-      ctrp_masking_code = 'OP'
-    elsif ct_masking.include? 'Single Blind'
-      ctrp_masking_code = 'SB'
-    elsif ct_masking.include? 'Double Blind'
-      ctrp_masking_code = 'DB'
-    else
-      ctrp_masking_code = ''
-    end
-
-    return ctrp_masking_code
-  end
-
-  def map_primary_purpose (ct_primary_purpose)
-    case ct_primary_purpose
-      when 'Treatment'
-        ctrp_primary_purpose_code = 'TRM'
-      when 'Prevention'
-        ctrp_primary_purpose_code = 'PRV'
-      when 'Diagnostic'
-        ctrp_primary_purpose_code = 'DIA'
-      when 'Supportive Care'
-        ctrp_primary_purpose_code = 'SUP'
-      when 'Screening'
-        ctrp_primary_purpose_code = 'SCR'
-      when 'Health Services Research '
-        ctrp_primary_purpose_code = 'HSR'
-      when 'Basic Science'
-        ctrp_primary_purpose_code = 'BSC'
-      when 'Other'
-        ctrp_primary_purpose_code = 'OTH'
-      else
-        ctrp_primary_purpose_code = ''
-    end
-
-    return ctrp_primary_purpose_code
-  end
 
 end

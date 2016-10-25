@@ -74,29 +74,30 @@
                     $scope.searchWarningMessage = "";
                 }
 
-
-
                 if(!isEmptySearch) {
                     $scope.searching = true;
                     CadsrService.searchCadsrs($scope.searchParams).then(function (data) {
-                        if ($scope.showGrid && data.cadsr_markers) {
-                            $scope.gridOptions.data = data.cadsr_markers;
-                            $scope.gridOptions.totalItems = data.cadsr_markers["length"];
+                        var status = data.server_response.status;
 
-                            //pin the selected rows, if any, at the top of the results
-                            _.each($scope.selectedRows, function (curRow, idx) {
-                                var ctrpId = curRow.entity.id;
-                                var indexOfCurRowInGridData = Common.indexOfObjectInJsonArray($scope.gridOptions.data, 'id', ctrpId);
-                                if (indexOfCurRowInGridData > -1) {
-                                    $scope.gridOptions.data.splice(indexOfCurRowInGridData, 1);
-                                    $scope.gridOptions.totalItems--;
-                                }
-                                $scope.gridOptions.data.unshift(curRow.entity);
-                                $scope.gridOptions.totalItems++;
-                            });
+                        if (status >= 200 && status <= 210) {
+                            if ($scope.showGrid && data.cadsr_markers) {
+                                $scope.gridOptions.data = data.cadsr_markers;
+                                $scope.gridOptions.totalItems = data.cadsr_markers["length"];
+
+                                //pin the selected rows, if any, at the top of the results
+                                _.each($scope.selectedRows, function (curRow, idx) {
+                                    var ctrpId = curRow.entity.id;
+                                    var indexOfCurRowInGridData = Common.indexOfObjectInJsonArray($scope.gridOptions.data, 'id', ctrpId);
+                                    if (indexOfCurRowInGridData > -1) {
+                                        $scope.gridOptions.data.splice(indexOfCurRowInGridData, 1);
+                                        $scope.gridOptions.totalItems--;
+                                    }
+                                    $scope.gridOptions.data.unshift(curRow.entity);
+                                    $scope.gridOptions.totalItems++;
+                                });
+                            }
+                            $scope.$parent.orgSearchResults = data; //{orgs: [], total, }
                         }
-                        $scope.$parent.orgSearchResults = data; //{orgs: [], total, }
-
                     }).catch(function (error) {
                         console.log("error in retrieving caDSR records: " + JSON.stringify(error));
                     }).finally(function() {

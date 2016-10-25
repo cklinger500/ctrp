@@ -18,6 +18,27 @@ Feature: Reg F05 Register Trial Protocol Identifiers
       |National                  |
       |Externally Peer-Reviewed  |
       |Institutional             |
+      
+   
+      Scenario Outline: #1a Rule for Character length for Trial Protocol Identifiers 
+  Given I have selected the option to register a trial <trialType>
+  And I am on the Register Trial Protocol Identifiers screen
+  Then a comment appears below the field to display the number of characters available to enter into the field
+    | Field                                                                | Number of Characters left          |
+    | Lead Organization Trial Identifier                                   | 30 characters left                           |
+   | Other Trial Identifier                                                | 30 characters left                           |
+
+  And "x characters left" will be displayed as characters are added
+  When all the characters mentioned above for field have been entered
+  Then no additional text can be entered
+
+  Examples:
+    |trialType  |
+    |National                 |
+    |Externally Peer-Reviewed |
+    |Institutional            |
+
+
 
   Scenario Outline: #2 I must enter the lead organization trial identifier
     Given I have selected the option to register a trial <TrialType>

@@ -1,6 +1,7 @@
 class ParticipatingSitesController < ApplicationController
   before_action :set_participating_site, only: [:show, :edit, :update, :destroy]
   before_filter :wrapper_authenticate_user unless Rails.env.test?
+  before_action :set_paper_trail_whodunnit, only: [:create,:update, :destroy]
 
   # GET /participating_sites
   # GET /participating_sites.json

@@ -12,4 +12,6 @@
 #
 
 class UserStatus < ActiveRecord::Base
+  validates :code, uniqueness: true
+
 end

@@ -1,4 +1,4 @@
-﻿@PA @global
+@PA @global
 Feature: PAA F08 Add and Edit Trial Participating Sites
 
 As any CTRP PA User, I can add a Trial Participating Sites
@@ -27,7 +27,7 @@ And I can add  the phone number extension <Ext> for the investigator contact
 And I can add  the contact e-mail for the contact <e-mail address> 
 Then the participating site information will be associated with the trial
 And the organization address information <Org City> <Org State> <Org Country> <Org zip code> will be associated with the trial
-And the system will disly "Yes" with the investigator is the "Primary Contact?"<Primary Contact?>
+And the system will display "Yes" with the investigator is the "Primary Contact?"<Primary Contact?>
 And the system will display the list of participating sites ordered ascending alphanumeric by participating site name
 And the system will display a message that the Participating Site Has been Updated <Message>
 And the Participating Site table can be sorted by
@@ -39,6 +39,22 @@ Examples:
 #|2222212|MD Anderson         |New York|NY           |USA          |10101       |123a                  |approved               |30-September-2015           |comments                        |123abc                    |25                   |john Smith                 |Principal Investigator          |No               |Clinical Trial Center|1-888-123-4567|4567|CTC@mda.com     |             |Participating Site Has been Updated|
 #|1212121|Wake Forest         |Trenton |NJ           |USA          |10101       |123b                  |approved               |30-September-2015           |<null>                          |<null>                    |null                 |John Doe                   |Sub  Investigator               |No               |Jane Doe             |212-123-4567  |1111|<null>          |             |Participating Site Has been Updated|
 
+  Scenario: #1'Participating site field's character limit
+    Given I can add a participating site to a trial
+     When I add a participating site field type <Field>
+     Then a comment appears below the Field Type <field> to display the number of characters available to enter into the field <FieldLength>
+     And "x characters left" will be displayed as characters are added
+     When the field Length <FieldLength> characters have been entered
+    Then no additional text can be entered
+       
+       |Field               |FieldLength|
+       |Organization Name   |254        |
+       |Contact First Name  |62         |
+       |Contact Last Name   |62         |
+       |Contact Middle Name |1          |
+       |Contact Phone Number|30         |
+       |Contact Extension   |14         |
+       |Contact Email       |254|
 
 Scenario Outline: #1a I can add one or more participating sites to a trial
 Given I am logged into the CTRP Protocol Abstraction application
@@ -46,18 +62,22 @@ And I am on the Participating Site Page
 And I can select an organization <Organization name> with the Organization look up 
 Then the participating site will be associated with the trial
 
-Scenario Outline: #1c Participating site required fields
+Scenario Outline: #1c Participating site required fields 
 Given I am logged into the CTRP Protocol Abstraction application
 And I have added a Participating Site
 Then the following fields will be required
-|Organization| 
-|Site Recruitment Status|
-|Site Recruitment status date |
-|Investigator |
-|Investigator Role|
-|Central Contact |
-|Central Contact Phone (when there is no E-mail Address)|
-|Central Contact E-mail Address (when there is not phone number)|   
+     # CTRP Org ID=Source ID when Source CTRP org
+     |CTRP ID|
+     |CTRP Organization Name|
+     |Investigators, Role (Principal Investigator or Sub-Investigator)|
+     |Local Trial Identifier|
+     |Program Code|
+     |Current Site Recruitment Status|
+     |Current Site Recruitment Status Date|
+     |Primary Contact|
+     |Email|
+     |Phone Number, Phone Number Extension|
+     
 
 
 Scenario Outline: #2 I can edit a participating site on a trial
@@ -216,7 +236,7 @@ When I add a trial status from <statusFrom> to trial status <statusTo> along wit
       |In Review	                                    |Complete	                                    |			       |yes     |WARNING: Interim status [Approved] is missing\nWARNING: Interim status [Active] is missing\nWARNING: Interim status [Closed to Accrual] is missing\nWARNING: Interim status [Closed to Accrual and Intervention] is missing           |
       |In Review	                                    |Administratively Complete	                    |Add Stopped Reason|yes	    |WARNING: Interim status [Approved] is missing\nWARNING: Interim status [Active] is missing\nWARNING: Interim status [Closed to Accrual] is missing\nWARNING: Interim status [Closed to Accrual and Intervention] is missing	       |
       
- Scenario Outline : #11b Trial Status Transition Rules - Approved status
+ Scenario: #11b Trial Status Transition Rules - Approved status
 Given I am logged into the CTRP Protocol Abstraction application
 And I am on the Participating Site Page
 And I have selected an organization 
@@ -477,3 +497,18 @@ Given I am logged into the CTRP Protocol Abstraction application
 And I am on the Participating Site Page
 And I select the Particiating Site 
 Then the details for the Particiating Site will be displayed (from PO Organization)
+
+Scenario: #16 Warning when removing a Site Investigator that is used as a site contact
+Given I am logged into the CTRP Protocol Abstraction application
+And I am on the Participating Site Investigator Page
+And a Site Investigator is also a Contact
+And I delete the Site Investigator that is also a Contact
+Then the system will display a warning message "The Site Investigator is also the contact for the Participating Site."
+
+Scenario: #17 I can view the Participation Site organization for a Trial
+Given I am logged into the CTRP Protocol Abstraction application
+And I have selected a trial 
+And I am on the Participating Site Page
+And the list of Participating sites are displayed 
+And I select a Participating Site
+Then the details for the Participating Site will be displayed (from PO Organization)

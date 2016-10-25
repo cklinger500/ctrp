@@ -278,6 +278,41 @@ var abstractionTrialDoc = function(){
         });
     };
 
+    this.replaceMonth = function (getDate){
+        var rDateMonth = '';
+        var dateSplit = getDate.toString().split("-");
+        dateDay = dateSplit[0];
+        dateMonth = dateSplit[1];
+        dateYear = dateSplit[2];
+        if(dateMonth === 'January'){
+            rDateMonth = 'Jan'
+        } else if(dateMonth === 'February'){
+            rDateMonth = 'Feb'
+        } else if(dateMonth === 'March'){
+            rDateMonth = 'Mar'
+        } else if(dateMonth === 'April'){
+            rDateMonth = 'Apr'
+        } else if(dateMonth === 'May'){
+            rDateMonth = 'May'
+        } else if(dateMonth === 'June'){
+            rDateMonth = 'Jun'
+        } else if(dateMonth === 'July'){
+            rDateMonth = 'Jul'
+        } else if(dateMonth === 'August'){
+            rDateMonth = 'Aug'
+        } else if(dateMonth === 'September'){
+            rDateMonth = 'Sep'
+        } else if(dateMonth === 'October'){
+            rDateMonth = 'Oct'
+        } else if(dateMonth === 'November'){
+            rDateMonth = 'Nov'
+        } else if(dateMonth === 'December'){
+            rDateMonth = 'Dec'
+        }
+        var getExpectedDate = dateDay + "-" + rDateMonth + "-" + dateYear;
+        return getExpectedDate;
+    };
+
     this.getCurrentDate = function (){
         var curr_date = ''
         var m_names = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
@@ -308,6 +343,423 @@ var abstractionTrialDoc = function(){
         var curr_month = d.getMonth();
         var curr_year = d.getFullYear();
         var getExpectedDate = curr_date + "-" + m_names[curr_month]+ "-" + curr_year;
+        return getExpectedDate;
+    };
+
+    this.getCrrentDte = function (){
+        var curr_date = ''
+        var m_names = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        var d = new Date();
+        var convCurr_date = d.getDate();
+        var gCurr_date = convCurr_date.toString();
+        if (gCurr_date === '1'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '2'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '3'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '4'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '5'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '6'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '7'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '8'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '9'){
+            curr_date = '0'+gCurr_date+'';
+        } else {
+            curr_date = ''+gCurr_date+'';
+        }
+        var curr_month = d.getMonth();
+        var curr_year = d.getFullYear();
+        var getExpectedDate = curr_date + "-" + m_names[curr_month]+ "-" + curr_year;
+        return getExpectedDate;
+    };
+
+    this.getFutureDate = function (){
+        var curr_date = ''
+        var m_names = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        var d = new Date();
+        var convCurr_date = d.getDate();
+        var gCurr_date = convCurr_date.toString();
+        if (gCurr_date === '1'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '2'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '3'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '4'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '5'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '6'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '7'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '8'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '9'){
+            curr_date = '0'+gCurr_date+'';
+        } else {
+            curr_date = ''+gCurr_date+'';
+        }
+        var curr_month = d.getMonth();
+        var next_month = '';
+        if (curr_month <= '11'){
+            next_month = curr_month + 1;
+        } else {
+            next_month = 1;
+        }
+        var curr_year = d.getFullYear();
+        var year_logic = '';
+        if(curr_month === '12'){
+            year_logic = curr_year + 1;
+        } else {
+            year_logic = curr_year;
+        }
+        var getExpectedDate = curr_date + "-" + m_names[next_month]+ "-" + year_logic;
+        return getExpectedDate;
+    };
+
+    this.getFutureDateNextTwoMonth = function (){
+        var curr_date = ''
+        var m_names = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        var d = new Date();
+        var convCurr_date = d.getDate();
+        var gCurr_date = convCurr_date.toString();
+        if (gCurr_date === '1'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '2'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '3'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '4'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '5'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '6'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '7'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '8'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '9'){
+            curr_date = '0'+gCurr_date+'';
+        } else {
+            curr_date = ''+gCurr_date+'';
+        }
+        var curr_month = d.getMonth();
+        var next_month = '';
+        if (curr_month <= '10'){
+            next_month = curr_month + 2;
+        } else if (curr_month === '11'){
+            next_month = 1;
+        } else {
+            next_month = 2;
+        }
+        var curr_year = d.getFullYear();
+        var year_logic = '';
+        if(curr_month === '12'){
+            year_logic = curr_year + 1;
+        } else if(curr_month === '11'){
+            year_logic = curr_year + 1;
+        } else {
+            year_logic = curr_year;
+        }
+        var getExpectedDate = curr_date + "-" + m_names[next_month]+ "-" + year_logic;
+        return getExpectedDate;
+    };
+
+    this.getFutureDateNextThreeMonth = function (){
+        var curr_date = ''
+        var m_names = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        var d = new Date();
+        var convCurr_date = d.getDate();
+        var gCurr_date = convCurr_date.toString();
+        if (gCurr_date === '1'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '2'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '3'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '4'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '5'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '6'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '7'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '8'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '9'){
+            curr_date = '0'+gCurr_date+'';
+        } else {
+            curr_date = ''+gCurr_date+'';
+        }
+        var curr_month = d.getMonth();
+        var next_month = '';
+        if (curr_month <= '10'){
+            next_month = curr_month + 3;
+        } else if (curr_month === '11'){
+            next_month = 1;
+        } else {
+            next_month = 2;
+        }
+        var curr_year = d.getFullYear();
+        var year_logic = '';
+        if(curr_month === '12'){
+            year_logic = curr_year + 1;
+        } else if(curr_month === '11'){
+            year_logic = curr_year + 1;
+        } else {
+            year_logic = curr_year;
+        }
+        var getExpectedDate = curr_date + "-" + m_names[next_month]+ "-" + year_logic;
+        return getExpectedDate;
+    };
+
+    this.getFutureDateNextFourMonth = function (){
+        var curr_date = ''
+        var m_names = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        var d = new Date();
+        var convCurr_date = d.getDate();
+        var gCurr_date = convCurr_date.toString();
+        if (gCurr_date === '1'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '2'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '3'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '4'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '5'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '6'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '7'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '8'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '9'){
+            curr_date = '0'+gCurr_date+'';
+        } else {
+            curr_date = ''+gCurr_date+'';
+        }
+        var curr_month = d.getMonth();
+        var next_month = '';
+        if (curr_month <= '10'){
+            next_month = curr_month + 4;
+        } else if (curr_month === '11'){
+            next_month = 1;
+        } else {
+            next_month = 2;
+        }
+        var curr_year = d.getFullYear();
+        var year_logic = '';
+        if(curr_month === '12'){
+            year_logic = curr_year + 1;
+        } else if(curr_month === '11'){
+            year_logic = curr_year + 1;
+        } else {
+            year_logic = curr_year;
+        }
+        var getExpectedDate = curr_date + "-" + m_names[next_month]+ "-" + year_logic;
+        return getExpectedDate;
+    };
+
+    this.getFutureDateNextFiveMonth = function (){
+        var curr_date = ''
+        var m_names = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        var d = new Date();
+        var convCurr_date = d.getDate();
+        var gCurr_date = convCurr_date.toString();
+        if (gCurr_date === '1'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '2'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '3'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '4'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '5'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '6'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '7'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '8'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '9'){
+            curr_date = '0'+gCurr_date+'';
+        } else {
+            curr_date = ''+gCurr_date+'';
+        }
+        var curr_month = d.getMonth();
+        var next_month = '';
+        if (curr_month <= '10'){
+            next_month = curr_month + 5;
+        } else if (curr_month === '11'){
+            next_month = 1;
+        } else {
+            next_month = 2;
+        }
+        var curr_year = d.getFullYear();
+        var year_logic = '';
+        if(curr_month === '12'){
+            year_logic = curr_year + 1;
+        } else if(curr_month === '11'){
+            year_logic = curr_year + 1;
+        } else {
+            year_logic = curr_year;
+        }
+        var getExpectedDate = curr_date + "-" + m_names[next_month]+ "-" + year_logic;
+        return getExpectedDate;
+    };
+
+    this.getFutureDateNextSixMonth = function (){
+        var curr_date = ''
+        var m_names = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        var d = new Date();
+        var convCurr_date = d.getDate();
+        var gCurr_date = convCurr_date.toString();
+        if (gCurr_date === '1'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '2'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '3'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '4'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '5'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '6'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '7'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '8'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '9'){
+            curr_date = '0'+gCurr_date+'';
+        } else {
+            curr_date = ''+gCurr_date+'';
+        }
+        var curr_month = d.getMonth();
+        var next_month = '';
+        if (curr_month <= '10'){
+            next_month = curr_month + 6;
+        } else if (curr_month === '11'){
+            next_month = 1;
+        } else {
+            next_month = 2;
+        }
+        var curr_year = d.getFullYear();
+        var year_logic = '';
+        if(curr_month === '12'){
+            year_logic = curr_year + 1;
+        } else if(curr_month === '11'){
+            year_logic = curr_year + 1;
+        } else {
+            year_logic = curr_year;
+        }
+        var getExpectedDate = curr_date + "-" + m_names[next_month]+ "-" + year_logic;
+        return getExpectedDate;
+    };
+
+    this.getFutureDateNextSevenMonth = function (){
+        var curr_date = ''
+        var m_names = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        var d = new Date();
+        var convCurr_date = d.getDate();
+        var gCurr_date = convCurr_date.toString();
+        if (gCurr_date === '1'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '2'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '3'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '4'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '5'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '6'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '7'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '8'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '9'){
+            curr_date = '0'+gCurr_date+'';
+        } else {
+            curr_date = ''+gCurr_date+'';
+        }
+        var curr_month = d.getMonth();
+        var next_month = '';
+        if (curr_month <= '10'){
+            next_month = curr_month + 7;
+        } else if (curr_month === '11'){
+            next_month = 1;
+        } else {
+            next_month = 2;
+        }
+        var curr_year = d.getFullYear();
+        var year_logic = '';
+        if(curr_month === '12'){
+            year_logic = curr_year + 1;
+        } else if(curr_month === '11'){
+            year_logic = curr_year + 1;
+        } else {
+            year_logic = curr_year;
+        }
+        var getExpectedDate = curr_date + "-" + m_names[next_month]+ "-" + year_logic;
+        return getExpectedDate;
+    };
+
+    this.getPastDate = function (){
+        var curr_date = ''
+        var m_names = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        var d = new Date();
+        var convCurr_date = d.getDate();
+        var gCurr_date = convCurr_date.toString();
+        if (gCurr_date === '1'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '2'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '3'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '4'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '5'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '6'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '7'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '8'){
+            curr_date = '0'+gCurr_date+'';
+        } else if (gCurr_date === '9'){
+            curr_date = '0'+gCurr_date+'';
+        } else {
+            curr_date = ''+gCurr_date+'';
+        }
+        var curr_month = d.getMonth();
+        var next_month = '';
+        if (curr_month >= '2'){
+            next_month = curr_month - 1;
+        } else {
+            next_month = 12;
+        }
+        var curr_year = d.getFullYear();
+        var year_logic = '';
+        if(curr_month === '1'){
+            year_logic = curr_year - 1;
+        } else {
+            year_logic = curr_year;
+        }
+        var getExpectedDate = curr_date + "-" + m_names[next_month]+ "-" + year_logic;
         return getExpectedDate;
     };
 

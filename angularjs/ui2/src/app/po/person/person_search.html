@@ -8,17 +8,13 @@
         <ctrp-ncit-interventions-search max-row-selectable="1" ng-model="personSearchView.selection"></ctrp-ncit-interventions-search>
     </div>
     <div class="row">
-        <button class="btn btn-primary" person-search-modal-button2 ng-model="personSearchView.selectedPersons" restriction-field>Search Person</button>
+        <button class="btn btn-primary" id="person_search_modal" person-search-modal-button2 ng-model="personSearchView.selectedPersons" restriction-field>Search Person</button>
     </div>
     <div class="row" ng-hide="personSearchView.selectedPersons.length == 0">
         <p ng-repeat="p in personSearchView.selectedPersons">
             name: {{p.fname}} {{p.lname}}
         </p>
     </div>
-    <!-- <div class="row">
-        <strong>Examples of Ag-Grid Search</strong>
-        <person-search2 show-grid="true" max-row-selectable="2" curation-mode="true"></person-search2>
-    </div> -->
 
     <!--
     <div class="row">

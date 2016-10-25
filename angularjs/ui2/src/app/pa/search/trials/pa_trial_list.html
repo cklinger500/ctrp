@@ -7,6 +7,11 @@
         </div>
         <div class="row">
             <form class="form form-horizontal" role="form">
+                <div class="row" ng-show="trialView.isEmptySearch && trialView.searchWarningMessage.length > 0" ng-cloak>
+                    <div class="alert alert-warning fade in">
+                        <strong>{{trialView.searchWarningMessage}}</strong>
+                    </div>
+                </div><br />
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-6">
                         <div class="form-group">
@@ -19,10 +24,14 @@
                         <div class="form-group">
                             <label for="protocol_origin_type" class="control-label col-xs-12 col-sm-5">Identifier Type: </label>
                             <div class="col-xs-12 col-sm-7">
-                                <select class="form-control input-sm" id="protocol_origin_type" ng-model="trialView.searchParams.protocol_origin_type">
+                                <!-- <select class="form-control input-sm" id="protocol_origin_type" ng-model="trialView.searchParams.protocol_origin_type">
                                     <option value="">-Select an Identifier Type-</option>
                                     <option ng-repeat="protocol_origin_type in trialView.protocolIdOriginArr" value="{{protocol_origin_type.code}}">{{protocol_origin_type.name}}</option>
-                                </select>
+                                </select> -->
+                                <ui-select multiple id="protocol_origin_type" ng-model="trialView.searchParams.protocol_origin_type_codes">
+                                    <ui-select-match placeholder="-Select Identifier Types-">{{$item.name}}</ui-select-match>
+                                    <ui-select-choices repeat="id in trialView.protocolIdOriginArr">{{id.name}}</ui-select-choices>
+                                </ui-select>
                             </div>
                         </div>
 
@@ -98,20 +107,21 @@
                         </div>
 
                         <div class="form-group">
-                            <div class="col-xs-12 col-sm-5"></div>
-                            <div class="col-xs-12 col-sm-3">
-                                <div>
-                                    <label for="onhold">
-                                        <input type="checkbox" id="onhold" ng-model="trialView.searchParams.onhold"> Trials on Hold
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-xs-12 col-sm-4">
+                            <div class="col-xs-12 col-sm-5"> </div>
+                            <div class="col-xs-12 col-sm-5">
                                 <div>
                                     <label for="checkout">
                                         <input type="checkbox" id="checkout" ng-model="trialView.searchParams.checkout"> Trials I have checked out
                                     </label>
                                 </div>
+                                <!-- <div>
+                                    <label for="onhold">
+                                        <input type="checkbox" id="onhold" ng-model="trialView.searchParams.onhold"> Trials on Hold
+                                    </label>
+                                </div> -->
+                            </div>
+                            <div class="col-xs-12 col-sm-2">
+
                             </div>
                         </div>
                     </div>
@@ -169,10 +179,10 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="research_category" class="control-label col-xs-12 col-sm-5">Research Category: </label>
+                            <label for="research_category" class="control-label col-xs-12 col-sm-5">Clinical Research Category: </label>
                             <div class="col-xs-12 col-sm-7">
                                 <ui-select multiple id="research_category" ng-model="trialView.searchParams.research_category">
-                                    <ui-select-match placeholder="-Select Research Category -">{{$item.name}}</ui-select-match>
+                                    <ui-select-match placeholder="-Select Clinical Research Category -">{{$item.name}}</ui-select-match>
                                     <ui-select-choices repeat="rc in trialView.researchCategoriesArr">{{rc.name}}</ui-select-choices>
                                 </ui-select>
                             </div>
@@ -237,7 +247,7 @@
                 </div>
                 <div class="row animated-item" ng-if="trialView.gridOptions.data.length > 0">
 
-                        <div ui-grid="trialView.gridOptions" ui-grid-pagination="" external-scopes="clickHandler" class="grid"></div>
+                        <div ui-grid="trialView.gridOptions" ui-grid-exporter ui-grid-pagination="" external-scopes="clickHandler" class="grid"></div>
 
                 </div>
 

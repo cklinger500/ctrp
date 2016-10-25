@@ -16,6 +16,7 @@
                 section: 'registry',
                 resolve: {
                     TrialService: 'TrialService',
+                    OrgService: 'OrgService',
                     studySourceObj: function(TrialService) {
                         return TrialService.getStudySources();
                     },
@@ -89,9 +90,8 @@
                     holderTypeObj: function(TrialService) {
                         return TrialService.getHolderTypes();
                     },
-                    GeoLocationService : 'GeoLocationService',
-                    countryList: function(GeoLocationService) {
-                        return GeoLocationService.getCountryList();
+                    countryList: function(TrialService) {
+                        return TrialService.getCountryList();
                     },
                     acceptedFileTypesObj: function(TrialService) {
                         return TrialService.getAcceptedFileTypesForRegistry();
@@ -155,9 +155,9 @@
                     holderTypeObj: function(TrialService) {
                         return TrialService.getHolderTypes();
                     },
-                    GeoLocationService : 'GeoLocationService',
-                    countryList: function(GeoLocationService) {
-                        return GeoLocationService.getCountryList();
+
+                    countryList: function(TrialService) {
+                        return TrialService.getCountryList();
                     },
                     acceptedFileTypesObj: function(TrialService) {
                         return TrialService.getAcceptedFileTypesForRegistry();
@@ -205,6 +205,7 @@
                 resolve: {
                     TrialService: 'TrialService',
                     UserService: 'UserService',
+                    PATrialService: 'PATrialService',
                     psDetailObj: function($q) {
                         var deferred = $q.defer();
                         deferred.resolve(null);
@@ -218,6 +219,9 @@
                     },
                     srStatusObj: function(TrialService) {
                         return TrialService.getSrStatuses();
+                    },
+                    centralContactTypes: function(PATrialService) {
+                        return PATrialService.getCentralContactTypes();
                     }
                 },
                 ncyBreadcrumb: {
@@ -234,6 +238,7 @@
                 resolve: {
                     TrialService: 'TrialService',
                     UserService: 'UserService',
+                    PATrialService: 'PATrialService',
                     psDetailObj: function($q) {
                         var deferred = $q.defer();
                         deferred.resolve(null);
@@ -247,6 +252,9 @@
                     },
                     srStatusObj: function(TrialService) {
                         return TrialService.getSrStatuses();
+                    },
+                    centralContactTypes: function(PATrialService) {
+                        return PATrialService.getCentralContactTypes();
                     }
                 },
                 ncyBreadcrumb: {
@@ -263,6 +271,7 @@
                 resolve: {
                     TrialService: 'TrialService',
                     UserService: 'UserService',
+                    PATrialService: 'PATrialService',
                     psDetailObj: function($stateParams, TrialService) {
                         return TrialService.getParticipatingSiteById($stateParams.psId);
                     },
@@ -274,6 +283,9 @@
                     },
                     srStatusObj: function(TrialService) {
                         return TrialService.getSrStatuses();
+                    },
+                    centralContactTypes: function(PATrialService) {
+                        return PATrialService.getCentralContactTypes();
                     }
                 },
                 ncyBreadcrumb: {

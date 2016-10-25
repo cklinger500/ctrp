@@ -36,11 +36,11 @@
             useExternalPagination: true,
             useExternalSorting: true,
             enableGridMenu: true,
-            enableFiltering: true,
+            enableFiltering: false,
             enableHorizontalScrollbar: 2,
             enableVerticalScrollbar: 2,
             columnDefs: [
-                {name: 'name', enableSorting: true, displayName: 'Family Name', minWidth: '120', width: '*', sort: { direction: 'asc', priority: 1}, 
+                {name: 'name', enableSorting: true, displayName: 'Family Name', minWidth: '120', width: '*', sort: { direction: 'asc', priority: 1},
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' +
                     '<a ui-sref="main.familyDetail({familyId : row.entity.id })">{{COL_FIELD CUSTOM_FILTERS}}</a></div>'
                 },

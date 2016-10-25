@@ -13,4 +13,6 @@
 
 class SubmissionType < ActiveRecord::Base
   include BasicConcerns
+  validates :code, uniqueness: true
+
 end

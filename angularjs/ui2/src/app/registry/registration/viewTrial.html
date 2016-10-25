@@ -5,11 +5,10 @@
         </div>
         <div class="row">
             <form class="form form-horizontal" role="form">
-                <h5 ng-if="viewTrialView.curTrial.last_amendment_date" class="border-bottom">Amendment Details:</h5>
-
+                <h5 ng-if="viewTrialView.curTrial.has_amd" class="border-bottom">Amendment Details:</h5>
                 <div ng-if="viewTrialView.curTrial.last_amendment_num" class="form-group">
                     <label class="control-label col-xs-12 col-sm-3">Amendment Number:</label>
-                    <div class="col-xs-12 col-sm-6 form-text">
+                    <div  class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.last_amendment_num}}
                     </div>
                 </div>
@@ -23,33 +22,36 @@
 
                 <h5 class="border-bottom">Trial Identifiers:</h5>
 
-                <div ng-if="viewTrialView.curTrial.lead_protocol_id" class="form-group">
+                <div  class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.lead_protocol_id" -->
                     <label class="control-label col-xs-12 col-sm-3">Lead Organization Trial Identifier:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.lead_protocol_id}}
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.nci_id" class="form-group">
+                <div  class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.nci_id" -->
                     <label class="control-label col-xs-12 col-sm-3">NCI ID:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.nci_id}}
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.other_ids.length > 0" class="form-group">
+                <div  class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.other_ids.length > 0" -->
                     <label class="control-label col-xs-12 col-sm-3">Other Trial Identifier:</label>
                     <div class=" col-xs-12 col-sm-6">
                         <table class="table table-bordered table-striped table-condensed">
                             <thead>
-                                <th>Protocol ID Type</th>
-                                <th>Protocol ID</th>
+                            <th>Protocol ID Type</th>
+                            <th>Protocol ID</th>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="otherId in viewTrialView.curTrial.other_ids track by $index">
-                                    <td class="col-md-6 protocol-id-origin">{{otherId.protocol_id_origin.name}}</td>
-                                    <td class="col-md-6 protocol-id">{{otherId.protocol_id}}</td>
-                                </tr>
+                            <tr ng-repeat="otherId in viewTrialView.curTrial.other_ids track by $index">
+                                <td class="col-md-6 protocol-id-origin">{{otherId.protocol_id_origin.name}}</td>
+                                <td class="col-md-6 protocol-id">{{otherId.protocol_id}}</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -57,95 +59,114 @@
 
                 <h5 class="border-bottom">Trial Details:</h5>
 
-                <div ng-if="viewTrialView.curTrial.official_title" class="form-group">
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.official_title" -->
                     <label class="control-label col-xs-12 col-sm-3">Official Title:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.official_title}}
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.phase" class="form-group">
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.phase" -->
                     <label class="control-label col-xs-12 col-sm-3">Phase:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.phase.name}}
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.pilot" class="form-group">
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.pilot" -->
                     <label class="control-label col-xs-12 col-sm-3">Pilot?</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.pilot}}
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.research_category" class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">Research Category:</label>
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.research_category" -->
+                    <label class="control-label col-xs-12 col-sm-3">Clinical Research Category:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.research_category.name}}
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.primary_purpose" class="form-group">
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.primary_purpose" -->
                     <label class="control-label col-xs-12 col-sm-3">Primary Purpose:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.primary_purpose.name}}
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.primary_purpose_other" class="form-group">
+                 <div ng-if="viewTrialView.showPrimaryPurposeOther" class="form-group">
                     <label class="control-label col-xs-12 col-sm-3">Describe "Other" Primary Purpose:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.primary_purpose_other}}
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.secondary_purpose" class="form-group">
+
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.secondary_purpose" -->
                     <label class="control-label col-xs-12 col-sm-3">Secondary Purpose:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.secondary_purpose.name}}
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.primary_purpose_other" class="form-group">
+                <div ng-if="viewTrialView.showSecondaryPurposeOther" class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.primary_purpose_other" -->
                     <label class="control-label col-xs-12 col-sm-3">Describe "Other" Secondary Purpose:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.secondary_purpose_other}}
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.accrual_disease_term" class="form-group">
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.accrual_disease_term" -->
                     <label class="control-label col-xs-12 col-sm-3">Accrual Disease Terminology:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.accrual_disease_term.name}}
                     </div>
                 </div>
 
-                <h5 ng-if="viewTrialView.curTrial.lead_org || viewTrialView.curTrial.pi" class="border-bottom">Lead Organization/Principal Investigator:</h5>
-
-                <div ng-if="viewTrialView.curTrial.lead_org" class="form-group">
+                <h5 class="border-bottom">Lead Organization/Principal Investigator:</h5>
+                <!-- ng-if="viewTrialView.curTrial.lead_org || viewTrialView.curTrial.pi" -->
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.lead_org" -->
                     <label class="control-label col-xs-12 col-sm-3">Lead Organization:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.lead_org.name}}
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.pi" class="form-group">
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.pi" -->
                     <label class="control-label col-xs-12 col-sm-3">Principal Investigator:</label>
-                    <div class="col-xs-12 col-sm-6 form-text">
+                    <div ng-if="viewTrialView.curTrial.pi" class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.pi.lname + ', ' + viewTrialView.curTrial.pi.fname}}
                     </div>
                 </div>
 
-                <h5 ng-if="viewTrialView.curTrial.sponsor" class="border-bottom">Sponsor:</h5>
-
-                <div ng-if="viewTrialView.curTrial.sponsor" class="form-group">
+                <h5 class="border-bottom">Sponsor:</h5>
+                <!-- ng-if="viewTrialView.curTrial.sponsor" -->
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.sponsor" -->
                     <label class="control-label col-xs-12 col-sm-3">Sponsor:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.sponsor.name}}
                     </div>
                 </div>
 
-                <h5 ng-if="viewTrialView.curTrial.funding_sources.length > 0 || viewTrialView.curTrial.program_code" class="border-bottom">Data Table 4 Information:</h5>
+                <h5 ng-if="viewTrialView.curTrial.study_source || viewTrialView.curTrial.program_code" class="border-bottom">Data Table 4 Information:</h5>
+
+                <div ng-if="viewTrialView.curTrial.study_source" class="form-group">
+                    <label class="control-label col-xs-12 col-sm-3">Study Source:</label>
+                    <div class="col-xs-12 col-sm-6 form-text">
+                        {{viewTrialView.curTrial.study_source.name}}
+                    </div>
+                </div>
 
                 <div ng-repeat="funding_source in viewTrialView.curTrial.funding_sources track by $index" class="form-group">
                     <label class="control-label col-xs-12 col-sm-3"><span ng-if="$index == 0">Data Table 4 Funding Source:</span></label>
@@ -154,32 +175,34 @@
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.program_code" class="form-group">
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.program_code" -->
                     <label class="control-label col-xs-12 col-sm-3">Program Code:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.program_code}}
                     </div>
                 </div>
 
-                <h5 ng-if="viewTrialView.curTrial.grants.length > 0 && viewTrialView.curTrial.is_owner" class="border-bottom">NIH Grant Information (for NIH funded Trials):</h5>
-
-                <div ng-if="viewTrialView.curTrial.grants.length > 0 && viewTrialView.curTrial.is_owner" class="form-group">
+                <h5 ng-if="viewTrialView.curTrial.is_owner" class="border-bottom">NIH Grant Information (for NIH funded Trials):</h5>
+                <!-- ng-if="viewTrialView.curTrial.grants.length > 0 && viewTrialView.curTrial.is_owner" -->
+                <div ng-if="viewTrialView.curTrial.is_owner" class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.grants.length > 0 && viewTrialView.curTrial.is_owner" -->
                     <label class="control-label col-xs-12 col-sm-3"></label>
                     <div class=" col-xs-12 col-sm-7">
                         <table class="table table-bordered table-striped table-condensed">
                             <thead>
-                                <th>Funding Mechanism</th>
-                                <th>Institute Code</th>
-                                <th>Serial Number</th>
-                                <th>NCI Division/Program Code</th>
+                            <th>Funding Mechanism</th>
+                            <th>Institute Code</th>
+                            <th>Serial Number</th>
+                            <th>NCI Division/Program Code</th>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="grant in viewTrialView.curTrial.grants track by $index">
-                                    <td class="col-md-3">{{grant.funding_mechanism}}</td>
-                                    <td class="col-md-2">{{grant.institute_code}}</td>
-                                    <td class="col-md-3">{{grant.serial_number}}</td>
-                                    <td class="col-md-4">{{grant.nci}}</td>
-                                </tr>
+                            <tr ng-repeat="grant in viewTrialView.curTrial.grants track by $index">
+                                <td class="col-md-3">{{grant.funding_mechanism}}</td>
+                                <td class="col-md-2">{{grant.institute_code}}</td>
+                                <td class="col-md-3">{{grant.serial_number}}</td>
+                                <td class="col-md-4">{{grant.nci}}</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -187,7 +210,8 @@
 
                 <h5 class="border-bottom">Trial Status:</h5>
 
-                <div ng-if="viewTrialView.curTrial.current_trial_status" class="form-group">
+                <div  class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.current_trial_status" -->
                     <label class="control-label col-xs-12 col-sm-3">Current Trials Status:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.current_trial_status}}
@@ -195,13 +219,15 @@
                 </div>
 
                 <div ng-if="viewTrialView.curTrial.current_trial_why_stopped" class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.current_trial_why_stopped" -->
                     <label class="control-label col-xs-12 col-sm-3">Why the Study Stopped:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.current_trial_why_stopped}}
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.current_trial_status_date" class="form-group">
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.current_trial_status_date" -->
                     <label class="control-label col-xs-12 col-sm-3">Current Trials Status Date:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.current_trial_status_date}}
@@ -210,55 +236,60 @@
 
                 <h5 class="border-bottom">Trial Dates:</h5>
 
-                <div ng-if="viewTrialView.curTrial.start_date" class="form-group">
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.start_date" -->
                     <label class="control-label col-xs-12 col-sm-3">Trial Start Date:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.start_date}}<span class="date-qualifier">{{viewTrialView.curTrial.start_date_qual}}</span>
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.primary_comp_date" class="form-group">
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.primary_comp_date" -->
                     <label class="control-label col-xs-12 col-sm-3">Primary Completion Date:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.primary_comp_date}}<span class="date-qualifier">{{viewTrialView.curTrial.primary_comp_date_qual}}</span>
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.comp_date" class="form-group">
+                <div  class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.comp_date" -->
                     <label class="control-label col-xs-12 col-sm-3">Completion Date:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.comp_date}}<span class="date-qualifier">{{viewTrialView.curTrial.comp_date_qual}}</span>
                     </div>
                 </div>
 
-                <h5 ng-if="viewTrialView.curTrial.ind_ides.length > 0 && viewTrialView.curTrial.is_owner" class="border-bottom">FDA IND/IDE Information for applicable trials:</h5>
-
-                <div ng-if="viewTrialView.curTrial.ind_ides.length > 0 && viewTrialView.curTrial.is_owner" class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3"></label>
-                    <div class=" col-xs-12 col-sm-8">
-                        <table class="table table-bordered table-striped table-condensed">
-                            <thead>
+                <div ng-show="viewTrialView.curTrial.is_owner" class="border-bottom">
+                    <!-- ng-show="viewTrialView.curTrial.ind_ides.length > 0 && viewTrialView.curTrial.is_owner" -->
+                    <!-- <h5 ng-if="viewTrialView.curTrial.ind_ides.length > 0 && viewTrialView.curTrial.is_owner" class="border-bottom">FDA IND/IDE Information for applicable trials:</h5> -->
+                    <h5 class="border-bottom">FDA IND/IDE Information for applicable trials:</h5>
+                    <div class="form-group">
+                        <label class="control-label col-xs-12 col-sm-3"></label>
+                        <div class=" col-xs-12 col-sm-8">
+                            <table class="table table-bordered table-striped table-condensed">
+                                <thead>
                                 <th>IND/IDE Types</th>
                                 <th>IND/IDE Number</th>
                                 <th>IND/IDE Grantor</th>
                                 <th>IND/IDE Holder Type</th>
                                 <th>NIH Institution, NCI Division/Program Code (if applicable)</th>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="indIde in viewTrialView.curTrial.ind_ides track by $index">
-                                <td class="col-md-2">{{indIde.ind_ide_type}}</td>
-                                <td class="col-md-2">{{indIde.ind_ide_number}}</td>
-                                <td class="col-md-2">{{indIde.grantor}}</td>
-                                <td class="col-md-3">{{indIde.holder_type.name}}</td>
-                                <td class="col-md-3">{{indIde.nih_nci}}</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="indIde in viewTrialView.curTrial.ind_ides track by $index">
+                                    <td class="col-md-2">{{indIde.ind_ide_type}}</td>
+                                    <td class="col-md-2">{{indIde.ind_ide_number}}</td>
+                                    <td class="col-md-2">{{indIde.grantor}}</td>
+                                    <td class="col-md-3">{{indIde.holder_type.name}}</td>
+                                    <td class="col-md-3">{{indIde.nih_nci}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
                 <h5 ng-if="viewTrialView.curTrial.is_owner" class="border-bottom">Regulatory Information:</h5>
-
                 <div ng-if="viewTrialView.curTrial.responsible_party && viewTrialView.curTrial.is_owner" class="form-group">
                     <label class="control-label col-xs-12 col-sm-3">Responsible Party:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
@@ -280,20 +311,21 @@
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.investigator_aff && viewTrialView.curTrial.is_owner" class="form-group">
+                <div  ng-if="viewTrialView.curTrial.investigator_aff && viewTrialView.curTrial.is_owner" class="form-group">
                     <label class="control-label col-xs-12 col-sm-3">Investigator Affiliation:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
                         {{viewTrialView.curTrial.investigator_aff.name}}
                     </div>
                 </div>
 
-                <div ng-if="viewTrialView.curTrial.oversight_authorities.length > 0 && viewTrialView.curTrial.is_owner" class="form-group">
+                <div ng-if="viewTrialView.curTrial.is_owner" class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.oversight_authorities.length > 0 && viewTrialView.curTrial.is_owner" -->
                     <label class="control-label col-xs-12 col-sm-3">Trial Oversight Authority:</label>
                     <div class=" col-xs-12 col-sm-6">
                         <table class="table table-bordered table-striped table-condensed">
                             <thead>
-                                <th>Country</th>
-                                <th>Organization</th>
+                            <th>Country</th>
+                            <th>Organization</th>
                             </thead>
                             <tbody>
                             <tr ng-repeat="authority in viewTrialView.curTrial.oversight_authorities track by $index">
@@ -325,97 +357,75 @@
                         {{viewTrialView.curTrial.data_monitor_indicator}}
                     </div>
                 </div>
-
-                <h5 ng-if="viewTrialView.curTrial.trial_documents.length > 0 && viewTrialView.curTrial.is_owner" class="border-bottom">Trial Related Documents:</h5>
-
-                <div ng-repeat="document in viewTrialView.curTrial.trial_documents track by $index"
-                     ng-if="document.document_type == 'Protocol Document' && document.status === 'active' && viewTrialView.curTrial.is_owner"
-                     class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">Protocol Document:</label>
-                    <div class="col-xs-12 col-sm-9 form-text">
-                        <a href="{{viewTrialView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
+                <div ng-show="viewTrialView.curTrial.is_owner || viewTrialView.curTrial.internal_source.code === 'IMP'">
+                    <!-- ng-show="viewTrialView.documents.length > 0  && (viewTrialView.curTrial.is_owner || viewTrialView.curTrial.internal_source.code === 'IMP')" -->
+                    <!-- <h5 ng-if="viewTrialView.curTrial.trial_documents.length > 0 && (viewTrialView.curTrial.is_owner || viewTrialView.curTrial.internal_source.code === 'IMP')" class="border-bottom">Trial Related Documents:</h5> -->
+                    <h5 class="border-bottom">Trial Related Documents:</h5>
+                    <div class="form-group" ng-repeat="doc in viewTrialView.documents">
+                        <label class="control-label col-xs-12 col-sm-3">{{doc.file_type}}</label>
+                        <div class="col-xs-12 col-sm-9 form-text" ng-repeat="f in doc.list">
+                            <a href="{{viewTrialView.downloadBaseUrl}}/{{f.id}}">{{f.file_name}}</a>  <span>{{f.document_subtype}}</span>
+                        </div>
                     </div>
                 </div>
 
-                <div ng-repeat="document in viewTrialView.curTrial.trial_documents track by $index"
-                     ng-if="document.document_type == 'Change Memo Document' && document.status === 'active' && viewTrialView.curTrial.is_owner"
-                     class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">Change Memo Document:</label>
-                    <div class="col-xs-12 col-sm-9 form-text">
-                        <a href="{{viewTrialView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
-                    </div>
-                </div>
-
-                <div ng-repeat="document in viewTrialView.curTrial.trial_documents track by $index"
-                     ng-if="document.document_type == 'Protocol Highlighted Document' && document.status === 'active' && viewTrialView.curTrial.is_owner"
-                     class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">Protocol Highlighted Document:</label>
-                    <div class="col-xs-12 col-sm-9 form-text">
-                        <a href="{{viewTrialView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
-                    </div>
-                </div>
-
-                <div ng-repeat="document in viewTrialView.curTrial.trial_documents track by $index"
-                     ng-if="document.document_type == 'IRB Approval' && document.status === 'active' && viewTrialView.curTrial.is_owner"
-                     class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">IRB Approval:</label>
-                    <div class="col-xs-12 col-sm-9 form-text">
-                        <a href="{{viewTrialView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
-                    </div>
-                </div>
-
-                <div ng-repeat="document in viewTrialView.curTrial.trial_documents track by $index"
-                     ng-if="document.document_type == 'List of Participating Sites' && document.status === 'active' && viewTrialView.curTrial.is_owner"
-                     class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">List of Participating Sites:</label>
-                    <div class="col-xs-12 col-sm-9 form-text">
-                        <a href="{{viewTrialView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
-                    </div>
-                </div>
-
-                <div ng-repeat="document in viewTrialView.curTrial.trial_documents track by $index"
-                     ng-if="document.document_type == 'Informed Consent' && document.status === 'active' && viewTrialView.curTrial.is_owner"
-                     class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">Informed Consent Document:</label>
-                    <div class="col-xs-12 col-sm-9 form-text">
-                        <a href="{{viewTrialView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
-                    </div>
-                </div>
-
-                <div ng-repeat="document in viewTrialView.curTrial.trial_documents track by $index"
-                     ng-if="document.document_type == 'Other Document' && document.status === 'active' && viewTrialView.curTrial.is_owner"
-                     class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">Other:</label>
-                    <div class="col-xs-12 col-sm-9 form-text">
-                        <a href="{{viewTrialView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
-                        <br>{{document.document_subtype}}
-                    </div>
-                </div>
-
-                <h5 ng-if="viewTrialView.curTrial.participating_sites.length > 0 && viewTrialView.curTrial.is_owner" class="border-bottom">Participating Sites:</h5>
-
-                <div ng-if="viewTrialView.curTrial.participating_sites.length > 0 && viewTrialView.curTrial.is_owner" class="form-group">
-                    <div class=" col-xs-12 col-sm-12">
-                        <table class="table table-bordered table-striped table-condensed">
+                <h5 class="border-bottom">Participating Sites:</h5>
+                <!-- ng-if="viewTrialView.curTrial.participating_sites.length > 0 || viewTrialView.curTrial.internal_source.code === 'IMP'" -->
+                <div class="form-group">
+                    <!-- ng-if="viewTrialView.curTrial.participating_sites.length > 0" -->
+                    <div class="col-sm-12 table-responsive">
+                        <!-- ng-show="viewTrialView.curTrial.participating_sites.length > 0" -->
+                        <table st-table="viewTrialView.curTrial.participating_sites" class="table table-bordered table-striped table-condensed">
                             <thead>
-                                <th>Organization Name</th>
-                                <th>Local Trial Identifier</th>
-                                <th>Site Principal Investigator</th>
-                                <th>Site Specific Program Code</th>
-                                <th>Current Status</th>
+                            <th>CTRP ID</th>
+                            <th>CTRP Organization Name</th>
+                            <th>Principal Investigator</th>
+                            <th>Local Trial Id</th>
+                            <th>Program Code</th>
+                            <th>Current Site Recruitment Status</th>
+                            <th>Current Site Recruitment Status Date</th>
+                            <th>Primary Contact</th>
+                            <th>Email</th>
+                            <th>Phone</th>
                             </thead>
                             <tbody>
                             <tr ng-repeat="ps in viewTrialView.curTrial.participating_sites track by $index">
-                                <td class="col-md-4">{{ps.organization.name}}</td>
-                                <td class="col-md-2">{{ps.protocol_id}}</td>
-                                <td class="col-md-2">{{ps.site_pi.lname + (ps.site_pi.lname ? ', ' : ' ') + ps.site_pi.fname}}</td>
-                                <td class="col-md-2">{{ps.program_code}}</td>
-                                <td class="col-md-2">{{ps.current_status_name}}</td>
+                                <td class="col-sm-1">{{ps.organization.id}}</td>
+                                <td class="col-sm-2">{{ps.organization.name}}</td>
+                                <td class="col-sm-1">{{ps.site_pi.lname}}, {{ps.site_pi.fname}}</td>
+                                <td class="col-sm-1">{{ps.protocol_id}}</td>
+                                <td class="col-sm-1">{{ps.program_code}}</td>
+                                <td class="col-sm-1">{{ps.current_status_name}}</td>
+                                <td class="col-sm-1">{{ps.latest_site_recruitment_status_date | dateFormat }}</td>
+                                <td class="col-sm-1">{{ps.contact_name}}</td>
+                                <td class="col-sm-1">{{ps.contact_email}}</td>
+                                <td class="col-sm-2">
+                                    {{ps.contact_phone}}
+                                    <span ng-show="ps.extension">
+                                            ext. {{ps.extension}}
+                                      </span>
+                                </td>
                             </tr>
                             </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="11" class="col-sm-12">
+                                    <div class="pull-left" st-pagination="" st-items-by-page="viewTrialView.itemsOptions.selectedOption.value" st-displayed-pages="7"></div>
+                                    <div class="pull-left">
+                                        <select class="form-control input-sm" name="itemsPerPage" id="itemsPerPage" ng-model="viewTrialView.itemsOptions.selectedOption"
+                                                ng-options="item.value for item in viewTrialView.itemsOptions.data track by item.id">
+                                        </select>
+                                    </div>
+                                    <div class="pull-left form-text pagination-text">
+                                        <span> items per page</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
+
             </form>
         </div>
     </div>

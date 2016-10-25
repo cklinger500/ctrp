@@ -1,4 +1,4 @@
-@PA @global
+@PA  @global
 Feature: PAM F15 Abstraction Dashboard - Workload
 
 As a CTRP PA SuperUser, I can view and edit the CTRP Abstraction Dashboard Workload
@@ -6,8 +6,10 @@ As a CTRP PA SuperUser, I can view and edit the CTRP Abstraction Dashboard Workl
 Scenario: #1 I can view Workload 
  Given I am logged into the CTRP Protocol Abstraction application
  And I am on the CTRP Abstraction Dashboard Workload screen
- Then all trials that have one of the following latest milestones will be displayed 
+ Then all trials that have one of the following latest milestones for the last active submission will be displayed 
 |Submission Received Date|
+|Validation Processing Start Date|
+|Validation Processing Completed Date|
 |Submission Acceptance Date|
 |Submission Reactivated Date|
 |Administrative Processing Start Date|
@@ -23,24 +25,24 @@ Scenario: #1 I can view Workload
 |Ready for TSR Date|
 And will display the following fields
 |NCI Trial Identifier|
-|Submission Type (Original (Information Source = Protocol and Submission number = 0) , Amendment (Information Source = Protocol and Submission number > 0), Imported (Information Source = Imported)|  
-|Submitted On|
-|Expected Abstraction Completion Date (Defaulted to Submission Date Plus 10 Business Days and is editible) |
-|Accepted|
-|Current On-Hold Date|
-|Admin Abstraction Completed|
-|Admin QC Completed|
-|Scientific Abstraction Completed|
-|Scientific QC Completed|
-|Checked Out By (Userid and check out i.e. smithj AD/SC)|
-|Ready for TSR|
-|Business Days Since Submitted|
+|Submission Type (Original (Information Source = Protocol and Submission number = 1) , Amendment (Information Source = Protocol and Submission number > 1), Imported (Information Source = Imported)|  
+|Submitted On (Date of current "Submission Received Date" milestone) |
+|Expected Abstraction Completion Date (Defaulted to date of current "Submission Received Date" milestone date Plus 10 Business Days and is editible) |
+|Accepted (Date of current "Submission Acceptance Date" milestone)|
+|Current On-Hold Date (Date of current "On Hold" date with no "Off Hold" date)|
+|Admin Abstraction Completed (Date of current "Administrative Processing Completed Date" milestone)|
+|Admin QC Completed (Date of current "Administrative QC Completion Date" milestone)|
+|Scientific Abstraction Completed (Date of current "Scientific Processing Completed Date" milestone)|
+|Scientific QC Completed (Date of current "Scientific QC Completion Date" milestone)|
+|Checked Out By (Userid and check out i.e. smithj AD/SC or smithj AD, doej SC)|
+|Ready for TSR (Date of current "Ready for TSR Date Date" milestone)|
+|Business Days Since Submitted (Days since date of current "Submission Received Date" milestone date|
 And the default sort order is by Submitted On Date ordered from oldest to Newest
 And the following columns can be sorted
 |NCI Trial Identifier|
-|Submission Type (Original (Information Source = Protocol and Submission number = 0) , Amendment (Information Source = Protocol and Submission number > 0), Imported (Information Source = Imported)|  
+|Submission Type (Original (Information Source = Protocol and Submission number = 1) , Amendment (Information Source = Protocol and Submission number > 1), Imported (Information Source = Imported)|  
 |Submitted On|
-|Expected Abstraction Completion Date (Defaulted to Submission Date Plus 10 Business Days and is editible) |
+|Expected Abstraction Completion Date (Defaulted to "Submission Received Date" Plus 10 Business Days and is editible) |
 |Accepted|
 |Current On-Hold Date|
 |Admin Abstraction Completed|
@@ -52,9 +54,9 @@ And the following columns can be sorted
 |Business Days Since Submitted|
 And the following columns can be filtered
 |NCI Trial Identifier|
-|Submission Type (Original (Information Source = Protocol and Submission number = 0) , Amendment (Information Source = Protocol and Submission number > 0), Imported (Information Source = Imported)|  
+|Submission Type (Original (Information Source = Protocol and Submission number = 1) , Amendment (Information Source = Protocol and Submission number > 1), Imported (Information Source = Imported)|  
 |Submitted On|
-|Expected Abstraction Completion Date (Defaulted to Submission Date Plus 10 Business Days and is editible) |
+|Expected Abstraction Completion Date (Defaulted to "Submission Received Date" Plus 10 Business Days and is editible) |
 |Accepted|
 |Current On-Hold Date|
 |Admin Abstraction Completed|
@@ -69,7 +71,7 @@ And the following columns can be filtered
 Scenario: #2 I can search the Workload 
  Given I am logged into the CTRP Protocol Abstraction application
  And I am on the CTRP Abstraction Dashboard Workload screen
- And all trials will be displayed (scenario 1) 
+ And all trials for the last active submission will be displayed (scenario 1) 
  Then I can narrow the list of trials by entering a partical 
  |NCI Trial Identifier|
  And I can narrow the list of trials by selecting one or more Submission Types 
@@ -90,25 +92,25 @@ Scenario: #2 I can search the Workload
 Scenario: #3 I can edit Expected Abstraction Completion Date
 Given I am logged into the CTRP Protocol Abstraction application
 And I am on the CTRP Abstraction Workload screen
-And I select a trial Expected Abstraction Completion Date
-Then I can edit the Expected Abstraction Completion Date
+And I select a trial "Expected Abstraction Completion Date"
+Then I can edit the "Expected Abstraction Completion Date"
 And the Expected Abstraction Completion Date will be associated with the trial
 
-Scenario: #4 I can view trail details - Validate
+Scenario: #4 I can enter an Expected Abstraction Completion Date Comment
 Given I am logged into the CTRP Protocol Abstraction application
 And I am on the CTRP Abstraction Workload screen
-And I select a trial ID
-And the latest trial milestone is "Submission Received Date"
-Then the trail validaiton sidebar menu will appear
-And the trial details screen will be displayed (see PAM F17 Abstraction Dashboard - Details) 
+And I select a trial "Expected Abstraction Completion Date"
+Then I can edit the "Expected Abstraction Completion Date"
+And I can enter an Expected Abstraction Completion Date "Comment"
+And the Expected Abstraction Completion Date Comment will be associated with the trial  
 
-Scenario: #5 I can view trail details - Abstract
+Scenario: #5 I can edit an Expected Abstraction Completion Date Comment
 Given I am logged into the CTRP Protocol Abstraction application
 And I am on the CTRP Abstraction Workload screen
-And I select a trial ID
-And the latest trial milestone is not "Submission Received Date"
-Then the trail abstraction sidebar menu will appear
-And the trial details screen will be displayed (see PAM F17 Abstraction Dashboard - Details)
+And I select a trial "Expected Abstraction Completion Date"
+Then I can edit the "Expected Abstraction Completion Date"
+And I can edit the Expected Abstraction Completion Date "Comment"
+And the Expected Abstraction Completion Date Comment will be associated with the trial
 
 
 Scenario: #6 I can export Abstraction Dashboard WorkLoad into an Excel spreadsheet
@@ -118,9 +120,9 @@ When I select the export to Excel option
 Then the trials in the Abstraction Dashboard WorkLoad will be exported to an Excel format spreadsheet 
 And will includ the following fields:
 |NCI Trial Identifier|
-|Submission Type (Original (Information Source = Protocol and Submission number = 0) , Amendment (Information Source = Protocol and Submission number > 0), Imported (Information Source = Imported)|  
+|Submission Type (Original (Information Source = Protocol and Submission number = 1) , Amendment (Information Source = Protocol and Submission number > 1), Imported (Information Source = Imported)|  
 |Submitted On|
-|Expected Abstraction Completion Date (Defaulted to Submission Date Plus 10 Business Days and is editible) |
+|Expected Abstraction Completion Date (Defaulted to "Submission Received Date" Plus 10 Business Days and is editible) |
 |Accepted|
 |Current On-Hold Date|
 |Admin Abstraction Completed|
@@ -220,11 +222,11 @@ And the This Trial is field will be a concetionation of the following
 |On Hold Date|
 |On Hold Reason|
 
-And the Check Out Status will be 
+And the "Check Out Status" will be 
 |<Logic>                                 |<Value>          |
 |When the trial is check out by my userid|Checked out by me|
 
-And the milestones will be 
+And the "Milestones" will be 
 |<Logic>                                                                                          |<Value>|
 |Last Milestone = Submission Received Date                                                        |Submitted -- Not Accepted|
 |Last Milestone = Submission Acceptance Date and no Administrative Processing Start Date milestone|Ready for Admin Processing|
@@ -234,12 +236,11 @@ And the milestones will be
 |Last Milestone = Scientific QC Start Date                                                        |Ready for Scientific QC|
 |Last Milestone = Ready for TSR Date                                                              |Ready for TSR Submission|
 
-And the On Hold Status will 
+And the "On Hold Date" and "On Hold Reason" will be 
 |<Logic>                                                              |<Value>   
 |when the trial has an "on hold date" and no "No Longer on hold" date"|On Hold since "on hold date" ; Reasons: "on hold reason" |
 
-Examples:
-
+|Examples:|
 |Checked out by me; Ready for Admin QC; Ready for Scientific Processing; On Hold since 3/3/2016; Reason:  Other|
 |Ready for Admin QC; Ready for Scientific Processing; On Hold since 1/1/2015; Reason: Pending CTRP Review|
 |Checked out by me; Ready for Scientific QC|

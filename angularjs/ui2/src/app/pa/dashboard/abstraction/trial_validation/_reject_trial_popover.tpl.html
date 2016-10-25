@@ -1,0 +1,22 @@
+<div class="popover popover-confirm" tabindex="-1" ng-show="content">
+    <div class="arrow"></div>
+    <h3 class="popover-title" ng-bind-html="title" ng-show="title"></h3>
+    <div class="popover-content">
+        <div class="popover-message" ng-bind-html="content"></div>
+        <select name="rejection_reason" id="rejection_reason"
+            class="form-control input-sm"
+            ng-model="rejectionObj.reason"
+            ng-required="true"
+            ng-options="r as r for r in rejectionReasonArr">
+            <option value="">- Please select a rejection reason...</option>
+        </select>
+        <div class="popover-message">
+            <strong>Rejection Comment:</strong>
+        </div>
+        <textarea class="form-control input-sm" id="rejection_comment" name="rejection_comment" ng-model="rejectionObj.comment" placeholder="Rejection Comment"></textarea>
+    </div>
+    <div class="form-actions btn-toolbar">
+        <button type="button" class="btn btn-danger pull-right" id="confirmed_btn" ng-click="confirmReject()" ng-disabled="!rejectionObj.reason">OK</button>
+        <button type="button" class="btn btn-warning pull-right" id="cancel_confirm_btn" ng-click="closePopover()">Cancel</button>
+    </div>
+</div>

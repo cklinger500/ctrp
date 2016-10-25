@@ -1,0 +1,111 @@
+<div class="row" ng-if="pamTrialsView.gridTrialsSubmittedOptions.data && !pamTrialsView.read_access">
+    You have reached this page by mistake.
+</div>
+<div class="col-xs-12" ng-if="pamTrialsView.gridTrialsSubmittedOptions.data && pamTrialsView.read_access">
+    <div class="row" ng-class="{no_edit: !pamTrialsView.isCurationEnabled}">
+        <div class="col-xs-12 drop-shadow">
+            <div class="row">
+                <p>
+                <h4>Abstraction Dashboard</h4>
+                </p>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <div class="date-radio-label">&nbsp;</div>
+                    <div class="date-radio-group">
+                        <label class="control-label date-radio">Any</label>
+                        <label class="control-label date-radio">Date</label>
+                        <label class="control-label date-radio">No Date</label>
+                    </div>
+                </div>
+             </div>
+            <div class="row">
+                <!-- Submitted On-->
+                <div class="form-group">
+                    <label for="find_submission_received" class="date-radio-label">Submitted On:</label>
+                    <div class="date-radio-group" id="find_accepted">
+                        <div class="control-label date-radio"><input type="radio" id="find_submission_received_1" name="find_submission_received" ng-model="pamTrialsView.searchParams.find_submission_received" ng-value="undefined" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_submission_received_2" name="find_submission_received"  ng-model="pamTrialsView.searchParams.find_submission_received" ng-value="true" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_submission_receivedd_3" name="find_submission_received" ng-model="pamTrialsView.searchParams.find_submission_received" ng-value="false" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Accepted-->
+                <div class="form-group">
+                    <label for="find_accepted" class="date-radio-label">Accepted:</label>
+                    <div class="date-radio-group" id="find_accepted">
+                        <div class="control-label date-radio"><input type="radio" id="find_accepted_1" name="find_accepted" ng-model="pamTrialsView.searchParams.find_accepted" ng-value="undefined" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_accepted_2" name="find_accepted"  ng-model="pamTrialsView.searchParams.find_accepted" ng-value="true" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_accepted_3" name="find_accepted" ng-model="pamTrialsView.searchParams.find_accepted" ng-value="false" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Current On-Hold Date-->
+                <div class="form-group">
+                    <label for="find_onhold" class="date-radio-label">Current On-Hold Date:</label>
+                    <div class="date-radio-group" id="site_admin">
+                        <div class="control-label date-radio"><input type="radio" id="find_onhold_1" name="find_onhold" ng-model="pamTrialsView.searchParams.find_onhold" ng-value="undefined" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_onhold_2" name="find_onhold" ng-model="pamTrialsView.searchParams.find_onhold" ng-value="true" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_onhold_3" name="find_onhold" ng-model="pamTrialsView.searchParams.find_onhold" ng-value="false" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Admin Abstraction Completed-->
+                <div class="form-group">
+                    <label for="find_admin_abstraction_completed" class="date-radio-label">Admin Abstraction Completed:</label>
+                    <div class="date-radio-group" id="find_admin_abstraction_completed">
+                        <div class="control-label date-radio"><input type="radio" id="find_admin_abstraction_completed_1" name="find_admin_abstraction_completed" ng-model="pamTrialsView.searchParams.find_admin_abstraction_completed" ng-value="undefined" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_admin_abstraction_completed_2" name="find_admin_abstraction_completed" ng-model="pamTrialsView.searchParams.find_admin_abstraction_completed" ng-value="true" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_admin_abstraction_completed_3" name="find_admin_abstraction_completed" ng-model="pamTrialsView.searchParams.find_admin_abstraction_completed" ng-value="false" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Admin QC Completed-->
+                <div class="form-group">
+                    <label for="find_admin_qc_completed" class="date-radio-label">Admin QC Completed:</label>
+                    <div class="date-radio-group" id="find_admin_qc_completed">
+                        <div class="control-label date-radio"><input type="radio" id="find_admin_qc_completed_1" name="find_admin_qc_completed" ng-model="pamTrialsView.searchParams.find_admin_qc_completed" ng-value="undefined" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_admin_qc_completed_2" name="find_admin_qc_completed" ng-model="pamTrialsView.searchParams.find_admin_qc_completed" ng-value="true" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_admin_qc_completed_3" name="find_admin_qc_completed" ng-model="pamTrialsView.searchParams.find_admin_qc_completed" ng-value="false" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Scientific Abstraction Completed-->
+                <div class="form-group">
+                    <label for="find_scientific_abstraction_completed" class="date-radio-label">Scientific Abstraction Completed:</label>
+                    <div class="date-radio-group" id="find_scientific_abstraction_completed">
+                        <div class="control-label date-radio"><input type="radio" id="find_scientific_abstraction_completed_1" name = "find_scientific_abstraction_completed" ng-model="pamTrialsView.searchParams.find_scientific_abstraction_completed" ng-value="undefined" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_scientific_abstraction_completed_2" name = "find_scientific_abstraction_completed" ng-model="pamTrialsView.searchParams.find_scientific_abstraction_completed" ng-value="true" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_scientific_abstraction_completed_3" name = "find_scientific_abstraction_completed" ng-model="pamTrialsView.searchParams.find_scientific_abstraction_completed" ng-value="false" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Scientific QC Completed-->
+                <div class="form-group">
+                    <label for="find_scientific_qc_completed" class="date-radio-label">Scientific QC Completed:</label>
+                    <div class="date-radio-group" id="find_scientific_qc_completed">
+                        <div class="control-label date-radio"><input type="radio" id="find_scientific_qc_completed_1" name="find_scientific_qc_completed" ng-model="pamTrialsView.searchParams.find_scientific_qc_completed" ng-value="undefined" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_scientific_qc_completed_2" name="find_scientific_qc_completed" ng-model="pamTrialsView.searchParams.find_scientific_qc_completed" ng-value="true" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                        <div class="control-label date-radio"><input type="radio" id="find_scientific_qc_completed_3" name="find_scientific_qc_completed" ng-model="pamTrialsView.searchParams.find_scientific_qc_completed" ng-value="false" ng-click="pamTrialsView.getUserSubmittedTrials()" /></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row top-offset-xs"></div>
+            <div ng-if="pamTrialsView.gridTrialsSubmittedOptions.data.length > 0">
+                <h4>{{pamTrialsView.gridTrialsSubmittedOptions.totalItems}} Trial(s) found</h4>
+                <div class="row animated-item">
+                    <div ui-grid="pamTrialsView.gridTrialsSubmittedOptions"  id="pamTrialsGrid" class="user-detail-grid"
+                         ui-grid-pagination="" ui-grid-exporter ui-grid-move-columns class="grid"></div>
+                </div>
+            </div>
+            <div ng-if="pamTrialsView.gridTrialsSubmittedOptions.data.length === 0">No trials submitted at this time.</div>
+            <div class="row top-offset-xs"></div>
+        </div>
+    </div>
+</div>

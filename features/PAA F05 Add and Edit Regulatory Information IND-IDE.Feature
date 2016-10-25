@@ -39,10 +39,10 @@ And selected the NCI Division/Program  from a list (Required when IND/IDE Holder
 |NIAMS-National Institute of Arthritis and Musculoskeletal and Skin Diseases|
 |NIBIB-National Institute of Biomedical Imaging and Bioengineering|
 |NICHD-NICHD-Eunice Kennedy Shriver National Institute of Child Health and Human Development|
+|NIDA-National Institute on Drug Abuse|
 |NIDCD-National Institute on Deafness and Other Communication Disorders|
 |NIDCR-National Institute of Dental and Craniofacial Research|
 |NIDDK-National Institute of Diabetes and Digestive and Kidney Diseases|
-|NIDA-National Institute on Drug Abuse|
 |NIEHS-National Institute of Environmental Health Sciences|
 |NIGMS-National Institute of General Medical Sciences|
 |NIMH-National Institute of Mental Health|
@@ -62,6 +62,7 @@ And selected the NCI Division/Program  from a list (Required when IND/IDE Holder
 |CCT/CTB|
 |CIP|
 |CDP|
+|CIP|
 |CTEP|
 |DCB|
 |DCCPS|
@@ -71,8 +72,8 @@ And selected the NCI Division/Program  from a list (Required when IND/IDE Holder
 |DTP|
 |OD|
 |OSB/SPOREs|
-|TRP|
 |RRP|
+|TRP|
 |N/A|
 Then the IND/IDE Information for the trial will be associated with the trial
 
@@ -86,7 +87,6 @@ Then I am able to select "Add IND/IDE" and enter the information for multiple IN
 Scenario: #4 I can remove Regulatory IND and IDE information for one or more IND or IDE registrations for a trial
 Given I am logged into the CTRP Protocol Abstraction application
 And I am on the Trial Regulatory Information (IND/IDE) screen
-And I have selected "Yes" for the IND/IDE question "Does this trial have an associated IND/IDE?"
 When I have selected the IND or IDE
 Then I am able to remove the IND or IDE information for one or more INDs or IDEs
 

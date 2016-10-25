@@ -1,3 +1,7 @@
+
+<div class="alert alert-warning fade in" ng-if="userView.searchWarningMessage && userView.searchWarningMessage.length" ng-cloak>
+    <strong>{{userView.searchWarningMessage}}</strong>
+</div>
 <div class="row">
     <div class="col-xs-12 drop-shadow">
         <div class="row">
@@ -5,16 +9,13 @@
                 <small>* for wild card (e.g. university* for any university)</small>
             </h4>
         </div>
-        <div class="alert alert-warning fade in" ng-if="userView.searchWarningMessage && userView.searchWarningMessage.length" ng-cloak>
-            <strong>{{userView.searchWarningMessage}}</strong>
-        </div>
         <div class="row">
             <form class="form form-horizontal" role="form">
                 <!-- first row -->
                 <div class="row">
                     <div class="col-xs-12 col-md-6">
                         <!-- username -->
-                        <div class="form-group" ng-if="!userView.registeredUsersPage">
+                        <div class="form-group" id="user_list_username">
                             <label for="username" class="control-label col-sm-5">Username: </label>
                             <div class="col-sm-7">
                                 <input type="text" id="username" class="form-control input-sm" placeholder="Username" ng-model="userView.searchParams.username" auto-focus/>
@@ -23,21 +24,21 @@
                         <!-- username ends -->
 
                         <!--Last Name-->
-                        <div class="form-group">
-                            <label for="first_name" class="control-label col-sm-5">Last Name:</label>
+                        <div class="form-group" id="user_list_last_name">
+                            <label for="last_name" class="control-label col-sm-5">Last Name:</label>
                             <div class="col-sm-7">
-                                <input type="text" id="last_name" class="form-control input-sm" placeholder="Last Name" ng-model="userView.searchParams.last_name" auto-focus/>
+                                <input type="text" id="last_name" class="form-control input-sm" placeholder="Last Name" ng-model="userView.searchParams.last_name"/>
                             </div>
                         </div>
                         <!-- Last Name ends -->
 
                         <!--Status-->
-                        <div class="form-group" ng-if="!userView.registeredUsersPage">
+                        <div class="form-group" ng-if="!userView.registeredUsersPage" id="user_list_status">
                             <label for="first_name" class="control-label col-sm-5">Status:</label>
                             <div class="col-sm-7" ng-if="!userView.searchStatus">
                                 <select class="form-control input-sm" id="user_status_id" ng-model="userView.searchParams.user_status_id">
                                     <option value="">Select a status</option>
-                                    <option ng-repeat="status in (userView.statusArrForROLESITESU || userView.statusArr)" value="{{status.id}}">{{status.name}}</option>
+                                    <option ng-repeat="status in (userView.statusArrForROLEAPPROVER || userView.statusArrForROLESITESU || userView.statusArr)" value="{{status.id}}">{{status.name}}</option>
                                 </select>
                             </div>
                             <div class="col-sm-7 control-label text-left" ng-if="userView.searchStatus">
@@ -47,13 +48,35 @@
                         <!-- Status ends -->
 
                         <!-- Organization Name-->
-                        <div class="form-group">
-                            <label for="organization_name" class="control-label col-sm-5">Organization Name:</label>
+                        <div class="form-group" id="user_list_organization">
+                            <label for="organization_name" class="control-label col-sm-5">Organization:</label>
                             <div class="col-sm-7"  ng-if="!userView.searchOrganization">
                                 <input type="text" id="organization_name" class="form-control input-sm" name="organization_name"
-                                       autocomplete="off" placeholder="Organization Name" ng-model="userView.searchParams.organization_name"
+                                       autocomplete="off" placeholder="Organization Name"
+                                       ng-model="userView.organization_name"
+                                       typeahead-on-select="userView.setUserListTypeAheadOrg($item)"
+                                       ng-if="!userView.userChosenOrg"
                                        uib-typeahead="org for org in userView.typeAheadNameSearch($viewValue)" ui-typeahead-loading="loadingOrganizations"
                                        typeahead-min-length="3" typeahead-wait-ms="50" typeahead-no-results="noResults" />
+                                <div id="typeAheadResults" ng-if="userView.userChosenOrg">
+                                        <b>{{userView.userChosenOrg.name}}</b>
+                                        <span class="btn-danger crn-rounded" ng-click="userView.removeOrgChoice()"
+                                              title="Change organization">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </span>
+                                        <br>
+                                        <span ng-if="userView.userChosenOrg.address">{{userView.userChosenOrg.address}}<br></span>
+                                        <span ng-if="userView.userChosenOrg.address2">{{userView.userChosenOrg.address2}}<br></span>
+                                        <span ng-if="userView.userChosenOrg.city">{{userView.userChosenOrg.city}},</span>
+                                        <span ng-if="userView.userChosenOrg.state_province">{{userView.userChosenOrg.state_province}} </span>
+                                        <span ng-if="userView.userChosenOrg.postal_code">{{userView.userChosenOrg.postal_code}}<br></span>
+                                        <span ng-if="userView.userChosenOrg.country">{{userView.userChosenOrg.country}}<br></span>
+                                        <i>
+                                        <span ng-if="userView.userChosenOrg.phone"><b>Contact:</b> <u>{{userView.userChosenOrg.phone}}</u><br></span>
+                                        <span ng-if="userView.userChosenOrg.email"><b>Email:</b> <u>{{userView.userChosenOrg.email}}</u><br></span>
+                                        <span ng-if="userView.userChosenOrg.fax"><b>Fax:</b> <u>{{userView.userChosenOrg.fax}}</u></span>
+                                        </i>
+                                </div>
                             </div>
                             <div class="col-sm-7 control-label text-left" ng-if="userView.searchOrganization">
                                 {{userView.searchOrganization}}
@@ -63,7 +86,7 @@
                     </div>
                     <div class="col-xs-12 col-md-6">
                         <!--email-->
-                        <div class="form-group" ng-if="!userView.registeredUsersPage">
+                        <div class="form-group" ng-if="!userView.registeredUsersPage" id="user_list_email">
                             <label for="email" class="control-label col-sm-5">Email:</label>
                             <div class="col-sm-7">
                                 <input type="text" id="email" class="form-control input-sm" placeholder="email" ng-model="userView.searchParams.email" />
@@ -72,7 +95,7 @@
                         <!-- email ends -->
 
                         <!--First Name-->
-                        <div class="form-group">
+                        <div class="form-group" id="user_list_first_name">
                             <label for="first_name" class="control-label col-sm-5">First Name:</label>
                             <div class="col-sm-7">
                                 <input type="text" id="first_name" class="form-control input-sm" placeholder="First Name" ng-model="userView.searchParams.first_name" />
@@ -81,7 +104,7 @@
                         <!-- First Name ends -->
 
                         <!-- Site Admin-->
-                        <div class="form-group" ng-if="!userView.registeredUsersPage">
+                        <div class="form-group" ng-if="!userView.registeredUsersPage" id="user_list_admin_priv">
                             <label for="site_admin" class="control-label col-sm-5">Site Administrator Privileges:</label>
                             <div class="col-sm-7">
                                 <label class="control-label radio-line">Yes: <input type="radio" id="site_admin" ng-model="userView.searchParams.site_admin" ng-value="true"/></label>
@@ -92,7 +115,7 @@
                         <!-- Site Admin ends -->
 
                         <!-- Organization Family-->
-                        <div class="form-group" ng-if="!(userView.searchOrganizationFamily !== undefined && userView.searchOrganizationFamily.length === 0) && !userView.registeredUsersPage">
+                        <div class="form-group" ng-if="!(userView.searchOrganizationFamily !== undefined && userView.searchOrganizationFamily.length === 0)" id="user_list_org_family">
                             <label for="organization_family" class="control-label col-sm-5">Organization Family:</label>
                             <div class="col-sm-7" ng-if="!userView.searchOrganizationFamily">
                                 <input type="text" id="organization_family" class="form-control input-sm" placeholder="Organization Family" ng-model="userView.searchParams.organization_family" />
@@ -108,7 +131,7 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <div class="btn-toolbar">
-                            <button type="submit" id="submission_btn" class="btn btn-primary pull-right" ng-click="userView.searchUsers()">
+                            <button type="submit" id="submission_btn" class="btn btn-primary pull-right" ng-click="userView.searchUsers()" ng-disabled="userView.searching">
                                <i class="glyphicon glyphicon-search"></i> Search
                             </button>
 
@@ -118,12 +141,13 @@
                         </div>
                     </div>
                 </div>
+                <div class="row top-offset-xs" ng-if="userView.gridOptions.totalItems == null"></div>
             </form>
         </div>
 
         <div class="row">
             <div class="col-xs-12">
-                <span us-spinner="{radius: 10, length: 5}" spinner-on="searching"></span>
+                <span us-spinner="{radius: 10, length: 5}" spinner-on="userView.searching"></span>
             </div>
         </div>
 
@@ -132,14 +156,30 @@
             <div class="col-xs-12">
                 <div class="row" ng-if="userView.gridOptions.totalItems != null">
                     <a href="" id="user_search_results"></a>
-                    <h4>User Search Results: {{userView.gridOptions.totalItems}} found</h4>
+                    <h4>{{userView.gridOptions.totalItems}} User(s) found</h4>
                 </div>
-                <div class="row animated-item" ng-if="userView.gridOptions.data.length > 0">
-                    <div ui-grid="userView.gridOptions" ui-grid-pagination="" external-scopes="clickHandler" ui-grid-exporter ui-grid-move-columns class="grid"></div>
+                <div class="row animated-item user-list-search-results" ng-if="userView.gridOptions.data.length > 0">
+                    <div ui-grid="userView.gridOptions" ui-grid-pagination="" external-scopes="clickHandler" ui-grid-exporter ui-grid-move-columns ui-grid-selection  class="grid" ng-class="{'edit-off': !userView.curationMode}"></div>
                 </div>
             </div>
         </div>
         <div class="row top-offset-xs" ng-if="userView.gridOptions.totalItems != null"></div>
-        <div class="row top-offset-xs"></div>
+
+        <!-- Saving the form for the Add Ownership -->
+        <div class="add-buttons" ng-if="userView.setAddMode === true && userView.trialId && userView.gridOptions.totalItems">
+            <div class="form-group">
+                <div class="btn-toolbar" ng-if="userView.curationMode">
+                    <button type="submit" class="btn btn-primary pull-right" id="submit_processing" ng-click="userView.addOwnersSubmit()">
+                        <i class="glyphicon glyphicon-ok"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-warning pull-right" id="out_cm_reset" ng-click="userView.clearSelectedRows()">
+                        <i class="glyphicon glyphicon-remove"></i> Reset
+                    </button>
+                </div>
+                <div class="add-association-error text-right" ng-if="userView.requireSelection">
+                    First make a selection.
+                </div>
+            </div>
+        </div>
     </div>
 </div>

@@ -13,7 +13,7 @@
     function trialRegFdaCtrl(TrialService, PATrialService, $scope, $timeout, $state, toastr, MESSAGES, trialDetailObj, responsiblePartyObj, countryList){// studySourceObj, nciDivObj, nciProgObj) {
         var vm = this;
         vm.curTrial = trialDetailObj;
-        vm.responsiblePartyArr = responsiblePartyObj;
+        vm.responsiblePartyArr = angular.copy(responsiblePartyObj);
         vm.countryArr = countryList;
         vm.showInvestigator = false;
         vm.showInvSearchBtn = true;
@@ -24,7 +24,6 @@
         vm.selectedIaArray = [];
         vm.selectedFsArray = [];
         vm.addedAuthorities = [];
-        //vm.selectedAuthority = false;
         vm.indIdeNum = 0;
         vm.toaNum = 0;
         vm.sponsor_id = null;
@@ -32,25 +31,40 @@
         vm.sponsorName = "";
         vm.disableBtn = false;
 
-        for (var i = 0; i < responsiblePartyObj.length; i++) {
-            if (responsiblePartyObj[i].code == "SPONSOR") {
-                vm.sponsor_id = responsiblePartyObj[i].id;
+        vm.initialize = function() {
+            for (var i = 0; i < vm.responsiblePartyArr.length; i++) {
+                if (vm.responsiblePartyArr[i].code == "SPONSOR") {
+                    vm.sponsor_id = vm.responsiblePartyArr[i].id;
+                }
             }
-        }
-        if (vm.curTrial.responsible_party_id == vm.sponsor_id) {
-            vm.showSponsor = true;
-        }
-        if (vm.curTrial.sponsor){
-            vm.sponsorName = vm.curTrial.sponsor.name;
-        } else {
-            vm.sponsorName = "";
+            if (vm.curTrial.responsible_party_id == vm.sponsor_id) {
+                vm.showSponsor = true;
+            }
+            if (vm.curTrial.sponsor){
+                vm.sponsorName = vm.curTrial.sponsor.name;
+            } else {
+                vm.sponsorName = "";
+            }
+
+            console.log('responsible_party_id is: ', vm.curTrial.responsible_party_id);
         }
 
-        vm.reload = function() {
-            $state.go($state.$current, null, { reload: true });
+        vm.initialize();
+
+        vm.reset = function() {
+            vm.curTrial = PATrialService.getCurrentTrialFromCache();
+            vm.responsiblePartyArr = angular.copy(responsiblePartyObj);
+            vm.initialize();
+
+            vm.authority_org = null;
+            vm.authority_country = null;
+            vm.addedAuthorities = [];
+            appendAuthorities();
+
+            vm.watchOption('responsible_party');
+
+            $scope.trial_form.$setPristine();
         };
-
-
 
         vm.deleteAllAuthorities  = function () {
             if (vm.authoritiesDestroyAll) {
@@ -87,7 +101,6 @@
 
             if (vm.addedAuthorities.length > 0) {
                 vm.curTrial.oversight_authorities_attributes = [];
-                //console.log("HIIIII added authorities =" + JSON.stringify(vm.addedAuthorities));
                 _.each(vm.addedAuthorities, function (authority) {
                     vm.curTrial.oversight_authorities_attributes.push(authority);
                 });
@@ -112,16 +125,17 @@
                 if (status >= 200 && status <= 210) {
                     vm.curTrial = response;
                     vm.addedAuthorities = vm.curTrial.oversight_authorities;
-                    //console.log("2HIIIII oversight_authorities =" + JSON.stringify(vm.curTrial.oversight_authorities));
 
                     PATrialService.setCurrentTrial(vm.curTrial); // update to cache
                     $scope.$emit('updatedInChildScope', {});
 
                     toastr.clear();
-                    toastr.success('Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded', 'Operation Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    });
+                    toastr.success('Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded', 'Operation Successful!');
+
+                    // To make sure setPristine() is executed after all $watch functions are complete
+                    $timeout(function() {
+                       $scope.trial_form.$setPristine();
+                   }, 1);
                 }
             }).catch(function(err) {
                 console.log("error in updating trial " + JSON.stringify(outerTrial));
@@ -168,11 +182,9 @@
                 vm.addAuthorityError = '';
                 vm.showAddAuthorityError = false;
                 vm.authoritiesDestroyAll = false;
-                //vm.selectedAuthority = true;
             } else {
                 vm.addAuthorityError = errorMsg;
                 vm.showAddAuthorityError = true;
-                //vm.selectedAuthority = false;
             }
         };
 
@@ -196,6 +208,21 @@
             }
         });
 
+        $scope.$watch(function() {
+            return vm.selectedInvArray;
+        }, function(newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue)) {
+                $scope.trial_form.$setDirty();
+            }
+        });
+
+        $scope.$watch(function() {
+            return vm.selectedIaArray;
+        }, function(newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue)) {
+                $scope.trial_form.$setDirty();
+            }
+        });
 
         // Scenario 6: I have selected "No" for FDA Regulated Intervention Indicator
         // And the number of Authorities > 0
@@ -216,7 +243,6 @@
                     vm.showInvestigator = true;
                     vm.showInvSearchBtn = false;
                     vm.showSponsor = false;
-                    //console.log("Setting Investigator title");
                     vm.curTrial.investigator_title = 'Principal Investigator';
                     // Copy the value from PI and Sponsor
                     vm.selectedInvArray = vm.selectedPiArray;
@@ -225,7 +251,6 @@
                     vm.showInvestigator = true;
                     vm.showInvSearchBtn = true;
                     vm.showSponsor = false;
-                    //console.log("Setting Investigator title");
                     vm.curTrial.investigator_title = 'Principal Investigator';
                     // Copy the value from PI and Sponsor
                     vm.selectedInvArray = vm.selectedPiArray;
@@ -242,13 +267,15 @@
                 }
             }  else if (type == 'authority_country') {
                 vm.authority_org = '';
-                /*
-                if(vm.addedAuthorities.length > 0){
-                    vm.selectedAuthority = true;
-                } else {
-                    vm.selectedAuthority = false;
-                }*/
-                vm.authorityOrgArr = TrialService.getAuthorityOrgArr(vm.authority_country);
+                TrialService.getAuthorityOrgArr(vm.authority_country).then(function (response) {
+                    var status = response.server_response.status;
+
+                    if (status >= 200 && status <= 210) {
+                        vm.authorityOrgArr  = response.authorities;
+                    }
+                }).catch(function (err) {
+                    console.log("Error in retrieving authorities for country");
+                });
             }
         };
 
@@ -275,7 +302,6 @@
         function getTrialDetailCopy() {
             $timeout(function() {
                 vm.curTrial = PATrialService.getCurrentTrialFromCache();
-                //console.log("vm.curTrial =" + JSON.stringify(vm.curTrial ));
             }, 1);
         } //getTrialDetailCopy
 

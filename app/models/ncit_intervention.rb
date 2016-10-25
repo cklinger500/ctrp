@@ -11,9 +11,11 @@
 #  ct_gov_type_code :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  c_code           :string
 #
 # Indexes
 #
+#  index_ncit_interventions_on_c_code          (c_code)
 #  index_ncit_interventions_on_ncit_status_id  (ncit_status_id)
 #  index_ncit_interventions_on_preferred_name  (preferred_name)
 #

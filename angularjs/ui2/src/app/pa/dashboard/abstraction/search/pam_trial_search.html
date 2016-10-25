@@ -1,0 +1,269 @@
+<div class="row" ng-if="pamTrialsSearchView.gridTrialsSubmittedOptions.data && !pamTrialsSearchView.read_access">
+    You have reached this page by mistake.
+</div>
+<div class="col-xs-12">
+    <div class="row" ng-class="{no_edit: !pamTrialsSearchView.isCurationEnabled}">
+        <div class="col-xs-12 col-sm-12 drop-shadow">
+            <div class="row">
+                <p>
+                <h4>Abstraction Dashboard Search</h4>
+                </p>
+            </div>
+
+            <div class="row">
+                <form class="form form-horizontal" role="form">
+                    <div class="row row1">
+                        <div class="col-xs-12 col-sm-12  col-md-6 col-lg-6">
+                            <div class="form-group">
+                                <div class="label_wrapper">
+                                    <label for="checked_out_by" class="control-label">Checked Out By: </label>
+                                </div>
+                                <div class="field_wrapper">
+                                    <input type="text" id="checked_out_by" name="checked_out_by" class="form-control input-sm" placeholder="Checked out by" ng-model="pamTrialsSearchView.searchParams.checked_out_by" autofocus/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 pam-right">
+                            <div class="form-group">
+                                <div class="label_wrapper">
+                                    <label for="submission_date_range" class="control-label">Submission Received Date: </label>
+                                </div>
+                                <div id="submission_date_range" class="field_wrapper">
+                                    <label for="submission_date_range_from" class="control-label text-left radio-line">
+                                        From:
+                                        <div class="input-group date datepicker ui-grid-datepicker">
+                                            <input id="submission_date_range_from"
+                                                   class="form-control left"
+                                                   placeholder="From"
+                                                   readonly="true" show-button-bar="true"
+                                                   datepicker-append-to-body="false"
+                                                   ng-model="pamTrialsSearchView.searchParams.submission_date_range_from" close-text="Close" show-weeks="true"
+                                                   ng-click="opened1 = true;" uib-datepicker-popup="dd-MMM-yyyy" is-open="opened1"
+                                                   datepicker-options="grid.appScope.dateOptions" type="text">
+                                            <span class="input-group-btn">
+                                                <label class="btn btn-primary" for="submission_date_range_from">
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </label>
+                                            </span>
+                                        </div>
+                                    </label>
+                                    <label for="submission_date_range_to" class="control-label text-left radio-line">
+                                        To:
+                                        <div class="input-group date datepicker ui-grid-datepicker">
+                                                <input id="submission_date_range_to"
+                                                       class="form-control left"
+                                                       placeholder="To"
+                                                       readonly="true" show-button-bar="true"
+                                                       datepicker-append-to-body="false"
+                                                       ng-model="pamTrialsSearchView.searchParams.submission_date_range_to" close-text="Close" show-weeks="true"
+                                                       ng-click="opened2 = true;" uib-datepicker-popup="dd-MMM-yyyy" is-open="opened2"
+                                                       uib-datepicker-popup="dd-MMM-yyyy"
+                                                       datepicker-options="grid.appScope.dateOptions2" type="text">
+                                            <span class="input-group-btn">
+                                                <label class="btn btn-primary" for="submission_date_range_to">
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </label>
+                                            </span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                     <div class="row row2">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <!-- Priorities-->
+                            <div class="form-group">
+                                <div class="label_wrapper">
+                                    <label for="priorities" class="control-label">Priorities:</label>
+                                </div>
+                                <div class="field_wrapper" id="priorities">
+                                    <label class="control-label checkbox3 radio-line">
+                                        <input type="checkbox" id="priorities_1" ng-model="pamTrialsSearchView.searchParams.priorities['1']" /> High
+                                    </label><br>
+                                    <label class="control-label checkbox3 radio-line">
+                                        <input type="checkbox" id="priorities_2" ng-model="pamTrialsSearchView.searchParams.priorities['2']" /> Normal
+                                    </label><br>
+                                    <label class="control-label checkbox3 radio-line">
+                                        <input type="checkbox" id="priorities_3" ng-model="pamTrialsSearchView.searchParams.priorities['3']" /> Low
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- Priorities -->
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 pam-right">
+                            <!-- Submission Types-->
+                            <div class="form-group">
+                                <div class="label_wrapper">
+                                    <label for="submission_types" class="control-label">Submission Types:</label>
+                                </div>
+                                <div class="field_wrapper" id="submission_types">
+                                    <label class="control-label checkbox3 radio-line">
+                                        <input type="checkbox" id="types_1" ng-model="pamTrialsSearchView.searchParams.submission_types['original']" /> Original
+                                    </label><br>
+                                    <label class="control-label checkbox3 radio-line">
+                                        <input type="checkbox" id="types_2" ng-model="pamTrialsSearchView.searchParams.submission_types['amendment']" /> Amendment
+                                    </label><br>
+                                    <label class="control-label checkbox3 radio-line">
+                                        <input type="checkbox" id="types_3" ng-model="pamTrialsSearchView.searchParams.submission_types['update']" /> Update
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- Submission Types -->
+                        </div>
+                    </div>
+                    <div class="row row3">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <!-- On Hold Status -->
+                            <div class="form-group">
+                                <div class="label_wrapper">
+                                    <label for="onhold_statuses" class="control-label">On Hold Status:</label>
+                                </div>
+                                <div class="field_wrapper" id="onhold_statuses">
+                                    <label class="control-label checkbox3 radio-line">
+                                        <input type="checkbox" id="onhold_statuses_1" ng-model="pamTrialsSearchView.searchParams.onhold_statuses['onhold']" /> On Hold (currently)
+                                    </label><br>
+                                    <label class="control-label checkbox3 radio-line">
+                                        <input type="checkbox" id="onhold_statuses_2" ng-model="pamTrialsSearchView.searchParams.onhold_statuses['not_onhold']" /> Not On Hold (currently)
+                                    </label><br>
+                                    <label class="control-label checkbox3 radio-line">
+                                        <input type="checkbox" id="onhold_statuses_3" ng-model="pamTrialsSearchView.searchParams.onhold_statuses['ever_onhold']" /> On Hold (at anytime)
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- On Hold Status -->
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 pam-right">
+                            <!-- On Hold Status -->
+                            <div class="form-group">
+                                <div class="label_wrapper">
+                                    <label for="onhold_statuses_reasons" class="control-label">On Hold Reasons:</label>
+                                </div>
+                                <div class="field_wrapper" id="onhold_statuses_reasons">
+                                    <label ng-repeat="onholdReason in pamTrialsSearchView.onholdReasonsArr"
+                                           class="control-label checkbox3 radio-line"
+                                           for="onhold_statuses_reasons_{{onholdReason.code}}">
+                                        <input type="checkbox" name="onholdReasons[]" id="onhold_statuses_reasons_{{onholdReason.code}}"
+                                                ng-model="pamTrialsSearchView.searchParams.onhold_statuses_reasons[onholdReason.code]"
+                                        > {{onholdReason.name}}<br>
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- On Hold Status -->
+                        </div>
+                    </div>
+                    <div class="row row4">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <!-- current_process_statuses -->
+                            <div class="form-group">
+                                <div class="label_wrapper">
+                                    <label for="current_process_statuses" class="control-label">Current Processing Status:</label>
+                                </div>
+                                <div class="field_wrapper" id="current_process_statuses">
+                                    <label ng-repeat="processingStatus in pamTrialsSearchView.processingStatusesArr"
+                                           class="control-label checkbox3 radio-line"
+                                           for="current_process_statuses_{{processingStatus.code}}">
+                                        <input type="checkbox" name="milestone[]" id="current_process_statuses_{{processingStatus.code}}"
+                                               ng-model="pamTrialsSearchView.searchParams.current_process_statuses[processingStatus.code]"
+                                        > {{processingStatus.name}}<br>
+                                    </label>
+                                </div>
+                                <!-- Organization Name-->
+                                <div class="form-group" id="pam_search_organization">
+                                    <div class="label_wrapper">
+                                        <label for="organization_name" class="control-label">Submitter Organization:
+
+                                            <span class="btn-danger crn-rounded" ng-click="pamTrialsSearchView.removeOrgChoice()"
+                                                  ng-if="pamTrialsSearchView.userChosenOrg"
+                                                  title="Change organization">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div class="field_wrapper col-sm-9 col-md-7 col-lg-7"  id="searchOrganization" ng-if="!pamTrialsSearchView.searchOrganization">
+                                        <input type="text" id="organization_name" class="form-control input-sm" name="organization_name"
+                                               autocomplete="off" placeholder="Organization Name"
+                                               ng-model="pamTrialsSearchView.organization_name"
+                                               typeahead-on-select="pamTrialsSearchView.setPamTrialsTypeAheadOrg($item)"
+                                               ng-if="!pamTrialsSearchView.userChosenOrg"
+                                               uib-typeahead="org for org in pamTrialsSearchView.typeAheadNameSearch($viewValue)" ui-typeahead-loading="loadingOrganizations"
+                                               typeahead-min-length="3" typeahead-wait-ms="50" typeahead-no-results="noResults" />
+                                        <div id="typeAheadResults" ng-if="pamTrialsSearchView.userChosenOrg">
+                                            <b>{{pamTrialsSearchView.userChosenOrg.name}}</b>
+                                            <br>
+                                            <span ng-if="pamTrialsSearchView.userChosenOrg.address">{{pamTrialsSearchView.userChosenOrg.address}}<br></span>
+                                            <span ng-if="pamTrialsSearchView.userChosenOrg.address2">{{pamTrialsSearchView.userChosenOrg.address2}}<br></span>
+                                            <span ng-if="pamTrialsSearchView.userChosenOrg.city">{{pamTrialsSearchView.userChosenOrg.city}},</span>
+                                            <span ng-if="pamTrialsSearchView.userChosenOrg.state_province">{{pamTrialsSearchView.userChosenOrg.state_province}} </span>
+                                            <span ng-if="pamTrialsSearchView.userChosenOrg.postal_code">{{pamTrialsSearchView.userChosenOrg.postal_code}}<br></span>
+                                            <span ng-if="pamTrialsSearchView.userChosenOrg.country">{{pamTrialsSearchView.userChosenOrg.country}}<br></span>
+                                            <i>
+                                                <span ng-if="pamTrialsSearchView.userChosenOrg.phone"><b>Contact:</b> <u>{{pamTrialsSearchView.userChosenOrg.phone}}</u><br></span>
+                                                <span ng-if="pamTrialsSearchView.userChosenOrg.email"><b>Email:</b> <u>{{pamTrialsSearchView.userChosenOrg.email}}</u><br></span>
+                                                <span ng-if="pamTrialsSearchView.userChosenOrg.fax"><b>Fax:</b> <u>{{pamTrialsSearchView.userChosenOrg.fax}}</u></span>
+                                            </i>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-7 control-label text-left" ng-if="pamTrialsSearchView.searchOrganization">
+                                        {{pamTrialsSearchView.searchOrganization}}
+                                    </div>
+                                </div>
+                                <!-- Organization Name ends -->
+                            </div>
+                            <!-- end current_process_statuses -->
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <!-- trial_milestone_dates -->
+                            <div class="form-group">
+                                <div class="label_wrapper">
+                                    <label for="trial_milestone_dates" class="control-label">Trial Milestones:</label>
+                                </div>
+                                <div class="field_wrapper" id="trial_milestone_dates">
+                                    <label ng-repeat="milestone in pamTrialsSearchView.milestonesArr"
+                                           class="control-label checkbox3 radio-line"
+                                           for="trial_milestone_dates_{{milestone.code}}">
+                                        <input type="checkbox" name="milestone[]" id="trial_milestone_dates_{{milestone.code}}"
+                                                ng-model="pamTrialsSearchView.searchParams.trial_milestone_dates[milestone.code]"
+                                        > {{milestone.name}}<br>
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- end trial_milestone_dates -->
+                        </div>
+                    </div>
+                    <div class="row row6">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="btn-toolbar">
+                                <button type="submit" id="submission_btn" class="btn btn-primary pull-right" ng-click="pamTrialsSearchView.getSubmittedTrials()">
+                                    <i class="glyphicon glyphicon-search"></i> Search
+                                </button>
+
+                                <button id="reset_btn" class="btn btn-warning pull-right" ng-click="pamTrialsSearchView.resetSearch()">
+                                    <i class="glyphicon glyphicon-remove"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="row top-offset-xs"></div>
+            <div ng-if="pamTrialsSearchView.gridTrialsSubmittedOptions.data.length > 0">
+                <h4>{{pamTrialsSearchView.gridTrialsSubmittedOptions.totalItems}} Trial(s) found</h4>
+                <div class="row animated-item">
+                    <div ui-grid="pamTrialsSearchView.gridTrialsSubmittedOptions"  id="pamTrialsGrid" class="user-detail-grid"
+                         ui-grid-pagination="" ui-grid-exporter ui-grid-move-columns class="grid"></div>
+                </div>
+            </div>
+            <div ng-if="pamTrialsSearchView.gridTrialsSubmittedOptions.data.length === 0">No trials found.</div>
+            <div class="row top-offset-xs"></div>
+        </div>
+    </div>
+</div>

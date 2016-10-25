@@ -14,4 +14,6 @@ class SourceCluster < ActiveRecord::Base
   include BasicConcerns
 
   has_many :organizations
+
+
 end

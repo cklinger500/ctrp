@@ -1,4 +1,4 @@
-@Global
+@Global(Grids_to_Export_Excel.xlsx) 
 Feature: Global F01 Export Search Results to Excel
 
 As a CTRP User, I can export search results to Excel

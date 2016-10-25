@@ -22,7 +22,7 @@ Examples:
       |Institutional           |
    
    
-   Scenario Outline: Required fields to save a draft
+   Scenario Outline:#2 Required fields to save a draft
     Given I have selected the option to register a trial <TrialType>
   And I have not entered the Lead Organization Trial ID
       When I have selected Save as Draft

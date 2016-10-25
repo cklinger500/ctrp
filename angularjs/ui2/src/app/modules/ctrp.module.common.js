@@ -6,10 +6,10 @@
 
     'use strict';
 
-    angular.module('ctrp.module.common', [])
+    angular.module('ctrp.module.common', ['ui.bootstrap.modal'])
         .service('Common', Common);
 
-    Common.$inject = ['$rootScope', '_', '$mdDialog'];
+    Common.$inject = ['$rootScope', '_', '$mdDialog', '$uibModal'];
 
     function Common($rootScope, _, $mdDialog) {
 

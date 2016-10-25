@@ -37,37 +37,104 @@
         vm.searchWarningMessage = '';
 
         vm.auditGridOptions = AuditService.getAuditsGridOptions();
+        var pageSize = 500;//audit grid page size
+
         vm.disableBtn = false;
+        vm.auditParams = AuditService.getAuditInitialSearchParams();
 
         vm.showSubmissions= showSubmissions;
+        vm.loadTrialSubmissions = loadTrialSubmissions;
 
         //This variable is being used by grid row to download a trial document.(Refer Audit Trial Service)
         $scope.downloadBaseUrl = HOST + '/ctrp/registry/trial_documents/download/';
 
+        vm.submissionsGridOptions = AuditService.getSubmissionsGridOptions();
+        vm.submissionsGridOptions.data = null;
+        vm.submissionsGridOptions.totalItems = null;
+        vm.submissionsGridOptions.exporterAllDataFn = function () {
+            var trialId = $scope.$parent.paTrialOverview.trialDetailObj.id || vm.trialProcessingObj.trialId;
+
+            vm.trialHistoryObj = {trial_id: trialId,start: vm.submissionParams.start, rows: vm.submissionParams.rows};
+            vm.disableBtn = true;
+
+            return AuditService.getSubmissions(vm.trialHistoryObj).then(function (data) {
+                var status = data.server_response.status;
+
+                if (status >= 200 && status <= 210) {
+                    vm.submissionsGridOptions.data = data.trial_versions;
+                    vm.submissionsGridOptions.totalItems = data.total;
+
+                    _.each(vm.submissionsGridOptions.data, function(version) {
+                        var docsArray = [];
+                        _.each(version.docs, function(doc) {
+                            docsArray.push(doc.file_name);
+                        })
+
+                        version.docs = docsArray.join(';');
+                    });
+                    console.log('export related: ', data.trial_versions);
+                }
+            }).catch(function (err) {
+                console.log('Getting trial submissions failed');
+            }).finally(function () {
+                console.log('search finished');
+
+                vm.disableBtn = false;
+            });
+        };
+        vm.submissionsGridOptions.onRegisterApi = function (gridApi) {
+            vm.gridApi = gridApi;
+            vm.gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
+                vm.submissionParams.start = newPage;
+                vm.submissionParams.rows = pageSize;
+                vm.loadTrialSubmissions();
+            });
+        }; //gridOptions
+
 
         activate();
         function activate() {
-            vm.auditGridOptions = AuditService.getAuditsGridOptions();
+            //vm.auditGridOptions = getGridOptions();
             vm.auditGridOptions.data =null;
             vm.auditGridOptions.totalItems = null;
-
-            vm.submissionsGridOptions = AuditService.getSubmissionsGridOptions();
-            vm.submissionsGridOptions.data = null;
-            vm.submissionsGridOptions.totalItems = null;
-            vm.submissionsGridOptions.onRegisterApi = function (gridApi) {
-                vm.gridApi = gridApi;
-                vm.gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
-                    vm.submissionParams.start = newPage;
-                    vm.submissionParams.rows = pageSize;
-                    loadTrialSubmissions();
-                });
-            }; //gridOptions
 
             loadTrialSubmissions();
 
             showDeletedDocs();
 
         }
+
+        function getGridOptions() {
+            var options = {
+                // rowData: vm.checkoutHistoryArr,
+                rowModelType: 'pagination',
+                columnDefs: getColumnDefs(),
+                enableColResize: true,
+                enableSorting: false,
+                enableFilter: true,
+                rowHeight: 30,
+                angularCompileRows: true,
+                suppressRowClickSelection: true,
+                suppressSizeToFit: false,
+            };
+
+            return options;
+        }
+
+
+        function getColumnDefs() {
+            var columns = [
+                {field: 'created_at'},
+                {field: 'event'},
+                {field: 'nci_id'},
+                {field: 'lead_protocol_id'},
+                {field: 'official_title'}
+            ];
+
+            return columns;
+        }
+
+
 
         /*Implementations below*/
 
@@ -85,11 +152,39 @@
 
          function showSubmissions() {
 
-             loadTrialSubmissions();
+             vm.loadTrialSubmissions();
 
         };
 
         function showAuditTrials() {
+
+            var columnDefs = [
+                {headerName: "Make", field: "make"},
+                {headerName: "Model", field: "model"},
+                {headerName: "Price", field: "price"}
+            ];
+
+            var rowData = [
+                {make: "Toyota", model: "Celica", price: 35000},
+                {make: "Ford", model: "Mondeo", price: 32000},
+                {make: "Porsche", model: "Boxter", price: 72000}
+            ];
+
+
+            vm.auditGridOptions.data =null;
+            vm.auditGridOptions.totalItems = null;
+
+            vm.auditGridOptions.onRegisterApi = function (gridApi) {
+                vm.gridApi = gridApi;
+                vm.gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
+                    vm.auditParams.start = newPage;
+                    vm.auditParams.rows = pageSize;
+                    loadAuditTrials();
+                });
+            }; //gridOptions
+
+
+
             loadAuditTrials();
         }
 
@@ -222,12 +317,19 @@
 
     //***Audit Trial Tab Logic ***//
 
+        function onPageSizeChanged(newPageSize) {
+            pageSize = new Number(newPageSize);
+            //createNewDatasource(vm.checkoutHistoryArr);
+        }
+
+
         function loadAuditTrials() {
             var trialId = $scope.$parent.paTrialOverview.trialDetailObj.id || vm.trialProcessingObj.trialId;
             var startDate = vm.start_date;
             var endDate = vm.end_date;
-            vm.trialHistoryObj = {trial_id: trialId, start_date: startDate, end_date: endDate};
+            vm.trialHistoryObj = {trial_id: trialId, start_date: startDate, end_date: endDate, start: vm.auditParams.start, rows: vm.auditParams.rows};
             vm.disableBtn = true;
+
 
             //if (startDate != null && endDate != null) {
                 vm.searchWarningMessage=''
@@ -236,8 +338,15 @@
 
                     if (status >= 200 && status <= 210) {
                         console.log('received search results: ' + JSON.stringify(data.trial_versions));
-                        vm.auditGridOptions.data = data.trial_versions;
-                        vm.auditGridOptions.totalItems = data.trial_versions["length"];
+                       vm.auditGridOptions.rowData=data.trial_versions
+                        //vm.auditGridOptions.api.setRowData(data.trial_versions);
+                        //$scope.auditGridOptions.rowData = data.trial_versions
+
+                        //vm.auditGridOptions.data = data.trial_versions;
+                        //vm.auditGridOptions.api.refreshView();
+                        //vm.auditGridOptions.api.sizeColumnsToFit();
+
+                        vm.auditGridOptions.totalItems = data.total;
                     }
                 }).catch(function (err) {
                     console.log('Getting audit trials failed');
@@ -251,6 +360,8 @@
             //}
 
         }
+
+
 
         function openCalendar($event, type) {
             $event.preventDefault();
@@ -323,13 +434,13 @@
             var vm = this;
             vm.entity = angular.copy(row.entity);
             vm.submission_num     =   row.entity.submission_num;
-            vm.submission_date    =   DateService.convertISODateToLocaleDateStr(row.entity.submission_date);
+            vm.submission_date    =   moment(row.entity.submission_date).format('DD-MMM-YYYY'); //DateService.convertISODateToLocaleDateStr(row.entity.submission_date);
             vm.acknowledgeUpdate  =   acknowledgeUpdate;
             vm.disableBtn         =   false;
 
             function acknowledgeUpdate() {
                 vm.entity.acknowledge ="Yes";
-                vm.entity.acknowledge_date = new Date();
+                vm.entity.acknowledge_date = moment().toDate();
                 vm.entity.acknowledged_by = userDetailObj.first_name +" , "+ userDetailObj.last_name;
                 var obj={'id':row.entity.id,
                     'acknowledge_comment':vm.entity.acknowledge_comment,
@@ -343,14 +454,11 @@
                     var status = res.server_response.status;
 
                     if (status >= 200 && status <= 210) {
-                        vm.entity.acknowledge_date = DateService.convertISODateToLocaleDateStr(vm.entity.acknowledge_date);
+                        //vm.entity.acknowledge_date = DateService.convertISODateToLocaleDateStr(vm.entity.acknowledge_date);
                         row.entity = angular.extend(row.entity, vm.entity);
 
                         toastr.clear();
-                        toastr.success('Submission has been acknowledged', 'Operation Successful!', {
-                            extendedTimeOut: 1000,
-                            timeOut: 0
-                        });
+                        toastr.success('Submission has been acknowledged', 'Operation Successful!');
                     }
 
                 }).catch(function(err) {
@@ -373,7 +481,7 @@
             var vm = this;
             vm.entity = angular.copy(row.entity);
             vm.entity.submission_num = row.entity.submission_num;
-            vm.entity.submission_date = DateService.convertISODateToLocaleDateStr(row.entity.submission_date);
+            vm.entity.submission_date =  row.entity.submission_date; //DateService.convertISODateToLocaleDateStr(row.entity.submission_date);
             vm.entity.amendment_num = row.entity.amendment_num;
 
             vm.reasonArr = reasonsArr;
@@ -404,17 +512,15 @@
                     if (status >= 200 && status <= 210) {
                         vm.entity.submission_type_list=[];
                         vm.entity.submission_type_list.push("Amendment");
-                        vm.entity.submission_type_list.push("Date:" + DateService.convertISODateToLocaleDateStr(vm.entity.amendment_date));
+                        vm.entity.submission_type_list.push("Date:" + vm.entity.amendment_date);
+                        //vm.entity.submission_type_list.push("Date:" + DateService.convertISODateToLocaleDateStr(vm.entity.amendment_date));
                         vm.entity.submission_type_list.push("Reason:" +vm.entity.amendment_reason_id);
                         vm.entity.submission_type_list.push("Number:" +vm.entity.amendment_num);
                         vm.entity.submission_type ="Amendment";
                         row.entity = angular.extend(row.entity.submission_type_list, vm.entity.submission_type_list);
                         row.entity = angular.extend(row.entity, vm.entity);
                         toastr.clear();
-                        toastr.success('Amendment has been updated', 'Operation Successful!', {
-                            extendedTimeOut: 1000,
-                            timeOut: 0
-                        });
+                        toastr.success('Amendment has been updated', 'Operation Successful!');
                     }
 
                 }).catch(function(err) {

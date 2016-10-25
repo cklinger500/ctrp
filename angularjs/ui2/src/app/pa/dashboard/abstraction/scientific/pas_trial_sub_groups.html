@@ -1,10 +1,10 @@
-<div class="row" id="section_top">
+<div class="row" id="section_top" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidProtocol || paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
     <div class="panel panel-default" ng-show="sgView.addEditMode">
         <div class="panel-heading">
             <div class="panel-title">Sub Groups Details</div>
         </div>
         <div class="panel-body">
-            <form class="form form-horizontal" role="form" name="sg_form" novalidate ctrp-submit="sgView.saveSubGroup()">
+            <form class="form form-horizontal" role="form" name="sg_form" novalidate ctrp-submit="sgView.saveSubGroup()" unsaved-changes>
                 <!-- fieldset for Sub Groups details-->
                 <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || sgView.disableBtn">
                     <legend class="sub-bordered">Sub Group Details</legend>
@@ -17,11 +17,12 @@
                                       rows="5"
                                       class="form-control"
                                       ng-model="sgView.currentSubGroup.label"
-                                      ng-maxlength="200"
+                                      ng-maxlength="62"
+                                      maxlength="62"
                                       ng-required="true">
                             </textarea>
                             <span class="help-block" ng-show="sg_form.label.$dirty">
-                                {{200 - sg_form.label.$viewValue.length}} characters left
+                                {{62 - sg_form.label.$viewValue.length}} characters left
                             </span>
                             <span ng-messages="ctrpbtn.sg_form.needsAttention(sg_form.label) && sg_form.label.$error">
                               <span class="help-block" ng-message="required">Label is Required</span>
@@ -37,11 +38,12 @@
                                       rows="5"
                                       class="form-control"
                                       ng-model="sgView.currentSubGroup.description"
-                                      ng-maxlength="200"
+                                      ng-maxlength="1000"
+                                      maxlength="1000"
                                       ng-required="true">
                             </textarea>
                             <span class="help-block" ng-show="sg_form.description.$dirty">
-                                {{200 - sg_form.description.$viewValue.length}} characters left
+                                {{1000 - sg_form.description.$viewValue.length}} characters left
                             </span>
                             <span ng-messages="ctrpbtn.sg_form.needsAttention(sg_form.description) && sg_form.description.$error">
                               <span class="help-block" ng-message="required">Description is Required</span>
@@ -59,7 +61,7 @@
                         <button type="button" class="btn btn-warning pull-right" ng-click="sgView.resetSubGroup()" ng-disabled="sgView.disableBtn">
                             <i class="glyphicon glyphicon-remove"></i> Reset
                         </button>
-                        <button type="button" class="btn btn-warning pull-right" id="oc_site_list" restriction-field ng-click="sgView.setAddMode(false)" ng-disabled="sgView.disableBtn">
+                        <button type="button" class="btn btn-warning pull-right" id="oc_site_list" restriction-field ng-click="sgView.reload()" ng-disabled="sgView.disableBtn">
                             <i class="glyphicon glyphicon-arrow-left"></i> Back to Sub Groups List
                         </button>
                     </div>
@@ -87,8 +89,7 @@
                         </thead>
 
                         <tbody ui-sortable="sgView.sortableListener" ng-model="sgView.curTrial.sub_groups">
-                        <tr ng-repeat="sub_group in sgView.curTrial.sub_groups track by $index" class="animated-item" ng-class="{'deleted-text': sub_group._destroy}">
-                            <td>
+                        <tr ng-repeat="sub_group in sgView.curTrial.sub_groups track by $index" class="animated-item" ng-class="{'locked': !(paTrialOverview.trialDetailObj.pa_sci_editable && sgView.isCurationEnabled) }" ng-class="{'deleted-text': sub_group._destroy}">                            <td>
                                 {{$index+1}}
                             </td>
                             <td>

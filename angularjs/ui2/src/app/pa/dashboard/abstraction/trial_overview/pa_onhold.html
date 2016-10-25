@@ -45,7 +45,7 @@
         </div>
         <div class="panel-body">
             <div class="form-group no-bottom-margin">
-                <form class="form form-horizontal" role="form" name="onhold_form" novalidate ctrp-submit="onholdView.saveOnhold()">
+                <form class="form form-horizontal" role="form" name="onhold_form" novalidate ctrp-submit="onholdView.saveOnhold()" unsaved-changes>
                     <fieldset class="sub-bordered" restriction-field>
                         <legend class="sub-bordered">On Hold Details</legend>
                         <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.onhold_form.needsAttention(onhold_form.onhold_reason)}">
@@ -88,8 +88,8 @@
                             <label class="control-label col-xs-12 col-sm-3">Off Hold Date:</label>
                             <div class="col-xs-12 col-sm-6">
                                 <div class="input-group add-on date datepicker" date-date-format="yyyy-mm-dd">
-                                    <input type="text" class="form-control input-sm" name="offhold_date" datepicker-popup="{{onholdView.dateFormat}}" ng-model="onholdView.offhold_date"
-                                           ng-click="onholdView.openCalendar($event, 'offhold_date')" is-open="onholdView.offhold_date_opened" uib-datepicker-options="onholdView.dateOptions" close-text="Close">
+                                    <input type="text" class="form-control input-sm" name="offhold_date" uib-datepicker-popup="{{onholdView.dateFormat}}" ng-model="onholdView.offhold_date"
+                                           ng-click="onholdView.openCalendar($event, 'offhold_date')" is-open="onholdView.offhold_date_opened" datepicker-options="onholdView.dateOptions" close-text="Close" readonly date-formatter>
                                     <span class="input-group-btn">
                                         <button restriction-field type="button" class="btn btn-primary" ng-click="onholdView.openCalendar($event, 'offhold_date')">
                                             <i class="glyphicon glyphicon-calendar"></i>

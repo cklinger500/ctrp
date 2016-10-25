@@ -17,6 +17,8 @@
 #  status           :string           default("active")
 #  why_deleted      :string
 #  source_document  :string           default("Registry")
+#  deleted_by       :string
+#  deletion_date    :date
 #
 # Indexes
 #

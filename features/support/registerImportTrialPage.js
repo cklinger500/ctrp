@@ -14,6 +14,9 @@ var importTrialPage = function() {
     this.addImportClinicalTrialID = element(by.model('importTrialView.searchParams.nct_id'));
     this.addImportSearchStudiesButton = element(by.css('button[ng-click="importTrialView.searchTrials()"]'));
     this.addImportTrialButton = element(by.css('button[ng-click="importTrialView.importTrial()"]'));
+    this.addImportViewNCTIDInTbl = element(by.binding('importTrialView.nct_id'));
+    this.addImportViewStatusInTbl = element(by.binding('importTrialView.status'));
+    this.addImportViewTitleCondIntInTbl = element(by.binding('importTrialView.official_title'));
 
     var helper = new helperFunctions();
 

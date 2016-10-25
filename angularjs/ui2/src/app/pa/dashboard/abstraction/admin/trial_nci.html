@@ -1,10 +1,10 @@
-<div class="row">
+<div class="row" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.rejection">
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">Trial NCI Specific Information</div>
         </div>
         <div class="panel-body">
-            <form class="form form-horizontal" role="form" name="trial_form" novalidate ctrp-submit="trialNciView.updateTrial">
+            <form class="form form-horizontal" role="form" name="trial_form" novalidate ctrp-submit="trialNciView.updateTrial" unsaved-changes>
                 <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_editable || trialNciView.disableBtn">
                     <legend class="sub-bordered">Study Source</legend>
                     <div class="form-group required" ng-class="{'has-error': !trialNciView.study_source_id && ctrpbtn.trial_form.needsAttention(trial_form.study_source_id)}">
@@ -110,7 +110,7 @@
                         <label for="trial_processing_comment" class="control-label col-xs-12  col-sm-4">Comments:</label>
                         <div class="col-xs-12 col-sm-7">
                             <textarea class="form-control" name="nci_specific_comment" id="trial_nci_specific_comment" rows="7" ng-model="trialNciView.curTrial.nci_specific_comment" maxlength="4000"></textarea>
-                            <span ng-show="trial_form.nci_specific_comment.$dirty">
+                            <span class="help-block" ng-show="trial_form.nci_specific_comment.$dirty">
                                 {{4000 - trial_form.nci_specific_comment.$viewValue.length}} characters left
                             </span>
                         </div>
@@ -120,7 +120,7 @@
                 <div class="form-group no-bottom-margin" ng-if="paTrialOverview.trialDetailObj.pa_editable">
                     <div class="btn-toolbar">
                         <button type="submit" class="btn btn-primary pull-right" id="submit_processing" restriction-field ng-click="trialNciView.updateTrial()" ng-disabled="trialNciView.disableBtn">Save</button>
-                        <button type="button" class="btn btn-warning pull-right" ng-click="trialNciView.reload()"  restriction-field ng-disabled="trialNciView.disableBtn">
+                        <button type="button" class="btn btn-warning pull-right" ng-click="trialNciView.reset()"  restriction-field ng-disabled="trialNciView.disableBtn">
                             <i class="glyphicon glyphicon-remove"></i> Reset
                         </button>
                     </div>

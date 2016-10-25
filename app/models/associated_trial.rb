@@ -19,7 +19,7 @@
 #  index_associated_trials_on_trial_id            (trial_id)
 #
 
-class AssociatedTrial < ActiveRecord::Base
+class AssociatedTrial < TrialBase
   include BasicConcerns
 
   belongs_to :identifier_type
@@ -30,6 +30,32 @@ class AssociatedTrial < ActiveRecord::Base
     where(trial_identifier: trial_identifier, identifier_type_id: identifier_type_id, trial_id: trial_id)
     # where(trial_identifier: trial_identifier)
   }
+
+  ## Audit Trail Callbacks
+  #after_save :touch_trial
+  #after_destroy :touch_trial
+
+  private
+
+  def touch_trial
+    find_current_user = nil
+    updated_by = nil
+    last_version_transaction_id = 0
+    last_version = self.versions.last
+    last_version_transaction_id = last_version.transaction_id if last_version
+    user_id = last_version.whodunnit if last_version
+    find_current_user = User.find_by_id(user_id) if user_id
+    if find_current_user
+      updated_by = find_current_user.username
+    end
+    does_trial_modified_during_this_transaction_size = 0
+    does_trial_modified_during_this_transaction = TrialVersion.where("item_type= ? and transaction_id= ?","Trial", last_version_transaction_id)
+    does_trial_modified_during_this_transaction_size = does_trial_modified_during_this_transaction.size if does_trial_modified_during_this_transaction
+    ##If trail has been modified during the same transaction , then there is no need to update Trail again to create another version.
+    if does_trial_modified_during_this_transaction_size == 0
+      self.trial.update(updated_by:updated_by, updated_at:Time.now)
+    end
+  end
 
   def create_reverse
 
@@ -42,7 +68,7 @@ class AssociatedTrial < ActiveRecord::Base
       # Rails.logger.info "parent_trial nci_id: #{@parent_trial.nci_id}"
       # Rails.logger.info "child_trial.id: #{@child_trial.id}"
 
-      identifier_type_id = IdentifierType.find_by_name('NCI').id
+      identifier_type_id = IdentifierType.find_by_code('NCI').id
       isExisted = AssociatedTrial.search_trial_associations(@child_trial.nci_id, identifier_type_id, @parent_trial.id).count > 0
 
       if (!isExisted)

@@ -1,0 +1,25 @@
+<div id="ps-details-modal">
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{psDetailsModalView.title}}</h4>
+        <button type="button" class="close pull-right" data-dismiss="modal" ng-click="psDetailsModalView.close()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <participating-sites-detail used-in-modal="true"
+                ps-detail-obj="psDetailObj" trial-detail-obj="trialDetailObj"
+                user-detail-obj="userDetailObj" sr-status-obj="srStatusObj"
+                central-contact-types="centralContactTypes" trial-service="TrialService"
+                user-service="UserService" pa-trial-service="PATrialService">
+            </participating-sites-detail>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="col-xs-12">
+            <div class="btn-toolbar">
+                <button class="btn btn-danger pull-right" ng-click="psDetailsModalView.close()">
+                    <i class="glyphicon glyphicon-remove"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

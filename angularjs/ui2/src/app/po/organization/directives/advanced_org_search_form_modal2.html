@@ -1,11 +1,11 @@
-<div id="adv-org-search-modal">
+<div id="adv-org-search-modal" ng-show="!advOrgSearchForm2ModalView.preSearch.nilclose">
     <div class="modal-header">
-        <h3 class="modal-title">Organization Search</h3>
-        <button type="button" class="close" data-dismiss="modal" ng-click="advOrgSearchForm2ModalView.cancel()">&times;</button>
+        <h4 class="modal-title pull-left">Organization Search</h4>
+        <button type="button" class="close pull-right" data-dismiss="modal" ng-click="advOrgSearchForm2ModalView.cancel()">&times;</button>
     </div>
     <div class="modal-body">
         <div class="row">
-            <ctrp-advanced-org-search-form2 show-grid="true" max-row-selectable="advOrgSearchForm2ModalView.maxRowSelectable" curation-mode="false" used-in-modal="true"></ctrp-advanced-org-search-form2>
+            <ctrp-advanced-org-search-form2 show-grid="true" max-row-selectable="advOrgSearchForm2ModalView.maxRowSelectable" pre-search="advOrgSearchForm2ModalView.preSearch" filtered-contexts="advOrgSearchForm2ModalView.filteredContexts" curation-mode="false" used-in-modal="true"></ctrp-advanced-org-search-form2>
         </div>
     </div>
     <div class="modal-footer">

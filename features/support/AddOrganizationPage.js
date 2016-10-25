@@ -11,9 +11,11 @@ var expect = require('chai').expect;
 var menuItemList = require('../support/PoCommonBar');
 var selectList = require('../support/CommonSelectList');
 var moment = require('moment');
+var countries = require("i18n-iso-countries");
+var phoneFormat = require('phoneformat.js');
 
 AddOrganizationsPage = function(){
-    this.addOrgName = element(by.model('orgDetailView.curOrg.name'));
+    this.addOrgName = element(by.model('orgDetailView.ctrpOrg.name'));//element(by.model('orgDetailView.curOrg.name'));
     this.addSourceContext = element(by.model('orgDetailView.curOrg.source_context_id'));
     this.addSourceId = element(by.model('orgDetailView.curOrg.source_id'));
     this.addSourceStatus = element(by.model('orgDetailView.curOrg.source_status_id'));
@@ -21,16 +23,17 @@ AddOrganizationsPage = function(){
     this.addSourceStatusList = element.all(by.model('orgDetailView.curOrg.source_status_id'));
     this.addAlias = element(by.model('orgDetailView.alias'));
     this.addAliasButton = element(by.css('button[ng-click="orgDetailView.addNameAlias()"]'));
-    this.addAddress = element(by.model('orgDetailView.curOrg.address'));
-    this.addAddress2 = element(by.model('orgDetailView.curOrg.address2'));
-    this.addCountry = element(by.model('orgDetailView.curOrg.country'));
+    this.addAddress = element(by.model('orgDetailView.ctrpOrg.address'));//element(by.model('orgDetailView.curOrg.address'));
+    this.addAddress2 = element(by.model('orgDetailView.ctrpOrg.address2'));//element(by.model('orgDetailView.curOrg.address2'));
+    this.addCountry = element(by.model('orgDetailView.ctrpOrg.country'));//element(by.model('orgDetailView.curOrg.country'));
     this.newCountry = element(by.id('country'));
-    this.addState = element(by.model('orgDetailView.curOrg.state_province'));
-    this.addCity = element(by.model('orgDetailView.curOrg.city'));
-    this.addPostalCode = element(by.model('orgDetailView.curOrg.postal_code'));
-    this.addEmail = element(by.model('orgDetailView.curOrg.email'));
-    this.addPhone = element(by.model('orgDetailView.curOrg.phone'));
+    this.addState = element(by.model('orgDetailView.ctrpOrg.state_province'));//element(by.model('orgDetailView.curOrg.state_province'));
+    this.addCity = element(by.model('orgDetailView.ctrpOrg.city'));//element(by.model('orgDetailView.curOrg.city'));
+    this.addPostalCode = element(by.model('orgDetailView.ctrpOrg.postal_code'));//element(by.model('orgDetailView.curOrg.postal_code'));
+    this.addEmail = element(by.model('orgDetailView.ctrpOrg.email'));//element(by.model('orgDetailView.curOrg.email'));
+    this.addPhone = element(by.model('orgDetailView.ctrpOrg.phone'));//element(by.model('orgDetailView.curOrg.phone'));
     this.addFax = element(by.model('orgDetailView.curOrg.fax'));
+    this.addExtension = element(by.model('orgDetailView.ctrpOrg.extension'));//element(by.model('orgDetailView.curOrg.extension'));
     this.addVerifyOrgFamilyName = element(by.binding('family.name'));
     this.saveButton = element(by.id('save_btn')); //element(by.css('input[value="Save"]'));
     this.clearButton = element(by.css('#clear_btn'));//element(by.css('input[value="Reset"]'));by.id('reset_btn')
@@ -43,7 +46,7 @@ AddOrganizationsPage = function(){
     this.addVerifyAddHeader = element(by.binding('orgDetailView.formTitleLabel'));//element(by.css('h4[ng-if="orgDetailView.curOrg.new"]'));
     this.addVerifyEditHeader = element(by.binding('orgDetailView.formTitleLabel'));//element(by.css('h4[ng-if="!orgDetailView.curOrg.new"]'));
     this.verifyAddedOrgAlias = element.all(by.binding('nameAlias.name'));
-    this.addOrgCTRPID = element(by.binding('orgDetailView.curOrg.ctrp_id'));
+    this.addOrgCTRPID = element(by.binding('orgDetailView.ctrpOrg.ctrp_id'));//element(by.binding('orgDetailView.curOrg.ctrp_id'));
     this.addOrgFieldLabel = element.all(by.css('.control-label.col-xs-12.col-sm-3'));
     this.addOrgFieldLabelPostalCode = element(by.css('.control-label.col-xs-12.col-sm-2'));
     this.addOrgFieldLabelPhone = element(by.css('.control-label.col-xs-12.col-sm-1'));
@@ -53,6 +56,7 @@ AddOrganizationsPage = function(){
     var addOrg = new helper();
     var selectItem =new selectList();
     var menuItem = new menuItemList();
+    var self = this;
 
     this.setAddOrgName = function(orgName){
         addOrg.setValue(this.addOrgName,orgName,"Organization by Name field");
@@ -93,11 +97,19 @@ AddOrganizationsPage = function(){
     };
 
     this.setAddPhone = function(phone){
-        addOrg.setValue(this.addPhone,phone,"Organization by Phone field");
+        this.addCountry.$('option:checked').getText().then(function(countryValue){
+            console.log("Alpha 2 code for selected country => " + countries.getAlpha2Code(countryValue, 'en'));
+            console.log('************Phone number format: ' + phoneFormat.formatLocal(countries.getAlpha2Code(countryValue, 'en'), phone));
+            addOrg.setValue(self.addPhone,phoneFormat.formatLocal(countries.getAlpha2Code(countryValue, 'en'), phone),"Organization by Phone field");
+        });
     };
 
     this.setAddFax = function(fax){
         addOrg.setValue(this.addFax,fax,"Organization by Fax field");
+    };
+
+    this.setAddExtension = function(extension){
+        addOrg.setValue(this.addExtension,extension,"Organization by Extension field");
     };
 
     this.clickSave = function(){
@@ -174,7 +186,11 @@ AddOrganizationsPage = function(){
     };
 
     this.getVerifyAddPhone = function(phone){
-        addOrg.getVerifyValue(this.addPhone,phone,"Get Organization by Phone field");
+        this.addCountry.$('option:checked').getText().then(function(countryValue){
+            console.log("Alpha 2 code for selected country => " + countries.getAlpha2Code(countryValue, 'en'));
+            console.log('************Phone number format: ' + phoneFormat.formatLocal(countries.getAlpha2Code(countryValue, 'en'), phone));
+            addOrg.getVerifyValue(self.addPhone,phoneFormat.formatLocal(countries.getAlpha2Code(countryValue, 'en'), phone),"Get Organization by Phone field");
+        });
     };
 
     this.getVerifyAddFax = function(fax){

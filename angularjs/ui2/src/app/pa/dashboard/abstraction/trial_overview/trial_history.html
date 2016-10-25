@@ -80,7 +80,7 @@
             <h3 class="modal-title">Acknowledge Update</h3>
         </div>
         <div class="modal-body">
-            <form class="form form-horizontal">
+            <form class="form form-horizontal" name="acknowledge_update_form">
                 <div class="form-group">
                     <label class="control-label col-xs-12 col-sm-4">Submission Number:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
@@ -91,7 +91,7 @@
                 <div class="form-group">
                     <label class="control-label col-xs-12 col-sm-4">Submission Date:</label>
                     <div class="col-xs-12 col-sm-6 form-text">
-                        {{vm.entity.submission_date}}
+                        {{vm.entity.submission_date | dateFormat}}
                     </div>
                 </div>
 
@@ -131,7 +131,7 @@
                     <div class="form-group">
                         <label class="control-label col-xs-12 col-sm-4">Submission Date:</label>
                         <div class="col-xs-12 col-sm-6 form-text">
-                            {{vm.entity.submission_date}}
+                            {{vm.entity.submission_date | dateFormat}}
                         </div>
                     </div>
 
@@ -144,15 +144,15 @@
 
                     <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.sub_form.needsAttention(sub_form.amendment_date)}">
                         <label class="control-label col-xs-12 col-sm-4">Amendment Date:</label>
-                        <div class="col-xs-12 col-sm-3">
+                        <div class="col-xs-12 col-sm-4">
                             <div class="input-group add-on date datepicker" date-date-format="yyyy-mm-dd">
-                                <input type="text" class="form-control input-sm" id="amendment_date" name="amendment_date" datepicker-popup="{{vm.dateFormat}}"
+                                <input type="text" class="form-control input-sm" id="amendment_date" name="amendment_date" uib-datepicker-popup="dd-MMM-yyyy"
                                        ng-model="vm.entity.amendment_date"
                                        ng-required="true"
                                        ng-click="vm.openCalendar($event, 'amendment_date')"
                                        is-open="vm.amendmentDateOpened"
                                        datepicker-options="vm.dateOptions"
-                                       close-text="Close">
+                                       close-text="Close" date-formatter readonly>
                                 <span class="input-group-btn">
                                     <button restriction-field type="button" class="btn btn-primary" ng-click="vm.openCalendar($event, 'amendment_date')">
                                         <i class="glyphicon glyphicon-calendar"></i>
@@ -163,7 +163,7 @@
                                     <span class="help-block" ng-message="required">Amendment Date is Required</span>
                                  </span>
                         </div>
-                        <div class="col-xs-12 col-sm-5"></div>
+                        <div class="col-xs-12 col-sm-4"></div>
                     </div>
 
                         <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.sub_form.needsAttention(sub_form.amendment_reason)}">
@@ -225,7 +225,7 @@
                                 </div>
                                 <div class="row animated-item" ng-if="trialHistoryView.submissionsGridOptions.data.length > 0">
                                     <div class="col-xs-12">
-                                        <div ui-grid="trialHistoryView.submissionsGridOptions" ui-grid-pagination="" external-scopes="clickHandler" class="grid grid-large-cell"></div>
+                                        <div ui-grid="trialHistoryView.submissionsGridOptions" ui-grid-exporter ui-grid-pagination="" external-scopes="clickHandler" class="grid grid-large-cell"></div>
                                     </div>
                                 </div>
                             </div>
@@ -239,7 +239,7 @@
                                 </div>
                                 <div class="row animated-item" ng-if="trialHistoryView.showDeletedDocuments && trialHistoryView.deleteDocsGridOptions.data.length > 0">
                                     <div class="col-xs-12">
-                                        <div ui-grid="trialHistoryView.deleteDocsGridOptions" ui-grid-pagination="" external-scopes="clickHandler" class="grid grid-small"></div>
+                                        <div ui-grid="trialHistoryView.deleteDocsGridOptions" ui-grid-exporter ui-grid-pagination="" external-scopes="clickHandler" class="grid grid-small"></div>
                                     </div>
                                 </div>
                             </div>
@@ -259,7 +259,7 @@
                                 </div>
                                 <div class="row animated-item" ng-if="trialHistoryView.updatesGridOptions.data.length > 0">
                                     <div class="col-xs-12">
-                                        <div ui-grid="trialHistoryView.updatesGridOptions" ui-grid-expandable ui-grid-pagination="" external-scopes="clickHandler" class="grid grid-medium-cell"></div>
+                                        <div ui-grid="trialHistoryView.updatesGridOptions" ui-grid-exporter ui-grid-expandable ui-grid-pagination="" external-scopes="clickHandler" class="grid grid-medium-cell"></div>
                                     </div>
                                 </div>
                             </div>
@@ -268,19 +268,19 @@
                 </md-tab>
 
                 <md-tab ng-click="trialHistoryView.showAuditTrials()">
-                    <md-tab-label>Audit Trial</md-tab-label>
+                    <md-tab-label>Audit Trail</md-tab-label>
                     <md-tab-body>
                         <form class="form form-horizontal" role="form" name="trial_status_form" novalidate ctrp-submit="trialHistoryView.updateTrialStatuses()">
                             <div class="form-group" date-date-format="yyyy-mm-dd">
                                 <label for="start_date" class="control-label col-xs-12 col-sm-3">Start Date:</label>
-                                <div class="col-xs-12 col-sm-2 search-calendar-grid">
+                                <div class="col-xs-12 col-sm-2">
                                     <div class="input-group add-on date datepicker" date-date-format="yyyy-mm-dd">
                                         <input type="text" id="start_date" name="status_date" class="form-control input-sm"
-                                               uib-datepicker-popup="{{trialHistoryView.dateFormat}}" ng-model="trialHistoryView.start_date"
+                                               uib-datepicker-popup="dd-MMM-yyyy" ng-model="trialHistoryView.start_date"
                                                ng-click="trialHistoryView.openCalendar($event, 'start_date')"
                                                is-open="trialHistoryView.startDateOpened"
                                                datepicker-options="trialHistoryView.dateOptions"
-                                               close-text="Close" placeholder="Start Date" readonly />
+                                               close-text="Close" placeholder="Start Date" readonly date-formatter>
                                                 <span class="input-group-btn">
                                                     <button type="button"  class="btn btn-primary" ng-click="trialHistoryView.openCalendar($event, 'start_date')">
                                                         <i class="glyphicon glyphicon-calendar"></i>
@@ -289,15 +289,15 @@
                                     </div>
                                 </div>
                                 <label for="end_date" class="control-label col-xs-12 col-sm-1">End Date:</label>
-                                <div class="col-xs-12 col-sm-2 search-calendar-grid">
+                                <div class="col-xs-12 col-sm-2">
                                     <div class="input-group add-on date datepicker">
                                         <input type="text" id="end_date" name="end_date" class="form-control input-sm"
-                                               uib-datepicker-popup="{{trialHistoryView.dateFormat}}" ng-model="trialHistoryView.end_date"
+                                               uib-datepicker-popup="dd-MMM-yyyy" ng-model="trialHistoryView.end_date"
                                                ng-click="trialHistoryView.openCalendar($event, 'end_date')"
                                                is-open="trialHistoryView.endDateOpened"
                                                datepicker-options="trialHistoryView.dateOptions"
                                                date-later-than="{{trialHistoryView.statusObj.start_date| date: 'short'}}"
-                                               close-text="Close" placeholder="End Date" readonly />
+                                               close-text="Close" placeholder="End Date" readonly date-formatter>
                                                 <span class="input-group-btn">
                                                     <button type="button" class="btn btn-primary" ng-click="trialHistoryView.openCalendar($event, 'end_date')">
                                                         <i class="glyphicon glyphicon-calendar"></i>
@@ -305,16 +305,17 @@
                                                 </span>
                                     </div>
                                 </div>
-                                <div class="col-xs-12 col-sm-4"></div>
-                            </div>
-                            <div class="form-group no-bottom-margin" >
-                                <div class="col-sm-3"></div>
-                                <div class="btn-toolbar col-xs-12 col-sm-9">
+                                <!--div class="col-xs-12 col-sm-4"></div-->
+
+                            <!--div class="form-group no-bottom-margin" -->
+                                <!--div class="col-sm-3"></div-->
+                                <div class="btn-toolbar col-xs-12 col-sm-2">
                                     <button type="button" class="btn btn-primary pull-right" id="search_btn" ng-click="trialHistoryView.loadAuditTrials()" ng-disabled="trialHistoryView.disableBtn">
-                                        <i class="glyphicon"></i> Search
+                                        <i class="glyphicon glyphicon-filter"></i> Filter
                                     </button>
                                 </div>
                             </div>
+
                         </form>
 
                         <!-- list of audit trials -->
@@ -323,9 +324,12 @@
                                 <div class="row" ng-if="trialHistoryView.auditGridOptions.totalItems != null">
                                     <p><h4>Audit Trail Results: {{trialHistoryView.auditGridOptions.totalItems}} found</h4></p>
                                 </div>
-                                <div class="row animated-item" ng-if="trialHistoryView.auditGridOptions.data.length > 0">
+                                <div class="row animated-item" ng-if="trialHistoryView.auditGridOptions.totalItems > 0">
                                     <div class="col-xs-12">
-                                        <div ui-grid="trialHistoryView.auditGridOptions" ui-grid-pagination="" external-scopes="clickHandler" class="grid"></div>
+                                        <div style="width: 100%; height:300px"
+                                             ag-grid="trialHistoryView.auditGridOptions"
+                                             class="ag-fresh ag-basic">
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -1,10 +1,10 @@
-<div class="row">
+<div class="row" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidProtocol || paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">Eligibility Criteria</div>
         </div>
         <div class="panel-body">
-            <form name="criteria_form" role="form" class="form form-horizontal" novalidate ctrp-submit="criteriaView.updateCriteria(true)" ctrp-submit-delete>
+            <form name="criteria_form" role="form" class="form form-horizontal" novalidate ctrp-submit="criteriaView.updateCriteria(true)" ctrp-submit-delete unsaved-changes>
                 <!-- fieldset for eligibility criteria -->
                     <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || criteriaView.disableBtn">
                         <legend class="sub-bordered">Eligibility Criteria</legend>
@@ -137,12 +137,12 @@
                             <div class="col-xs-12 col-sm-5">
                                 <textarea class="form-control input-sm" rows="5"
                                     name="study_pop_desc" id="study_pop_desc"
-                                    maxlength="800" ng-maxlength="800"
+                                    maxlength="1000" ng-maxlength="1000"
                                     ng-required="criteriaView.trialDetailObj.isObservational || criteriaView.trialDetailObj.isAncillary"
                                     ng-model="criteriaView.trialDetailObj.study_pop_desc" rows="3">
                                 </textarea>
                                 <span class="help-block" ng-show="criteria_form.study_pop_desc.$viewValue.length > 0">
-                                    {{800 - criteria_form.study_pop_desc.$viewValue.length}} characters left
+                                    {{1000 - criteria_form.study_pop_desc.$viewValue.length}} characters left
                                 </span>
                                 <span ng-messages="ctrpbtn.criteria_form.needsAttention(criteria_form.study_pop_desc) && criteria_form.study_pop_desc.$error">
                                     <span class="help-block" ng-message="required">Study Population Description is Required</span>
@@ -221,7 +221,7 @@
                                 </tr>
                                 </thead>
                                 <tbody ui-sortable="criteriaView.sortableListener" ng-model="criteriaView.trialDetailObj.other_criteria">
-                                <tr class="cursor-move" ng-repeat="row in criteriaView.trialDetailObj.other_criteria track by $index" ng-class="{'deleted-text': row._destroy, 'edit-selected': row.edit}">
+                                <tr class="cursor-move" ng-repeat="row in criteriaView.trialDetailObj.other_criteria track by $index" ng-class="{'locked': !(paTrialOverview.trialDetailObj.pa_sci_editable && criteriaView.isCurationEnabled) }"   ng-class="{'deleted-text': row._destroy, 'edit-selected': row.edit}">
                                     <td>
                                         {{row.criteria_type}}
                                     </td>

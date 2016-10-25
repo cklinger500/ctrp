@@ -1,10 +1,10 @@
-<div class="row">
+<div class="row" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidProtocol || paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">Human Subject Safety Information</div>
         </div>
         <div class="panel-body">
-            <form class="form form-horizontal" role="form" name="human_safety_form" novalidate ctrp-submit="regInfoSafetyView.updateHumanSafetyInfo()">
+            <form class="form form-horizontal" role="form" name="human_safety_form" novalidate ctrp-submit="regInfoSafetyView.updateHumanSafetyInfo()" unsaved-changes>
                 <!-- board approval status -->
                 <div class="form-group" ng-class="{'has-feedback required': regInfoSafetyView.approvalStatusRequired, 'has-error': ctrpbtn.human_safety_form.needsAttention(human_safety_form.approval_status)}">
                     <label for="board_approval_status" class="control-label col-xs-12 col-sm-4">Board Approval Status:</label>
@@ -60,6 +60,7 @@
                                 class="form-control input-sm"
                                 placeholder="Affiliated Organization"
                                 ng-required="regInfoSafetyView.boardAffRequired"
+                                maxlength="255"
                                 disabled>
                             <span class="form-control-feedback" ng-show="regInfoSafetyView.boardAffRequired && human_safety_form.board_affiliation.$viewValue.length == 0"
                                 ng-class="!ctrpbtn.human_safety_form.needsAttention(human_safety_form.board_affiliation) ?
@@ -73,7 +74,7 @@
 
                         </div>
                         <div class="col-sm-4">
-                            <ctrp-org-adv-search-modal-button max-row-selectable="1" use-built-in-template="false" selected-orgs-array="regInfoSafetyView.boardAffiliationArray"></ctrp-org-adv-search-modal-button>
+                            <ctrp-org-adv-search-modal-button max-row-selectable="1" pre-search = '{"source_contextfilter": ["CTRP"]}' use-built-in-template="false" selected-orgs-array="regInfoSafetyView.boardAffiliationArray"></ctrp-org-adv-search-modal-button>
                         </div>
                     </div>
                     <!-- end of Board Affiliation -->

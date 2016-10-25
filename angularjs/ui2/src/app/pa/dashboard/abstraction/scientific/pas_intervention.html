@@ -1,4 +1,4 @@
-<div class="row" id="section_top">
+<div class="row" id="section_top" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidProtocol || paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
     <div class="panel panel-default" ng-show="interventionView.showInterventionForm">
         <div class="panel-heading">
             <div class="panel-title">
@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="panel-body">
-            <form name="intervention_form" role="form" class="form form-horizontal" novalidate ctrp-submit="interventionView.upsertIntervention(interventionView.curInterventionObj)">
+            <form name="intervention_form" role="form" class="form form-horizontal" novalidate ctrp-submit="interventionView.upsertIntervention(interventionView.curInterventionObj)" unsaved-changes>
                 <!-- fieldset for list of interventions -->
                 <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || interventionView.disableBtn" ng-show="interventionView.showInterventionForm">
                     <legend class="sub-bordered">
@@ -73,7 +73,7 @@
                         <button type="button" class="btn btn-warning pull-right" ng-click="interventionView.resetLookupForm(intervention_form)" ng-disabled="interventionView.upsertBtnDisabled">
                             <i class="glyphicon glyphicon-remove"></i> Reset
                         </button>
-                        <button type="button" class="btn btn-warning pull-right" ng-click="interventionView.addIntervention(false)" ng-disabled="interventionView.upsertBtnDisabled">
+                        <button type="button" class="btn btn-warning pull-right" ng-click="interventionView.reload()" ng-disabled="interventionView.upsertBtnDisabled">
                             <i class="glyphicon glyphicon-arrow-left"></i> Back to Interventions List
                         </button>
                     </div>
@@ -104,7 +104,7 @@
                         </tr>
                         </thead>
                         <tbody ui-sortable="interventionView.sortableListener" ng-model="interventionView.trialDetailObj.interventions">
-                            <tr class="cursor-move" ng-repeat="t in interventionView.trialDetailObj.interventions track by $index" ng-class="{'edit-selected': interventionView.curInterventionObj.index === t.index}">
+                            <tr class="cursor-move" ng-repeat="t in interventionView.trialDetailObj.interventions track by $index" ng-class="{'locked': !(paTrialOverview.trialDetailObj.pa_sci_editable && interventionView.isCurationEnabled), 'edit-selected': interventionView.curInterventionObj.index === t.index}">
                                 <td>
                                     {{t.name}}
                                 </td>

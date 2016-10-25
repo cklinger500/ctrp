@@ -3,30 +3,41 @@ class UtilController < ApplicationController
 
   def get_app_settings
     requestedSettings = params[:settings]
-    results = AppSetting.find_by_code(requestedSettings) ? AppSetting.find_by_code(requestedSettings).big_value.gsub("\n",'').split.join(" ") : nil
+    valueLoc = params[:location] || "big_value"
+    results = AppSetting.find_by_code(requestedSettings) ? AppSetting.find_by_code(requestedSettings)[valueLoc].gsub("\n",'').split.join(" ") : nil
     @settings = [results]
   end
 
   def get_app_settings_ext
     requestedSettings = params[:settings]
-    permittedSettings = ['USER_DOMAINS','USER_ROLES','NIH_USER_FUNCTIONS','NIHEXT_USER_FUNCTIONS','Federated_USER_FUNCTIONS']
+    valueLoc = params[:location] || "big_value"
+    permittedSettings = ['LOGIN_BULLETIN','USER_DOMAINS','USER_ROLES','NIH_USER_FUNCTIONS','NIHEXT_USER_FUNCTIONS','Federated_USER_FUNCTIONS','APP_VERSION','APP_RELEASE_MILESTONE']
     if permittedSettings.include? requestedSettings
-      results = AppSetting.find_by_code(requestedSettings) ? AppSetting.find_by_code(requestedSettings).big_value.gsub("\n",'').split.join(" ")  : nil
+      results = AppSetting.find_by_code(requestedSettings) ? AppSetting.find_by_code(requestedSettings)[valueLoc].gsub("\n",'').split.join(" ")  : nil
       @settings = [results]
     end
   end
 
   def get_countries
-    @countries = Country.all.sort
-    us_idx = @countries.index(["United States", "US"])
-    @countries.insert(0, @countries.delete_at(us_idx))
-    canada_idx = @countries.index(["Canada", "CA"])
-    @countries.insert(1, @countries.delete_at(canada_idx))
+    geo_location_service = GeoLocationService.new
+    @countries = geo_location_service.get_countries
   end
 
+  def get_countries_for_registry
+     geo_location_service = GeoLocationService.new
+     @countries = geo_location_service.get_countries
+  end
+
+  def get_authorities_for_a_country
+      @authorities = []
+      geo_location_service = GeoLocationService.new
+      @authorities = geo_location_service.getAuthorityOrgArr(params[:country])
+  end
+
+
   def get_states
-    country = Country.find_country_by_name(params[:country])
-    @states = country.states.sort_by { |k, v| v["name"] } if country.present?
+    geo_location_service = GeoLocationService.new
+    @states = geo_location_service.get_states(params[:country])
   end
 
   def get_funding_mechanisms

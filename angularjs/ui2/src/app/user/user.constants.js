@@ -3,4 +3,4 @@
 
     angular.module('ctrp.app.user')
     .constant('user', 'user');
-})();
+}());

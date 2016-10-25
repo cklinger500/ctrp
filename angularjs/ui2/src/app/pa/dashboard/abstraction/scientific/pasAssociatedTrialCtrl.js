@@ -6,10 +6,10 @@
     angular.module('ctrp.app.pa.dashboard')
         .controller('pasAssociatedTrialCtrl', pasAssociatedTrialCtrl);
 
-    pasAssociatedTrialCtrl.$inject = ['$scope', 'TrialService', 'PATrialService', 'toastr',
+    pasAssociatedTrialCtrl.$inject = ['$scope', 'TrialService', 'PATrialService', '$state', 'toastr',
         'MESSAGES', '_', '$timeout', 'identifierTypes', '$location', '$anchorScroll'];
 
-    function pasAssociatedTrialCtrl($scope, TrialService, PATrialService, toastr,
+    function pasAssociatedTrialCtrl($scope, TrialService, PATrialService, $state, toastr,
         MESSAGES, _, $timeout, identifierTypes, $location, $anchorScroll) {
             var vm = this;
             vm.identifierTypes = identifierTypes;
@@ -28,6 +28,8 @@
             vm.deleteTrialAssociations = deleteTrialAssociations;
             // vm.resetAssociations = _getTrialDetailCopy;
             vm.deleteAllAssociations = deleteAllAssociations;
+            vm.reload = reload;
+
             vm.disableBtn = false;
 
             activate();
@@ -75,8 +77,13 @@
             function resetTrialLookupForm(form) {
                 vm.trialQueryObj = {identifierTypeId: 1, trialIdentifier: 'NCI-'};
                 vm.foundTrialObj = _initFoundTrialObj();
+                $scope.associated_trials_form.$setPristine();
                 // TODO: reset form to $pristine, etc.
             }
+
+            function reload() {
+                $state.go($state.$current, null, { reload: true });
+            };
 
             function _initFoundTrialObj() {
                 return {
@@ -132,10 +139,7 @@
                         closeLookupForm();
 
                         toastr.clear();
-                        toastr.success('Record Created.', 'Operation Successful!', {
-                            extendedTimeOut: 1000,
-                            timeOut: 0
-                        });
+                        toastr.success('Record Created.', 'Operation Successful!');
                         vm.deleteAllAssoCheckbox = false;
                     }
                 }).catch(function(err) {
@@ -168,7 +172,7 @@
                             if (newVal === 1) {
                                 vm.trialQueryObj.trialIdentifier = 'NCI-';
                             } else {
-                                vm.trialQueryObj.trialIdentifier = 'NCT-';
+                                vm.trialQueryObj.trialIdentifier = 'NCT';
                             }
                         }
                 }, true);
@@ -201,10 +205,7 @@
                         vm.deleteAllAssoCheckbox = false;
 
                         toastr.clear();
-                        toastr.success('Record(s) deleted.', 'Operation Successful!', {
-                            extendedTimeOut: 1000,
-                            timeOut: 0
-                        });
+                        toastr.success('Record(s) deleted.', 'Operation Successful!');
                         _getTrialDetailCopy();
                     }
                 }).catch(function(err) {

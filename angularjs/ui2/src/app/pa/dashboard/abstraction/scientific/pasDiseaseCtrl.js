@@ -7,11 +7,13 @@
     angular.module('ctrp.app.pa.dashboard')
         .controller('pasDiseaseCtrl', pasDiseaseCtrl);
 
-    pasDiseaseCtrl.$inject = ['$scope', '$state', 'toastr', 'DiseaseService', '$window', 'trialDetailObj', 'TrialService', '$anchorScroll', '$location'];
+    pasDiseaseCtrl.$inject = ['$scope', '$state', 'toastr', 'DiseaseService', '$window', 'TrialService',
+        '$anchorScroll', '$location', '$timeout', 'PATrialService'];
 
-    function pasDiseaseCtrl($scope, $state, toastr, DiseaseService, $window, trialDetailObj, TrialService, $anchorScroll, $location) {
+    function pasDiseaseCtrl($scope, $state, toastr, DiseaseService, $window, TrialService,
+                            $anchorScroll, $location, $timeout, PATrialService) {
         var vm = this;
-        vm.curTrial = trialDetailObj;
+        vm.curTrial = PATrialService.getCurrentTrialFromCache();
         vm.addMode = false;
         vm.searchParams = {};
         vm.searchParams.disease_name = '';
@@ -24,6 +26,10 @@
         vm.showSecondaryOnlyOne = false;
         vm.disableBtn = false;
         vm.searching = false;
+
+        vm.reload = function() {
+            $state.go($state.$current, null, { reload: true });
+        };
 
         vm.setAddMode = function(mode) {
             vm.addMode = mode;
@@ -75,8 +81,17 @@
                 var status = response.server_response.status;
 
                 if (status >= 200 && status <= 210) {
-                    $state.go('main.pa.trialOverview.disease', {}, {reload: true});
+                    vm.curTrial = response;
+                    PATrialService.setCurrentTrial(vm.curTrial); // cache the updated trial
+                    $scope.$emit('updatedInChildScope', {}); // signal for updates
+                    vm.setAddMode(false);
+                    activate();
                     toastr.success('Record(s) deleted', 'Operation Successful!');
+
+                    // To make sure setPristine() is executed after all $watch functions are complete
+                    $timeout(function() {
+                       $scope.disease_form.$setPristine();
+                   }, 1);
                 }
             }).catch(function(err) {
                 console.log("Error in deleting diseases " + JSON.stringify(outerTrial));
@@ -106,8 +121,17 @@
                 var status = response.server_response.status;
 
                 if (status >= 200 && status <= 210) {
-                    $state.go('main.pa.trialOverview.disease', {}, {reload: true});
+                    vm.curTrial = response;
+                    PATrialService.setCurrentTrial(vm.curTrial); // cache the updated trial
+                    $scope.$emit('updatedInChildScope', {}); // signal for updates
+                    vm.setAddMode(false);
+                    activate();
                     toastr.success('Diseases have been updated', 'Operation Successful!');
+
+                    // To make sure setPristine() is executed after all $watch functions are complete
+                    $timeout(function() {
+                       $scope.disease_form.$setPristine();
+                   }, 1);
                 }
             }).catch(function(err) {
                 console.log("Error in updating diseases " + JSON.stringify(outerTrial));
@@ -199,8 +223,17 @@
                 var status = response.server_response.status;
 
                 if (status >= 200 && status <= 210) {
-                    $state.go('main.pa.trialOverview.disease', {}, {reload: true});
+                    vm.curTrial = response;
+                    PATrialService.setCurrentTrial(vm.curTrial); // cache the updated trial
+                    $scope.$emit('updatedInChildScope', {}); // signal for updates
+                    vm.setAddMode(false);
+                    activate();
                     toastr.success('Diseases have been recorded', 'Operation Successful!');
+
+                    // To make sure setPristine() is executed after all $watch functions are complete
+                    $timeout(function() {
+                       $scope.saved_disease_form.$setPristine();
+                    }, 1);
                 }
             }).catch(function(err) {
                 console.log("Error in saving diseases " + JSON.stringify(outerTrial));
@@ -213,6 +246,9 @@
             vm.searchParams = {};
             vm.searchResult = [];
             vm.addedDiseases = [];
+            $scope.disease_form.$setPristine();
+            $scope.search_disease_form.$setPristine();
+            $scope.saved_disease_form.$setPristine();
         };
 
         activate();
@@ -226,6 +262,7 @@
 
         // Append associations for existing Trial
         function appendDiseases() {
+            vm.existingDiseases = [];
             for (var i = 0; i < vm.curTrial.diseases.length; i++) {
                 var disease = {};
                 disease.id = vm.curTrial.diseases[i].id;

@@ -14,7 +14,7 @@ Scenario: #2 I can associate one or more organizations as the Specific Funding S
 Given I have selected a trial to abstract
 And I am on the NCI Specific Information page screen
 And I have selected funding source organization look-up
-When a list of unique organizations including my organization, the organizations in my family and the organizations associated with this trial (sponsor, Lead, IRB) are displayed
+And I have selected an organization
 Then the selected organization will be associated to the trial as Specific Funding Source
 
 Scenario: #3 I can unassociate one or more organizations from the Specific Funding Source for a clinical trial
@@ -50,7 +50,7 @@ And the Trial Sponsor is "National Cancer Institute" (Trial/Sponsor_ID where org
 And the Trial Lead Organization is not "NCI - Center for Cancer Research" (Trial/Lead_Org_ID where Organizations/Name = "NCI - Center for Cancer Research")
 And the Trial processing status is "Verification Pending", "Abstracted", "Abstraction Verified No Response", or "Abstraction Verified Response"
 And the Trial Overall Status is not "Complete", "Administratively Complete" or "Terminated"
-And the trial Research Category is "Interventional" (Trial/Research_Category_id where Research_Categories/Name = "Interventional")
+And the trial Clinical Research Category is "Interventional" (Trial/Clinica_Research_Category_id where Clinical_Research_Categories/Name = "Interventional")
 When I select the radio button for Yes or No for �Send Trial Information to ClinicalTrials.gov?� 
 Then the selected value for �Send Trial Information to ClinicalTrials.gov?� will be Yes or No
 
@@ -90,7 +90,7 @@ Examples:
 |Trial Overall Status is "Complete"|trial_status_wrappers.trial_status_id trial_statuses.name = "Complete"|
 |Trial Overall Status is "Administratively Complete"|trial_status_wrappers.trial_status_id trial_statuses.name = "Administratively Complete"|
 |Trial Overall Status is "Terminated"|trial_status_wrappers.trial_status_id trial_statuses.name = "Terminated"|
-|Trial Research Category is not "Interventional"|trials.Research_catagory_id Research_catagories.name not = "Interventional"|
+|Trial Clinical Research Category is not "Interventional"|trials.Clinical_Research_catagory_id Clinical_Research_catagories.name not = "Interventional"|
 
 Scenario: #11a I cannot view the �Send Trial Information to ClinicalTrials.gov?�
 Given I am logged into the CTRP PA application

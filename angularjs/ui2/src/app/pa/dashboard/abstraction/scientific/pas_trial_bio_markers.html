@@ -1,10 +1,10 @@
-<div class="row" id="section_top">
+<div class="row" id="section_top" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidProtocol || paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
     <div class="panel panel-default" ng-show="markersView.addEditMode">
         <div class="panel-heading">
             <div class="panel-title">Biomarker Details</div>
         </div>
         <div class="panel-body">
-            <form class="form form-horizontal" role="form" name="marker_form" novalidate ctrp-submit="markersView.saveBioMarker()">
+            <form class="form form-horizontal" role="form" name="marker_form" novalidate ctrp-submit="markersView.saveBioMarker()" unsaved-changes>
                 <!-- first row in the accordion body -->
                 <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || markersView.disableBtn">
                     <legend class="sub-bordered">Names & Status</legend>
@@ -241,7 +241,7 @@
                         <button type="button" class="btn btn-warning pull-right" restriction-field ng-click="markersView.resetBioMarker()" ng-disabled="markersView.disableBtn">
                             <i class="glyphicon glyphicon-remove"></i> Reset
                         </button>
-                        <button type="button" class="btn btn-warning pull-right" id="participating_site_list" restriction-field ng-click="markersView.setAddMode(false)" ng-disabled="markersView.disableBtn">
+                        <button type="button" class="btn btn-warning pull-right" id="participating_site_list" restriction-field ng-click="markersView.reload()" ng-disabled="markersView.disableBtn">
                             <i class="glyphicon glyphicon-arrow-left"></i> Back to Biomarkers List
                         </button>
                     </div>

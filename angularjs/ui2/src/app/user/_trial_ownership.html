@@ -1,0 +1,103 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="panel-title">Assign Ownership</div>
+    </div>
+    <div class="panel-body">
+        <div class="row"  ng-if="trialOwnershipView.curUser.role === 'ROLE_ADMIN' || trialOwnershipView.curUser.role === 'ROLE_SUPER' || trialOwnershipView.curUser.role === 'ROLE_ABSTRACTOR'">
+            <h2>1. Select Family</h2>
+            <div class="col-xs-auto">
+                <select name="family" id="family"
+                        class="form-control input-sm"
+                        ng-model="trialOwnershipView.family_id"
+                        ng-change="trialOwnershipView.organization_id = null; trialOwnershipView.getFamilyTrialsUsers()"
+                        ng-options="family.id as family.name for family in trialOwnershipView.families"
+                        required>
+                    <option value="">Select an Organization Family</option>
+                </select>
+                <h2><u><b><em>or</em></b> Organization</u> <small>(for organizations without families)</small></h2>
+                <div class="input-group">
+                    <input type="text" ng-if="!trialOwnershipView.userChosenOrg" id="organization_name" class="input-sm" name="organization_name"
+                           autocomplete="off" placeholder="Organization Name"
+                           ng-model="trialOwnershipView.org_search_name"
+                           typeahead-on-select="trialOwnershipView.setAssignTrialTypeAheadOrg($item)"
+                           uib-typeahead="org for org in trialOwnershipView.typeAheadNameSearch($viewValue)" ui-typeahead-loading="loadingOrganizations"
+                           typeahead-min-length="3" typeahead-wait-ms="50" typeahead-no-results="noResults" />
+                                    <span id="typeAheadResults" ng-if="trialOwnershipView.userChosenOrg">
+                                            <b>{{trialOwnershipView.userChosenOrg.name}}</b>
+                                            <span class="btn-danger crn-rounded" ng-click="trialOwnershipView.removeOrgChoice()"
+                                                  title="Change organization">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </span>
+                                            <br>
+                                            <span ng-if="trialOwnershipView.userChosenOrg.address">{{trialOwnershipView.userChosenOrg.address}}<br></span>
+                                            <span ng-if="trialOwnershipView.userChosenOrg.address2">{{trialOwnershipView.userChosenOrg.address2}}<br></span>
+                                            <span ng-if="trialOwnershipView.userChosenOrg.city">{{trialOwnershipView.userChosenOrg.city}},</span>
+                                            <span ng-if="trialOwnershipView.userChosenOrg.state">{{trialOwnershipView.userChosenOrg.state_province}} </span>
+                                            <span ng-if="trialOwnershipView.userChosenOrg.postal_code">{{trialOwnershipView.userChosenOrg.postal_code}}<br></span>
+                                            <span ng-if="trialOwnershipView.userChosenOrg.country">{{trialOwnershipView.userChosenOrg.country}}<br></span>
+                                            <i>
+                                            <span ng-if="trialOwnershipView.userChosenOrg.phone"><b>Contact:</b> <u>{{trialOwnershipView.userChosenOrg.phone}}</u><br></span>
+                                            <span ng-if="trialOwnershipView.userChosenOrg.email"><b>Email:</b> <u>{{trialOwnershipView.userChosenOrg.email}}</u><br></span>
+                                            <span ng-if="trialOwnershipView.userChosenOrg.fax"><b>Fax:</b> <u>{{trialOwnershipView.userChosenOrg.fax}}</u></span>
+                                            </i>
+                                    </span>
+                </div>
+                <div class="row top-offset-xs"></div>
+            </div>
+        </div>
+        <div class="row" ng-if="trialOwnershipView.curUser.role === 'ROLE_SITE-SU'">
+            <h2 ng-if="trialOwnershipView.family_name">1. Family: {{trialOwnershipView.family_name}}</h2>
+            <h2 ng-if="!trialOwnershipView.family_name">1. Organization: {{trialOwnershipView.organization_name}}</h2>
+        </div>
+        <div class="row"
+             ng-if="trialOwnershipView.showSelects && trialOwnershipView.userOptions.resetItems && !trialOwnershipView.userOptions.resetItems.length">
+            <h2>2. Select Users</h2>
+            <p>There are no users to assign trials to.</p>
+        </div>
+        <div class="row" ng-if="trialOwnershipView.showSelects && trialOwnershipView.userOptions.resetItems.length">
+            <h2>2. Select Users</h2>
+            <ctrptransferselect options="trialOwnershipView.userOptions"> </ctrptransferselect>
+        </div>
+        <div class="row" ng-if="!trialOwnershipView.trialId && trialOwnershipView.showSelects && trialOwnershipView.userOptions.resetItems.length">
+            <h2>3. Select Trials</h2>
+            <ctrptransferselect options="trialOwnershipView.trialOptions"> </ctrptransferselect>
+        </div>
+
+        <hr>
+        <div ng-if="trialOwnershipView.showSelects && trialOwnershipView.userOptions.resetItems.length">
+            <div class="form-group row btn-toolbar">
+                <button
+                        type="button" class="btn btn-primary pull-right ng-isolate-scope"
+                        id="save_btn"
+                        ng-click = "trialOwnershipView.validateAssignment()"
+                        ctrp-confirm ctrp-click="trialOwnershipView.save()"
+                        ng-attr-confirm-off="{{trialOwnershipView.trialOptions.selectedItems.length === 0 || trialOwnershipView.userOptions.selectedItems.length === 0}}"
+                        confirm-msg="You have selected to 'Add' ownership of the trial(s) to the Selected User(s) above."> <i class="glyphicon glyphicon-ok"></i>  Add Selected User(s) to Trial(s)
+                </button>
+
+                <button type="button" class="btn btn-danger pull-right"
+                        id="remove_btn"
+                        ng-click = "trialOwnershipView.validateAssignment()"
+                        ctrp-confirm ctrp-click="trialOwnershipView.removeTrialsOwnerships()"
+                        ng-attr-confirm-off="{{trialOwnershipView.trialOptions.selectedItems.length === 0 || trialOwnershipView.userOptions.selectedItems.length === 0}}"
+                        confirm-msg="You have selected to 'End' ownership of the trials to the Selected User(s) above.">
+                    <i class="glyphicon glyphicon-remove"></i> Remove Selected User(s) from Trial(s)
+                </button>
+            </div>
+
+            <div class="form-group row btn-toolbar">
+                <button ng-if="trialOwnershipView.trialId" type="button" class="btn btn-warning pull-right" id="save_cancel" ng-click = "trialOwnershipView.setAddMode = false">
+                    <i class="glyphicon glyphicon-remove"></i>  Cancel and View Current Owners of this trial
+                </button>
+                <button ng-if="!trialOwnershipView.trialId" type="button" class="btn btn-warning pull-right" id="save_reset" ng-click="trialOwnershipView.resetAll()">
+                    <i class="glyphicon glyphicon-remove"></i> Reset All
+                </button>
+            </div>
+        </div>
+        <ul class="text-right add-association-error list-unstyled" ng-if="trialOwnershipView.showErrors">
+            <li ng-if="trialOwnershipView.userOptions.selectedItems.length === 0">Please first select the 'users'.</li>
+            <li ng-if="!trialOwnershipView.trialId && trialOwnershipView.trialOptions.selectedItems.length === 0">Please first select the 'trials'.</li>
+        </ul>
+        <div class="row top-offset-xs"></div>
+    </div>
+</div>

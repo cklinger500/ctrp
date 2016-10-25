@@ -1,5 +1,5 @@
 @PA @global
-Feature: PAM F24 Abstraction Dashboard - Search
+Feature: PAM F22 Abstraction Dashboard - Search
 
 As a CTRP PA User, I can view  the CTRP Abstraction Dashboard Search
 
@@ -7,20 +7,22 @@ Scenario: #1 I can view Search section
  Given I am logged into the CTRP Protocol Abstraction application
  And I am on the CTRP Abstraction Dashboard Search screen
  And I can select a user that has checked out a trial
- And I can select a date range for when a trail was submitted (Date of Milestone "Submission Received Date"
+ And I can select a date range for when a trail was submitted (Date of Milestone "Submission Received Date")
  And I can select the submitter Organization (Org search)
  And I can select multiple Priorities
 |1 - High|
 |2 - Normal|
 |3 - Low| 
  And I can select one or more submission types
-|Original|
-|Amendment|
-|Update|
- And I can select one or more On Hold Status
-|On Hold (Now)|
-|Not On Hold (Now)|
-|On Hold (anytime)|
+|<Submission Type>|<rule>|
+|Original|last active submission is the original submission (may or may not have any past or current updates that needs to be acknowledged) |
+|Amendment|last active amendment submission , not the original submission (may or may not have any past or current updates that needs to be acknowledged) |
+|Update |has at least one update that needs to be acknowledged for the last active submission(either origional submission or amendment submission)|
+And I can select one or more On Hold Status
+|<On Hold Status>|<comment>
+|On Hold |(currently)|
+|Not On Hold| (currently)|
+|On Hold |(at anytime)|
  And I can select one or more On Hold Reasons
 |Submission Incomplete|
 |Submission Incomplete -- Missing Documents| 
@@ -48,6 +50,8 @@ And I can select the Information Source|
 |Imported|
 And I can select one or more trial milestones
 |Submission Received Date|
+|Validation Processing Start Date|
+|Validation Processing Completed Date|
 |Submission Acceptance Date|
 |Submission Terminated Date|
 |Submission Reactivated Date|
@@ -73,14 +77,15 @@ And I can select a trail milestone type
 |Has as Last Milestone|
 And I can select one or more Data Table 4 Anatomic Sites (similar to grant type ahead search)
 And I can select Show Trials Ready for (check boxes)
-|Administrative Abstraction|
-|Administrative QC|
-|Scientific Abstraction|
-|Scientific QC|
-|Administrative and Scientific Abstraction|
-|Administrative and Scientific QC|
+|<Abstraction Status>|<comments>|
+|Administrative Abstraction|"Ready for Administrative QC Date"is the curent Administrative milestone when the submission is original or the Amendment Reason Code is "Administrative" or "Both"|
+|Administrative QC|"Ready for Administrative QC Date"is the curent Administrative milestone|
+|Scientific Abstraction|"Ready for Scientific QC Date"is the curent Scientific milestone when the submission is original or the Amendment Reason Code is "Scientific" or "Both"|
+|Scientific QC|"Ready for Scientific QC Date" is the curent Scientific milestone|
+|Administrative and Scientific Abstraction|"Submission Acceptance Date" is the curent Administrative milestone|
+|Administrative and Scientific QC|"Ready for Scientific QC Date" and "Ready for Administrative QC Date" are curent Administrative and Scientific milestone when the submission is original or the Amendment Reason Code is "Both"|
 And I select Search
-Then the following fields will be will displayed for each trial
+Then the following fields will be will displayed for all trial that meet the search criteria
 |NCI Trial Identifier|
 |Submission Type (Original (Information Source = Protocol and Submission number = 0) , Amendment (Information Source = Protocol and Submission number > 0), Imported (Information Source = Imported)|  
 |CTEP/DCP|

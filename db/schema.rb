@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160610142618) do
+ActiveRecord::Schema.define(version: 20161016031557) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,7 +69,7 @@ ActiveRecord::Schema.define(version: 20160610142618) do
     t.integer  "anatomic_site_id"
     t.integer  "trial_id"
     t.datetime "created_at",                               null: false
-    t.datetime "updated_at",                               null: false
+    t.datetime "updated_at"
     t.string   "uuid",             limit: 255
     t.integer  "lock_version",                 default: 0
   end
@@ -288,6 +288,28 @@ ActiveRecord::Schema.define(version: 20160610142618) do
     t.integer  "parent_id"
   end
 
+  create_table "ct_gov_import_exports", force: :cascade do |t|
+    t.string   "from",             limit: 255
+    t.string   "to",               limit: 255
+    t.string   "import_or_export", limit: 255
+    t.string   "model",            limit: 255
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+    t.string   "uuid",             limit: 255
+    t.integer  "lock_version",                 default: 0
+  end
+
+  create_table "ctep_org_types", force: :cascade do |t|
+    t.string   "code",          limit: 255
+    t.string   "name",          limit: 255
+    t.string   "record_status"
+    t.string   "sent_to_ctrp"
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+    t.string   "uuid",          limit: 255
+    t.integer  "lock_version",              default: 0
+  end
+
   create_table "diseases", force: :cascade do |t|
     t.string   "preferred_name",   limit: 255
     t.string   "code",             limit: 255
@@ -414,6 +436,24 @@ ActiveRecord::Schema.define(version: 20160610142618) do
     t.integer  "lock_version",             default: 0
   end
 
+  create_table "import_trial_log_data", force: :cascade do |t|
+    t.string   "file"
+    t.string   "file_name",        limit: 255
+    t.string   "document_type",    limit: 255
+    t.string   "document_subtype", limit: 255
+    t.string   "context",          limit: 255
+    t.string   "object",           limit: 255
+    t.string   "method",           limit: 255
+    t.string   "status",           limit: 255
+    t.string   "object_id",        limit: 255
+    t.string   "user",             limit: 255
+    t.text     "response_body"
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+    t.string   "uuid",             limit: 255
+    t.integer  "lock_version",                 default: 0
+  end
+
   create_table "ind_ides", force: :cascade do |t|
     t.string   "ind_ide_type",   limit: 255
     t.string   "grantor",        limit: 255
@@ -459,15 +499,15 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   end
 
   create_table "interventions", force: :cascade do |t|
-    t.string   "name",                 limit: 255
-    t.string   "other_name",           limit: 255
+    t.string   "name",                 limit: 1000
+    t.string   "other_name",           limit: 1000
     t.text     "description"
     t.integer  "intervention_type_id"
     t.integer  "trial_id"
-    t.datetime "created_at",                                   null: false
-    t.datetime "updated_at",                                   null: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
     t.string   "uuid",                 limit: 255
-    t.integer  "lock_version",                     default: 0
+    t.integer  "lock_version",                      default: 0
     t.integer  "index"
     t.string   "c_code"
   end
@@ -487,6 +527,24 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   end
 
   add_index "links", ["trial_id"], name: "index_links_on_trial_id", using: :btree
+
+  create_table "log_data", force: :cascade do |t|
+    t.string   "file"
+    t.string   "file_name",        limit: 255
+    t.string   "document_type",    limit: 255
+    t.string   "document_subtype", limit: 255
+    t.string   "context",          limit: 255
+    t.string   "object",           limit: 255
+    t.string   "method",           limit: 255
+    t.string   "status",           limit: 255
+    t.string   "object_id",        limit: 255
+    t.string   "user",             limit: 255
+    t.text     "response_body"
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+    t.string   "uuid",             limit: 255
+    t.integer  "lock_version",                 default: 0
+  end
 
   create_table "mail_logs", force: :cascade do |t|
     t.string   "from"
@@ -739,30 +797,48 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   add_index "onholds", ["onhold_reason_id"], name: "index_onholds_on_onhold_reason_id", using: :btree
   add_index "onholds", ["trial_id"], name: "index_onholds_on_trial_id", using: :btree
 
+  create_table "org_funding_mechanisms", force: :cascade do |t|
+    t.string   "code",          limit: 255
+    t.string   "name",          limit: 255
+    t.string   "record_status"
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+    t.string   "uuid",          limit: 255
+    t.integer  "lock_version",              default: 0
+  end
+
   create_table "organizations", force: :cascade do |t|
-    t.string   "source_id",         limit: 255
-    t.string   "name",              limit: 255
-    t.string   "address",           limit: 255
-    t.string   "address2",          limit: 255
-    t.string   "city",              limit: 255
-    t.string   "state_province",    limit: 255
-    t.string   "postal_code",       limit: 255
-    t.string   "country",           limit: 255
-    t.string   "email",             limit: 255
-    t.string   "phone",             limit: 255
-    t.string   "fax",               limit: 255
+    t.string   "source_id",                limit: 255
+    t.string   "name",                     limit: 255
+    t.string   "address",                  limit: 255
+    t.string   "address2",                 limit: 255
+    t.string   "city",                     limit: 255
+    t.string   "state_province",           limit: 255
+    t.string   "postal_code",              limit: 255
+    t.string   "country",                  limit: 255
+    t.string   "email",                    limit: 255
+    t.string   "phone",                    limit: 255
     t.integer  "source_status_id"
     t.integer  "source_context_id"
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
-    t.string   "uuid",              limit: 255
-    t.integer  "lock_version",                  default: 0
+    t.datetime "created_at",                                       null: false
+    t.datetime "updated_at",                                       null: false
+    t.string   "uuid",                     limit: 255
+    t.integer  "lock_version",                         default: 0
     t.integer  "ctrp_id"
     t.string   "created_by"
     t.string   "updated_by"
-    t.string   "extension",         limit: 255
+    t.string   "extension",                limit: 255
+    t.string   "processing_status"
+    t.string   "address3"
+    t.integer  "service_request_id"
+    t.integer  "ctep_org_type_id"
+    t.integer  "org_funding_mechanism_id"
+    t.datetime "association_date"
   end
 
+  add_index "organizations", ["ctep_org_type_id"], name: "index_organizations_on_ctep_org_type_id", using: :btree
+  add_index "organizations", ["org_funding_mechanism_id"], name: "index_organizations_on_org_funding_mechanism_id", using: :btree
+  add_index "organizations", ["service_request_id"], name: "index_organizations_on_service_request_id", using: :btree
   add_index "organizations", ["source_context_id"], name: "index_organizations_on_source_context_id", using: :btree
   add_index "organizations", ["source_status_id"], name: "index_organizations_on_source_status_id", using: :btree
 
@@ -854,12 +930,13 @@ ActiveRecord::Schema.define(version: 20160610142618) do
     t.integer  "organization_id"
     t.integer  "person_id"
     t.datetime "created_at",                                     null: false
-    t.datetime "updated_at",                                     null: false
+    t.datetime "updated_at"
     t.string   "uuid",                   limit: 255
     t.integer  "lock_version",                       default: 0
     t.string   "extension",              limit: 255
     t.string   "contact_type",           limit: 255
     t.string   "local_trial_identifier"
+    t.integer  "legacy_ps_id"
   end
 
   add_index "participating_sites", ["organization_id"], name: "index_participating_sites_on_organization_id", using: :btree
@@ -867,26 +944,31 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   add_index "participating_sites", ["trial_id"], name: "index_participating_sites_on_trial_id", using: :btree
 
   create_table "people", force: :cascade do |t|
-    t.string   "source_id",         limit: 255
-    t.string   "prefix",            limit: 255
-    t.string   "suffix",            limit: 255
-    t.string   "email",             limit: 255
-    t.string   "phone",             limit: 255
+    t.string   "source_id",              limit: 255
+    t.string   "prefix",                 limit: 255
+    t.string   "suffix",                 limit: 255
+    t.string   "email",                  limit: 255
+    t.string   "phone",                  limit: 255
     t.integer  "source_status_id"
     t.integer  "source_context_id"
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
-    t.string   "uuid",              limit: 255
-    t.integer  "lock_version",                  default: 0
-    t.string   "fname",             limit: 255
-    t.string   "mname",             limit: 255
-    t.string   "lname",             limit: 255
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
+    t.string   "uuid",                   limit: 255
+    t.integer  "lock_version",                       default: 0
+    t.string   "fname",                  limit: 255
+    t.string   "mname",                  limit: 255
+    t.string   "lname",                  limit: 255
     t.integer  "ctrp_id"
     t.string   "created_by"
     t.string   "updated_by"
-    t.string   "extension",         limit: 255
+    t.string   "extension",              limit: 255
+    t.string   "processing_status"
+    t.datetime "association_start_date"
+    t.string   "registration_type"
+    t.integer  "service_request_id"
   end
 
+  add_index "people", ["service_request_id"], name: "index_people_on_service_request_id", using: :btree
   add_index "people", ["source_context_id"], name: "index_people_on_source_context_id", using: :btree
   add_index "people", ["source_status_id"], name: "index_people_on_source_status_id", using: :btree
 
@@ -964,6 +1046,14 @@ ActiveRecord::Schema.define(version: 20160610142618) do
     t.datetime "updated_at",                           null: false
     t.string   "uuid",         limit: 255
     t.integer  "lock_version",             default: 0
+    t.string   "section"
+  end
+
+  create_table "registration_types", force: :cascade do |t|
+    t.string   "code",       limit: 255
+    t.string   "name",       limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   create_table "research_categories", force: :cascade do |t|
@@ -991,6 +1081,16 @@ ActiveRecord::Schema.define(version: 20160610142618) do
     t.datetime "updated_at",                           null: false
     t.string   "uuid",         limit: 255
     t.integer  "lock_version",             default: 0
+  end
+
+  create_table "service_requests", force: :cascade do |t|
+    t.string   "code",          limit: 255
+    t.string   "name",          limit: 255
+    t.string   "record_status"
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+    t.string   "uuid",          limit: 255
+    t.integer  "lock_version",              default: 0
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -1044,13 +1144,17 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   end
 
   create_table "source_statuses", force: :cascade do |t|
-    t.string   "code",         limit: 255
-    t.string   "name",         limit: 255
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
-    t.string   "uuid",         limit: 255
-    t.integer  "lock_version",             default: 0
+    t.string   "code",              limit: 255
+    t.string   "name",              limit: 255
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.string   "uuid",              limit: 255
+    t.integer  "lock_version",                  default: 0
+    t.string   "record_status"
+    t.integer  "source_context_id"
   end
+
+  add_index "source_statuses", ["source_context_id"], name: "index_source_statuses_on_source_context_id", using: :btree
 
   create_table "specimen_types", force: :cascade do |t|
     t.string   "code",         limit: 255
@@ -1136,17 +1240,20 @@ ActiveRecord::Schema.define(version: 20160610142618) do
     t.integer  "trial_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "uuid",                 limit: 255
-    t.integer  "lock_version",                     default: 0
-    t.string   "amendment_num",        limit: 255
+    t.string   "uuid",                                          limit: 255
+    t.integer  "lock_version",                                              default: 0
+    t.string   "amendment_num",                                 limit: 255
     t.integer  "submission_type_id"
     t.integer  "submission_source_id"
     t.integer  "submission_method_id"
     t.integer  "user_id"
-    t.string   "acknowledge",          limit: 255
+    t.string   "acknowledge",                                   limit: 255
     t.text     "acknowledge_comment"
     t.date     "acknowledge_date"
-    t.string   "acknowledged_by",      limit: 255
+    t.string   "acknowledged_by",                               limit: 255
+    t.string   "status"
+    t.date     "expected_abstraction_completion_date"
+    t.string   "expected_abstraction_completion_date_comments"
   end
 
   add_index "submissions", ["amendment_reason_id"], name: "index_submissions_on_amendment_reason_id", using: :btree
@@ -1253,6 +1360,17 @@ ActiveRecord::Schema.define(version: 20160610142618) do
 
   add_index "trial_funding_sources", ["organization_id"], name: "index_trial_funding_sources_on_organization_id", using: :btree
   add_index "trial_funding_sources", ["trial_id"], name: "index_trial_funding_sources_on_trial_id", using: :btree
+
+  create_table "trial_histories", force: :cascade do |t|
+    t.json     "snapshot"
+    t.integer  "submission_id"
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+    t.string   "uuid",          limit: 255
+    t.integer  "lock_version",              default: 0
+  end
+
+  add_index "trial_histories", ["submission_id"], name: "index_trial_histories_on_submission_id", using: :btree
 
   create_table "trial_ownerships", force: :cascade do |t|
     t.integer  "trial_id"
@@ -1396,6 +1514,7 @@ ActiveRecord::Schema.define(version: 20160610142618) do
     t.integer  "internal_source_id"
     t.string   "nci_specific_comment",          limit: 4000
     t.string   "send_trial_flag"
+    t.boolean  "is_rejected"
   end
 
   add_index "trials", ["accrual_disease_term_id"], name: "index_trials_on_accrual_disease_term_id", using: :btree
@@ -1457,10 +1576,6 @@ ActiveRecord::Schema.define(version: 20160610142618) do
     t.datetime "updated_at"
     t.string   "first_name"
     t.string   "last_name"
-    t.text     "street_address"
-    t.string   "zipcode"
-    t.string   "country"
-    t.string   "state"
     t.string   "middle_name"
     t.string   "prs_organization_name"
     t.boolean  "receive_email_notifications"
@@ -1469,16 +1584,29 @@ ActiveRecord::Schema.define(version: 20160610142618) do
     t.string   "source"
     t.integer  "user_status_id"
     t.string   "phone"
-    t.string   "city"
     t.string   "domain"
+    t.datetime "status_date"
+    t.string   "phone_ext"
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["organization_id"], name: "index_users_on_organization_id", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["unlock_token"], name: "index_users_on_unlock_token", unique: true, using: :btree
   add_index "users", ["user_status_id"], name: "index_users_on_user_status_id", using: :btree
   add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
+
+  create_table "validation_rules", force: :cascade do |t|
+    t.string   "code"
+    t.string   "section"
+    t.string   "item"
+    t.string   "rule"
+    t.text     "description"
+    t.text     "remark"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.string   "model"
+    t.string   "category"
+  end
 
   create_table "version_associations", force: :cascade do |t|
     t.integer "version_id"
@@ -1555,6 +1683,9 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   add_foreign_key "ncit_interventions", "ncit_statuses"
   add_foreign_key "onholds", "onhold_reasons"
   add_foreign_key "onholds", "trials"
+  add_foreign_key "organizations", "ctep_org_types"
+  add_foreign_key "organizations", "org_funding_mechanisms"
+  add_foreign_key "organizations", "service_requests"
   add_foreign_key "organizations", "source_contexts"
   add_foreign_key "organizations", "source_statuses"
   add_foreign_key "other_criteria", "trials"
@@ -1568,6 +1699,7 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   add_foreign_key "participating_sites", "organizations"
   add_foreign_key "participating_sites", "people"
   add_foreign_key "participating_sites", "trials"
+  add_foreign_key "people", "service_requests"
   add_foreign_key "people", "source_contexts"
   add_foreign_key "people", "source_statuses"
   add_foreign_key "po_affiliations", "organizations"
@@ -1578,6 +1710,7 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   add_foreign_key "processing_status_wrappers", "trials"
   add_foreign_key "site_rec_status_wrappers", "participating_sites"
   add_foreign_key "site_rec_status_wrappers", "site_recruitment_statuses"
+  add_foreign_key "source_statuses", "source_contexts"
   add_foreign_key "sub_groups", "trials"
   add_foreign_key "submissions", "amendment_reasons"
   add_foreign_key "submissions", "submission_methods"
@@ -1596,6 +1729,7 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   add_foreign_key "trial_documents", "users", column: "added_by_id"
   add_foreign_key "trial_funding_sources", "organizations"
   add_foreign_key "trial_funding_sources", "trials"
+  add_foreign_key "trial_histories", "submissions"
   add_foreign_key "trial_ownerships", "trials"
   add_foreign_key "trial_ownerships", "users"
   add_foreign_key "trial_status_wrappers", "trial_statuses"
@@ -1651,6 +1785,8 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   create_sequence "citations_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "collaborators_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "comments_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
+  create_sequence "ct_gov_import_exports_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
+  create_sequence "ctep_org_types_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "diseases_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "evaluation_types_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "families_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
@@ -1662,12 +1798,14 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   create_sequence "grants_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "holder_types_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "identifier_types_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
+  create_sequence "import_trial_log_data_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "ind_ides_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "internal_sources_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "intervention_models_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "intervention_types_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "interventions_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "links_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
+  create_sequence "log_data_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "mail_logs_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "mail_templates_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "marker_assay_type_associations_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
@@ -1687,6 +1825,7 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   create_sequence "ncit_statuses_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "onhold_reasons_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "onholds_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
+  create_sequence "org_funding_mechanisms_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "organizations_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "other_criteria_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "other_ids_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
@@ -1703,12 +1842,14 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   create_sequence "processing_status_wrappers_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "processing_statuses_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "protocol_id_origins_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
+  create_sequence "registration_types_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "research_categories_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "responsible_parties_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "secondary_purposes_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "seq_families_id", :increment => 5, :min => 1, :max => 9223372036854775807, :start => 65000000, :cache => 1, :cycle => false
   create_sequence "seq_organizations_id", :increment => 5, :min => 1, :max => 9223372036854775807, :start => 65000000, :cache => 1, :cycle => false
   create_sequence "seq_persons_id", :increment => 5, :min => 1, :max => 9223372036854775807, :start => 65000000, :cache => 1, :cycle => false
+  create_sequence "service_requests_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "sessions_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "site_rec_status_wrappers_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "site_recruitment_statuses_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
@@ -1731,6 +1872,7 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   create_sequence "trial_co_pis_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "trial_documents_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "trial_funding_sources_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
+  create_sequence "trial_histories_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "trial_ownerships_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "trial_status_wrappers_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "trial_statuses_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
@@ -1738,6 +1880,7 @@ ActiveRecord::Schema.define(version: 20160610142618) do
   create_sequence "trials_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "user_statuses_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "users_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
+  create_sequence "validation_rules_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "version_associations_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
   create_sequence "versions_id_seq", :increment => 1, :min => 1, :max => 9223372036854775807, :start => 1, :cache => 1, :cycle => false
 

@@ -79,6 +79,14 @@ class SessionsController < Devise::SessionsController
 
       ## Generate JWT token
       token = create_token({:user_id => self.resource.id})
+
+      ############################### ****REDIS CODE**** #######################
+      Rails.logger.info("In the process of setting token to REDIS-SERVER")
+      $redis.set(token,self.resource.id)
+      Rails.logger.info "yes it is #{$redis.get(token)} "
+
+      ############################# //End of REDIS CODE // #####################
+
       #user = User.find_by_id(self.resource.id)
       #user.token = token
       #user.save!
@@ -117,10 +125,22 @@ class SessionsController < Devise::SessionsController
     Rails.logger.info "params = #{request.params} "
 
 
-    user = User.custom_find_by_username(request.params["username"]) || User.custom_find_by_username(request.params['user']["username"])
+    user = User.find_by_id(request.params["user_id"]) || User.custom_find_by_username(request.params["username"]) || User.custom_find_by_username(request.params['user']["username"])
     Rails.logger.info "user = #{user.inspect} "
     source = request.params["source"] || ""
     sign_out(user)
+
+    ############################### ****REDIS CODE**** #######################
+    Rails.logger.info("In the process of deleting token from REDIS-SERVER")
+
+    current_token = parse_request_header
+
+    Rails.logger.info "yes it is #{$redis.get(current_token)} "
+
+    Rails.logger.info("Token #{current_token}")
+    $redis.del(current_token)
+    ############################# //End of REDIS CODE // #####################
+
     user.current_sign_in_at = nil
     user.save!
     reset_current_user

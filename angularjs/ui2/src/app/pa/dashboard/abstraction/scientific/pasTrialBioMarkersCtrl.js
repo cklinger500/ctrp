@@ -3,10 +3,10 @@
     angular.module('ctrp.app.pa.dashboard')
         .controller('pasBioMarkersCtrl', pasBioMarkersCtrl);
 
-    pasBioMarkersCtrl.$inject = ['$scope', 'TrialService', 'PATrialService', 'toastr',
+    pasBioMarkersCtrl.$inject = ['$scope', 'TrialService', 'PATrialService', '$state', 'toastr',
         'MESSAGES', '_', '$timeout','uiGridConstants','trialDetailObj','assayTypes','evaluationTypes','specimenTypes','biomarkerUses','biomarkerPurposes','$location','$anchorScroll'];
 
-    function pasBioMarkersCtrl($scope, TrialService, PATrialService, toastr,
+    function pasBioMarkersCtrl($scope, TrialService, PATrialService, $state, toastr,
                                    MESSAGES, _, $timeout, uiGridConstants,trialDetailObj,assayTypes,evaluationTypes,specimenTypes,biomarkerUses,biomarkerPurposes, $location, $anchorScroll) {
         var vm = this;
         vm.curTrial = trialDetailObj;
@@ -17,6 +17,7 @@
         vm.deleteSelected = deleteSelected;
         vm.saveAndRetainMarker = saveAndRetainMarker;
         vm.resetBioMarker = resetBioMarker;
+        vm.reload = reload;
         vm.trialDetailObj = {};
         vm.selOrganization = {name: '', array: []};
         vm.showOrgFields = true;
@@ -113,6 +114,10 @@
 
         $scope.deleteRow = function(row) {
             OutcomeMeasureService.getGridOptions().data.splice(row.entity.id, 1);
+        };
+
+        function reload() {
+            $state.go($state.$current, null, { reload: true });
         };
 
         function _watchCheckedEvalTypes() {
@@ -306,10 +311,12 @@
                     $scope.$emit('updatedInChildScope', {});
 
                     toastr.clear();
-                    toastr.success('Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded', 'Operation Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    })
+                    toastr.success('Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded', 'Operation Successful!')
+
+                    // To make sure setPristine() is executed after all $watch functions are complete
+                    $timeout(function() {
+                       $scope.marker_form.$setPristine();
+                   }, 1);
 
                     vm.addEditMode = false;
                     vm.selectedAllBM = false;
@@ -362,10 +369,7 @@
                     $scope.$emit('updatedInChildScope', {});
 
                     toastr.clear();
-                    toastr.success('Record(s) deleted.', 'Operation Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    });
+                    toastr.success('Record(s) deleted.', 'Operation Successful!');
                 }
             }).catch(function(err) {
                 console.log("error in creating or updating Trial sub group " + JSON.stringify(outerTrial));
@@ -399,6 +403,8 @@
                         vm.currentBioMarker.record_status="Active";
                         vm.currentBioMarker.status_alert=true;
                     }
+
+                    $scope.marker_form.$setDirty();
                 }
                 console.log(newVal);
                 console.log(vm.currentBioMarker.cadsr_marker_id);
@@ -516,6 +522,7 @@
                 return;
             }
             vm.setAddMode();
+            $scope.marker_form.$setPristine();
         }
 
         function getTrialDetailCopy() {

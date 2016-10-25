@@ -1,6 +1,13 @@
 class ApplicationController < ActionController::Base
   respond_to :html, :xml, :json
   around_filter :global_request_logging
+  before_filter :set_time_zone
+
+  def set_time_zone
+    Time.zone = 'Eastern Time (US & Canada)'
+  end
+
+
   #before_filter :wrapper_authenticate_user unless Rails.env.test?
   #check_authorization :unless => :devise_controller?
   rescue_from DeviseLdapAuthenticatable::LdapException do |exception|
@@ -51,11 +58,12 @@ class ApplicationController < ActionController::Base
     #Rails.logger.debug "\n, In Application controller, parse_request_header, auth_string = #{auth_string.inspect}"
     accept_flag = auth_string.split(" ")[0]
     #Rails.logger.debug "In Application controller, parse_request_header, accept_flag = #{accept_flag.inspect}"
-    if accept_flag != "Accept"
-      Rails.logger.error "The User didnot Accept the GSA"
-      Rails.logger.debug "Accept flag is not true"
-      raise CanCan::AccessDenied.new("Not authorized!")
-    end
+    #if accept_flag != "Accept"
+     # Rails.logger.error "The User didnot Accept the GSA"
+      #Rails.logger.debug "Accept flag is not true"
+      #raise CanCan::AccessDenied.new("Not authorized!")
+      #redirect_to destroy_session_url
+    #end
     token = auth_string.split(" ")[1]
     return token
   end
@@ -63,6 +71,7 @@ class ApplicationController < ActionController::Base
   def wrapper_authenticate_user
     #Rails.logger.info "In wrapper_authenticate_user session = #{session.inspect}"
     token = parse_request_header
+    @token = nil
 
     ## If the App was accessed with the Angular UI, it will have a token, else the token will be nil
     if token.blank?
@@ -83,13 +92,21 @@ class ApplicationController < ActionController::Base
       Rails.logger.info "token = " + token
       # Decode the token
       begin
-        user_id = decode_token(token)
+        Rails.logger.info "Getting it #{$redis.get(token)}"
+        user_id = $redis.get(token)
+        if user_id.nil?
+          Rails.logger.info "SERIOUS FLAG Some one trying to hijack the session with this token #{token}"
+          raise "Hijackng Session ........."
+        else
+           user_id = decode_token(token)
+        end
+
       rescue => e
         Rails.logger.debug "Unable to decode token exception #{e.backtrace}"
         raise "Unable to decode token. The Authentication of the user cannot be performed"
       end
       user = User.find_by_id(user_id)
-      authenticate_user(user)
+      authenticate_user(user) if user
     end
     #Rails.logger.info "End of wrapper_authenticate_user"
   end
@@ -148,8 +165,8 @@ class ApplicationController < ActionController::Base
 
   ## TODO secret must be an environmental variable
   def create_token(token_data)
-    hmac_secret = "secret" # must be an environment variable
-    exp = Time.now.to_i + 4 * 3600
+    hmac_secret = Rails.application.secrets.secret_key_base
+    exp = Time.now.to_i + 120*60 # 120 Minutes
     exp_payload = { :token => token_data, :exp => exp }
     JWT.encode(exp_payload, hmac_secret, 'HS256')
     #JWT.encode(token_data, secret)
@@ -157,7 +174,7 @@ class ApplicationController < ActionController::Base
 
   ## TODO secret must be an environmental variable
   def decode_token(token)
-    hmac_secret = "secret" # must be an environment variable
+    hmac_secret = Rails.application.secrets.secret_key_base
     begin
       decoded_token = JWT.decode token, hmac_secret, true, { :algorithm => 'HS256' }
       #decoded_token = JWT.decode token, hmac_secret
@@ -282,9 +299,9 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.for(:sign_up) { |u| u.permit(:domain, :organization_name, :organization_id, :username, :email, :first_name, :last_name, :password, :password_confirmation, selected_functions: []) }
-    devise_parameter_sanitizer.for(:sign_in) { |u| u.permit(:username, :email, :password) }
-    devise_parameter_sanitizer.for(:account_update) { |u| u.permit(:username, :email, :password, :password_confirmation, :current_password, :role) }
+#    devise_parameter_sanitizer.for(:sign_up) { |u| u.permit(:domain, :organization_name, :organization_id, :username, :email, :first_name, :last_name, :password, :password_confirmation, selected_functions: []) }
+#    devise_parameter_sanitizer.for(:sign_in) { |u| u.permit(:username, :email, :password) }
+#    devise_parameter_sanitizer.for(:account_update) { |u| u.permit(:username, :email, :password, :password_confirmation, :current_password, :role) }
   end
 
 =begin
@@ -313,6 +330,16 @@ class ApplicationController < ActionController::Base
     user = get_user
     Rails.logger.debug "\nIn Application Controller, current_ctrp_user, user obtained from get_user = #{user.inspect}"
     current_local_user || current_ldap_user || user
+  end
+
+  def current_ctrp_user_role_details user_role
+    role_details = {}
+    all_roles = AppSetting.find_by_code('USER_ROLES') ?
+        (JSON.parse (AppSetting.find_by_code('USER_ROLES')["big_value"].gsub("\n",'').gsub("\\",'').split.join(" "))) : nil
+    if !all_roles.nil?
+      role_details = all_roles.select { |role| role["id"] == user_role }[0]
+    end
+    return role_details
   end
 
   def global_request_logging

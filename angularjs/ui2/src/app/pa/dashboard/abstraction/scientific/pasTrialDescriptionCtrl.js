@@ -16,9 +16,9 @@
         vm.curTrial = trialDetailObj;
         vm.disableBtn = false;
 
-        vm.reload = function() {
-            console.log("RELOAD");
-            $state.go($state.$current, null, { reload: true });
+        vm.reset = function() {
+            getTrialDetailCopy();
+            $scope.desc_form.$setPristine();
         };
 
         vm.saveTrialDescription = function(){
@@ -41,12 +41,11 @@
                     vm.curTrial = response;
                     vm.curTrial.lock_version = response.lock_version || '';
 
-                    PATrialService.setCurrentTrial(vm.curTrial); // update to cache
+                    PATrialService.setCurrentTrial(angular.copy(vm.curTrial)); // update to cache
                     toastr.clear();
-                    toastr.success('Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded', 'Operation Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    });
+                    toastr.success('Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded', 'Operation Successful!');
+
+                    $scope.desc_form.$setPristine();
                 }
             }).catch(function(err) {
                 console.log('error in updating trial ' + JSON.stringify(outerTrial));
@@ -56,7 +55,11 @@
 
         }//saveTrial
 
-
+        function getTrialDetailCopy() {
+            $timeout(function() {
+                vm.curTrial = PATrialService.getCurrentTrialFromCache();
+            }, 1);
+        } //getTrialDetailCopy
 
     } //pasTrialDescriptionCtrl
 

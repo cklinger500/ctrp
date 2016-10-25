@@ -1,10 +1,10 @@
-<div class="row">
+<div class="row" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.rejection || paTrialOverview.trialDetailObj.menuTypes.trialValidImport">
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">NIH Grant Information (for NIH funded Trials)</div>
         </div>
         <div class="panel-body">
-            <form class="form form-horizontal" role="form" name="trial_form" novalidate ctrp-submit="trialDetailView.updateTrial()">
+            <form class="form form-horizontal" role="form" name="trial_form" novalidate ctrp-submit="trialDetailView.updateTrial()" unsaved-changes>
                 <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_editable || trialDetailView.disableBtn">
                     <legend class="sub-bordered">NCI Grant</legend>
 
@@ -29,12 +29,12 @@
                     <legend class="sub-bordered">Funding Mechanism</legend>
 
                     <div class="col-sm-12">
-                        <table class="table table-striped table-condensed" ng-show="trialDetailView.curTrial.grant_question === 'Yes'">
+                        <table class="table table-striped table-condensed" ng-show="trialDetailView.curTrial.grant_question === 'Yes'" ctrp-hint hint-append-element="fieldset">
                             <thead>
                             <th>Funding Mechanism</th>
                             <th>Institute Code</th>
                             <th>Serial Number</th>
-                            <th>NCI Division/Program Code</th>
+                            <th>NCI Division/Program</th>
                             <th></th>
                             </thead>
                             <tbody>
@@ -96,7 +96,7 @@
                                 </td>
                                 <td class="col-md-1">
                                     <div>
-                                        <button type="button" restriction-field class="btn btn-primary" ng-click="trialDetailView.addGrant()">
+                                        <button type="button" restriction-field class="btn btn-primary btn-add" ng-click="trialDetailView.addGrant()">
                                             <i class="glyphicon glyphicon-plus"></i> Add
                                         </button>
                                     </div>
@@ -117,7 +117,7 @@
                                 Serial Number is Required
                             </span>
                             <span class="help-block" ng-show="trialDetailView.showAddGrantError && !trialDetailView.nci">
-                                NCI Division/Program Code is Required
+                                NCI Division/Program is Required
                             </span>
 
                             <div class="top-offset-xs" ng-if="ctrpbtn.trial_form.needsAttention(trial_form.grant_dummy)">
@@ -132,7 +132,7 @@
                             <th>Funding Mechanism</th>
                             <th>Institute Code</th>
                             <th>Serial Number</th>
-                            <th>NCI Division/Program Code</th>
+                            <th>NCI Division/Program</th>
                             <th class="text-center td-icon">Delete</th>
                             </thead>
                             <tbody>
@@ -156,7 +156,7 @@
                         <button type="submit" class="btn btn-primary pull-right" id="submit_processing" restriction-field ng-disabled="trialDetailView.disableBtn">
                             <i class="glyphicon glyphicon-ok"></i> Save
                         </button>
-                        <button type="button" class="btn btn-warning pull-right" ng-click="trialDetailView.reload()" restriction-field ng-disabled="trialDetailView.disableBtn">
+                        <button type="button" class="btn btn-warning pull-right" ng-click="trialDetailView.reset()" restriction-field ng-disabled="trialDetailView.disableBtn">
                             <i class="glyphicon glyphicon-remove"></i> Reset
                         </button>
                     </div>

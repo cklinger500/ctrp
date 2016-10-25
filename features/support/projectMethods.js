@@ -69,7 +69,8 @@ var projectMethods = function() {
         addOrg.setAddPostalCode(postalCode);
         addOrg.setAddEmail(email);
         addOrg.setAddPhone(phone);
-        addOrg.setAddFax(fax);
+    //    addOrg.setAddFax(fax);
+        addOrg.setAddExtension('01');
         addOrg.clickSave();
     };
     /***********************************************
@@ -181,27 +182,7 @@ var projectMethods = function() {
         searchOrg.setAffiliatedOrgExpirationDate(orgExpirationDate);
         addFamily.clickSave();
     };
-
-    /**********************************
-     * Method: Verify the item in Search Results
-     * @param searchString
-     ***********************************/
-    //
-    //this.inSearchResults = function(searchString) {
-    //    return menuItem.searchResult.filter(function(name) {
-    //        return name.getText().then(function(text) {
-    //            return text === searchString ;
-    //        });
-    //    }).then(function(filteredElements) {
-    //        // Only the elements that passed the filter will be here. This is an array.
-    //        if (filteredElements.length > 0) {
-    //            return 'false';
-    //        }
-    //        else {
-    //            return 'true';
-    //        }
-    //    });
-    //};
+    
 
     this.inOrgSearchResults = function(searchString) {
         return element(by.css('div.ui-grid-cell-contents')).isPresent().then(function(state) {
@@ -591,6 +572,26 @@ var projectMethods = function() {
         });
     };
 
+    /*****************************************************************
+     * Method: Verify the affiliated Organization Relationship
+     * @param affiliatedOrg
+     * @param OrgRelationship
+     *****************************************************************/
+    this.verifyOrgAffiliatedRelationshipFamily = function(affiliatedOrg, OrgRelationship) {
+        return searchOrg.orgFamilyAffiliatedTable.getText().filter(function(row) {
+            // Get the second column's text.
+            return row.$$('td').get(2).getText().then(function(rowName) {
+                // Filter rows matching the name you are looking for.
+                console.log('print row name' + rowName);
+                return rowName === affiliatedOrg;
+            });
+        }).then(function(rows) {
+            // This is an array. Find the button in the row and click on it.
+            console.log('value of row' + rows);
+            expect(rows[0].element(by.model('org.family_relationship_id')).$('option:checked').getText()).to.eventually.equal(OrgRelationship);
+        });
+    };
+
     /********************************
      * Method: Convert Object value to a String
      * @param obj
@@ -720,7 +721,8 @@ var projectMethods = function() {
                         addOrg.setAddPostalCode('46578');
                         addOrg.setAddEmail('searchOrg@email.com');
                         addOrg.setAddPhone('222-487-8956');
-                        addOrg.setAddFax('222-487-4242');
+                      //  addOrg.setAddFax('222-487-4242');
+                        addOrg.setAddExtension('01');
                         addOrg.clickSave();
                         orgSourceId = addOrg.addOrgCTRPID.getText();
                         menuItem.clickOrganizations();
@@ -798,7 +800,8 @@ var projectMethods = function() {
                         addOrg.setAddPostalCode(orgPostal);
                         addOrg.setAddEmail(orgEmail);
                         addOrg.setAddPhone(orgPhone);
-                        addOrg.setAddFax(orgFax);
+                     //   addOrg.setAddFax(orgFax);
+                        addOrg.setAddExtension('01');
                         addOrg.clickSave();
                         orgSourceId = addOrg.addOrgCTRPID.getText();
                         menuItem.clickOrganizations();
@@ -884,7 +887,8 @@ var projectMethods = function() {
                         addOrg.setAddPostalCode('42589');
                         addOrg.setAddEmail('editOrg@email.com');
                         addOrg.setAddPhone('589-687-8956');
-                        addOrg.setAddFax('898-420-4242');
+                     //   addOrg.setAddFax('898-420-4242');
+                        addOrg.setAddExtension('01');
                         addOrg.clickSave();
                         orgSourceId = addOrg.addOrgCTRPID.getText();
                     });
@@ -1151,6 +1155,73 @@ var projectMethods = function() {
                 }
             });
       //  });
+
+    };
+
+    /**
+     * Verify Created Organization
+     * @param orgName
+     * @param alias
+     * @param address1
+     * @param address2
+     * @param country
+     * @param state
+     * @param city
+     * @param postalCode
+     * @param email
+     * @param phone
+     * @param fax
+     */
+    this.verifyCreatedOrganization = function(orgName, alias ,address1, address2, country, state, city, postalCode, email, phone, fax){
+       addOrg.getVerifyAddOrgName(orgName);
+        if(alias !== '') {
+            expect(self.verifyOrgAlias(alias)).to.become('true');
+        }
+        addOrg.getVerifyAddAddress(address1);
+        addOrg.getVerifyAddAddress2(address2);
+        addOrg.getVerifyAddCountry(country);
+        addOrg.getVerifyAddState(state);
+        addOrg.getVerifyAddCity(city);
+        addOrg.getVerifyAddPostalCode(postalCode);
+        addOrg.getVerifyAddEmail(email);
+        addOrg.getVerifyAddPhone(phone);
+    //    addOrg.getVerifyAddFax(fax);
+    };
+
+    /**********************************
+     * Method: Verify Created Family
+     ***********************************/
+    this.verifyCreatedFamily = function(familyName, familyStatus, familyType, familyOrg, familyOrgRel, familyOrgEffectiveDate, familyOrgExpiryDate){
+        addFamily.familyVerifyAddName(familyName);
+        addFamily.familyVerifyAddStatus(familyStatus);
+        addFamily.familyVerifyAddType(familyType);
+        if(familyOrg !== ''){
+            self.verifyOrgAffiliated(familyOrg);//).to.become('true');
+            if(familyOrgRel !== ''){
+                self.verifyOrgAffiliatedRelationshipFamily(familyOrg,familyOrgRel);
+                self.verifyOrgAffiliatedEffectiveDateFamily(familyOrg,familyOrgEffectiveDate);
+                self.verifyOrgAffiliatedExpirationDateFamily(familyOrg,familyOrgExpiryDate);
+            }
+        }
+
+    };
+
+    /**
+     * Verify Created Person
+     */
+    this.verifyCreatedPerson = function(prefix, fName, mName, lName, suffix, email, phone, personOrg, personOrgEffectiveDate, personOrgExpiryDate){
+        addPeople.getVerifyAddPerPrefix(prefix);
+        addPeople.getVerifyAddPerFName(fName);
+        addPeople.getVerifyAddPerMName(mName);
+        addPeople.getVerifyAddPerLName(lName);
+        addPeople.getVerifyAddPerSuffix(suffix);
+        addPeople.getVerifyAddPerEmail(email);
+        addPeople.getVerifyAddPerPhone(phone);
+        if(personOrg!== ''){
+            self.verifyOrgAffiliated(personOrg);
+            self.verifyOrgPersonAffiliatedEffectiveDate(personOrg,personOrgEffectiveDate);
+            self.verifyOrgPersonAffiliatedExpirationDate(personOrg,personOrgExpiryDate);
+        }
 
     };
 

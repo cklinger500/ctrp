@@ -9,10 +9,10 @@
         .factory('PATrialService', PATrialService);
 
     PATrialService.$inject = ['URL_CONFIGS', 'MESSAGES', '$log', '_', 'Common', 'Upload', 'TrialService',
-            '$rootScope', 'PromiseTimeoutService', 'DateService', 'HOST', 'LocalCacheService', 'uiGridConstants'];
+            '$rootScope', 'PromiseTimeoutService', 'DateService', 'HOST', 'LocalCacheService', 'uiGridConstants', 'uiGridExporterConstants', 'uiGridExporterService'];
 
     function PATrialService(URL_CONFIGS, MESSAGES, $log, _, Common, Upload, TrialService,
-            $rootScope, PromiseTimeoutService, DateService, HOST, LocalCacheService, uiGridConstants) {
+            $rootScope, PromiseTimeoutService, DateService, HOST, LocalCacheService, uiGridConstants, uiGridExporterConstants, uiGridExporterService) {
 
         var curTrial = {};
         var initTrialSearchParams = {
@@ -20,7 +20,9 @@
             sort: '',
             order: '',
             rows: 10,
-            start: 1
+            start: 1,
+            // protocol_id: '',
+            // protocol_origin_type_codes: [],
         }; //initial Trial Search Parameters
 
         var gridOptions = {
@@ -34,17 +36,28 @@
             useExternalPagination: true,
             useExternalSorting: true,
             enableGridMenu: true,
-            enableFiltering: true,
+            enableFiltering: false,
             enableVerticalScrollbar: uiGridConstants.scrollbars.WHEN_NEEDED,
             enableHorizontalScrollbar: uiGridConstants.scrollbars.WHEN_NEEDED,
+            exporterCsvFilename: 'trials.csv',
+            exporterMenuAllData: true,
+            exporterMenuPdf: false,
+            exporterMenuCsv: false,
+            gridMenuCustomItems: [{
+                title: 'Export All Data As CSV',
+                order: 100,
+                action: function ($event){
+                    this.grid.api.exporter.csvExport(uiGridExporterConstants.ALL, uiGridExporterConstants.ALL);
+                }
+            }],
             columnDefs: [
                 {name: 'nci_id', displayName: 'NCI ID', enableSorting: true, minWidth: '150', width: '3%',
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' +
-                    '<a ui-sref="main.pa.trialOverview({trialId : row.entity.id })"> {{COL_FIELD CUSTOM_FILTERS}}</a></div>'
+                    '<a ui-sref="main.pa.trialOverview.trialIdentification({trialId : row.entity.id })"> {{COL_FIELD CUSTOM_FILTERS}}</a></div>'
                 },
                 {name: 'lead_protocol_id', displayName: 'Lead Protocol ID', enableSorting: true, minWidth: '170', width: '3%', sort: { direction: 'asc', priority: 1},
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' +
-                    '<a ui-sref="main.pa.trialOverview({trialId : row.entity.id })"> {{COL_FIELD CUSTOM_FILTERS}}</a></div>'
+                    '<a ui-sref="main.pa.trialOverview.trialIdentification({trialId : row.entity.id })"> {{COL_FIELD CUSTOM_FILTERS}}</a></div>'
                 },
                 {name: 'official_title', enableSorting: true, minWidth: '150', width: '8%',
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' + '{{COL_FIELD CUSTOM_FILTERS}}</div>'
@@ -77,7 +90,7 @@
                 {name: 'admin_milestone', enableSorting: true, minWidth: '250', width: '9%',
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' + '{{COL_FIELD CUSTOM_FILTERS}}</div>'
                 },
-                {name: 'other_ids', enableSorting: true, minWidth: '400', width: '25%',
+                {name: 'other_ids',displayName:'Other Identifiers', enableSorting: true, minWidth: '400', width: '25%',
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' + '{{COL_FIELD CUSTOM_FILTERS}}</div>'
                 },
                 {name: 'current_processing_status', enableSorting: true, minWidth: '225', width: '10%',
@@ -168,7 +181,11 @@
             getMailLogs: getMailLogs,
             getTrialCheckoutHistory: getTrialCheckoutHistory,
             annotateTrialStatusWithNameAndCode: annotateTrialStatusWithNameAndCode,
-            getInternalSources: getInternalSources
+            getInternalSources: getInternalSources,
+            getAmendReasons: getAmendReasons,
+            validateAbstractionOnTrial: validateAbstractionOnTrial,
+            validatePAATrialStatus: validatePAATrialStatus,
+            abstractionValidateTrialStatus: abstractionValidateTrialStatus,
         };
 
         return services;
@@ -183,7 +200,6 @@
 
         function getTrialById(trialId) {
             console.log('calling getTrialById in TrialService');
-            //return PromiseService.getData(URL_CONFIGS.AN_TRIAL + trialId + '.json');
             return PromiseTimeoutService.getData(URL_CONFIGS.A_TRIAL + trialId + '.json');
         } //getTrialById
 
@@ -217,7 +233,7 @@
          * @return initTrialSearchParams
          */
         function getInitialTrialSearchParams() {
-            return initTrialSearchParams;
+            return angular.copy(initTrialSearchParams);
         } //getInitialTrialSearchParams
 
         function getGridOptions() {
@@ -400,7 +416,7 @@
 
             delete curTrial.admin_checkout;
             delete curTrial.scientific_checkout;
-            return curTrial;
+            return angular.copy(curTrial);
         }
 
         function checkoutTrial(trialId, checkoutType) {
@@ -486,6 +502,15 @@
             return PromiseTimeoutService.getData(URL_CONFIGS.PA.TRIAL_ID_TYPES);
         }
 
+        function getAmendReasons() {
+            return PromiseTimeoutService.getData(URL_CONFIGS.PA.AMENDMENT_REASONS);
+        }
+
+        function validateAbstractionOnTrial(trialId) {
+            var url = URL_CONFIGS.PA.VALIDATE_ABSTRACTION.replace(/\s*\{.*?\}\s*/g, trialId);
+            return PromiseTimeoutService.getData(url);
+        }
+
         /**
          * Search clinical trials, ignoring existing trials even if they have been imported
          * @param  {String} nctId        NCT trial id
@@ -563,6 +588,28 @@
         }
 
         /**
+         * Get validation warnings/errors for trial statuses in PAA
+         *
+         * @param statuses
+         */
+        function validatePAATrialStatus(statuses) {
+            if (!!statuses) {
+                return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.PAA_VALIDATE_TRIAL_STATUS, statuses);
+            }
+        }
+
+        /**
+         * Get validation warnings/errors for trial statuses in Abstraction Validation
+         *
+         * @param statuses
+         */
+        function abstractionValidateTrialStatus(statuses) {
+            if (!!statuses) {
+                return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.ABSTRACTION_VALIDATE_TRIAL_STATUS, statuses);
+            }
+        }
+
+        /**
          * Update an existing trial
          * @param  {[JSON]} trialObj - Trial detail object
          * @return {[Promise]}
@@ -609,7 +656,6 @@
         function uploadTrialRelatedDocs(trialDocsArr, trialId) {
             var promises = [];
             promises = _.map(trialDocsArr, function(trialDocObj) {
-                // console.log('trialDocObj: ', trialDocObj);
                 return prepUploadingTrialRelatedDocs(trialDocObj, trialId);
             });
 
@@ -632,7 +678,7 @@
                 status.trial_status_name = curStatusObj.name || '';
                 status.trial_status_code = curStatusObj.code || '';
                 status._destroy = false;
-                status.status_date = moment(status.status_date).format("DD-MMM-YYYY");
+                //status.status_date = moment(status.status_date).format("DD-MMM-YYYY");
                 delete status.trial_status; // delete the trial_status object
                 delete status.updated_at;
                 delete status.created_at;

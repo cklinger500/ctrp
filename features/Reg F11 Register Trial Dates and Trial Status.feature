@@ -388,15 +388,15 @@ Feature: Reg F11 Register Trial Dates and Trial Status
 |Date Entered Now |In Review                                      |Same Date entered later      |Approved                                       |                                                                                                                           |                                                                 |
 |Date Entered past|Approved                                       |Date entered Now             |In Review                                      |                                                                                                                           |ERROR: Invalid status transition from [Approved] to [In Review]       |
 |Date Entered past|In Review                                      |Date entered Now             |Approved                                       |                                                                                                                           |                                                                   |
-|Date Entered Now |Active                                         |Same Date entered later      |Temporarily Closed to Accrual                  |all the previous Status before Active has been added                                                                       |WARNING: Status [Active] and [Temporarily Closed to Accrual] have the same date  |
+|Date Entered Now |Active                                         |Same Date entered later      |Temporarily Closed to Accrual                  |all the previous Status before Active has been added                                                                       |WARNING: Statuses [Active] and [Temporarily Closed to Accrual] have the same date  |
 |Date Entered past|Active                                         |Date Entered Now             |Temporarily Closed to Accrual                  |all the previous Status before Active has been added                                                                       |                                                                 |
 |Date Entered Now |Temporarily Closed to Accrual                  |Same Date entered later      |Active                                         |all the previous Status before Active including Active before Temporarily Closed to Accrual has been added                 |                                                                 |
 |Date Entered Now |Temporarily Closed to Accrual                  |Same Date entered later      |Active                                         |all the previous Status before Active has been added                                                                       |WARNING: Interim status [Active] is missing                      |
-|Date Entered Now |Active                                         |Same Date entered later      |Temporarily Closed to Accrual and Intervention |all the previous Status before Active has been added                                                                       |WARNING: Status [Active] and [Temporarily Closed to Accrual and Intervention] have the same date |
+|Date Entered Now |Active                                         |Same Date entered later      |Temporarily Closed to Accrual and Intervention |all the previous Status before Active has been added                                                                       |WARNING: Statuses [Active] and [Temporarily Closed to Accrual and Intervention] have the same date |
 |Date Entered past|Active                                         |Date Entered Now             |Temporarily Closed to Accrual and Intervention |all the previous Status before Active has been added                                                                       |                                                                 |
 |Date Entered Now |Temporarily Closed to Accrual and Intervention |Same Date entered later      |Active                                         |all the previous Status before Active including Active before Temporarily Closed to Accrual and Intervention has been added|                                                                 |
 |Date Entered Now |Temporarily Closed to Accrual and Intervention |Same Date entered later      |Active                                         |all the previous Status before Active has been added                                                                       |WARNING: Interim status [Active] is missing\nWARNING: Interim status [Temporarily Closed to Accrual]|
-|Date Entered Now |Active                                         |Same Date entered later      |Closed to Accrual                              |all the previous Status before Active has been added                                                                       |WARNING: Status [Active] and [Closed to Accrual] have the same date                     |
+|Date Entered Now |Active                                         |Same Date entered later      |Closed to Accrual                              |all the previous Status before Active has been added                                                                       |WARNING: Statuses [Active] and [Closed to Accrual] have the same date                     |
 |Date Entered past|Active                                         |Date Entered Now             |Closed to Accrual                              |all the previous Status before Active has been added                                                                       |                                                                 |
 |Date Entered Now |Closed to Accrual                              |Same Date entered later      |Active                                         |all the previous Status before Active including Active before Closed to Accrual has been added                             |ERROR: Invalid status transition from [Closed to Accrual] to [Active] |
 |Date Entered Now |Closed to Accrual                              |Same Date entered later      |Active                                         |all the previous Status before Active has been added                                                                       |ERROR: Invalid status transition from [Closed to Accrual] to [Active]                     |
@@ -416,13 +416,14 @@ Feature: Reg F11 Register Trial Dates and Trial Status
       |Approved                                       |
       |Active                                         |
       |Enrolling by Invitation                        |
-      |Closed to Accrual                              |
-      |Closed to Accrual and Intervention             |
       |Temporarily Closed to Accrual                  |
       |Temporarily Closed to Accrual and Intervention |
-      |Withdrawn                                      |
-      |Administratively Complete                      |
+      |Closed to Accrual                              |
+      |Closed to Accrual and Intervention             |
       |Complete                                       |
+      |Administratively Complete                      |
+      |Withdrawn                                      |
+
 
     Examples:
       |trialType  |
@@ -436,16 +437,14 @@ Feature: Reg F11 Register Trial Dates and Trial Status
     When I click on Review Trial without any Trial Status
     Then I should get an error message as "Trial Status is Required"
     And On Add Trial Status if Status Date or Status is missing
-    Then I should get an error message as "Status Date, Trial Status are Required"
-    And On Add Trial Status when the Status selected is
-    Then I should get an error message as "Trial Status Date and Trial Status are Required"
+    Then I should get an error message as "Status Date and Status are Required"
     And On Add Trial Status when the Status selected is
       |Temporarily Closed to Accrual                  |
       |Temporarily Closed to Accrual and Intervention |
       |Withdrawn                                      |
-      |Administratively Complete                      |
+      |Administratively Complete  |                    
     And Why Study Stopped reason is not provided
-    Then I should get an error message as "Trial Status Date, Trial Status and  Why Study Stopped are Required"
+    Then I should get an error message as "Status Date, Status and Why Study Stopped are Required"
 
     Examples:
       |trialType  |
@@ -685,9 +684,26 @@ Scenario Outline: #8 Rules for Study Date types
       |National                 |
       |Externally Peer-Reviewed |
       |Institutional            |
+    
+      Scenario Outline: #10 Rule for Character length for Trial Status section 
+  Given I have selected the option to register a trial <trialType>
+  And I am on the Trial Status Section
+  Then a comment appears below the field to display the number of characters available to enter into the field
+    | Field                                             | Number of Characters left       |
+    | Why Study Stopped                                 | 160 characters left             |
+    | Comment                                           | 160 characters left             |
 
-     
+  And "x characters left" will be displayed as characters are added
+  When all the characters mentioned above for field have been entered
+  Then no additional text can be entered
 
+  Examples:
+    |trialType  |
+    |National                 |
+    |Externally Peer-Reviewed |
+    |Institutional            |
+
+   
 
 
 

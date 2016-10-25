@@ -36,25 +36,36 @@ class NonInterventionalTrial
   text_node :research_category_id, "trialType", :optional=>true,
             :reader=>proc{|obj,xml,default_reader|
               default_reader.call(obj,xml)
-              obj.research_category_id= ResearchCategory.find_by_name(obj.research_category_id).id if !obj.research_category_id.nil?
+              if !obj.research_category_id.nil?
+                p obj.research_category_id
+                val1 = obj.research_category_id
+                val1 = "Ancillary Correlative" if obj.research_category_id == "Ancillary-Correlative"
+                obj.research_category_id= ResearchCategory.find_by_name(val1).id
+              end
             }
+  #text_node :studyModelCode, "studyModelCode", :optional=>true
+  #text_node :timePerspectiveCode, "timePerspectiveCode", :optional=>true
+
 end
 
 
 class RegulatoryInformationXml
   include XML::Mapping
 
-  text_node :sec801_indicator, "section801", :default_value=>nil, :optional=>true,
+      text_node :country, "country", :optional=>true
+      text_node :authorityName, "authorityName", :optional=>true
+
+      text_node :sec801_indicator, "section801", :default_value=>nil, :optional=>true,
             :reader=>proc{|obj,xml,default_reader|
               default_reader.call(obj,xml)
               obj.sec801_indicator=BooleanMapper.map(obj.sec801_indicator)
             }
-  text_node :intervention_indicator, "fdaRegulated", :default_value=>nil, :optional=>true,
+      text_node :intervention_indicator, "fdaRegulated", :default_value=>nil, :optional=>true,
             :reader=>proc{|obj,xml,default_reader|
               default_reader.call(obj,xml)
               obj.intervention_indicator=BooleanMapper.map(obj.intervention_indicator)
             }
-  text_node :data_monitor_indicator, "dataMonitoringCommitteeAppointed", :default_value=>nil, :optional=>true,
+      text_node :data_monitor_indicator, "dataMonitoringCommitteeAppointed", :default_value=>nil, :optional=>true,
             :reader=>proc{|obj,xml,default_reader|
               default_reader.call(obj,xml)
               obj.data_monitor_indicator=BooleanMapper.map(obj.data_monitor_indicator)

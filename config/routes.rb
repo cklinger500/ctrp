@@ -1,5 +1,15 @@
 Rails.application.routes.draw do
 
+  resources :import_trial_log_data
+
+  resources :ct_gov_import_exports
+
+  get 'validation_rule/index'
+
+  get 'validation_rule/show'
+
+  get 'validation_rule/validate'
+
   resources :marker_biomarker_purpose_associations
 
   resources :accrual_disease_terms
@@ -22,6 +32,9 @@ Rails.application.routes.draw do
                                                       }
               #put  '/:id/status' =>  'api_trials#change_status'
             end
+            scope '/import' do
+              post '/:id' => 'api_trials#import_trial'
+            end
           end
         end
       end
@@ -38,9 +51,13 @@ Rails.application.routes.draw do
     resources :organizations do
       collection do
         get 'search'
+        get '/associated/:id', to: 'organizations#associated'
+        post 'associated', to: 'organizations#associated', defaults: {format: 'json'}
+        post 'dis_associate', to: 'organizations#dis_associate', defaults: {format: 'json'}
         post 'search'
         post 'select'
         post 'curate'
+        post 'clone'
         post 'unique', defaults: {format: 'json'}
       end
     end
@@ -57,7 +74,14 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :source_statuses
+    resources :source_statuses do
+      collection do
+        post 'search'
+      end
+    end
+    resources :service_requests
+    resources :org_funding_mechanisms
+    resources :ctep_org_types
 
     resources :source_contexts
 
@@ -119,6 +143,9 @@ Rails.application.routes.draw do
         post 'search'
         post 'curate'
         post 'unique', defaults: {format: 'json'}
+        get '/associate_context/:ctep_person_id/:ctrp_id', to: 'people#associate_person'
+        get '/association/remove/:ctep_person_id', to: 'people#remove_association'
+        post '/clone_ctep', to: 'people#clone_ctep_person'
       end
     end
 
@@ -161,8 +188,11 @@ Rails.application.routes.draw do
     get '/app_settings_ext/:settings' => 'util#get_app_settings_ext'
 
     post '/trial_submissions' => 'submissions#search'
+    post '/trial_submission_expect_complete' => 'submissions#update'
 
     get '/countries' => 'util#get_countries'
+    get '/countries_for_registry' => 'util#get_countries'
+    get '/get_authorities_for_a_country' => 'util#get_authorities_for_a_country'
     get '/states' => 'util#get_states'
     get '/backoffice' => 'backoffice#index'
     get '/backoffice/download_log'
@@ -194,7 +224,17 @@ Rails.application.routes.draw do
       get 'nih_nci_div_pa' => 'util#get_nih_nci_div_pa'
       get 'nih_nci_prog_pa' => 'util#get_nih_nci_prog_pa'
       get 'trial_document_types' => 'util#get_trial_document_types'
+      post 'paa_validate_trial_status' => 'trials#paa_validate_trial_status'
+      post 'abstraction_validate_trial_status' => 'trials#abstraction_validate_trial_status'
       resources :submission_methods
+    end
+
+    scope '/model' do
+      resources :validation_rules do
+        collection do
+          get 'trial/:trial_id' => 'validation_rules#validate_trial'
+        end
+      end
     end
 
     scope '/registry' do
@@ -236,6 +276,8 @@ Rails.application.routes.draw do
           get  'search_ctrp_interventions'
           get  'get_mail_logs'
           get  'get_trial_checkout_history'
+          post 'rollback'
+          get  'amendment_reasons'
         end
       end
 
@@ -260,7 +302,7 @@ Rails.application.routes.draw do
         collection do
           get 'download/:id' => 'trial_documents#download'
           get  'download_tsr_in_rtf/:trial_id' => 'trial_documents#download_tsr_in_rtf'
-          post 'deleted_documents'
+          post 'deleted_documents' # => 'trial_documents#deleted_documents'
         end
       end
 

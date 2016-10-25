@@ -14,7 +14,7 @@ Then the CTRP application will check that all required fields have been entered
 |Title|
 |Phase|
 |Pilot|
-|Research Category|
+|Clinical Research Category|
 |Primary Purpose|
 |Accrual Disease Terminology|
 |Lead Organization|
@@ -78,7 +78,7 @@ Examples:
 Scenario Outline: #3 Check for Duplicate trials
 Given I have selected the option to register a trial <trialType>
 When I have entered the same Lead Organization Trial Identifier for a Lead Organization which exists in another Trial
-And the Trial has NOT been Rejected or Submission Terminated
+And the Trial has NOT been Rejected 
 Then on review, the error message " A Trial exists in the system with the same Lead Organization Trial identifier for the selected Lead Organization" will be displayed
 And the option to Register Trial will be not available
 
@@ -87,11 +87,13 @@ And the option to Register Trial will be not available
   |National                 |
   |Externally Peer-Reviewed |
   |Institutional            |
+  
+  
 
 Scenario Outline: #3a Check for Duplicate trials
 Given I have selected the option to register a trial <trialType>
 When I have entered the same Lead Organization Trial Identifier for a Lead Organization which exists in another Trial
-And the registered Trial has been Rejected or Submission Terminated
+And the registered Trial has been Rejected 
 Then I should be able to register the new trial 
 
  Examples:

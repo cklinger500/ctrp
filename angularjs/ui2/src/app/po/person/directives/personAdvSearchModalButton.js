@@ -15,7 +15,7 @@
         .controller('advancedPersonSearchModalCtrl', advancedPersonSearchModalCtrl)
         .directive('ctrpPersonAdvSearchModalButton', ctrpPersonAdvSearchModalButton);
 
-    advancedPersonSearchModalCtrl.$inject = ['$scope', '$uibModalInstance', 'maxRowSelectable']; //for modal controller
+    advancedPersonSearchModalCtrl.$inject = ['$scope', '$uibModalInstance', 'maxRowSelectable', 'sourceContextOnly']; //for modal controller
     ctrpPersonAdvSearchModalButton.$inject = ['$uibModal', '$compile', '_', '$timeout', 'Common']; //modal button directive
 
 
@@ -53,7 +53,6 @@
             $scope.allowOverwrite = $scope.allowOverwrite == undefined ? true : $scope.allowOverwrite;
             var modalOpened = false;
 
-            //console.log('maxRow selectable: ' + $scope.maxRowSelectable + ', builtInTemplate: ' + $scope.useBuiltInTemplate);
             $scope.searchPerson = function(size) {
                 if (modalOpened) return; //prevent modal open twice in single click
 
@@ -131,11 +130,11 @@
      * @param $scope
      * @param $uibModalInstance
      */
-    function advancedPersonSearchModalCtrl($scope, $uibModalInstance, maxRowSelectable) {
+    function advancedPersonSearchModalCtrl($scope, $uibModalInstance, maxRowSelectable, sourceContextOnly) {
         var vm = this;
         vm.maxRowSelectable = maxRowSelectable; //to be passed to the adv person search form
+        vm.sourceContextOnly = sourceContextOnly; // to be passed to the adv person search form
 
-        // console.log('in Modal, received promise maxRowSelectable: ' + maxRowSelectable + ', also received usedInModal: ' + usedInModal);
         $scope.personSearchResults = {people: [], total: 0, start: 1, rows: 10, sort: 'name', order: 'asc'};
         $scope.selectedPersonsArray = [];  // persons selected in the modal
 

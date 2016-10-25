@@ -64,16 +64,20 @@
             var dateStr = '';
 
             if (!!isoDate) {
-                var date = new Date(isoDate);
-                //adjust timezone offset * 600000 ms
-                date = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-                //dateStr = date.format("dd-MMM-yyyy");
-                // Add leading zero for single digit date
-                var day = ('0' + date.getDate()).slice(-2);
-                var year = date.getFullYear();
-                var monthNum = date.getMonth() + 1;
-                var month = monthsDict[monthNum];
-                dateStr = day + '-' + month + '-' + year;
+                if (moment(isoDate, 'DD-MMM-yyyy', true).isValid()) {
+                    dateStr = isoDate;
+                } else {
+                    var date = moment(isoDate).toDate();
+                    //adjust timezone offset * 600000 ms
+                    date = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+                    //dateStr = date.format("dd-MMM-yyyy");
+                    // Add leading zero for single digit date
+                    var day = ('0' + date.getDate()).slice(-2);
+                    var year = date.getFullYear();
+                    var monthNum = date.getMonth() + 1;
+                    var month = monthsDict[monthNum];
+                    dateStr = day + '-' + month + '-' + year;
+                }
             }
             /*
             if (!!isoDate) {
@@ -98,6 +102,7 @@
                 }
             }
             */
+
             return dateStr;
         }; //convertISODateToLocale
 
@@ -110,7 +115,7 @@
         this.convertLocaleDateToISODateStr = function(localeDate) {
             var dateStr = '';
             if (!!localeDate) {
-                var splits = localeDate.split('-');
+                var splits = localeDate.toString().split('-');
                 var year = splits[2];
                 var month = reverseMonthsDict[splits[1]];
                 var day = splits[0];
@@ -163,8 +168,11 @@
             }
 
             _.each(dateArray, function (item) {
-                var d = new Date(item[dateKey]);
-                item[dateKey] = moment(d).format(dateFormat);
+                if (moment(item[dateKey], dateFormat, true).isValid()) {
+                    item[dateKey] = moment(item[dateKey], dateFormat).format(dateFormat);
+                } else {
+                    item[dateKey] = moment(item[dateKey]).format('DD-MMM-YYYY')
+                }
             });
 
             return dateArray;

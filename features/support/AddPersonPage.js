@@ -135,11 +135,11 @@ AddPersonPage = function () {
     };
 
     this.getVerifyAddPerPrefix = function(prefix){
-        addPerson.getVerifyValue(this.addPersonPrefix,prefix,"Get Person by Address field");
+        addPerson.getVerifyValue(this.addPersonPrefix,prefix,"Get Person by Prefix field");
     };
 
     this.getVerifyAddPerSuffix = function(suffix){
-        addPerson.getVerifyValue(this.addPersonSuffix,suffix,"Get Person by Address2 field");
+        addPerson.getVerifyValue(this.addPersonSuffix,suffix,"Get Person by Suffix field");
     };
 
     this.getVerifyAddPerEmail = function(email){

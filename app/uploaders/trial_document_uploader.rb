@@ -16,11 +16,13 @@ class TrialDocumentUploader < CarrierWave::Uploader::Base
   # This is a sensible default for uploaders that are meant to be mounted:
   def store_dir
     #"uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
-    "../../../storage/trial/#{model.trial_id}"
+    # "../../../storage/trial/#{model.trial_id}"
+    "#{AppSetting.find_by_code('FILE_STORAGE_DIR').value}/#{model.trial_id}"
   end
 
   def cache_dir
-    "../../../storage/tmp"
+    # "../../../storage/tmp"
+    "#{AppSetting.find_by_code('FILE_CACHE_DIR').value}/#{model.trial_id}"
   end
 
   # Store the original filename in Trial Document's file_name field

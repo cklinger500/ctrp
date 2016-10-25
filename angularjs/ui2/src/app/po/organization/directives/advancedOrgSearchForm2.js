@@ -10,10 +10,10 @@
         .directive('ctrpAdvancedOrgSearchForm2', ctrpAdvancedOrgSearchForm2);
 
     ctrpAdvancedOrgSearchForm2.$inject = ['OrgService', 'GeoLocationService', 'Common', '$state',
-        'MESSAGES', 'uiGridConstants', '_', 'toastr', '$compile', 'UserService','DateService'];
+        'MESSAGES', 'uiGridConstants', '_', 'toastr', '$compile', 'UserService','DateService', '$timeout'];
 
     function ctrpAdvancedOrgSearchForm2(OrgService, GeoLocationService, Common, $state,
-                                        MESSAGES, uiGridConstants, _, toastr, $compile, UserService,DateService) {
+                                        MESSAGES, uiGridConstants, _, toastr, $compile, UserService,DateService, $timeout) {
 
         var directiveObj = {
             restrict: 'E',
@@ -21,6 +21,8 @@
                 showGrid: '=?', //boolean, optional
                 usedInModal: '=?', //boolean, option
                 maxRowSelectable: '=', //int, required
+                filteredContexts: '=', //required
+                preSearch: '=', //required
                 curationMode: '=?',
                 orgSearchResults: '@orgSearchResults',
                 selectedOrgsArray: '@selectedOrgsArray'
@@ -40,11 +42,9 @@
 
         //_, $anchorScroll,
         function ctrpAdvancedOrgSearchController($scope) {
-
             var fromStateName = $state.fromState.name || '';
             var curStateName = $state.$current.name || '';
             $scope.searchParams = OrgService.getInitialOrgSearchParams();
-            $scope.watchCountrySelection = OrgService.watchCountrySelection();
             $scope.selectedRows = [];
             $scope.sourceContextArr = [];
             $scope.sourceStatuses = [];
@@ -53,9 +53,12 @@
             $scope.curationShown = false;
             $scope.curationModeEnabled = false;
             $scope.searchWarningMessage = '';
-            $scope.userRole = !!UserService.getUserRole() ? UserService.getUserRole().split("_")[1].toLowerCase() : '';
+            $scope.processingStatuses = OrgService.getProcessingStatuses();
+            $scope.serviceRequests = [];
+            $scope.userRole = UserService.getUserRole() ? UserService.getUserRole().split("_")[1].toLowerCase() : '';
             $scope.dateFormat = DateService.getFormats()[1];
             $scope.searching = false;
+            $scope.filteredContexts = $scope.filteredContexts;
 
             //$scope.maxRowSelectable = $scope.maxRowSelectable == undefined ? 0 : $scope.maxRowSelectable; //default to 0
             $scope.maxRowSelectable = $scope.maxRowSelectable === 'undefined' ? Number.MAX_VALUE : $scope.maxRowSelectable; //Number.MAX_SAFE_INTEGER; //default to MAX
@@ -69,6 +72,11 @@
             $scope.curationModeEnabled = angular.isDefined($scope.curationMode) ? $scope.curationMode : $scope.curationModeEnabled;
             $scope.usedInModal = angular.isDefined($scope.usedInModal) ? $scope.usedInModal : false;
             $scope.showGrid = angular.isDefined($scope.showGrid) ? $scope.showGrid : false;
+
+            $scope.watchCountrySelection = function () {
+                $scope.searchParams.state_province = "";
+                return OrgService.watchCountrySelection();
+            };
 
             $scope.typeAheadNameSearch = function () {
                 var wildcardOrgName = $scope.searchParams.name.indexOf('*') > -1 ? $scope.searchParams.name : '*' + $scope.searchParams.name + '*';
@@ -92,14 +100,13 @@
                         orgNames = res.orgs.map(function (org) {
                             return org.name;
                         });
-
-                        return uniqueNames = orgNames.filter(function (name) {
+                        uniqueNames = orgNames.filter(function (name) {
                             return uniqueNames.indexOf(name) === -1;
                         });
+                        return uniqueNames;
                     }
                 });
             }; //typeAheadNameSearch
-
 
             /* searchOrgs */
             $scope.searchOrgs = function (newSearchFlag) {
@@ -116,7 +123,7 @@
 
                 _.keys($scope.searchParams).forEach(function (key) {
 
-                    if(ignoreKeys.indexOf(key) === -1 && $scope.searchParams[key] != '')
+                    if(ignoreKeys.indexOf(key) === -1 && $scope.searchParams[key] !== '')
                         isEmptySearch = false;
                 });
                 if(isEmptySearch && newSearchFlag === 'fromStart') {
@@ -137,11 +144,6 @@
                     if (curStateName.indexOf('trial') > -1 || $scope.usedInModal) {
                         $scope.searchParams.source_status = 'Active';
                     }
-                    if ($scope.usedInModal || $scope.userRole.indexOf('TRIAL-SUBMITTER') > -1) {
-                        // search from the modal can only search against 'Active' in 'CTRP' context
-                        $scope.searchParams.source_status = 'Active';
-                        $scope.searchParams.source_context = 'CTRP';
-                    }
 
                     OrgService.searchOrgs($scope.searchParams).then(function (data) {
                         var status = data.server_response.status;
@@ -150,6 +152,12 @@
                             if ($scope.showGrid && data.orgs) {
                                 $scope.gridOptions.data = data.orgs;
                                 $scope.gridOptions.totalItems = data.total;
+
+                                // if set to close on no results send flag through false
+                                // selectedOrgsArray to close modal
+                                if ($scope.searchParams.nilclose && (data.total < 1) ) {
+                                    $scope.$parent.selectedOrgsArray = -1;
+                                }
 
                                 //pin the selected rows, if any, at the top of the results
                                 _.each($scope.selectedRows, function (curRow, idx) {
@@ -173,7 +181,6 @@
                     });
                 }
             }; //searchOrgs
-
 
             /* resetSearch */
             $scope.resetSearch = function () {
@@ -243,7 +250,7 @@
                         toastr.success('Curation was successful', 'Curated!');
                     }
                 }).catch(function (err) {
-                    toastr.error('There was an error in curation', 'Curation error');
+                    toastr.error('There was an error in curation', 'Curation error', { timeOut: 0});
                 });
 
             }; //commitNullification
@@ -279,7 +286,7 @@
                 switch (range) {
                     case 'today':
                         $scope.searchParams.startDate = today;
-                        $scope.searchParams.endDate = today;;
+                        $scope.searchParams.endDate = today;
                         break;
                     case 'yesterday':
                         $scope.searchParams.startDate = moment().add(-1, 'days').toDate();
@@ -306,7 +313,21 @@
                         $scope.searchParams.endDate = '';
                 }
             };
-
+            
+            $scope.getSourceStatusArr = function() {
+                OrgService.getSourceStatuses({
+                    "view_type": "search",
+                    "view_context": $scope.searchParams.source_context
+                }).then(function (statuses) {
+                    var status = statuses.server_response.status;
+                    if (status >= 200 && status <= 210) {
+                        if (statuses && angular.isArray(statuses)) {
+                            statuses.sort(Common.a2zComparator());
+                            $scope.sourceStatuses = statuses;
+                        }
+                    }
+                });
+            };
 
             activate();
 
@@ -314,7 +335,7 @@
                 getPromisedData();
                 prepareGidOptions();
 
-                if (fromStateName != 'main.orgDetail') {
+                if (fromStateName !== 'main.orgDetail' || $scope.searchParams.nosave) {
                     $scope.resetSearch();
                 } else {
                    $scope.searchOrgs(); //refresh search results
@@ -333,28 +354,38 @@
                 //get source contexts
                 OrgService.getSourceContexts().then(function (contexts) {
                     var status = contexts.server_response.status;
-
                     if (status >= 200 && status <= 210) {
                         contexts.sort(Common.a2zComparator());
-                        $scope.sourceContexts = contexts;
-                    }
-                });
-
-                //get source statuses
-                OrgService.getSourceStatuses().then(function (statuses) {
-                    var status = statuses.server_response.status;
-
-                    if (status >= 200 && status <= 210) {
-                        if (statuses && angular.isArray(statuses)) {
-                            statuses.sort(Common.a2zComparator());
-                            $scope.sourceStatuses = statuses;
+                        if ($scope.filteredContexts) {
+                            $scope.sourceContexts = _.filter(contexts, function (item, index) {
+                                return _.contains($scope.filteredContexts, item.code);
+                            });
+                        } else {
+                            $scope.sourceContexts = contexts;
                         }
                     }
                 });
 
+                //get source statuses
+                $scope.getSourceStatusArr();
+
+                OrgService.getServiceRequests().then(function (requests) {
+                    var status = requests.server_response.status;
+
+                    if (status >= 200 && status <= 210) {
+                        $scope.serviceRequests = requests;
+                    }
+
+                    delete requests.server_response;
+                });
+
                 //get countries
                 GeoLocationService.getCountryList().then(function (countries) {
-                    $scope.countries = countries;
+                    var status = countries.server_response.status;
+
+                    if (status >= 200 && status <= 210) {
+                        $scope.countries = countries;
+                    }
                 });
             } //getPromisedData
 
@@ -363,7 +394,7 @@
                 $scope.$watch('searchParams.country', function (newVal, oldVal) {
                     $scope.states = [];
 
-                    if (!!newVal && newVal != oldVal) {
+                    if (newVal && newVal !== oldVal) {
                         GeoLocationService.getStateListInCountry(newVal)
                             .then(function (response) {
                                 var status = response.server_response.status;
@@ -510,6 +541,28 @@
                 };
                 $scope.gridOptions.enableVerticalScrollbar = 2; //uiGridConstants.scrollbars.NEVER;
                 $scope.gridOptions.enableHorizontalScrollbar = 2; //uiGridConstants.scrollbars.NEVER;
+
+                $scope.gridOptions.exporterAllDataFn = function () {
+                    var allSearchParams = angular.copy($scope.searchParams);
+                    var origGridColumnDefs = angular.copy($scope.gridOptions.columnDefs);
+
+                    allSearchParams.start = null;
+                    allSearchParams.rows = null;
+                    allSearchParams.allrows = true;
+
+                    return OrgService.searchOrgs(allSearchParams).then(
+                        function (data) {
+                            var status = data.server_response.status;
+
+                            if (status >= 200 && status <= 210) {
+                                $scope.gridOptions.useExternalPagination = false;
+                                $scope.gridOptions.useExternalSorting = false;
+                                $scope.gridOptions.data = data['orgs'];
+                                $scope.gridOptions.columnDefs = origGridColumnDefs;
+                            }
+                        }
+                    );
+                };
                 $scope.gridOptions.onRegisterApi = function (gridApi) {
                     $scope.gridApi = gridApi;
                     $scope.gridApi.core.on.sortChanged($scope, sortChangedCallBack);
@@ -526,6 +579,8 @@
                         });
                     });
                 }; //gridOptions
+
+
 
                 /**
                  * Toggle curation on and off
@@ -554,7 +609,7 @@
                         $scope.warningMessage = '';
                     }
 
-                    if (newVal != oldVal) {
+                    if (newVal !== oldVal && $scope.gridApi) {
                         $scope.gridApi.grid.refresh();
                     }
                 });
@@ -570,7 +625,7 @@
                     $scope.toBeCurated.id_to_be_nullified = $scope.nullifiedId;
                     if ($scope.selectedRows.length === $scope.maxRowSelectable && $scope.nullifiedId) {
                         _.each($scope.selectedRows, function (curRow) {
-                            if (curRow.entity.id != $scope.nullifiedId) {
+                            if (curRow.entity.id !== $scope.nullifiedId) {
                                 $scope.toBeCurated['id_to_be_retained'] = curRow.entity.id;
                                 return;
                             }
@@ -644,7 +699,33 @@
             }
 
 
+            if ($scope.userRole.indexOf('TRIAL-SUBMITTER') > -1) {
+                $scope.searchParams.source_status = 'Active';
+                $scope.searchParams.source_context = 'CTRP';
+            }
+
+            //pre-search results
+            if ($scope.preSearch !== undefined) {
+                for (var property in $scope.preSearch) {
+                    if ({}.hasOwnProperty.call($scope.preSearch, property)) {
+                        $scope.searchParams[property] = $scope.preSearch[property];
+                    }
+                }
+                if ($scope.preSearch.preload) {
+                    $scope.searchOrgs();
+                }
+                //trigger country on-change
+                if($scope.preSearch["country"]) {
+                    $timeout(function() {
+                        $scope.searchParams["country"] = "";
+                        $timeout(function() {
+                            $scope.searchParams["country"] = $scope.preSearch["country"];
+                        }, 100);
+                    }, 100);
+                }
+            }
+
         } //ctrpAdvancedOrgSearchController
     }
 
-})();
+}());

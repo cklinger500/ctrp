@@ -1,0 +1,20 @@
+<div id="unsaved-tab-modal" class="modal-default">
+    <div class="modal-header"></div>
+    <div class="modal-body">
+        <div class="row">
+            {{unChgs.message}}
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="col-xs-12">
+            <div class="btn-toolbar">
+                <button class="btn pull-right" ng-click="unChgs.confirm()">
+                    {{unChgs.confirmButtonText}}
+                </button>
+                <button class="btn pull-right" ng-click="unChgs.cancel()" ng-show="!unChgs.isSaveRequired">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

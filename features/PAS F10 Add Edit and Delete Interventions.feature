@@ -66,14 +66,13 @@ Then the selected intervention will be added to the intervention table with fiel
 
 Scenario: #3 Intervention Description field Characters Rule
    Given I am on the Add Intervention screen
-   And I can type 1000 characters in the Intervention description field
-   When I start typing text in the Intervention Description field
-   Then the limited characters provided under the Intervention Description field starts to decrement
-   And when I have reach the 1000 characters limit no additional text can be entered
-    
-     
-
-    Scenario: #4 I can search Interventions when Exact Match Only is used
+   Then a comment appears below the Intervention Description field to display the number of characters available to enter into the field.  
+ |1000 characters left|
+ And "x characters left" will be displayed as characters are added
+ When 1000 characters have been entered
+ Then no additional text can be entered
+   
+       Scenario: #4 I can search Interventions when Exact Match Only is used
     Given I am on the Search Interventions screen
      When the exact Match Only box is checked
      Then only the exact Intervention name should be displayed 

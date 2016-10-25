@@ -65,9 +65,6 @@
                 resolve: {
                     TrialService: 'TrialService',
                     UserService: 'UserService',
-                    trialDetailObj: function($stateParams, TrialService) {
-                        return TrialService.getTrialById($stateParams.trialId);
-                    },
                     milestoneObj: function(TrialService) {
                         return TrialService.getMilestones();
                     },
@@ -87,9 +84,6 @@
                 controller: 'paOnholdCtrl as onholdView',
                 resolve: {
                     TrialService: 'TrialService',
-                    trialDetailObj: function ($stateParams, TrialService) {
-                        return TrialService.getTrialById($stateParams.trialId);
-                    },
                     onholdReasonObj: function (TrialService) {
                         return TrialService.getOnholdReasons();
                     }
@@ -123,6 +117,7 @@
             .state('main.pa.trialOverview.assignOwnership', {
                 url: '/assign-ownership',
                 templateUrl: 'app/pa/dashboard/abstraction/trial_overview/assign_ownership.html',
+                controller: 'userListCtrl as userView',
                 section: 'pa',
                 ncyBreadcrumb: {
                     parent: 'main.pa.trialOverview',

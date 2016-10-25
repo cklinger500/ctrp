@@ -1,3 +1,9 @@
+/**
+ * Created by kigonyapa.
+
+ * This directive allows you to transfer items from a multiselect to another
+ */
+
 (function() {
     'use strict';
 

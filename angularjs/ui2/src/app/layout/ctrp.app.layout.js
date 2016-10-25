@@ -21,7 +21,7 @@
         /* 3rd party */
         'ui.router'
 
-    ]).run(function($rootScope, $urlRouter, $state, $stateParams, $injector, UserService, LocalCacheService, toastr) {
+    ]).run(function($rootScope, $urlRouter, $state, $stateParams, $injector, UserService, AppSettingsService, LocalCacheService, toastr) {
             $rootScope.$on('stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
                 var statesNotRequiringGsa = ['main.sign_in', 'main.sign_up', 'main.gsa'];
                 if (statesNotRequiringGsa.indexOf(toState.name) === -1 &&
@@ -31,7 +31,7 @@
             });
 
             $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-                
+
                 event.preventDefault();
                 toastr.clear();
                 var writeModeSupported = false; //is write mode supported for the toState?
@@ -44,10 +44,19 @@
 
                     if (!UserService.isLoggedIn()) {
                         UserService.getAppVerFromDMZ().then(function(data) {
-                            UserService.setAppVersion(data['app_version']);
+                            var status = data.server_response.status;
+
+                            if (status >= 200 && status <= 210) {
+                                UserService.setAppVersion(data['app_version']);
+                            }
                         });
-                        UserService.getAppRelMilestoneFromDMZ().then(function(data) {
-                            UserService.setAppRelMilestone(data['app_rel_milestone']);
+
+                        AppSettingsService.getSettings({ setting: 'APP_RELEASE_MILESTONE', external: true, location: "value" }).then(function (response) {
+                            var status = response.status;
+
+                            if (status >= 200 && status <= 210) {
+                                UserService.setAppRelMilestone(response.data[0] ? response.data[0].settings : '');
+                            }
                         });
                     }
                 } else {

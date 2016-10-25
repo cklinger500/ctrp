@@ -1,0 +1,29 @@
+
+<div class="form form-horizontal">
+    <div class="row md-sidenav-push-in-target"
+         ng-repeat="nlmOrg in orgDetailView.associatedOrgs | filter:{ source_context_name: 'NLM' } | orderBy : 'name'">
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-3">CTRP ID:</label>
+            <div class="col-xs-12 col-sm-6 form-text">{{nlmOrg.ctrp_id}}</div>
+        </div>
+        <div class="form-group has-feedback">
+            <label class="control-label col-xs-12 col-sm-3">Name:</label>
+            <div class="col-xs-12 col-sm-6 form-text">{{nlmOrg.name}}</div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-3">NLM Organization Status:</label>
+            <div class="col-xs-12 col-sm-6">{{nlmOrg.source_status_name}}</div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-12 col-sm-6 has-feedback">
+                <label class="control-label col-xs-6 col-sm-6">NLM Service Request:</label>
+                <div class="col-xs-6 col-sm-6 form-text">{{nlmOrg.service_request_name}}</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-3">Processing Status:</label>
+            <div class="col-xs-12 col-sm-6 form-text">{{nlmOrg.processing_status}}</div>
+        </div>
+        <hr>
+    </div>
+</div>

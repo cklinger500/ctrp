@@ -7,10 +7,10 @@
     angular.module('ctrp.app.pa.dashboard')
         .controller('pasArmsGroupsCtrl', pasArmsGroupsCtrl);
 
-    pasArmsGroupsCtrl.$inject = ['$scope','$filter', '$state', 'TrialService', 'PATrialService', 'toastr',
+    pasArmsGroupsCtrl.$inject = ['$scope','$filter','UserService', '$state', 'TrialService', 'PATrialService', 'toastr',
         'MESSAGES', '_', '$timeout', '$anchorScroll', '$location', 'Common'];
 
-    function pasArmsGroupsCtrl($scope,$filter, $state, TrialService, PATrialService, toastr,
+    function pasArmsGroupsCtrl($scope,$filter, UserService,$state, TrialService, PATrialService, toastr,
                                      MESSAGES, _, $timeout, $anchorScroll, $location, Common) {
         var vm = this;
         vm.curTrial = {};
@@ -25,11 +25,18 @@
         vm.interventionList = [];
         vm.trial_interventions = [];
         vm.interventional = false;
-        vm.sortableListener = {};
+        vm.isCurationEnabled = UserService.isCurationModeEnabled() || false;
+        vm.sortableListener = {
+            cancel: '.locked'
+        };
         vm.sortableListener.stop = dragItemCallback;
         vm.disableBtn = false;
         vm.deleteBtnDisabled = true;
         vm.old_assigned_interventions_array = [];
+
+        $scope.$on(MESSAGES.CURATION_MODE_CHANGED, function() {
+            vm.isCurationEnabled = UserService.isCurationModeEnabled();
+        });
 
         //vm.watchArmLabel = watchArmLabel();
         activate();
@@ -158,10 +165,10 @@
 
                 if (status >= 200 && status <= 210) {
                     vm.curTrial.lock_version = response.lock_version || '';
-                    $scope.$emit('updatedInChildScope', {});
                     vm.curTrial = response;
                     vm.curTrial.arms_groups_attributes=[];
                     PATrialService.setCurrentTrial(vm.curTrial); // update to cache
+                    $scope.$emit('updatedInChildScope', {});
                     //if(vm.currentArmsGroup.new){
                         vm.currentArmsGroup.new =false;
                         vm.addEditMode = false;
@@ -174,10 +181,7 @@
                         successMsg = 'Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded';
                     }
                     toastr.clear();
-                    toastr.success(successMsg, 'Operation Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    });
+                    toastr.success(successMsg, 'Operation Successful!');
                     vm.selectedAllAG = false;
                 }
             }).catch(function(err) {
@@ -187,6 +191,10 @@
             });
 
         }; //saveTrial
+
+        vm.reload = function() {
+            $state.go($state.$current, null, { reload: true });
+        };
 
         function setAddMode(isAddMode) {
             vm.currentArmsGroup = {};
@@ -215,7 +223,7 @@
                 $anchorScroll();
             }
 
-            //$scope.arm_form.$setPristine();
+            $scope.arm_form.$setPristine();
         }
 
         /**
@@ -290,10 +298,7 @@
 
                     successMsg = 'Trial ' + vm.curTrial.lead_protocol_id + ' has been updated';
                     toastr.clear();
-                    toastr.success(successMsg, 'Operation Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    });
+                    toastr.success(successMsg, 'Operation Successful!');
                 }
             }).catch(function(err) {
                 console.log("error in updating trial " + JSON.stringify(outerTrial));

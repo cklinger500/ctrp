@@ -21,9 +21,9 @@
         </div>
 
         <div class="row">
-            <form class="form form-horizontal" role="form" name="trial_form" novalidate ctrp-submit="trialDetailView.updateTrial()">
+            <form class="form form-horizontal" role="form" name="trial_form" novalidate ctrp-submit="trialDetailView.updateTrial()" unsaved-changes>
                 <uib-accordion close-others="false">
-                    <uib-accordion-group ng-if="['amend'].indexOf(trialDetailView.curTrial.edit_type) > -1" is-open="trialDetailView.accordions[0]">
+                    <div uib-accordion-group class="panel-default" ng-if="['amend'].indexOf(trialDetailView.curTrial.edit_type) > -1" is-open="trialDetailView.accordions[0]">
                         <uib-accordion-heading>
                             Amendment Details <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[0], 'glyphicon-chevron-right': !trialDetailView.accordions[0]}"></i>
                         </uib-accordion-heading>
@@ -43,7 +43,7 @@
                             <div class="col-xs-12 col-sm-3">
                                 <div class="input-group add-on date datepicker" date-date-format="yyyy-mm-dd">
                                     <input restriction-field type="text" class="form-control input-sm" name="amendment_date" uib-datepicker-popup="{{trialDetailView.dateFormat}}" ng-model="trialDetailView.amendment_date"
-                                            ng-click="trialDetailView.openCalendar($event, 'amendment_date')" is-open="trialDetailView.amendment_date_opened" datepicker-options="trialDetailView.dateOptions" close-text="Close" required>
+                                            ng-click="trialDetailView.openCalendar($event, 'amendment_date')" is-open="trialDetailView.amendment_date_opened" datepicker-options="trialDetailView.dateOptions" close-text="Close" required readonly date-formatter>
                                     <span class="input-group-btn">
                                         <button restriction-field type="button" class="btn btn-primary" ng-click="trialDetailView.openCalendar($event, 'amendment_date')">
                                             <i class="glyphicon glyphicon-calendar"></i>
@@ -55,9 +55,9 @@
                                 </span>
                             </div>
                         </div>
-                    </uib-accordion-group>
+                    </div>
 
-                    <uib-accordion-group is-open="trialDetailView.accordions[1]">
+                    <div uib-accordion-group class="panel-default" is-open="trialDetailView.accordions[1]">
                         <uib-accordion-heading>
                             Trial Identifiers <i class="glyphicon glyphicon-edit" title="Editable Section" aria-label="Editable Section" ng-if="!trialDetailView.curTrial.new && trialDetailView.curTrial.edit_type === 'update'"></i> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[1], 'glyphicon-chevron-right': !trialDetailView.accordions[1]}"></i>
                         </uib-accordion-heading>
@@ -75,8 +75,11 @@
                             <label class="control-label col-xs-12 col-sm-3">Lead Organization Trial Identifier:</label>
                             <div class=" col-xs-12 col-sm-6">
                                 <input type="text" restriction-field class="form-control input-sm" id="lead_protocol_id" name="lead_protocol_id" ng-model="trialDetailView.curTrial.lead_protocol_id"
-                                       maxlength="50" ng-disabled="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1" required autofocus>
-                                <span class="form-control-feedback" ng-show="trialDetailView.curTrial.lead_protocol_id.length" ng-class="!ctrpbtn.trial_form.needsAttention(trial_form.lead_protocol_id) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+                                       maxlength="30" ng-disabled="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1" required autofocus>
+                                <span class="help-block" ng-show="trial_form.lead_protocol_id.$dirty">
+                                    {{30 - trialDetailView.curTrial.lead_protocol_id.length}} characters left
+                                </span>
+                                <span class="form-control-feedback" ng-show="trialDetailView.curTrial.lead_protocol_id.length"></span>
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.lead_protocol_id) || (trial_form.lead_protocol_id.$error.required && trialDetailView.showLpiError)">
                                     Lead Organization Trial Identifier is Required
                                 </span>
@@ -93,7 +96,7 @@
                         <div class="form-group">
                             <label class="control-label col-xs-12 col-sm-3">Other Trial Identifier:</label>
                             <div class=" col-xs-12 col-sm-6">
-                                <table class="table table-striped table-condensed">
+                                <table class="table table-striped table-condensed" ctrp-hint>
                                     <thead>
                                         <th>Protocol ID Type</th>
                                         <th>Protocol ID</th>
@@ -111,12 +114,15 @@
                                         </td>
                                         <td class="col-md-6">
                                             <div>
-                                                <input restriction-field type="text" class="form-control input-sm" id="protocol_id" ng-model="trialDetailView.protocol_id" />
+                                                <input restriction-field type="text" class="form-control input-sm" id="protocol_id" maxlength="30" ng-model="trialDetailView.protocol_id" />
+                                                <span class="help-block" ng-show="trialDetailView.protocol_id.length > 0">
+                                                    {{30 - trialDetailView.protocol_id.length}} characters left
+                                                </span>
                                             </div>
                                         </td>
                                         <td class="col-md-2">
                                             <div>
-                                                <button type="button" restriction-field class="btn btn-primary" ng-click="trialDetailView.addOtherId()">
+                                                <button type="button" restriction-field class="btn btn-primary btn-add" ng-click="trialDetailView.addOtherId()" ng-disabled="!trialDetailView.protocol_id.length">
                                                     <i class="glyphicon glyphicon-plus"></i> Add
                                                 </button>
                                             </div>
@@ -149,9 +155,9 @@
                                 </table>
                             </div>
                         </div>
-                    </uib-accordion-group>
+                    </div>
 
-                    <uib-accordion-group is-open="trialDetailView.accordions[2]">
+                    <div uib-accordion-group class="panel-default"  is-open="trialDetailView.accordions[2]">
                         <uib-accordion-heading>
                             Trial Details  <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[2], 'glyphicon-chevron-right': !trialDetailView.accordions[2]}"></i>
                         </uib-accordion-heading>
@@ -159,9 +165,12 @@
                         <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.official_title)}">
                             <label class="control-label col-xs-12 col-sm-3">Official Title:</label>
                             <div class=" col-xs-12 col-sm-6">
-                                <textarea restriction-field class="form-control input-sm" id="official_title" name="official_title" ng-model="trialDetailView.curTrial.official_title"
+                                <textarea restriction-field class="form-control input-sm" id="official_title" name="official_title" maxlength="600" ng-model="trialDetailView.curTrial.official_title"
                                           ng-disabled="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1" required ></textarea>
-                                <span class="form-control-feedback" ng-show="trialDetailView.curTrial.official_title.length" ng-class="!ctrpbtn.trial_form.needsAttention(trial_form.official_title) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+                              <span class="help-block" ng-show="trial_form.official_title.$dirty">
+                                  {{600 - trial_form.official_title.$viewValue.length}} characters left
+                              </span>
+                                <span class="form-control-feedback" ng-show="trialDetailView.curTrial.official_title.length"></span>
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.official_title)">
                                     Official Title is Required
                                 </span>
@@ -199,15 +208,15 @@
                         </div>
 
                         <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.research_category)}">
-                            <label class="control-label col-xs-12 col-sm-3">Research Category:</label>
+                            <label class="control-label col-xs-12 col-sm-3">Clinical Research Category:</label>
                             <div class=" col-xs-12 col-sm-6">
                                 <select restriction-field class="form-control input-sm" id="research_category" name="research_category" ng-model="trialDetailView.curTrial.research_category_id"
                                         ng-options="category.id as category.name for category in trialDetailView.researchCategoryArr"
                                         ng-change="trialDetailView.watchOption('research_category')" ng-disabled="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1" required>
-                                    <option value="">-Select a Research Category-</option>
+                                    <option value="">-Select a Clinical Research Category-</option>
                                 </select>
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.research_category)">
-                                    Research Category is Required
+                                    Clinical Research Category is Required
                                 </span>
                             </div>
                         </div>
@@ -229,9 +238,12 @@
                         <div ng-if="trialDetailView.showPrimaryPurposeOther" class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.primary_purpose_other)}">
                             <label class="control-label col-xs-12 col-sm-3">Describe "Other" Primary Purpose:</label>
                             <div class=" col-xs-12 col-sm-6">
-                                <textarea restriction-field class="form-control input-sm" id="primary_purpose_other" name="primary_purpose_other" ng-model="trialDetailView.curTrial.primary_purpose_other"
+                                <textarea restriction-field class="form-control input-sm" id="primary_purpose_other" name="primary_purpose_other" maxlength="200"
+                                          ng-model="trialDetailView.curTrial.primary_purpose_other"
                                           ng-disabled="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1" required></textarea>
-                                <span class="form-control-feedback" ng-show="trialDetailView.curTrial.primary_purpose_other.length" ng-class="!ctrpbtn.trial_form.needsAttention(trial_form.primary_purpose_other) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+                                <span class="help-block" ng-show="trialDetailView.curTrial.primary_purpose_other.length && trial_form.primary_purpose_other.$dirty">
+                                    {{200 - trial_form.primary_purpose_other.$viewValue.length}} characters left
+                                </span>
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.primary_purpose_other)">
                                     Other Primary Purpose is Required
                                 </span>
@@ -252,9 +264,13 @@
                         <div ng-if="trialDetailView.showSecondaryPurposeOther" class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.secondary_purpose_other)}">
                             <label class="control-label col-xs-12 col-sm-3">Describe "Other" Secondary Purpose:</label>
                             <div class=" col-xs-12 col-sm-6">
-                                <textarea restriction-field class="form-control input-sm" id="secondary_purpose_other" name="secondary_purpose_other" ng-model="trialDetailView.curTrial.secondary_purpose_other"
-                                          ng-disabled="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1" required></textarea>
-                                <span class="form-control-feedback" ng-show="trialDetailView.curTrial.secondary_purpose_other.length" ng-class="!ctrpbtn.trial_form.needsAttention(trial_form.secondary_purpose_other) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+                                <textarea restriction-field class="form-control input-sm" id="secondary_purpose_other"
+                                    name="secondary_purpose_other" maxlength="1000"
+                                    ng-model="trialDetailView.curTrial.secondary_purpose_other"
+                                    ng-disabled="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1" required></textarea>
+                                <span class="help-block" ng-show="trialDetailView.curTrial.secondary_purpose_other.length && trial_form.secondary_purpose_other.$dirty">
+                                    {{1000 - trial_form.secondary_purpose_other.$viewValue.length}} characters left
+                                </span>
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.secondary_purpose_other)">
                                     Other Secondary Purpose is Required
                                 </span>
@@ -273,9 +289,9 @@
                                 </span>
                             </div>
                         </div>
-                    </uib-accordion-group>
+                    </div>
 
-                    <uib-accordion-group is-open="trialDetailView.accordions[3]">
+                    <div uib-accordion-group class="panel-default"  is-open="trialDetailView.accordions[3]">
                         <uib-accordion-heading>
                             Lead Organization/Principal Investigator  <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[3], 'glyphicon-chevron-right': !trialDetailView.accordions[3]}"></i>
                         </uib-accordion-heading>
@@ -284,13 +300,13 @@
                             <label class="control-label col-xs-12 col-sm-3">Lead Organization:</label>
                             <div class="col-xs-12 col-sm-6">
                                 <input type="text" class="form-control input-sm" name="lead_org_name" disabled ng-model="trialDetailView.selectedLoArray[0].name" required>
-                                <span class="form-control-feedback" ng-show="trialDetailView.selectedLoArray[0].name.length" ng-class="!ctrpbtn.ctrpbtn.trial_form.needsAttention(trial_form.lead_org_name) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+                                <span class="form-control-feedback" ng-show="trialDetailView.selectedLoArray[0].name.length"></span>
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.lead_org_name)">
                                     Lead Organization is Required
                                 </span>
                             </div>
                             <div class="col-xs-12 col-xs-3" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
-                                <ctrp-org-adv-search-modal-button max-row-selectable="1" use-built-in-template="false" selected-orgs-array="trialDetailView.selectedLoArray"></ctrp-org-adv-search-modal-button>
+                                <ctrp-org-adv-search-modal-button max-row-selectable="1" pre-search = '{"source_contextfilter": ["CTRP"]}' use-built-in-template="false" selected-orgs-array="trialDetailView.selectedLoArray"></ctrp-org-adv-search-modal-button>
                             </div>
                         </div>
 
@@ -298,19 +314,22 @@
                             <label class="control-label col-xs-12 col-sm-3">Principal Investigator:</label>
                             <div class="col-xs-12 col-sm-6">
                                 <input type="text" class="form-control input-sm" name="pi_name1" disabled value="{{trialDetailView.selectedPiArray[0].lname + (trialDetailView.selectedPiArray[0].lname ? ', ' : ' ') + trialDetailView.selectedPiArray[0].fname}}">
-                                <span class="form-control-feedback" ng-show="trialDetailView.selectedPiArray[0].lname.length" ng-class="!ctrpbtn.trial_form.needsAttention(trial_form.pi_name) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+                                <span class="form-control-feedback" ng-show="trialDetailView.selectedPiArray[0].lname.length"></span>
                                 <input type="hidden" name="pi_name" ng-model="trialDetailView.selectedPiArray[0]" required>
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.pi_name)">
                                     Principal Investigator is Required
                                 </span>
                             </div>
                             <div class="col-xs-12 col-xs-3" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
-                                <ctrp-person-adv-search-modal-button max-row-selectable="1" use-built-in-template="false" selected-persons-array="trialDetailView.selectedPiArray"></ctrp-person-adv-search-modal-button>
+                                <button type="button" class="btn btn-primary" id="person_search_modal" person-search-modal-button2 max-row-selectable="1" source-context-only="'CTRP'" ng-model="trialDetailView.selectedPiArray" restriction-field>
+                                    <i class="glyphicon glyphicon-search"></i> Search Persons
+                                </button>
+                                <!-- <ctrp-person-adv-search-modal-button max-row-selectable="1" use-built-in-template="false" selected-persons-array="trialDetailView.selectedPiArray"></ctrp-person-adv-search-modal-button> -->
                             </div>
                         </div>
-                    </uib-accordion-group>
+                    </div>
 
-                    <uib-accordion-group is-open="trialDetailView.accordions[4]">
+                    <div uib-accordion-group class="panel-default"  is-open="trialDetailView.accordions[4]">
                         <uib-accordion-heading>
                             Sponsor  <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[4], 'glyphicon-chevron-right': !trialDetailView.accordions[4]}"></i>
                         </uib-accordion-heading>
@@ -319,19 +338,19 @@
                             <label class="control-label col-xs-12 col-sm-3">Sponsor:</label>
                             <div class="col-xs-12 col-sm-6">
                                 <input type="text" class="form-control input-sm" name="sponsor_name" disabled ng-model="trialDetailView.selectedSponsorArray[0].name" required>
-                                <span class="form-control-feedback" ng-show="trialDetailView.selectedSponsorArray[0].name.length" ng-class="!ctrpbtn.trial_form.needsAttention(trial_form.sponsor_name) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+                                <span class="form-control-feedback" ng-show="trialDetailView.selectedSponsorArray[0].name.length"></span>
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.sponsor_name)">
                                     Sponsor is Required
                                 </span>
                             </div>
                             <div class="col-xs-12 col-sm-3" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
-                                <ctrp-org-adv-search-modal-button max-row-selectable="1" use-built-in-template="false" selected-orgs-array="trialDetailView.selectedSponsorArray"></ctrp-org-adv-search-modal-button>
+                                <ctrp-org-adv-search-modal-button pre-search ='{"source_contextfilter": ["CTRP"]}' max-row-selectable="1" use-built-in-template="false" selected-orgs-array="trialDetailView.selectedSponsorArray"></ctrp-org-adv-search-modal-button>
                             </div>
                         </div>
 
-                    </uib-accordion-group>
+                    </div>
 
-                    <uib-accordion-group is-open="trialDetailView.accordions[5]">
+                    <div uib-accordion-group class="panel-default"  is-open="trialDetailView.accordions[5]">
                         <uib-accordion-heading>
                             Data Table 4 Information  <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[5], 'glyphicon-chevron-right': !trialDetailView.accordions[5]}"></i>
                         </uib-accordion-heading>
@@ -339,7 +358,7 @@
                         <div class="form-group required" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.fs_dummy)}">
                             <label class="control-label col-xs-12 col-sm-3">Data Table 4 Funding Source:</label>
                             <div class="col-xs-12 col-sm-9" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
-                                <ctrp-org-adv-search-modal-button max-row-selectable="1" use-built-in-template="false" selected-orgs-array="trialDetailView.selectedFsArray" allow-overwrite="false"></ctrp-org-adv-search-modal-button>
+                                <ctrp-org-adv-search-modal-button pre-search ='{"source_contextfilter": ["CTRP"]}' max-row-selectable="1" use-built-in-template="false" selected-orgs-array="trialDetailView.selectedFsArray" allow-overwrite="false"></ctrp-org-adv-search-modal-button>
                                 <input type="hidden" name="fs_dummy" ng-model="trialDetailView.dummyField" ng-required="trialDetailView.fsNum === 0">
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.fs_dummy)">
                                     Funding Source is Required
@@ -364,9 +383,9 @@
                                        ng-disabled="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
                             </div>
                         </div>
-                    </uib-accordion-group>
+                    </div>
 
-                    <uib-accordion-group is-open="trialDetailView.accordions[6]">
+                    <div uib-accordion-group class="panel-default"  is-open="trialDetailView.accordions[6]">
                         <uib-accordion-heading>
                             NIH Grant Information (for NIH funded Trials) <i class="glyphicon glyphicon-edit" title="Editable Section" aria-label="Editable Section" ng-if="!trialDetailView.curTrial.new && trialDetailView.curTrial.edit_type === 'update'"></i> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[6], 'glyphicon-chevron-right': !trialDetailView.accordions[6]}"></i>
                         </uib-accordion-heading>
@@ -390,7 +409,7 @@
 
                         <div class="form-group" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.grant_dummy)}">
                             <div class="col-sm-12">
-                                <table class="table table-striped table-condensed" ng-hide="trialDetailView.curTrial.grant_question !== 'Yes'">
+                                <table class="table table-striped table-condensed" ng-hide="trialDetailView.curTrial.grant_question !== 'Yes'" ctrp-hint>
                                     <thead>
                                         <th>Funding Mechanism</th>
                                         <th>Institute Code</th>
@@ -419,7 +438,7 @@
 
                                             <td class="col-md-2">
                                                 <div class="select2-results-absolute">
-                                                    <ui-select restriction-field ng-model="trialDetailView.serial_number"
+                                                    <ui-select ng-model="trialDetailView.serial_number"
                                                                theme="select2"
                                                                ng-disabled="grantsInputs.disabled"
                                                                reset-search-input="false"
@@ -455,7 +474,7 @@
                                             </td>
                                             <td class="col-md-1">
                                                 <div>
-                                                    <button type="button" restriction-field class="btn btn-primary" ng-click="trialDetailView.addGrant()">
+                                                    <button type="button" restriction-field class="btn btn-primary btn-add" ng-click="trialDetailView.addGrant()">
                                                         <i class="glyphicon glyphicon-plus"></i> Add
                                                     </button>
                                                 </div>
@@ -497,16 +516,16 @@
                                 </table>
                             </div>
                         </div>
-                    </uib-accordion-group>
+                    </div>
 
-                    <uib-accordion-group is-open="trialDetailView.accordions[7]">
+                    <div uib-accordion-group class="panel-default"  is-open="trialDetailView.accordions[7]">
                         <uib-accordion-heading>
                             Trial Status <i class="glyphicon glyphicon-edit" title="Editable Section" aria-label="Editable Section" ng-if="!trialDetailView.curTrial.new && trialDetailView.curTrial.edit_type === 'update'"></i> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[7], 'glyphicon-chevron-right': !trialDetailView.accordions[7]}"></i>
                         </uib-accordion-heading>
 
                         <div class="form-group required" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.ts_dummy)}">
                             <div class="col-sm-12">
-                                <table class="table table-striped table-condensed">
+                                <table class="table table-striped table-condensed" ctrp-hint>
                                     <thead>
                                         <th>Status Date</th>
                                         <th>Status</th>
@@ -519,7 +538,7 @@
                                             <td class="col-md-2">
                                                 <div class="input-group add-on date datepicker" date-date-format="yyyy-mm-dd">
                                                     <input restriction-field type="text" class="form-control input-sm" uib-datepicker-popup="{{trialDetailView.dateFormat}}" ng-model="trialDetailView.status_date"
-                                                            ng-click="trialDetailView.openCalendar($event, 'status_date')" is-open="trialDetailView.status_date_opened" datepicker-options="trialDetailView.dateOptions" ng-required="false" close-text="Close">
+                                                            ng-click="trialDetailView.openCalendar($event, 'status_date')" is-open="trialDetailView.status_date_opened" datepicker-options="trialDetailView.dateOptions" ng-required="false" close-text="Close" readonly date-formatter>
                                                     <span class="input-group-btn">
                                                         <button restriction-field type="button" class="btn btn-primary" ng-click="trialDetailView.openCalendar($event, 'status_date')">
                                                             <i class="glyphicon glyphicon-calendar"></i>
@@ -537,17 +556,17 @@
                                             </td>
                                             <td class="col-md-3">
                                                 <div>
-                                                    <textarea restriction-field class="form-control input-sm resize-vertical" id="status_comment" ng-model="trialDetailView.status_comment" />
+                                                    <textarea restriction-field class="form-control input-sm resize-vertical" id="status_comment" maxlength="160" ng-model="trialDetailView.status_comment" />
                                                 </div>
                                             </td>
                                             <td class="col-md-3">
                                                 <div>
-                                                    <textarea restriction-field class="form-control input-sm resize-vertical" id="why_stopped" ng-model="trialDetailView.why_stopped" ng-disabled="trialDetailView.why_stopped_disabled" />
+                                                    <textarea restriction-field class="form-control input-sm resize-vertical" id="why_stopped" maxlength="160" ng-model="trialDetailView.why_stopped" ng-disabled="trialDetailView.why_stopped_disabled" />
                                                 </div>
                                             </td>
                                             <td class="col-md-1">
                                                 <div>
-                                                    <button type="button" restriction-field class="btn btn-primary" ng-click="trialDetailView.addStatus()">
+                                                    <button type="button" restriction-field class="btn btn-primary btn-add" ng-click="trialDetailView.addStatus()">
                                                         <i class="glyphicon glyphicon-plus"></i> Add
                                                     </button>
                                                 </div>
@@ -563,7 +582,7 @@
                                 </span>
 
                                 <div class="add-association-error" ng-show="trialDetailView.showAddStatusError && trialDetailView.why_stopped_disabled">
-                                    Status Date and Status are required
+                                    Status Date and Status are Required
                                 </div>
                                 <div class="add-association-error" ng-show="trialDetailView.showAddStatusError && !trialDetailView.why_stopped_disabled">
                                     Status Date, Status and Why Study Stopped are Required
@@ -583,7 +602,7 @@
                                     </thead>
                                     <tbody>
                                         <tr ng-repeat="status in trialDetailView.addedStatuses track by $index" ng-class="status._destroy == true ? 'deleted-text animated-item' : 'animated-item'">
-                                            <td class="col-md-1">{{status.status_date}}</td>
+                                            <td class="col-md-1">{{status.status_date | dateFormat}}</td>
                                             <td class="col-md-2">{{status.trial_status_name}}</td>
                                             <td class="col-md-2">{{status.comment}}</td>
                                             <td class="col-md-2">{{status.why_stopped}}</td>
@@ -611,7 +630,15 @@
                                                 </div>
                                             </td>
                                             <td class="text-center td-icon">
-                                                <label restriction-field class="btn btn-warning" ng-click="trialDetailView.toggleSelection($index, 'trial_status')">
+                                                <!-- <label restriction-field class="btn btn-warning" ng-click="trialDetailView.toggleSelection($index, 'trial_status')">
+                                                    <i ng-class="status._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
+                                                </label> -->
+                                                <label restriction-field class="btn btn-warning"
+                                                    comment-popover="registry_trial_status"
+                                                    on-save="trialDetailView.deleteTrialStatus(why_deleted, $index)"
+                                                    toggle-status="trialDetailView.toggleSelection($index, 'trial_status')"
+                                                    is-deleted="{{status._destroy === true}}"
+                                                    >
                                                     <i ng-class="status._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
                                                 </label>
                                             </td>
@@ -620,9 +647,9 @@
                                 </table>
                             </div>
                         </div>
-                    </uib-accordion-group>
+                    </div>
 
-                    <uib-accordion-group is-open="trialDetailView.accordions[8]">
+                    <div uib-accordion-group class="panel-default"  is-open="trialDetailView.accordions[8]">
                         <uib-accordion-heading>
                             Trial Dates <i class="glyphicon glyphicon-edit" title="Editable Section" aria-label="Editable Section" ng-if="!trialDetailView.curTrial.new && trialDetailView.curTrial.edit_type === 'update'"></i> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[8], 'glyphicon-chevron-right': !trialDetailView.accordions[8]}"></i>
                         </uib-accordion-heading>
@@ -632,7 +659,7 @@
                             <div class="col-xs-12 col-sm-2">
                                 <div class="input-group add-on date datepicker" date-date-format="yyyy-mm-dd">
                                     <input restriction-field type="text" class="form-control input-sm" name="start_date" uib-datepicker-popup="{{trialDetailView.dateFormat}}" ng-model="trialDetailView.curTrial.start_date"
-                                           ng-click="trialDetailView.openCalendar($event, 'start_date')" is-open="trialDetailView.start_date_opened" datepicker-options="trialDetailView.dateOptions" close-text="Close" required>
+                                           ng-click="trialDetailView.openCalendar($event, 'start_date')" is-open="trialDetailView.start_date_opened" datepicker-options="trialDetailView.dateOptions" close-text="Close" required readonly date-formatter>
                                     <span class="input-group-btn">
                                         <button restriction-field type="button" class="btn btn-primary" ng-click="trialDetailView.openCalendar($event, 'start_date')">
                                             <i class="glyphicon glyphicon-calendar"></i>
@@ -671,7 +698,7 @@
                             <div class="col-xs-12 col-sm-2">
                                 <div class="input-group add-on date datepicker" date-date-format="yyyy-mm-dd">
                                     <input restriction-field type="text" class="form-control input-sm" name="primary_comp_date" uib-datepicker-popup="{{trialDetailView.dateFormat}}" ng-model="trialDetailView.curTrial.primary_comp_date"
-                                           ng-click="trialDetailView.openCalendar($event, 'primary_comp_date')" is-open="trialDetailView.primary_comp_date_opened" datepicker-options="trialDetailView.dateOptions" close-text="Close" required>
+                                           ng-click="trialDetailView.openCalendar($event, 'primary_comp_date')" is-open="trialDetailView.primary_comp_date_opened" datepicker-options="trialDetailView.dateOptions" close-text="Close" required readonly date-formatter>
                                     <span class="input-group-btn">
                                         <button restriction-field type="button" class="btn btn-primary" ng-click="trialDetailView.openCalendar($event, 'primary_comp_date')">
                                             <i class="glyphicon glyphicon-calendar"></i>
@@ -713,7 +740,7 @@
                             <div class="col-xs-12 col-sm-2">
                                 <div class="input-group add-on date datepicker" date-date-format="yyyy-mm-dd">
                                     <input restriction-field type="text" class="form-control input-sm" name="comp_date" uib-datepicker-popup="{{trialDetailView.dateFormat}}" ng-model="trialDetailView.curTrial.comp_date"
-                                           ng-click="trialDetailView.openCalendar($event, 'comp_date')" is-open="trialDetailView.comp_date_opened" datepicker-options="trialDetailView.dateOptions" close-text="Close" required>
+                                           ng-click="trialDetailView.openCalendar($event, 'comp_date')" is-open="trialDetailView.comp_date_opened" datepicker-options="trialDetailView.dateOptions" close-text="Close" required readonly date-formatter>
                                     <span class="input-group-btn">
                                         <button restriction-field type="button" class="btn btn-primary" ng-click="trialDetailView.openCalendar($event, 'comp_date')">
                                             <i class="glyphicon glyphicon-calendar"></i>
@@ -750,9 +777,9 @@
                                 </span>
                             </div>
                         </div>
-                    </uib-accordion-group>
+                    </div>
 
-                    <uib-accordion-group is-open="trialDetailView.accordions[9]">
+                    <div uib-accordion-group class="panel-default"  is-open="trialDetailView.accordions[9]">
                         <uib-accordion-heading>
                             FDA IND/IDE Information for applicable trials <i class="glyphicon glyphicon-edit" title="Editable Section" aria-label="Editable Section" ng-if="!trialDetailView.curTrial.new && trialDetailView.curTrial.edit_type === 'update'"></i> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[9], 'glyphicon-chevron-right': !trialDetailView.accordions[9]}"></i>
                         </uib-accordion-heading>
@@ -776,7 +803,7 @@
 
                         <div class="form-group" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.ind_ide_dummy)}">
                             <div class="col-sm-12">
-                                <table class="table table-striped table-condensed" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1 || trialDetailView.curTrial.ind_ide_question !== 'Yes'">
+                                <table class="table table-striped table-condensed" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1 || trialDetailView.curTrial.ind_ide_question !== 'Yes'" ctrp-hint>
                                     <thead>
                                         <th>IND/IDE Types</th>
                                         <th>IND/IDE Number</th>
@@ -819,15 +846,19 @@
                                             </td>
                                             <td class="col-md-3">
                                                 <div>
-                                                    <select restriction-field class="form-control input-sm" id="nih_nci" ng-model="trialDetailView.nih_nci">
+                                                    <select restriction-field class="form-control input-sm" id="nih_nci"
+                                                        ng-model="trialDetailView.nih_nci" ng-required="trialDetailView.indIdeHolderTypeCode ==='NCI' || trialDetailView.indIdeHolderTypeCode === 'NIH'" ng-disabled="!trialDetailView.nihNciArr.length">
                                                         <option value="">-Select-</option>
                                                         <option ng-repeat="nihNci in trialDetailView.nihNciArr" value="{{nihNci.code}}">{{nihNci.code}}</option>
                                                     </select>
                                                 </div>
+                                                <div class="add-association-error" ng-show="trialDetailView.nihHolderTypeError.length > 0 && !trialDetailView.nih_nci">
+                                                    {{trialDetailView.nihHolderTypeError}}
+                                                </div>
                                             </td>
                                             <td class="col-md-1">
                                                 <div>
-                                                    <button type="button" restriction-field class="btn btn-primary" ng-click="trialDetailView.addIndIde()">
+                                                    <button type="button" restriction-field class="btn btn-primary btn-add" ng-click="trialDetailView.addIndIde()">
                                                         <i class="glyphicon glyphicon-plus"></i> Add
                                                     </button>
                                                 </div>
@@ -871,9 +902,9 @@
                                 </table>
                             </div>
                         </div>
-                    </uib-accordion-group>
+                    </div>
 
-                    <uib-accordion-group is-open="trialDetailView.accordions[10]">
+                    <div uib-accordion-group class="panel-default" is-open="trialDetailView.accordions[10]">
                         <uib-accordion-heading>
                             Regulatory Information  <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[10], 'glyphicon-chevron-right': !trialDetailView.accordions[10]}"></i>
                         </uib-accordion-heading>
@@ -897,25 +928,31 @@
                             <label class="control-label col-xs-12 col-sm-3">Investigator:</label>
                             <div class="col-xs-12 col-sm-6">
                                 <input type="text" class="form-control input-sm" name="investigator_name1" disabled value="{{trialDetailView.selectedInvArray[0].lname + (trialDetailView.selectedInvArray[0].lname ? ', ' : ' ') + trialDetailView.selectedInvArray[0].fname}}"/>
-                                <span class="form-control-feedback" ng-show="trialDetailView.selectedInvArray[0].lname.length" ng-class="!ctrpbtn.trial_form.needsAttention(trial_form.investigator_name) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+                                <span class="form-control-feedback" ng-show="trialDetailView.selectedInvArray[0].lname.length"></span>
                                 <input type="hidden" name="investigator_name" ng-model="trialDetailView.selectedInvArray[0]" ng-required="trialDetailView.showInvestigator">
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.investigator_name)">
                                     Investigator is Required
                                 </span>
                             </div>
                             <div class="col-xs-12 col-sm-3" ng-show="trialDetailView.showInvSearchBtn && ['update'].indexOf(trialDetailView.curTrial.edit_type) < 0">
-                                <ctrp-person-adv-search-modal-button max-row-selectable="1" use-built-in-template="false" selected-persons-array="trialDetailView.selectedInvArray"></ctrp-person-adv-search-modal-button>
+                                <!-- <ctrp-person-adv-search-modal-button max-row-selectable="1" use-built-in-template="false" selected-persons-array="trialDetailView.selectedInvArray"></ctrp-person-adv-search-modal-button> -->
+                                <button type="button" class="btn btn-primary" id="person_search_modal" person-search-modal-button2 max-row-selectable="1" source-context-only="'CTRP'" ng-model="trialDetailView.selectedInvArray" restriction-field>
+                                    <i class="glyphicon glyphicon-search"></i> Search Persons
+                                </button>
                             </div>
                         </div>
 
                         <div ng-show="trialDetailView.showInvestigator" class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.investigator_title)}">
                             <label class="control-label col-xs-12 col-sm-3">Investigator Title:</label>
                             <div class="col-xs-12 col-sm-6">
-                                <input type="text" restriction-field class="form-control input-sm" id="investigator_title" name="investigator_title" ng-model="trialDetailView.curTrial.investigator_title"
+                                <input type="text" restriction-field class="form-control input-sm" id="investigator_title" name="investigator_title"
+                                        maxlength="254" ng-model="trialDetailView.curTrial.investigator_title"
                                        ng-disabled="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1" ng-required="trialDetailView.showInvestigator">
-                                <span class="form-control-feedback" ng-show="trialDetailView.curTrial.investigator_title.length" ng-class="!ctrpbtn.trial_form.needsAttention(trial_form.investigator_title) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.investigator_title)">
                                     Investigator Title is Required
+                                </span>
+                                <span class="help-block" ng-show="trial_form.investigator_title.$dirty">
+                                    {{254 - trialDetailView.curTrial.investigator_title.length }} characters left
                                 </span>
                             </div>
                         </div>
@@ -924,21 +961,21 @@
                             <label class="control-label col-xs-12 col-sm-3">Investigator Affiliation:</label>
                             <div class="col-xs-12 col-sm-6">
                                 <input type="text" class="form-control input-sm" disabled value="{{trialDetailView.selectedIaArray[0].name}}" name="inv_aff_name1"/>
-                                <span class="form-control-feedback" ng-show="trialDetailView.selectedIaArray[0].name.length" ng-class="!ctrpbtn.trial_form.needsAttention(trial_form.inv_aff_name) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+                                <span class="form-control-feedback" ng-show="trialDetailView.selectedIaArray[0].name.length"></span>
                                 <input type="hidden" name="inv_aff_name" ng-model="trialDetailView.selectedIaArray[0]" ng-required="trialDetailView.showInvestigator">
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.inv_aff_name)">
                                     Investigator Affiliation is Required
                                 </span>
                             </div>
                             <div class="col-xs-12 col-sm-3" ng-show="!trialDetailView.showInvSearchBtn && ['update'].indexOf(trialDetailView.curTrial.edit_type) < 0">
-                                <ctrp-org-adv-search-modal-button max-row-selectable="1" use-built-in-template="false" selected-orgs-array="trialDetailView.selectedIaArray"></ctrp-org-adv-search-modal-button>
+                                <ctrp-org-adv-search-modal-button pre-search='{"source_contextfilter": ["CTRP"]}' max-row-selectable="1" use-built-in-template="false" selected-orgs-array="trialDetailView.selectedIaArray"></ctrp-org-adv-search-modal-button>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="control-label col-xs-12 col-sm-3">Trial Oversight Authority:</label>
                             <div class="col-xs-12 col-sm-6">
-                                <table class="table table-striped table-condensed" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
+                                <table class="table table-striped table-condensed" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1" ctrp-hint>
                                     <thead>
                                         <th>Country</th>
                                         <th>Organization</th>
@@ -964,7 +1001,7 @@
                                             </td>
                                             <td class="col-md-2">
                                                 <div>
-                                                    <button type="button" restriction-field class="btn btn-primary" ng-click="trialDetailView.addAuthority()">
+                                                    <button type="button" restriction-field class="btn btn-primary btn-add" ng-click="trialDetailView.addAuthority()">
                                                         <i class="glyphicon glyphicon-plus"></i> Add
                                                     </button>
                                                 </div>
@@ -1051,12 +1088,19 @@
                                 </label>
                             </div>
                         </div>
-                    </uib-accordion-group>
+                    </div>
 
-                    <uib-accordion-group is-open="trialDetailView.accordions[11]">
+                    <div uib-accordion-group class="panel-default"  is-open="trialDetailView.accordions[10]">
                         <uib-accordion-heading>
-                            Trial Related Documents <i class="glyphicon glyphicon-edit" title="Editable Section" aria-label="Editable Section" ng-if="!trialDetailView.curTrial.new && trialDetailView.curTrial.edit_type === 'update'"></i> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[11], 'glyphicon-chevron-right': !trialDetailView.accordions[11]}"></i>
+                            Trial Related Documents <i class="glyphicon glyphicon-edit" title="Editable Section" aria-label="Editable Section" ng-if="!trialDetailView.curTrial.new && trialDetailView.curTrial.edit_type === 'update'"></i> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[10], 'glyphicon-chevron-right': !trialDetailView.accordions[10]}"></i>
                         </uib-accordion-heading>
+
+                        <p class="text-left text-block">
+                            To ensure successful registration, upload a Protocol document and an IRB Approval document. If the Protocol document does not include the Informed Consent and/or participating sites, upload the Informed Consent document and a list of participating sites separately. You can use the Participating Sites template to submit your list of participating sites.
+                        </p>
+                        <p class="text-left text-block">
+                            CTRP accepts most standard document types. For additional information about what document types are accepted, please refer to the Help section.
+                        </p>
 
                         <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.protocol_document)}">
                             <label class="control-label col-xs-12 col-sm-3">Protocol Document:</label>
@@ -1073,11 +1117,11 @@
                             </div>
                         </div>
 
-                        <div ng-repeat="document in trialDetailView.addedDocuments track by $index" ng-if="document.document_type == 'Protocol Document' && document.status === 'active'" class="form-group">
+                        <div ng-repeat="document in trialDetailView.addedDocuments track by $index" ng-if="document.document_type == 'Protocol Document' && document.status === 'active' && document.is_latest" class="form-group">
                             <label class="control-label col-xs-12 col-sm-3"></label>
                             <div class="col-xs-12 col-sm-9">
                                 <a ng-class="document._destroy == true ? 'deleted-text animated-item' : 'animated-item'" href="{{trialDetailView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
-                                <span restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
+                                <span ng-show="trialDetailView.isDocDeletionAllowed" restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
                             </div>
                         </div>
 
@@ -1097,11 +1141,11 @@
                                 </div>
                             </div>
 
-                            <div ng-repeat="document in trialDetailView.addedDocuments track by $index" ng-if="document.document_type == 'Change Memo Document' && document.status === 'active'" class="form-group">
+                            <div ng-repeat="document in trialDetailView.addedDocuments track by $index" ng-if="document.document_type == 'Change Memo Document' && document.status === 'active' && document.is_latest" class="form-group">
                                 <label class="control-label col-xs-12 col-sm-3"></label>
                                 <div class="col-xs-12 col-sm-9">
                                     <a ng-class="document._destroy == true ? 'deleted-text animated-item' : 'animated-item'" href="{{trialDetailView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
-                                    <span restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
+                                    <span ng-show="trialDetailView.isDocDeletionAllowed" restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
                                 </div>
                             </div>
 
@@ -1120,11 +1164,11 @@
                                 </div>
                             </div>
 
-                            <div ng-repeat="document in trialDetailView.addedDocuments track by $index" ng-if="document.document_type == 'Protocol Highlighted Document' && document.status === 'active'" class="form-group">
+                            <div ng-repeat="document in trialDetailView.addedDocuments track by $index" ng-if="document.document_type == 'Protocol Highlighted Document' && document.status === 'active' && document.is_latest" class="form-group">
                                 <label class="control-label col-xs-12 col-sm-3"></label>
                                 <div class="col-xs-12 col-sm-9">
                                     <a ng-class="document._destroy == true ? 'deleted-text animated-item' : 'animated-item'" href="{{trialDetailView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
-                                    <span restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
+                                    <span ng-show="trialDetailView.isDocDeletionAllowed" restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
                                 </div>
                             </div>
                         </div>
@@ -1144,30 +1188,29 @@
                             </div>
                         </div>
 
-                        <div ng-repeat="document in trialDetailView.addedDocuments track by $index" ng-if="document.document_type == 'IRB Approval' && document.status === 'active'" class="form-group">
+                        <div ng-repeat="document in trialDetailView.addedDocuments track by $index" ng-if="document.document_type == 'IRB Approval' && document.status === 'active' && document.is_latest" class="form-group">
                             <label class="control-label col-xs-12 col-sm-3"></label>
                             <div class="col-xs-12 col-sm-9">
                                 <a ng-class="document._destroy == true ? 'deleted-text animated-item' : 'animated-item'" href="{{trialDetailView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
-                                <span restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
+                                <span ng-show="trialDetailView.isDocDeletionAllowed" restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
                             </div>
                         </div>
 
                         <div class="form-group has-feedback" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.participating_sites)}">
                             <label class="control-label col-xs-12 col-sm-3">List of Participating Sites:</label>
                             <div class="col-xs -12 col-sm-9 form-file-upload">
-                                <input type="file" restriction-field ngf-select ng-model="trialDetailView.participating_sites" name="participating_sites" ngf-max-size="10MB"
-                                       validate-file-type="{{trialDetailView.acceptedFileExtensions}}">
+                                <input type="file" restriction-field ngf-select ng-model="trialDetailView.participating_sites" name="participating_sites" ngf-max-size="10MB" validate-file-type="{{trialDetailView.acceptedFileExtensions}}">
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.participating_sites) && trial_form.participating_sites.$error.validateFileType">
                                     Valid file is Required. Allowed file types: {{trialDetailView.acceptedFileExtensions}}
                                 </span>
                             </div>
                         </div>
 
-                        <div ng-repeat="document in trialDetailView.addedDocuments track by $index" ng-if="document.document_type == 'List of Participating Sites' && document.status === 'active'" class="form-group">
+                        <div ng-repeat="document in trialDetailView.addedDocuments track by $index" ng-if="document.document_type == 'List of Participating Sites' && document.status === 'active' && document.is_latest" class="form-group">
                             <label class="control-label col-xs-12 col-sm-3"></label>
                             <div class="col-xs-12 col-sm-9">
                                 <a ng-class="document._destroy == true ? 'deleted-text animated-item' : 'animated-item'" href="{{trialDetailView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
-                                <span restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
+                                <span ng-show="trialDetailView.isDocDeletionAllowed" restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
                             </div>
                         </div>
 
@@ -1182,11 +1225,32 @@
                             </div>
                         </div>
 
-                        <div ng-repeat="document in trialDetailView.addedDocuments track by $index" ng-if="document.document_type == 'Informed Consent' && document.status === 'active'" class="form-group">
+                        <div ng-repeat="document in trialDetailView.addedDocuments track by $index" ng-if="document.document_type == 'Informed Consent' && document.status === 'active' && document.is_latest" class="form-group">
                             <label class="control-label col-xs-12 col-sm-3"></label>
                             <div class="col-xs-12 col-sm-9">
                                 <a ng-class="document._destroy == true ? 'deleted-text animated-item' : 'animated-item'" href="{{trialDetailView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
-                                <span restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
+                                <span ng-show="trialDetailView.isDocDeletionAllowed" restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-show="trialDetailView.changeMemoDoc.file_name.length > 0">
+                            <label class="control-label col-xs-12 col-sm-3">Change Memo:</label>
+                            <div class="col-xs-12 col-sm-9 form-text">
+                                <a href="{{trialDetailView.downloadBaseUrl}}/{{trialDetailView.changeMemoDoc.id}}" target="_self">{{trialDetailView.changeMemoDoc.file_name}}</a>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-show="trialDetailView.proHighlightedDoc.file_name.length > 0">
+                            <label class="control-label col-xs-12 col-sm-3">Protocol Highlighted Document:</label>
+                            <div class="col-xs-12 col-sm-9 form-text">
+                                <a href="{{trialDetailView.downloadBaseUrl}}/{{trialDetailView.proHighlightedDoc.id}}" target="_self">{{trialDetailView.proHighlightedDoc.file_name}}</a>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-show="trialDetailView.tsrShown">
+                            <label class="control-label col-xs-12 col-sm-3">TSR:</label>
+                            <div class="col-xs-12 col-sm-9 form-text">
+                                <a href="{{trialDetailView.downloadBaseUrl}}/{{trialDetailView.tsrDoc.id}}" target="_self">{{trialDetailView.tsrDoc.file_name}}</a>
                             </div>
                         </div>
 
@@ -1205,7 +1269,10 @@
                             <div class="form-group">
                                 <label class="control-label col-xs-12 col-sm-3"></label>
                                 <div class="col-xs-12 col-sm-6">
-                                    <input type="text" restriction-field class="form-control input-sm" ng-model="trialDetailView.other_document_subtypes[$index]" placeholder="Describe other document">
+                                    <input type="text" restriction-field class="form-control input-sm" maxlength="255" ng-model="trialDetailView.other_document_subtypes[$index]" placeholder="Describe other document">
+                                    <span class="help-block" ng-show="trialDetailView.other_document_subtypes[$index].length > 0">
+                                        {{255 - trialDetailView.other_document_subtypes[$index].length}} characters left
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -1223,11 +1290,77 @@
                             <label class="control-label col-xs-12 col-sm-3"></label>
                             <div class="col-xs-12 col-sm-9">
                                 <a ng-class="document._destroy == true ? 'deleted-text animated-item' : 'animated-item'" href="{{trialDetailView.downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
-                                <span restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
+                                <span ng-show="trialDetailView.isDocDeletionAllowed" restriction-field ng-click="trialDetailView.toggleSelection($index, 'document')" class="btn glyphicon glyphicon-trash"></span>
                                 <br>{{document.document_subtype}}
                             </div>
                         </div>
-                    </uib-accordion-group>
+                    </div>
+
+                    <div uib-accordion-group is-open="trialDetailView.accordions[11]" class="panel-default" ng-show="!trialDetailView.curTrial.new && (trialDetailView.curTrial.edit_type === 'update' || trialDetailView.curTrial.edit_type === 'amend')">
+                        <uib-accordion-heading>
+                            Participating Sites <i class="glyphicon glyphicon-edit" title="Editable Section" aria-label="Editable Section"></i> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[11], 'glyphicon-chevron-right': !trialDetailView.accordions[11]}"></i>
+                        </uib-accordion-heading>
+
+                        <div class="form-group">
+                            <div class="col-sm-12 table-responsive" ng-show="trialDetailView.curTrial.participating_sites.length > 0">
+                                <h5>List of Participating Sites:</h5>
+                                <table st-table="trialDetailView.curTrial.participating_sites" class="table table-bordered table-striped table-condensed">
+                                    <thead>
+                                        <th>CTRP Org ID</th>
+                                        <th>CTRP Organization Name</th>
+                                        <th>Principal Investigator</th>
+                                        <th>Local Trial Id</th>
+                                        <th>Program Code</th>
+                                        <th>Current Site Recruitment Status</th>
+                                        <th>Current Site Recruitment Status Date</th>
+                                        <th>Primary Contact</th>
+                                        <th>Email</th>
+                                        <th>Phone/Ext</th>
+                                        <th>Edit</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="ps in trialDetailView.curTrial.participating_sites track by $index">
+                                            <td class="col-sm-1">{{ps.organization.source_id}}</td>
+                                            <td class="col-sm-2">{{ps.organization.name}}</td>
+                                            <td class="col-sm-1">{{ps.site_pi.lname}}, {{ps.site_pi.fname}}</td>
+                                            <td class="col-sm-1">{{ps.protocol_id}}</td>
+                                            <td class="col-sm-1">{{ps.program_code}}</td>
+                                            <td class="col-sm-1">{{ps.current_status_name}}</td>
+                                            <td class="col-sm-1">{{ps.latest_site_recruitment_status_date | dateFormat }}</td>
+                                            <td class="col-sm-1">{{ps.contact_name}}</td>
+                                            <td class="col-sm-1">{{ps.contact_email}}</td>
+                                            <td class="col-sm-1">
+                                                {{ps.contact_phone}}
+                                                <span ng-show="ps.extension">
+                                                    x{{ps.extension}}
+                                                </span>
+                                            </td>
+                                            <td class="col-sm-1">
+                                                <button type="button" restriction-field class="btn btn-primary" ng-click="trialDetailView.editParticipatingSite($index)">
+                                                    <i class="glyphicon glyphicon-edit"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                            			<tr>
+                            				<td colspan="11" class="col-sm-12">
+                            					<div class="pull-left" st-pagination="" st-items-by-page="trialDetailView.itemsOptions.selectedOption.value" st-displayed-pages="7"></div>
+                                                <div class="pull-left">
+                                                    <select class="form-control input-sm" name="itemsPerPage" id="itemsPerPage" ng-model="trialDetailView.itemsOptions.selectedOption"
+                                                        ng-options="item.value for item in trialDetailView.itemsOptions.data track by item.id">
+                                                    </select>
+                                                </div>
+                                                <div class="pull-left form-text pagination-text">
+                                                    <span> items per page</span>
+                                                </div>
+                            				</td>
+                            			</tr>
+                            		</tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </uib-accordion>
 
                 <div class="form-group" ng-hide="trialDetailView.curTrial.new || !trialDetailView.curTrial.created_by">
@@ -1253,7 +1386,7 @@
                         <button type="submit" restriction-field class="btn btn-primary pull-right" id="submit_btn" ng-disabled="trialDetailView.disableBtn">
                             {{trial_form.$invalid ? 'Review' : 'Submit'}}
                         </button>
-                        <button type="button" restriction-field class="btn btn-warning pull-right" ng-click="trialDetailView.reload()" ng-disabled="trialDetailView.disableBtn">
+                        <button type="button" restriction-field class="btn btn-warning pull-right" ng-click="trialDetailView.reset()" ng-disabled="trialDetailView.disableBtn">
                             <i class="glyphicon glyphicon-remove"></i> Reset
                         </button>
                     </div>

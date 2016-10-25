@@ -1,6 +1,10 @@
 class MarkersController < ApplicationController
   before_action :set_marker, only: [:show, :edit, :update, :destroy]
 
+  ##Paper Trail Callbacks
+  before_action :set_paper_trail_whodunnit, only: [:create,:update, :destroy]
+
+
   # GET /markers
   # GET /markers.json
   def index

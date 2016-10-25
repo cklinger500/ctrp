@@ -8,27 +8,31 @@
         .controller('pasInterventionCtrl', pasInterventionCtrl)
         .controller('pasInterventionLookupModalCtrl',pasInterventionLookupModalCtrl);
 
-    pasInterventionCtrl.$inject = ['$scope', 'TrialService', 'PATrialService', 'toastr',
+    pasInterventionCtrl.$inject = ['$scope', 'TrialService', 'PATrialService', '$state', 'toastr',
         'MESSAGES', '_', '$timeout', 'Common', '$uibModal', 'interventionTypes', 'UserService','$location', '$anchorScroll'];
 
     pasInterventionLookupModalCtrl.$inject = ['$scope', '$uibModalInstance', 'PATrialService'];
 
-    function pasInterventionCtrl($scope, TrialService, PATrialService, toastr,
+    function pasInterventionCtrl($scope, TrialService, PATrialService, $state, toastr,
         MESSAGES, _, $timeout, Common, $uibModal, interventionTypes, UserService, $location, $anchorScroll) {
 
             var vm = this;
             vm.interventionTypes = interventionTypes;
-            console.info('interventionTypes: ', interventionTypes);
             vm.trialDetailObj = {};
             vm.showInterventionForm = false;
             vm.curInterventionObj = {};
             vm.deleteBtnDisabled = true;
             vm.upsertBtnDisabled = true;
             vm.disableBtn = false;
-            vm.sortableListener = {};
+            vm.isCurationEnabled = UserService.isCurationModeEnabled() || false;
+            vm.sortableListener = {
+                cancel: '.locked'
+             };
             vm.sortableListener.stop = dragItemCallback;
+
             var curUserRole = UserService.getUserRole() || '';
-            var isUserAllowedToSelectType = curUserRole === 'ROLE_SUPER' || curUserRole === 'ROLE_ABSTRACTOR-SU'; // only super userss are allowed
+            var USERS_ALLOWED_CHANGE_TYPE = ['ROLE_SUPER', 'ROLE_ABSTRACTOR-SU', 'ROLE_ADMIN']; // user roles allowed to change intervention type
+            var isUserAllowedToSelectType = _.contains(USERS_ALLOWED_CHANGE_TYPE, curUserRole);
 
             // actions
             vm.addIntervention = addIntervention;
@@ -38,6 +42,7 @@
             vm.flagAllInterventionsForDeletion = flagAllInterventionsForDeletion;
             vm.deleteInterventions = deleteInterventions;
             vm.openLookupModal = openLookupModal;
+            vm.reload = reload;
 
             activate();
             function activate() {
@@ -90,7 +95,6 @@
             }
 
             function updateInterventions(showToastr) {
-                console.info('interventions: ', vm.trialDetailObj.interventions);
                 vm.trialDetailObj.interventions_attributes = _labelSortableIndex(vm.trialDetailObj.interventions);
                 vm.deleteBtnDisabled = true;
                 vm.upsertBtnDisabled = true;
@@ -105,21 +109,22 @@
                         $scope.$emit('updatedInChildScope', {});
                         if (showToastr) {
                             toastr.clear();
-                            toastr.success('Intervention has been updated', 'Successful!', {
-                                extendedTimeOut: 1000,
-                                timeOut: 0
-                            });
+                            toastr.success('Intervention has been updated', 'Successful!');
                         }
                         _getTrialDetailCopy();
+
+                        // To make sure setPristine() is executed after all $watch functions are complete
+                        $timeout(function() {
+                           $scope.intervention_form.$setPristine();
+                        }, 1);
+
+                        vm.curInterventionObj = null;
+                        vm.showInterventionForm = false; // hide the form
                     }
                 }).catch(function(err) {
                     console.error('trial upsert error: ', err);
                 }).finally(function() {
-                    console.info('hiding intervention form now!');
-                    vm.curInterventionObj = null;
-                    vm.showInterventionForm = false; // hide the form
                     vm.disableBtn = false;
-                    // resetLookupForm();
                 });
             }
 
@@ -150,6 +155,7 @@
                     return;
                 }
                 vm.curInterventionObj = _newInterventionObj();
+                $scope.intervention_form.$setPristine();
             }
 
             function watchInterventionList() {
@@ -206,6 +212,8 @@
                     vm.curInterventionObj.intervention_type_id = selectedInterventionObj.intervention_type_id || '';
                     vm.isInterventionTypeListEnabled = vm.curInterventionObj.intervention_type_id === '' && isUserAllowedToSelectType;
                     console.info('received vm.curInterventionObj: ', vm.curInterventionObj);
+
+                    $scope.intervention_form.$setDirty();
                 }).catch(function(err) {
                     console.error('error in modal instance: ', err);
                 }).finally(function() {
@@ -213,6 +221,11 @@
                     modalOpened = false;
                 });
             } // openLookupModal
+
+            function reload() {
+                $state.go($state.$current, null, { reload: true });
+            };
+
     } // pasInterventionCtrl
 
 
@@ -230,13 +243,15 @@
             // search ctrp interventions for same name, if exists, get its intervention type id for
             // trials to use
             PATrialService.searchCtrpInterventionsByName(interventionCCode).then(function(searchResponse) {
-                console.info('searchResponse: ', searchResponse);
-                var result = searchResponse.data;
-                if (result !== null) {
-                    vm.selection.intervention_type_id = result.intervention_type_id;
-                    // vm.selection.intervention_type_ct_gov_id = result.intervention_type_ct_gov_id;
+                var status = searchResponse.server_response.status;
+
+                if (status >= 200 && status <= 210) {
+                    var result = searchResponse.data;
+                    if (result !== null) {
+                        vm.selection.intervention_type_id = result.intervention_type_id;
+                        // vm.selection.intervention_type_ct_gov_id = result.intervention_type_ct_gov_id;
+                    }
                 }
-                console.info('intervention search result: ', result);
             }).catch(function(err) {
                 console.error('error in search CTRP Interventions: ', err);
             }).finally(function() {

@@ -14,29 +14,85 @@ var helperFunctions = require('../support/helper');
 
 
 var abstractionCommonBar = function(){
-    /*******
-     * Page Object: Abstraction Dashboards
-     *
-     *
-     *******/
-    this.homeSearchTrials = element(By.xpath('//a[contains(text(),"Search Trials")]'));
-    this.homeAbstractionDashboards = element(By.xpath('//a[contains(text(),"Abstraction Dashboards")]'));
-    var homeAbstractionDashboards = element(by.css('a[href="#/main/pa_trials"]'));
+    /*********************************************
+     * Page Object: Abstraction Dashboards & Menu
+     *********************************************/
+    this.homeSearchTrials = element(by.xpath('//a[contains(text(),"Search Trials")]'));
+    var homeAbstractorSearchTrials = element(by.id('dash_search_trial'));
+    var homeAbstractionDashboards = element(by.id('dash_abst_trial'));
+    //this.homeAbstractionDashboards = element(by.xpath('//a[contains(text(),"Abstraction Dashboards")]'));
+    //Top Menus
+    /*********************************************
+     * Home
+     *********************************************/
     this.homeMenu = element(by.linkText('Home'));
+
+    /*********************************************
+     * Dashboards
+     *********************************************/
     this.dashboardMenu = element(by.linkText('Dashboards'));
-    this.dashboardAbstractionMenu = element(by.linkText('Abstraction'));
-    this.dashboardResultReportingMenu = element(by.linkText('Results Reporting'));
-    this.dashboardCTGovMenu = element(by.linkText('CT.Gov Import'));
+    this.abstractionMenu = element(by.linkText('Abstraction'));
+    this.resultReportingMenu = element(by.linkText('Results Reporting'));
+    this.ctGovMenu = element(by.linkText('CT.Gov Import'));
+
+    /*********************************************
+     * Organization & Families
+     *********************************************/
     this.organizationAndFamiliesMenu = element(by.linkText('Organizations & Families'));
+    this.searchOrganizations = element(by.linkText('Search Organizations'));
+    this.searchFamilies = element(by.linkText('Search Families'));
+
+    /*********************************************
+     * Persons
+     *********************************************/
     this.personsMenu = element(by.linkText('Persons'));
+    this.searchPersons = element(by.linkText('Search Persons'));
+
+    /*********************************************
+     * Trials
+     *********************************************/
     this.trialsMenu = element(by.linkText('Trials'));
+    this.searchTrialsReg = element(by.linkText('Search Trials (Reg)'));
+    this.searchTrialsPA = element(by.id('mnu_srch_trls_pa'));
+    this.registerTrial = element(by.linkText('Register Trial'));
+
+    this.clickTrials = function(){
+        helper.clickLink(this.trialsMenu, "Trials - Menu");
+    };
+
+    this.clickSearchTrialsReg = function(){
+        helper.clickLink(this.searchTrialsReg, "Search Trials Reg - Menu");
+    };
+
+    this.clickSearchTrialsPA = function(){
+        helper.clickButton(this.searchTrialsPA, "Search Trials PA - Menu");
+    };
+
+    this.clickRegisterTrial = function(){
+        helper.clickLink(this.registerTrial, "Register Trial - Menu");
+    };
+
+    /*********************************************
+     * Management
+     *********************************************/
     this.userManagementMenu = element(by.linkText('User Management'));
 
     var pageHeaderText = element(by.css('div.row > h4'));
-
     var helper = new helperFunctions();
     var search_Trial_Header_Text = 'Search Trials * for wild card';
     var register_Trial_Header_Text = 'Register Trial';
+
+
+
+    this.clickSearchTrialAbstractor = function(){
+        homeAbstractorSearchTrials.isPresent().then(function(retVal){
+            console.log('value of ret val : ' + retVal);
+            if (retVal === true) {
+                helper.clickButton(homeAbstractorSearchTrials, "Dashboard: Search Trial button");
+                expect(pageHeaderText.getText()).to.eventually.equal(search_Trial_Header_Text);
+            }
+        });
+    };
 
     this.clickHomeAbstractionDashboards = function(){
         homeAbstractionDashboards.isPresent().then(function(retVal){

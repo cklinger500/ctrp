@@ -1,4 +1,4 @@
-@PA @global
+ï»¿@PA @global
 Feature: Global F04 Field Annotations and Help
 
 As any CTRP PA User, I will see helpful comments on Trial Date and Status fields
@@ -27,7 +27,7 @@ And I am on the Trial Status Screen
 Then the comment appears below the Trial Status?
 | In Review - The trial is in development and waiting for final approval.|
 |Approved - Trial has been approved.|
-|Active – The trial is open for Accrual.| 
+|Active ï¿½ The trial is open for Accrual.| 
 |Temporarily Closed to Accrual - Trial is temporarily not accruing.|
 |Temporarily Closed to Accrual and Intervention - Trial has been closed to participant accrual. No participants are receiving treatment/intervention, but participants are still being followed according to the primary objectives of the study.|
 |Closed to Accrual - Trial has been closed to participant accrual. Participants are still receiving treatment/intervention.|
@@ -35,35 +35,5 @@ Then the comment appears below the Trial Status?
 |Complete - Trial has been closed to accrual; participants have completed treatment/intervention, and the study has met its primary objectives.|
 |Administratively Complete - Trial has been completed prematurely (for example, due to poor accrual, insufficient drug supply, IND closure, etc.)|
 |Withdrawn - Trial has been withdrawn from development and review.|
-
-Scenario: #5 PA Trial Status Why Study Stopped? field character count
-Given I am logged into the CTRP Protocol Abstraction application
-And I am on the Trial Status Screen
-Then a comment appears below the Why Study Stopped? field to display the number of characters available to enter into the field.  
-|160 characters left|
-
-Scenario: #6 PA Trial Status Comments field character count
-Given I am logged into the CTRP Protocol Abstraction application
-And I am on the Trial Status Screen
-Then a comment appears below the Comments field to display the number of characters available to enter into the field.  
-|160 characters left|
-
-Scenario: #7 PA General Trails Details Official Title field character count
-Given I am logged into the CTRP Protocol Abstraction application
-And I am on the General Trails Details Screen
-Then a comment appears below the Official Title field to display the number of characters available to enter into the field.  
-|4000 characters left|
-
-Scenario: #8 PA General Trails Details Keywords field character count
-Given I am logged into the CTRP Protocol Abstraction application
-And I am on the General Trails Details Screen
-Then a comment appears below the Keywords field to display the number of characters available to enter into the field.  
-|4000 characters left|
-
-Scenario: #8 PA Regulatory Information – Human Subject Safety Board Name field character count
-Given I am logged into the CTRP Protocol Abstraction application
-And I am on the Regulatory Information – Human Subject Safety Screen
-Then a comment appears below the Board Name field to display the number of characters available to enter into the field.  
-|160 characters left|
 
 

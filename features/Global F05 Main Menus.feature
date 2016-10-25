@@ -59,8 +59,6 @@ When I select the Trials menu item
 Then the Trials menu is expanded and includes:
 |Search Trials|
 |Register Trial|
-|Import Trial|
-|Add My Site|
 
 Scenario: #7 View Accrual Tab
 Given I am logged into the CTRP application
@@ -79,7 +77,8 @@ And I am on the home screen
 When I select the Administrative menu item
 Then the Administrative menu is expanded and includes:
 | Registered User Details|
-| Manage Site Admins|
+| User Management| 
+| Assign Trial Ownership|
 | New Biomarker Requests|
 | Manage NCIt Terms|
 
@@ -107,3 +106,11 @@ Then the Register Trials menu is expanded and includes:
 |Institutional|
 |Industrial/Other|
 
+Scenario: #11 View Abstraction Dashboard Submenu 
+Given I am logged into the CTRP application
+And I am on the home screen
+And I select the Dashboards menu item
+When I select the Abstraction item
+Then the Dashboard Sub-menu is expanded and includes:
+|Workload (for the abstraction dashboard in PAM F15)|
+|Search (for the abstraction dashboard search in PAM F22)|

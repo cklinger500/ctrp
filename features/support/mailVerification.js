@@ -60,21 +60,26 @@ var mailVerificationfunction = function() {
 
         });
         helper.setValueNonAngularPage(this.gmailSearchField, gmailEmailToBeSearched, 'Search field');
+           browser.sleep(5000);
         helper.clickButtonNonAngularPage(this.gmailSearchEmailButton, 'Search Email button');
+           browser.sleep(5000);
            browser.driver.isElementPresent(this.gmailclickfirstEmail).then(function (state) {
                if (state === true) {
                    helper.clickButtonNonAngularPage(self.gmailclickfirstEmail, 'First Email');
+                   browser.sleep(5000);
                }
                else {
-                   callback(new Error('Gmail Login unsuccessful'));
+                   callback(new Error('Gmail Email not present'));
                }
 
            });
      //   helper.clickButtonNonAngularPage(this.gmailclickfirstEmail, 'First Email');
-        browser.driver.findElement(this.gmailEmailBody).getText().then(function (value) {
-            console.log('value of email body without send information:\n' + value + '\n');
-            expect(value).to.equal(textOfEmailToBeVerified);
-        });
+           if(textOfEmailToBeVerified !== '') {
+               browser.driver.findElement(this.gmailEmailBody).getText().then(function (value) {
+                   console.log('value of email body without send information:\n' + value + '\n');
+                   expect(value).to.equal(textOfEmailToBeVerified);
+               });
+           }
     };
 
     this.gmailLogin = function (gmailURL,gmailEmailID, userName, password){
@@ -115,6 +120,17 @@ var mailVerificationfunction = function() {
             }
         });
     };
+
+
+    this.getLastEmail1 = function getLastEmail() {
+        var deferred = protractor.promise.defer();
+        console.log("Waiting for an email...");
+
+        mailListener1.on("mail", function(mail){
+            deferred.fulfill(mail);
+        });
+        return deferred.promise;
+    }
 
 };
 module.exports = mailVerificationfunction;

@@ -90,8 +90,9 @@
 #  biospecimen_retention_id      :integer
 #  biospecimen_desc              :text
 #  internal_source_id            :integer
-#  nci_specific_comment          :text
+#  nci_specific_comment          :string(4000)
 #  send_trial_flag               :string
+#  is_rejected                   :boolean
 #
 # Indexes
 #
@@ -124,6 +125,9 @@
 #
 
 class Trial < TrialBase
+  include Filterable
+  include TableLoggable
+  include ActiveRecord::UnionScope
 
   # Disabled optimistic locking
   self.locking_column = :dummy_column
@@ -151,7 +155,7 @@ class Trial < TrialBase
   has_many :trial_co_pis
   has_many :co_pis, through: :trial_co_pis, source: :person
   has_many :oversight_authorities, -> { order 'oversight_authorities.id' }
-  has_many :trial_documents, -> { order 'trial_documents.id' }
+  has_many :trial_documents, -> { order ('trial_documents.id desc') }
   has_many :mail_logs, -> { order 'mail_logs.id'}
 
   # PA fields
@@ -220,11 +224,31 @@ class Trial < TrialBase
   accepts_nested_attributes_for :markers, allow_destroy: true
   accepts_nested_attributes_for :diseases, allow_destroy: true
   accepts_nested_attributes_for :milestone_wrappers, allow_destroy: true
+  accepts_nested_attributes_for :processing_status_wrappers, allow_destroy: true
   accepts_nested_attributes_for :onholds, allow_destroy: true
+  accepts_nested_attributes_for :citations, allow_destroy: true
+  accepts_nested_attributes_for :links, allow_destroy: true
+  accepts_nested_attributes_for :trial_ownerships, allow_destroy: true
 
   validates :lead_protocol_id, presence: true
-  validates :lead_protocol_id, uniqueness: { scope: :lead_org_id, message: "Combination of Lead Organization Trial ID and Lead Organization must be unique" }
+  #validates :lead_protocol_id, uniqueness: { scope: :lead_org_id, message: "Combination of Lead Organization Trial ID and Lead Organization must be unique" }
+  validate :lead_protocol_id_lead_org_id_uniqueness
   validates :official_title, presence: true, if: 'is_draft == false && edit_type != "import" && edit_type != "imported_update" && (internal_source.nil? || internal_source.code != "IMP")'
+  validates :official_title, length: {maximum: 600}
+  validates :brief_title, length: {maximum: 300}
+  validates :brief_summary, length: {maximum: 5000}
+  validates :detailed_description, length: {maximum: 32000}
+  validates :objective, length: {maximum: 32000}
+  validates :primary_purpose_other, length: {maximum: 200}
+  validates :secondary_purpose_other, length: {maximum: 1000}
+  validates :study_model_other,length: {maximum: 200}
+  validates :time_perspective_other, length: {maximum: 200}
+  validates :biospecimen_desc, length: {maximum: 1000}
+  validates :study_pop_desc, length: {maximum: 1000}
+
+  validates :acronym, length: {maximum: 14}
+  validates :lead_protocol_id, length: {maximum: 30}
+  validates :board_name, length: {maximum: 255}
   validates :phase, presence: true, if: 'is_draft == false && edit_type != "import" && edit_type != "imported_update" && (internal_source.nil? || internal_source.code != "IMP")'
   validates :pilot, presence: true, if: 'is_draft == false && edit_type != "import" && edit_type != "imported_update" && (internal_source.nil? || internal_source.code != "IMP")'
   validates :research_category, presence: true, if: 'is_draft == false && edit_type != "import" && edit_type != "imported_update" && (internal_source.nil? || internal_source.code != "IMP")'
@@ -242,41 +266,84 @@ class Trial < TrialBase
   validates :comp_date, presence: true, if: 'is_draft == false && edit_type != "import" && edit_type != "imported_update" && (internal_source.nil? || internal_source.code != "IMP")'
   validates :comp_date_qual, presence: true, if: 'is_draft == false && edit_type != "import" && edit_type != "imported_update" && (internal_source.nil? || internal_source.code != "IMP")'
 
+  def lead_protocol_id_lead_org_id_uniqueness
+    if id.present?
+      dup_trial = Trial.joins(:lead_org).where('organizations.id = ? AND lead_protocol_id = ? AND trials.id <> ?', lead_org, lead_protocol_id, id)
+    else
+      dup_trial = Trial.joins(:lead_org).where('organizations.id = ? AND lead_protocol_id = ?', lead_org, lead_protocol_id)
+    end
+    dup_trial = dup_trial.filter_rejected
+
+    if dup_trial.length > 0
+      errors.add(:lead_protocol_id, 'Combination of Lead Organization Trial ID and Lead Organization must be unique')
+    end
+  end
+
   before_create :save_history
   before_create :save_internal_source
   before_save :generate_status
   before_save :check_indicator
   after_create :create_ownership
-  after_save :send_email
+
+  # The set_defaults will only work if the object is new
+  after_initialize :set_defaults, unless: :persisted?
+
 
   # Array of actions can be taken on this Trial
   def actions
     actions = []
 
-    if self.users.include? self.current_user
-      if self.is_draft
-        actions.append('complete')
-      elsif self.internal_source && self.internal_source.code == 'PRO'
-        actions.append('update')
-        actions.append('amend')
-        actions.append('verify-data')
-        actions.append('view-tsr')
+    if self.internal_source && self.internal_source.code == 'PRO'
 
-      end
-    end
-
-    if self.internal_source && self.internal_source.code == 'IMP'
-      if self.current_user.role == 'ROLE_SITE-SU'
-        actions.append('manage-sites')
-      else
-        if self.ps_orgs.include?(self.current_user.organization)
-          # Associated org has been added as participating site
-          actions.append('update-my-site')
-        elsif self.current_user.organization.present?
-          # Associated org hasn't been added as participating site
-          actions.append('add-my-site')
+      #When trial is Protocol
+      if self.users.include? self.current_user
+        if self.is_draft
+          actions.append('complete')
+        else
+          actions.append('update')
+          processing_status_wrappers = self.processing_status_wrappers.pluck(:processing_status_id)
+          p processing_status_wrappers
+          if (processing_status_wrappers.include? ProcessingStatus.find_by_code("AVR").id) || (processing_status_wrappers.include? ProcessingStatus.find_by_code("VNR").id)
+            actions.append('amend')
+            actions.append('verify-data')
+            actions.append('view-tsr')
+          end
         end
       end
+
+
+    elsif self.internal_source && self.internal_source.code == 'IMP'
+      #When Trial is Imported
+      if self.current_user && self.current_user.role == 'ROLE_SITE-SU'
+        #Have Site Admin Privileges
+        #
+          flag=0;
+          self.current_user.family_organizations.each do |org|
+            if self.ps_orgs.include?(org)
+                flag =1;
+                break;
+            end
+          end
+          if flag == 1
+            actions.append('manage-sites') #
+          else
+            actions.append('manage-sites') #
+          end
+
+
+      else
+        #Do not have site Admin Privileges
+        #
+        if self.current_user &&  self.ps_orgs.include?(self.current_user.organization)
+            # Associated org has been added as participating site
+            actions.append('update-my-site')
+          elsif self.current_user && self.current_user.organization.present?
+            # Associated org hasn't been added as participating site
+            actions.append('add-my-site')
+          end
+        end
+    else
+      #Actions will be null if trial belongs to none of the above types
     end
 
     return actions
@@ -310,9 +377,10 @@ class Trial < TrialBase
     return sitesu_sites
   end
 
-  # Array of orgs in user's associated org's family that's not yet added to participating sites
+  # Array of orgs in user's associated org's family
   def available_family_orgs
-    return self.current_user.family_orgs - self.ps_orgs if self.current_user.present?
+    #return self.current_user.family_orgs - self.ps_orgs if self.current_user.present?
+    return self.current_user.family_orgs if self.current_user.present?
   end
 
   def is_owner
@@ -397,13 +465,32 @@ class Trial < TrialBase
     self.submissions.pluck('submission_num').uniq
   end
 
+  # Most recent active non-update submission
+  def most_recent_active_submission
+    upd = SubmissionType.find_by_code('UPD')
+    if upd.present?
+      return Submission.joins(:submission_type).where('trial_id = ? AND submission_types.id <> ? AND submissions.status = ?', self.id, upd.id, 'Active').order('submission_num desc').first
+    else
+      return nil
+    end
+  end
+
   # Most recent non-update submission
-  def current_submission
+  def most_recent_submission
     upd = SubmissionType.find_by_code('UPD')
     if upd.present?
       return Submission.joins(:submission_type).where('trial_id = ? AND submission_types.id <> ?', self.id, upd.id).order('submission_num desc').first
     else
       return nil
+    end
+  end
+
+  # Current submission based on rejection status
+  def current_submission
+    if self.is_rejected
+      return most_recent_submission
+    else
+      return most_recent_active_submission
     end
   end
 
@@ -427,6 +514,17 @@ class Trial < TrialBase
     target = ProcessingStatusWrapper.where('trial_id = ? AND submission_id = ?', self.id, submission_id).order('id').last
     if target.present? && target.processing_status.present?
       return target.processing_status.code
+    else
+      return nil
+    end
+  end
+
+  def current_processing_status
+    if self.current_submission.present?
+      target = ProcessingStatusWrapper.where('trial_id = ? AND submission_id = ?', self.id, self.current_submission.id).order('id').last
+      if target.present?
+        return target.processing_status
+      end
     else
       return nil
     end
@@ -597,7 +695,8 @@ class Trial < TrialBase
         validation_msgs[:errors].push('Trial Summary Report Date milestone must exist')
       end
     elsif milestone_to_add.code == 'IAV'
-      if !is_last_milestone?(submission_id, 'RTS')
+      rts = Milestone.find_by_code('RTS')
+      if rts.present? && !contains_milestone?(submission_id, rts.id)
         validation_msgs[:errors].push('Ready for Trial Summary Report Date milestone must exist')
       end
       if active_onhold_exists?
@@ -725,6 +824,47 @@ class Trial < TrialBase
     end
 
     return nil
+  end
+
+  def has_atleast_one_active_update_sub_with_not_acked
+    upd = SubmissionType.find_by_code('UPD')
+    if upd.present?
+      subs = Submission.where('trial_id = ? AND submission_type_id = ? and status = ? and acknowledge = ?', self.id, upd.id, 'Active','No')
+      if subs.count == 0
+        return false
+      else
+        return true
+      end
+    else
+      return false
+    end
+
+  end
+
+  def has_atleast_one_active_amendment_sub
+    amd = SubmissionType.find_by_code('AMD')
+    if amd.present?
+      subs = Submission.where('trial_id = ? AND submission_type_id = ? and status = ?', self.id, amd.id, 'Active')
+      if subs.count == 0
+        return false
+      else
+        return true
+      end
+    else
+      return false
+    end
+
+  end
+
+  ##Returns sites with onlly active orgs.
+  def participating_sites_with_active_orgs
+    participating_sites_with_active_orgs = []
+      self.participating_sites.each do |e|
+        if SourceStatus.find_by_id(Organization.find_by_id(e.organization_id).source_status_id).code == 'ACT'
+          participating_sites_with_active_orgs.push(e)
+        end
+      end
+    return participating_sites_with_active_orgs
   end
 
   private
@@ -859,172 +999,13 @@ class Trial < TrialBase
   end
 
   def create_ownership
-    # New Trial Ownership
-    #if self.coming_from == 'rest'
-     # TrialOwnership.create(trial: self, user: User.find_by_username("ctrptrialsubmitter"))
-    #else
+    if self.internal_source.present? && self.internal_source.code != 'IMP'
       TrialOwnership.create(trial: self, user: self.current_user) if self.current_user.present?
-    #end
+    end
   end
 
-  def send_email
-
-    if !['original', 'complete', 'update', 'amend'].include?(self.edit_type)
-      # do not send email for other types of update
-      return
-    end
-
-    last_submission = self.submissions.last
-    last_sub_type = last_submission.submission_type if last_submission.present?
-    last_sub_method = last_submission.submission_method if last_submission.present?
-    last_submitter = last_submission.user if last_submission.present?
-    last_submitter_name = last_submitter.nil? ? '' : "#{last_submitter.first_name} #{last_submitter.last_name}"
-    last_submitter_name.strip!
-    last_submitter_name = 'CTRP User' if last_submitter_name.blank?
-    last_submission_date = last_submission.nil? ? '' : (last_submission.submission_date.nil? ? '' : last_submission.submission_date.strftime('%d-%b-%Y'))
-    lead_protocol_id = self.lead_protocol_id.present? ? self.lead_protocol_id : ''
-    trial_title = self.official_title.present? ? self.official_title : ''
-    nci_id = self.nci_id.present? ? self.nci_id : ''
-    org_name = ''
-    org_id = ''
-    if self.lead_org.present?
-      org_name = self.lead_org.name
-      org_id = self.lead_org.id.to_s
-    end
-
-    mail_template = nil
-
-    if last_sub_type.present? && last_sub_method.present?
-      if last_sub_type.code == 'ORI' && last_sub_method.code == 'REG'
-        mail_template = MailTemplate.find_by_code('TRIAL_REG')
-        if mail_template.present?
-          ## populate the mail_template with data for trial registration
-          mail_template.to = self.current_user.email if self.current_user.present? && self.current_user.email.present? && self.current_user.receive_email_notifications
-
-          # Populate the trial data in the email body
-          mail_template.subject.sub!('${nciTrialIdentifier}', nci_id)
-          mail_template.subject.sub!('${leadOrgTrialIdentifier}', lead_protocol_id)
-          mail_template.subject = "[#{Rails.env}] " + mail_template.subject if !Rails.env.production?
-          mail_template.body_html.sub!('${trialTitle}', trial_title)
-
-          table = '<table border="0">'
-          table += "<tr><td><b>Lead Organization Trial ID:</b></td><td>#{lead_protocol_id}</td></tr>"
-          table += "<tr><td><b>Lead Organization:</b></td><td>#{org_name}</td></tr>"
-          table += "<tr><td><b>NCI Trial ID:</b></td><td>#{nci_id}</td></tr>"
-          self.other_ids.each do |other_id|
-            table += "<tr><td><b>#{other_id.protocol_id_origin.name}:</b></td><td>#{other_id.protocol_id}</td></tr>"
-          end
-          table += '</table>'
-          mail_template.body_html.sub!('${trialIdentifiers}', table)
-
-          mail_template.body_html.sub!('${submissionDate}', last_submission_date)
-          mail_template.body_html.sub!('${CurrentDate}', Date.today.strftime('%d-%b-%Y'))
-          mail_template.body_html.sub!('${SubmitterName}', last_submitter_name)
-          mail_template.body_html.sub!('${nciTrialIdentifier}', nci_id)
-        end
-
-      elsif last_sub_type.code == 'UPD'
-        mail_template = MailTemplate.find_by_code('TRIAL_UPDATE')
-        # trial_owner = TrialOwnership.find_by_trial_id(self.id)
-        # trial_registrant_email = trial_owner.nil? ? nil : trial_owner.user.email
-        if mail_template.present?
-          ## populate the mail_template with data for trial update
-          mail_template.from = 'ncictro@mail.nih.gov'
-          # mail_template.to = trial_registrant_email
-          mail_template.to = self.current_user.email if self.current_user.present? && self.current_user.email.present? && self.current_user.receive_email_notifications
-          mail_template.subject.sub!('${nciTrialIdentifier}', nci_id)
-          mail_template.subject.sub!('${leadOrgTrialIdentifier}', lead_protocol_id)
-          mail_template.subject = "[#{Rails.env}] " + mail_template.subject if !Rails.env.production?
-          mail_template.body_html.sub!('${trialTitle}', trial_title)
-          mail_template.body_html.sub!('${nciTrialIdentifier}', nci_id)
-          mail_template.body_html.sub!('${leadOrgTrialIdentifier}', lead_protocol_id)
-          mail_template.body_html.sub!('${ctrp_assigned_lead_org_id}', org_id)
-          mail_template.body_html.sub!('${submitting_organization}', org_name)
-          mail_template.body_html.sub!('${submissionDate}', last_submission_date)
-          mail_template.body_html.sub!('${CurrentDate}', Date.today.strftime('%d-%b-%Y'))
-          mail_template.body_html.sub!('${SubmitterName}', last_submitter_name)
-        end
-
-      elsif last_sub_type.code == 'AMD'
-        mail_template = MailTemplate.find_by_code('TRIAL_AMEND')
-        if mail_template.present?
-          ## populate the mail_template with data for trial amendment
-          mail_template.from = 'ncictro@mail.nih.gov'
-          mail_template.to = self.current_user.email if self.current_user.present? && self.current_user.email.present? && self.current_user.receive_email_notifications
-          last_amend_num = last_submission.nil? ? '' : (last_submission.amendment_num.present? ? last_submission.amendment_num : '')
-          mail_template.subject.sub!('${trialAmendNumber}', last_amend_num)
-          mail_template.subject.sub!('${nciTrialIdentifier}', nci_id)
-          mail_template.subject.sub!('${leadOrgTrialIdentifier}', lead_protocol_id)
-          mail_template.subject = "[#{Rails.env}] " + mail_template.subject if !Rails.env.production?
-          mail_template.body_html.sub!('${trialTitle}', trial_title)
-          mail_template.body_html.sub!('${nciTrialIdentifier}', nci_id)
-          mail_template.body_html.sub!('${lead_organization}', org_name)
-          mail_template.body_html.sub!('${leadOrgTrialIdentifier}', lead_protocol_id)
-          mail_template.body_html.sub!('${ctrp_assigned_lead_org_id}', org_id)
-
-          # find all those identifiers and populate the fields in the email template
-          nct_origin_id = ProtocolIdOrigin.find_by_code('NCT').id
-          ctep_origin_id = ProtocolIdOrigin.find_by_code('CTEP').id
-          dcp_origin_id = ProtocolIdOrigin.find_by_code('DCP').id
-          nctIdentifierObj = self.other_ids.any?{|a| a.protocol_id_origin_id == nct_origin_id} ? self.other_ids.find {|a| a.protocol_id_origin_id == nct_origin_id} : nil
-          nctIdentifier = nctIdentifierObj.present? ? nctIdentifierObj.protocol_id : nil
-          ctepIdentifierObj = self.other_ids.any?{|a| a.protocol_id_origin_id == ctep_origin_id} ? self.other_ids.find {|a| a.protocol_id_origin_id == ctep_origin_id} : nil
-          ctepIdentifier = ctepIdentifierObj.present? ? ctepIdentifierObj.protocol_id : nil
-          dcpIdentifierObj = self.other_ids.any?{|a| a.protocol_id_origin_id == dcp_origin_id} ? self.other_ids.find {|a| a.protocol_id_origin_id == dcp_origin_id} : nil
-          dcpIdentifier = dcpIdentifierObj.present? ? dcpIdentifier.protocol_id : nil
-
-          mail_template.body_html.sub!('${nctId}', nctIdentifier.nil? ? '' : nctIdentifier)
-          mail_template.body_html.sub!('${ctepId}', ctepIdentifier.nil? ? '' : ctepIdentifier)
-          mail_template.body_html.sub!('${dcpId}', dcpIdentifier.nil? ? '' : dcpIdentifier)
-
-          mail_template.body_html.sub!('${CurrentDate}', Date.today.strftime('%d-%b-%Y'))
-          mail_template.body_html.sub!('${SubmitterName}', last_submitter_name)
-
-          # if !last_submission.nil? and last_submission.amendment_date
-          #   trial_amend_date = Date.strptime(last_submission.amendment_date.to_s, "%Y-%m-%d").strftime("%d-%b-%Y")
-          # end
-          trial_amend_date = last_submission.nil? ? '' : (last_submission.amendment_date.present? ? Date.strptime(last_submission.amendment_date.to_s, "%Y-%m-%d").strftime("%d-%b-%Y") : '')
-          mail_template.body_html.sub!('${trialAmendNumber}', last_amend_num)
-          mail_template.body_html.sub!('${trialAmendmentDate}', trial_amend_date)
-
-        end
-      end
-
-    elsif self.is_draft == TRUE
-      mail_template = MailTemplate.find_by_code('TRIAL_DRAFT')
-      if mail_template.present?
-        ## populate the mail_template with data for trial draft
-        mail_template.from = 'ncictro@mail.nih.gov'
-        mail_template.to = self.current_user.email if self.current_user.present? && self.current_user.email.present? && self.current_user.receive_email_notifications
-        mail_template.subject.sub!('${leadOrgTrialIdentifier}', lead_protocol_id)
-        mail_template.subject = "[#{Rails.env}] " + mail_template.subject if !Rails.env.production?
-        mail_template.body_html.sub!('${trialTitle}', trial_title)
-        mail_template.body_html.sub!('${leadOrgTrialIdentifier}', lead_protocol_id)
-        mail_template.body_html.sub!('${lead_organization}', org_name)
-        mail_template.body_html.sub!('${ctrp_assigned_lead_org_id}', org_id)
-        mail_template.body_html.sub!('${submissionDate}', last_submission_date)
-        mail_template.body_html.sub!('${CurrentDate}', Date.today.strftime('%d-%b-%Y'))
-        mail_template.body_html.sub!('${SubmitterName}', last_submitter_name)
-      end
-
-    end
-
-    mail_sending_result = 'Mail server failed to send'
-    if mail_template.present?
-      begin
-        mail_sending_result = 'Success'
-        CtrpMailer.general_email(mail_template.from, mail_template.to, mail_template.cc, mail_template.bcc, mail_template.subject, mail_template.body_text, mail_template.body_html).deliver_now
-      rescue  Exception => e
-        logger.warn "email delivery error = #{e}"
-      end
-      ## save the mail sending to mail log
-      if mail_template.to.nil? || !mail_template.to.include?("@")
-        # recipient email not replaced with actual email address (user does not have email)
-        mail_sending_result = 'Failed, recipient email is unspecified or user refuses to receive email notification'
-      end
-      MailLog.create(from: mail_template.from, to: mail_template.to, cc: mail_template.cc, bcc: mail_template.bcc, subject: mail_template.subject, body: mail_template.body_html, email_template_name: mail_template.name, mail_template: mail_template, result: mail_sending_result, trial: self)
-
-    end
+  def set_defaults
+    self.is_rejected = false if self.is_rejected.nil?
   end
 
   #scopes for search API
@@ -1044,12 +1025,56 @@ class Trial < TrialBase
     end
   }
 
+
+
   scope :in_family, -> (value, dateLimit) {
     familyOrganizations = FamilyMembership.where(
         family_id: value
     ).where("family_memberships.expiration_date > '#{dateLimit}' or family_memberships.expiration_date is null")
     .pluck(:organization_id)
     where(lead_org_id: familyOrganizations)
+  }
+
+  scope :with_current_user_in_family_as_ps, -> (value) {
+    current_user = value
+    organization = current_user.organization
+    family_organizations = current_user.family_organizations
+    param = []
+    family_organizations.each do |o|
+      param.push(o)
+    end
+
+    family_organizations = family_organizations.join(',')
+    join_clause = "LEFT JOIN participating_sites _ps1 ON _ps1.trial_id = trials.id LEFT JOIN internal_sources _is on _is.id = trials.internal_source_id "
+    where_clause = " _ps1.organization_id in ("+param.join(',')+") "
+    where_clause += " AND _is.code = ? "
+    joins(join_clause).where(where_clause,"IMP")
+  }
+
+
+  scope :with_current_user_org_as_ps, -> (value) {
+    current_user = value
+    organization = current_user.organization
+    join_clause = "LEFT JOIN participating_sites _ps ON _ps.trial_id = trials.id LEFT JOIN internal_sources _is on _is.id = trials.internal_source_id  "
+    where_clause = " _ps.organization_id =? "
+    where_clause += " AND _is.code =? "
+    joins(join_clause).where(where_clause, organization, "IMP")
+  }
+
+  scope :in_family, -> (value, dateLimit) {
+    familyOrganizations = FamilyMembership.where(
+        family_id: value
+    ).where("family_memberships.expiration_date > '#{dateLimit}' or family_memberships.expiration_date is null")
+                              .pluck(:organization_id)
+    where(lead_org_id: familyOrganizations)
+  }
+
+  scope :with_owner_and_with_current_user_org_as_ps, ->(value) {
+    union_scope(with_owner(value.username),with_current_user_org_as_ps(value))
+  }
+
+  scope :with_owner_and_with_current_user_in_family_as_ps, ->(value) {
+    union_scope(with_owner(value.username),with_current_user_in_family_as_ps(value))
   }
 
   scope :with_protocol_id, -> (value) {
@@ -1070,7 +1095,22 @@ class Trial < TrialBase
     joins(join_clause).where(where_clause, value_exp, value_exp, value_exp)
   }
 
-  scope :with_nci_id, -> (nci_id) { where(nci_id: nci_id) }
+  # scope :with_nci_id, -> (nci_id) { where(nci_id: nci_id) }
+
+  scope :with_nci_id, -> (value) {
+    where_clause = 'trials.nci_id ilike ?'
+    str_len = value.length
+    if value[0] == '*' && value[str_len - 1] != '*'
+      value_exp = "%#{value[1..str_len - 1]}"
+    elsif value[0] != '*' && value[str_len - 1] == '*'
+      value_exp = "#{value[0..str_len - 2]}%"
+    elsif value[0] == '*' && value[str_len - 1] == '*'
+      value_exp = "%#{value[1..str_len - 2]}%"
+    else
+      value_exp = "#{value}"
+    end
+    where(where_clause, value_exp, value_exp, value_exp)
+  }
 
   scope :with_phase, -> (value) { joins(:phase).where("phases.code = ?", "#{value}") }
 
@@ -1218,7 +1258,7 @@ class Trial < TrialBase
 
     #join_clause = "LEFT JOIN organizations lead_orgs ON lead_orgs.id = trials.lead_org_id LEFT JOIN organizations sponsors ON sponsors.id = trials.sponsor_id LEFT JOIN trial_funding_sources ON trial_funding_sources.trial_id = trials.id LEFT JOIN organizations funding_sources ON funding_sources.id = trial_funding_sources.organization_id"
     #where_clause = "lead_orgs.name ilike ? OR sponsors.name ilike ? OR funding_sources.name ilike ?"
-    join_clause = "LEFT JOIN organizations lead_orgs ON lead_orgs.id = trials.lead_org_id LEFT JOIN organizations sponsors ON sponsors.id = trials.sponsor_id LEFT JOIN participating_sites ON participating_sites.trial_id = trials.id LEFT JOIN organizations sites ON sites.id = participating_sites.organization_id"
+    join_clause = "LEFT JOIN organizations lead_orgs ON lead_orgs.id = trials.lead_org_id LEFT JOIN organizations sponsors ON sponsors.id = trials.sponsor_id LEFT JOIN participating_sites ps ON ps.trial_id = trials.id LEFT JOIN organizations sites ON sites.id = ps.organization_id"
     where_clause = ""
     conditions = []
 
@@ -1247,7 +1287,10 @@ class Trial < TrialBase
   }
 
   scope :with_owner, -> (value) {
-    joins(:users).where("users.username = ? AND (trials.is_draft = ? OR trials.is_draft IS ?)", value, false, nil)
+    #joins(:users).where("users.username = ? AND (trials.is_draft = ? OR trials.is_draft IS ?)", value, false, nil)
+    join_clause = "LEFT JOIN trial_ownerships ON trial_ownerships.trial_id = trials.id LEFT JOIN users ON users.id = trial_ownerships.user_id"
+    where_clause = "trial_ownerships.ended_at IS ? AND users.username = ? AND (trials.is_draft = ? OR trials.is_draft IS ?)"
+    joins(join_clause).where(where_clause, nil, value, false, nil)
   }
 
   scope :is_not_draft, -> {
@@ -1273,6 +1316,22 @@ class Trial < TrialBase
     conditions.insert(0, q)
 
     joins(:internal_source).where(conditions)
+  }
+
+
+  scope :user_trials, -> (user_id) {
+    trial_ownerships = TrialOwnership.matches('user_id', user_id)
+    trial_ownerships = trial_ownerships.matches('internal_source_id', InternalSource.find_by_code('PRO').id)
+    where(id: trial_ownerships.pluck(:trial_id))
+  }
+
+  scope :filter_rejected, -> {
+    where("is_rejected = ? OR is_rejected IS NULL", FALSE)
+  }
+
+  scope :active_submissions, -> {
+    where("id in (select DISTINCT ON (trial_id) trial_id from submissions where submissions.trial_id is not null AND submissions.status = 'Active')")
+    joins(:internal_source).where("internal_sources.code = 'PRO'")
   }
 
   scope :sort_by_col, -> (params) {
@@ -1321,4 +1380,7 @@ class Trial < TrialBase
       order("LOWER(trials.#{column}) #{order}")
     end
   }
+
+
+
 end

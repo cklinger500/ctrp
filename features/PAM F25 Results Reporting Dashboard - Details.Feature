@@ -1,4 +1,4 @@
-@PA @global
+﻿@PA @global
 Feature: PAM F25 Results Reporting Dashboard -Details
 
 As a CTRP PA Abstractor, I can view and edit the CTRP Results Reporting Dashboard
@@ -46,6 +46,7 @@ And the Trial Results section will be displayed for the selected trial including
 |<Record Changes>|
 |Change Type|
 |Action Taken|
+|Change|
 |Completion Date|
 |Complete By|
 

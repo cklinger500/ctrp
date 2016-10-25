@@ -6,12 +6,11 @@ Feature: Reg F04 Register Trial Study Source
   Scenario Outline: #1 I can select the option to register a protocol for a National, Externally Peer-Reviewed, or Institutional trial
     Given I have selected the option to register a trial <trialType>
     Then I am on the Register Trial screen
-    And CTRP will display the Required registration elements for a complete protocol registration for the selected <trialType>
+    And CTRP will display the required registration elements for a complete protocol registration for the selected <trialType>
     Examples:
-      |trialType                |
-      |National                 |
-      |Externally Peer-Reviewed |
-      |Institutional            |
-
-
+      |trialType                                          |
+      |National     |
+      |Externally Peer-Reviewed  |
+      |Institutional   |
+     
 

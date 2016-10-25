@@ -1,16 +1,15 @@
 <div ng-show="editMode">
     <div class="col-xs-12 col-sm-9">
         <input type="text" id="other_id_edit" class="form-control input-sm" ng-model="model" auto-focus ng-required="true">
+        <span class="help-block" ng-show="errorMsg.length > 0">
+            {{errorMsg}}
+        </span>
     </div>
     <div class="col-xs-6 col-sm-3"><button type="button" id="cancel_edit_btn" class="btn btn-warning" ng-click="cancelEdit()">Cancel</button>
     <button type="button" id="save_id_btn" class="btn btn-primary" ng-disabled="errorMsg.length > 0" ng-click="saveEdit()" restriction-field>Save</button></div>
 </div>
-<div class="help-block" ng-show="errorMsg.length > 0">
-    {{errorMsg}}
-</div>
 <div ng-hide="editMode">
     <span ng-mouseenter="showEdit = true" ng-mouseleave="showEdit = false">
         <span ng-click="edit()" class="editable-click">{{model}}</span>
-        <!-- <a ng-show="showEdit" ng-click="edit()">Edit</a> -->
     </span>
 </div>

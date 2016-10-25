@@ -26,8 +26,19 @@
         vm.grantsInputs = {grantResults: [], disabled: true};
         vm.disableBtn = false;
 
-        vm.reload = function() {
-            $state.go($state.$current, null, { reload: true });
+        vm.reset = function() {
+            getTrialDetailCopy();
+
+            /* Reset form fields */
+            vm.serial_number = null;
+            vm.institute_code = null;
+            vm.funding_mechanism = null;
+            vm.nci = null;
+
+            vm.showAddGrantError = false;
+            vm.addedGrants = [];
+            appendGrants();
+            $scope.trial_form.$setPristine();
         };
 
         vm.updateTrial = function(updateType) {
@@ -66,10 +77,12 @@
                     $scope.$emit('updatedInChildScope', {});
 
                     toastr.clear();
-                    toastr.success('Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded', 'Operation Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    });
+                    toastr.success('Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded', 'Operation Successful!');
+
+                    // To make sure setPristine() is executed after all $watch functions are complete
+                    $timeout(function() {
+                       $scope.trial_form.$setPristine();
+                   }, 1);
                 }
             }).catch(function(err) {
                 console.log("error in updating trial " + JSON.stringify(outerTrial));
@@ -148,7 +161,6 @@
                     } else {
                         vm.grantNum++;
                     }
-                    //console.log("in vm.toggleSelection, vm.grantNum="+JSON.stringify(vm.grantNum));
                 }
             }
         };// toggleSelection
@@ -164,6 +176,7 @@
             appendGrants();
             getTrialDetailCopy();
             watchTrialDetailObj();
+            watchFundingMechanismFields();
         }
 
         /**
@@ -196,6 +209,24 @@
                 vm.addedGrants.push(grant);
                 vm.grantNum++;
             }
+        }
+
+        /* Clears Add Funding Mechanism UI if question value === 'No' */
+        function watchFundingMechanismFields() {
+            $scope.$watch(function() {return vm.curTrial.grant_question;}, function(newVal, oldVal) {
+                if (newVal === 'No') {
+                    resetFundingMechanismFields();
+                }
+            });
+        }
+
+        function resetFundingMechanismFields() {
+            vm.serial_number = null;
+            vm.institute_code = null;
+            vm.funding_mechanism = null;
+            vm.nci = null;
+
+            vm.showAddGrantError = false;
         }
 
 

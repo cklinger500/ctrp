@@ -1,15 +1,15 @@
-<div class="row">
+<div class="row" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">Trial Status</div>
         </div>
         <div class="panel-body">
-            <form class="form form-horizontal" role="form" name="trial_status_form" novalidate ctrp-submit="trialStatusView.updateTrialStatuses()">
+            <form class="form form-horizontal" role="form" name="trial_status_form" novalidate ctrp-submit="trialStatusView.updateTrialStatuses()" unsaved-changes>
                 <!-- fieldset for trial statuses -->
                 <fieldset class="sub-bordered" ng-disabled="!paTrialOverview.trialDetailObj.pa_editable || trialStatusView.disableBtn">
                     <legend class="sub-bordered">Trial Statuses</legend>
                     <div class="row table-responsive">
-                        <table class="table table-striped table-condensed">
+                        <table class="table table-striped table-condensed" ctrp-hint hint-append-element="fieldset">
                             <thead>
                                 <th width="10%" class="min-width-md">Status Date</th>
                                 <th width="10%" class="min-width-md">Status</th>
@@ -22,12 +22,12 @@
                                 <tr>
                                     <td class="col-sm-2">
                                         <div class="input-group add-on date datepicker" date-date-format="yyyy-mm-dd">
-                                            <input type="text" id="status_date" name="status_date" class="form-control input-sm" id="status_date"
+                                            <input type="text" id="status_date" name="status_date" class="form-control input-sm"
                                                 uib-datepicker-popup="{{trialStatusView.dateFormat}}" ng-model="trialStatusView.statusObj.status_date"
                                                 ng-click="trialStatusView.openCalendar($event, 'status_date')"
                                                 is-open="trialStatusView.statusDateOpened"
                                                 datepicker-options="trialStatusView.dateOptions"
-                                                close-text="Close" readonly />
+                                                close-text="Close" readonly date-formatter>
                                             <span class="input-group-btn">
                                                 <button type="button" restriction-field class="btn btn-primary" id="status_date_calendar" ng-click="trialStatusView.openCalendar($event, 'status_date')">
                                                     <i class="glyphicon glyphicon-calendar"></i>
@@ -74,7 +74,7 @@
                                     </td>
                                     <td class="col-sm-2">
                                         <div ng-hide="trialStatusView.statusObj.edit">
-                                            <button class="btn btn-primary" id="trial_status_add_btn" restriction-field type="button" ng-click="trialStatusView.addTrialStatus()"
+                                            <button class="btn btn-primary btn-add" id="trial_status_add_btn" restriction-field type="button" ng-click="trialStatusView.addTrialStatus()"
                                                 ng-disabled="!trialStatusView.statusObj.status_date ||
                                                 !trialStatusView.statusObj.trial_status_id ||
                                                 trial_status_form.why_stopped.$viewValue.length > 160 ||
@@ -121,12 +121,12 @@
                           </thead>
                           <tbody>
                             <tr ng-repeat="status in trialStatusView.tempTrialStatuses track by $index" ng-class="{'deleted-text': status._destroy, 'edit-selected': status.trial_status_id === trialStatusView.statusObj.trial_status_id}">
-                              <td>{{status.status_date}}</td>
+                              <td>{{status.status_date | dateFormat}}</td>
                               <td>{{status.trial_status_name}}</td>
                               <td>{{status.comment}}</td>
                               <td>{{status.why_stopped}}</td>
                               <td>
-                                  <div class="text-danger" ng-repeat="error in trialStatusView.statusValidationMsgs[$index].errors" ng-if="error.hasOwnProperty('status')">
+                                  <!--<div class="text-danger" ng-repeat="error in trialStatusView.statusValidationMsgs[$index].errors" ng-if="error.hasOwnProperty('status')">
                                       ERROR: Interim status [{{error.status}}] is missing
                                   </div>
                                   <div class="text-danger" ng-repeat="error in trialStatusView.statusValidationMsgs[$index].errors" ng-if="error.hasOwnProperty('message')">
@@ -137,6 +137,28 @@
                                   </div>
                                   <div class="text-warning" ng-repeat="warning in trialStatusView.statusValidationMsgs[$index].warnings" ng-if="warning.hasOwnProperty('message')">
                                       WARNING: {{warning.message}}
+                                  </div>
+                                  <div class="text-warning" ng-repeat="warning in trialStatusView.statusValidationMsgs[$index].warnings" ng-if="warning.hasOwnProperty('message') && warning.message == 'Same Day' && warning.sameDate">
+                                      WARNING: Statuses [{{warning.from}}] and [{{warning.to}}] have the same date
+                                  </div> -->
+
+                                  <div class="text-danger" ng-repeat="error in trialStatusView.statusValidationMsgs[$index].errors" ng-if="error.hasOwnProperty('status')">
+                                      ERROR: Interim status [{{error.status}}] is missing
+                                  </div>
+                                  <div class="text-danger" ng-repeat="error in trialStatusView.statusValidationMsgs[$index].errors" ng-if="error.hasOwnProperty('message') && error.message == 'Invalid Transition'">
+                                      ERROR: Invalid status transition from [{{error.from}}] to [{{error.to}}]
+                                  </div>
+                                  <div class="text-danger" ng-repeat="error in trialStatusView.statusValidationMsgs[$index].errors" ng-if="error.hasOwnProperty('message') && error.message == 'Duplicate'">
+                                      ERROR: Duplicate [{{error.dupStatus}}] status is not allowed
+                                  </div>
+                                  <div class="text-warning" ng-repeat="warning in trialStatusView.statusValidationMsgs[$index].warnings" ng-if="warning.hasOwnProperty('status')">
+                                      WARNING: Interim status [{{warning.status}}] is missing
+                                  </div>
+                                  <div class="text-warning" ng-repeat="warning in trialStatusView.statusValidationMsgs[$index].warnings" ng-if="warning.hasOwnProperty('message') && warning.message == 'Invalid Transition'">
+                                      WARNING: Invalid status transition from [{{warning.from}}] to [{{warning.to}}]
+                                  </div>
+                                  <div class="text-warning" ng-repeat="warning in trialStatusView.statusValidationMsgs[$index].warnings" ng-if="warning.hasOwnProperty('message') && warning.message == 'Duplicate'">
+                                      WARNING: Duplicate [{{warning.dupStatus}}] status is not allowed
                                   </div>
                                   <div class="text-warning" ng-repeat="warning in trialStatusView.statusValidationMsgs[$index].warnings" ng-if="warning.hasOwnProperty('message') && warning.message == 'Same Day' && warning.sameDate">
                                       WARNING: Statuses [{{warning.from}}] and [{{warning.to}}] have the same date
@@ -173,7 +195,7 @@
                                        is-open="trialStatusView.startDateOpened"
                                        datepicker-options="trialStatusView.dateOptions"
                                        ng-required="true"
-                                       close-text="Close" readonly>
+                                       close-text="Close" readonly date-formatter>
                                 <span class="input-group-btn">
                                     <button restriction-field type="button" class="btn btn-primary" id="trial_start_date_calendar" ng-click="trialStatusView.openCalendar($event, 'start_date')">
                                         <i class="glyphicon glyphicon-calendar"></i>
@@ -213,7 +235,7 @@
                             <div class="input-group add-on date datepicker" date-date-format="yyyy-mm-dd">
                                 <input type="text" class="form-control input-sm min-width-sm" id="primary_completion_date" name="primary_comp_date" uib-datepicker-popup="{{trialStatusView.dateFormat}}" ng-model="trialStatusView.trialDetailObj.primary_comp_date"
                                        ng-click="trialStatusView.openCalendar($event, 'primary_comp_date')" is-open="trialStatusView.primaryCompDateOpened" datepicker-options="trialStatusView.dateOptions" close-text="Close"
-                                       ng-required="!trialStatusView.isDCPTrial" readonly>
+                                       ng-required="!trialStatusView.isDCPTrial" readonly date-formatter>
                                 <span class="input-group-btn">
                                     <button restriction-field type="button" class="btn btn-primary" id="primary_completion_date_calendar" ng-click="trialStatusView.openCalendar($event, 'primary_comp_date')">
                                         <i class="glyphicon glyphicon-calendar"></i>
@@ -259,7 +281,7 @@
                                     ng-click="trialStatusView.openCalendar($event, 'comp_date')"
                                     is-open="trialStatusView.compDateOpened"
                                     datepicker-options="trialStatusView.dateOptions"
-                                    close-text="Close" readonly>
+                                    close-text="Close" readonly date-formatter>
                                 <span class="input-group-btn">
                                     <button restriction-field type="button" class="btn btn-primary" id="completion_date_calendar" ng-click="trialStatusView.openCalendar($event, 'comp_date')">
                                         <i class="glyphicon glyphicon-calendar"></i>

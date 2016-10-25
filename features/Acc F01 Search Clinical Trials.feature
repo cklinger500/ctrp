@@ -1,6 +1,6 @@
 @Acc @global
 
-Feature: Acc F01 Search Clinical Trials
+Feature: Acc F01 Search Clinical Trials 
 As a CTRP Accrual Submitter, I can search CTRP clinical trial in the CTRP Accrual Application 
 
     Scenario: # I can submit Accrual Data
@@ -21,7 +21,7 @@ As a CTRP Accrual Submitter, I can search CTRP clinical trial in the CTRP Accrua
       |NCI Trial Identifier  |
       |Official Title  |
       |Current Trial Status  |
-      |Research Category  |
+      |Clinical Research Category  |
       |Accrual Disease Terminology  |
     And Displayed trials are sorted with most recent NCI Trial Identifier by default 
     And I can search specific Trial
@@ -129,7 +129,7 @@ As a CTRP Accrual Submitter, I can search CTRP clinical trial in the CTRP Accrua
      When I don't check a box
      Then the trial information column won't be displayed on the trial list
 
-       Scenario: I can sort Trial displayed information using a sort capabilities for all columns 
+       Scenario:#2a I can sort Trial displayed information using a sort capabilities for all columns 
        Given I am on the Trial Search screen
      When I click on the selected trial information column 
      Then Trial Information will be sorted ascendingly or descendingly 

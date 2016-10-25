@@ -40,17 +40,18 @@ grant27 = Tempgrants.find_or_create_by(serial_number: 97131, institution_name:'U
 
 ## Central Contact Types
 contact_type1 = CentralContactType.find_or_create_by(code: 'NONE', name: 'None')
-contact_type2 = CentralContactType.find_or_create_by(code: 'PI', name: 'Site Investigator')
+contact_type2 = CentralContactType.find_or_create_by(code: 'PI', name: 'PI')
 contact_type3 = CentralContactType.find_or_create_by(code: 'PERSON', name: 'Person')
 contact_type4 = CentralContactType.find_or_create_by(code: 'GENERAL', name: 'General')
 
 
 ## Board Approval Statuses
-approval_status2 = BoardApprovalStatus.find_or_create_by(code: 'SUBPENDING', name: 'Submitted, pending')
-approval_status3 = BoardApprovalStatus.find_or_create_by(code: 'SUBAPPROVED', name: 'Submitted, approved')
-approval_status4 = BoardApprovalStatus.find_or_create_by(code: 'SUBEXEMPT', name: 'Submitted, exempt')
-approval_status5 = BoardApprovalStatus.find_or_create_by(code: 'SUBDENIED', name: 'Submitted, denied')
-approval_status6 = BoardApprovalStatus.find_or_create_by(code: 'SUBUNREQUIRED', name: 'Submission not required')
+approval_status2 = BoardApprovalStatus.find_or_create_by(code: 'SUBPENDING', name: 'Pending')
+approval_status3 = BoardApprovalStatus.find_or_create_by(code: 'SUBAPPROVED', name: 'Approved')
+approval_status4 = BoardApprovalStatus.find_or_create_by(code: 'SUBEXEMPT', name: 'Exempt')
+approval_status5 = BoardApprovalStatus.find_or_create_by(code: 'SUBDENIED', name: 'Denied')
+approval_status6 = BoardApprovalStatus.find_or_create_by(code: 'SUBUNREQUIRED', name: 'Not required')
+approval_status7 = BoardApprovalStatus.find_or_create_by(code: 'SUBUNREQUIRED', name: 'Not yet submitted')
 
 total_orgs = Organization.all.size
 

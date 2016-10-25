@@ -1,5 +1,7 @@
 {
   "baseMainUrl" : "http://ctrp-ci.nci.nih.gov/ctrp/",
+  "baseMainUrlQA" : "http://ctrp-qa.ncifcrf.gov/ctrp/",
+  "baseMainUrlLocalHost" : "http://localhost/ctrp/",
   "uiUrl" : "ui/#/main/sign_in",
   "curatorUID" : "ctrpcurator",
   "curatorPWD" : "Welcome01",
@@ -12,5 +14,8 @@
   "trialSubmitterEmail" : "ctrptrialsubmitter@gmail.com",
   "trialSubmitterEmailPwd" : "Welcome0!",
   "trialSubmitterEmailFirstName" : "ctrptrialsubmitter",
-  "conString" : "postgres://singhs10:@localhost:5432/ctrp_dev"
+  "conStringShilpiLocalDB" : "postgres://singhs10:@localhost:5432/ctrp_dev",
+  "conStringCIDB" : "postgres://postgres:Welcome0!@10.133.224.59:8081/ctrp_ci",
+  "conStringQADB" : "postgres://docker:Welcome01@129.43.165.163:5432/docker"
+
 }

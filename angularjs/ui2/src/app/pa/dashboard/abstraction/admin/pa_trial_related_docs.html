@@ -1,15 +1,15 @@
-<div class="row">
+<div class="row" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">Trial Related Documents</div>
         </div>
         <div class="panel-body">
-            <form name="trial_docs_form" role="form" class="form form-horizontal" novalidate ctrp-submit="trialRelatedDocsView.saveDocuments('true', 'trial_docs_form')">
+            <form name="trial_docs_form" role="form" class="form form-horizontal" novalidate ctrp-submit="trialRelatedDocsView.saveDocuments('true', 'trial_docs_form')" unsaved-changes>
                 <fieldset class="sub-bordered" ng-disabled="!paTrialOverview.trialDetailObj.pa_editable || trialRelatedDocsView.disableBtn">
                     <legend class="sub-bordered">Trial Related Documents</legend>
                     <div class="form-group">
                         <div class="table-responsive">
-                            <table class="table table-condensed table-striped">
+                            <table class="table table-condensed table-striped" ctrp-hint hint-append-element="fieldset">
                                 <thead>
                                     <th>Document Type</th>
                                     <th></th>
@@ -45,7 +45,7 @@
                                                    validate-file-type="{{trialRelatedDocsView.acceptedFileExtensions}}">
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-primary"
+                                            <button type="button" class="btn btn-primary btn-add"
                                                     ng-click="trialRelatedDocsView.upsertDoc(trialRelatedDocsView.curDoc.index)"
                                                     ng-disabled="trialRelatedDocsView.curDoc.document_type=='' ||
                                             trialRelatedDocsView.curDoc.file == '' || trial_docs_form.current_doc.$invalid" ng-hide="trialRelatedDocsView.curDoc.edit">

@@ -36,6 +36,13 @@ var searchTrial = function(){
     this.searchTrialCountOfResult = element(by.binding('trialView.gridOptions.totalItems'));
     this.searchTrialMultiSelectList = element.all(by.css('input[ng-model="$select.search"]'));
     this.searchTrialNoCriteriaMessage = element(by.binding('trialView.searchWarningMessage'));
+    this.searchTrialSortColumnNCITrialID = element.all(by.buttonText('NCI Trial Identifier'));
+    this.searchTrialSortColumnOfficialTitle = element.all(by.buttonText('Official Title'));
+    this.searchTrialSortColumnLeadOrg = element.all(by.buttonText('Lead Organization'));
+    this.searchTrialSortColumnLeadOrgTrialID = element.all(by.buttonText('Lead Org Trial Identifier'));
+    this.searchTrialSortColumnPrincipalInvestigator = element.all(by.buttonText('Principal Investigator'));
+    this.searchTrialSortColumnClinicalTrialID = element.all(by.buttonText('ClinicalTrials.gov Identifier'));
+
 
     var self = this;
 

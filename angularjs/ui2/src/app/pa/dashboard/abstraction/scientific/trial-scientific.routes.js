@@ -199,10 +199,7 @@
                 controller: 'pasDiseaseCtrl as diseaseView',
                 resolve: {
                     DiseaseService: 'DiseaseService',
-                    TrialService: 'TrialService',
-                    trialDetailObj: function($stateParams, TrialService) {
-                        return TrialService.getTrialById($stateParams.trialId);
-                    }
+                    TrialService: 'TrialService'
                 },
                 section: 'pa',
                 ncyBreadcrumb: {

@@ -29,7 +29,7 @@
             restrict: 'A',
             priority: 200,
             scope: {
-                ngClick: '&ctrpClick'
+                ngClick: '&ctrpClick',
             },
             link: linkerFn
         };
@@ -37,6 +37,8 @@
         return directiveObj;
 
         function linkerFn(scope, element, attrs) {
+            var popover;
+            /*
             var popover = $popover(element, {
                 title: 'Please Confirm',
                 templateUrl: attrs.confirmTemplate || defaultTemplateUrl,
@@ -48,12 +50,29 @@
                 autoClose: true,
                 scope: scope
             });
+            */
+            // watch for the confirm-msg dynamically
+            attrs.$observe('confirmMsg', function(newVal) {
+                popover = $popover(element, {
+                    title: 'Please Confirm',
+                    templateUrl: attrs.confirmTemplate || defaultTemplateUrl,
+                    html: true,
+                    trigger: 'manual',
+                    placement: attrs.placement || 'top',
+                    animation: 'am-flip-x',
+                    content: newVal || 'Are you sure?',
+                    autoClose: true,
+                    scope: scope
+                });
+            });
 
             element.bind('click', function(event) {
                 if (attrs.confirmOff && attrs.confirmOff !== 'false') {
                     // trigger the click action and broadcast delete confirmation in case it is a secondary task in ctrp-submit directive
                     scope.ngClick();
-                    $rootScope.$broadcast('deleteConfirmationComplete');
+                    $timeout(function() {
+                        $rootScope.$broadcast('deleteConfirmationComplete');
+                    }, 1500);
                 } else {
                     popover.event = event;
                     if (!popover.$isShown) {

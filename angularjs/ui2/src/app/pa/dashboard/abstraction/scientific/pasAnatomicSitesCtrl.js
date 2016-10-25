@@ -87,10 +87,7 @@
                         successMsg = 'Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded';
                     }
                     toastr.clear();
-                    toastr.success(successMsg, 'Operation Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    });
+                    toastr.success(successMsg, 'Operation Successful!');
                 }
             }).catch(function(err) {
                 console.log("error in updating trial " + JSON.stringify(outerTrial));
@@ -102,10 +99,10 @@
 
         vm.reset = function() {
             vm.anatomic_sites_selected = [];
+            $scope.anatomic_sites_form.$setPristine();
         };
 
         function deleteListHandler(anatomicSitesSelectedInCheckboxes){
-            //console.log("In deleteListHandler anatomicSitesSelectedInCheckboxes" + JSON.stringify(anatomicSitesSelectedInCheckboxes));
             var deleteList = [];
             angular.forEach(anatomicSitesSelectedInCheckboxes, function(item) {
                 if ( angular.isDefined(item.selected) && item.selected === true ) {
@@ -113,8 +110,6 @@
                 }
             });
             vm.selectedDeleteAnatomicSiteList = deleteList ;
-            //console.log("In vm.selectedDeleteAnatomicSiteList=" + JSON.stringify(vm.selectedDeleteAnatomicSiteList));
-
         };
 
         function deleteSelected() {
@@ -123,7 +118,6 @@
                 return
             }
             vm.curTrial.anatomic_site_wrappers_attributes = [];
-            //console.log(vm.selectedDeleteAnatomicSiteList);
             for (var i = 0; i < vm.selectedDeleteAnatomicSiteList.length; i++) {
                 var anatomicSiteToBeDeletedFromDb = {};
                 anatomicSiteToBeDeletedFromDb.id = vm.selectedDeleteAnatomicSiteList[i].id;

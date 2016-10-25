@@ -32,15 +32,17 @@
                 outerTrial.trial = vm.curTrial;
 
                 TrialService.upsertTrial(outerTrial).then(function (response) {
-                    if (response.server_response.status < 300) {
+                    var status = response.server_response.status;
+
+                    if (status >= 200 && status <= 210) {
                         $state.go('main.verifyTrialData', {trialId: response.id}, {reload: true});
                         toastr.success('Trial data has been verified', 'Operation Successful!');
-                    } else {
-                        // Enable buttons in case of backend error
-                        vm.disableBtn = false;
                     }
                 }).catch(function (err) {
                     console.log("error in verifying trial data " + JSON.stringify(outerTrial));
+                }).finally(function() {
+                    // Enable buttons in case of backend error
+                    vm.disableBtn = false;
                 });
             }).catch(function(cancel) {
                 // isConfirmed = cancel;
@@ -60,4 +62,3 @@
         }
     }
 })();
-

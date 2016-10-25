@@ -13,36 +13,43 @@
             'SEARCH_ORG': '/ctrp/organizations/search.json',
             'CURATE_ORG': '/ctrp/organizations/curate',
             'UNIQUE_ORG': '/ctrp/organizations/unique',
+            'ASSOCIATED_ORGS': '/ctrp/organizations/associated/',
+            'DISASSOCIATE_ORGS': '/ctrp/organizations/dis_associate/',
+            'CLONE_CTEP_ORG': '/ctrp/organizations/clone.json',
             'COUNTRY_LIST': '/ctrp/countries.json',
             'STATES_IN_COUNTRY': '/ctrp/states.json?country=',
             'SOURCE_CONTEXTS': '/ctrp/source_contexts.json',
-            'SOURCE_STATUSES': '/ctrp/source_statuses.json',
+            'SOURCE_STATUSES': '/ctrp/source_statuses/search.json',
+            'SOURCE_STATUSES2': '/ctrp/source_statuses.json',
             'A_USER': '/ctrp/users/',
-            'A_USER_SIGNUP': '/ctrp/sign_up',
+            'A_USER_SIGNUP': '/ctrp/sign_up.json',
             'A_USER_CHANGEPASSWORD': '/ctrp/change_password',
             'USER_GSA': '/ctrp/users/gsa',
             'SEARCH_USER': '/ctrp/users/search.json',
-            'USER_LIST': '/ctrp/users.json',
-            'USER_STATUSES': 'users/user_statuses',
+            'USER_STATUSES': '/ctrp/users/user_statuses',
             'USER_TRIALS': '/ctrp/trial_ownerships/search.json',
             'USER_TRIALS_END': '/ctrp/trial_ownerships/end.json',
             'USER_TRIALS_ADD': '/ctrp/trial_ownerships/add.json',
             'USER_TRIALS_TRANSFER': '/ctrp/trial_ownerships/transfer.json',
             'USER_TRIALS_CREATE': '/ctrp/trial_ownerships.json',
             'USER_SUBMITTED_TRIALS': '/ctrp/trial_submissions.json',
+            'SUBMISSION_EXPECT_COMPLETE': '/ctrp/trial_submission_expect_complete.json',
             'PERSON_LIST': '/ctrp/people.json',
             'A_PERSON': '/ctrp/people/',
             'CURATE_PERSON': '/ctrp/people/curate',
             'PO_AFF_STATUSES': '/ctrp/po_affiliation_statuses.json',
             'SEARCH_PERSON': '/ctrp/people/search.json',
-            'UNIQUE_PERSON': '/ctrp/people/unique',
+            'UNIQUE_PERSON': '/ctrp/people/unique.json',
+            'ASSOCIATE_PERSON': '/ctrp/people/associate_context/{:ctep_person_id}/{:ctrp_id}.json',
+            'REMOVE_PERSON_ASSOCIATION': '/ctrp/people/association/remove/{:ctep_person_id}',
+            'CLONE_CTEP_PERSON': '/ctrp/people/clone_ctep',  // POST
             'A_FAMILY': '/ctrp/families/',
             'FAMILY_LIST': '/ctrp/families.json',
             'SEARCH_FAMILY': '/ctrp/families/search.json',
             'FAMILY_STATUSES':'/ctrp/family_statuses.json',
             'FAMILY_TYPES':'/ctrp/family_types.json',
             'FAMILY_RELATIONSHIPS':'/ctrp/family_relationships.json',
-            'UNIQUE_FAMILY': '/ctrp/families/unique',
+            'UNIQUE_FAMILY': '/ctrp/families/unique.json',
             'TRIAL_LIST': '/ctrp/registry/trials.json',
             'A_TRIAL': '/ctrp/registry/trials/',
             'SEARCH_TRIAL': '/ctrp/registry/trials/search.json',
@@ -64,7 +71,9 @@
             'ANATOMIC_SITES': '/ctrp/registry/anatomic_sites.json',
             'ACCEPTED_FILE_TYPES_REG': '/ctrp/registry/accepted_file_types_for_registry.json',
             'ACCEPTED_FILE_TYPES': '/ctrp/registry/accepted_file_types.json',
-            'VALIDATE_TRIAL_STATUS': '/ctrp/registry/trials/validate_status.json',
+            'VALIDATE_TRIAL_STATUS': '/ctrp/registry/trials/validate_status.json', // registry
+            'PAA_VALIDATE_TRIAL_STATUS': '/ctrp/pa/paa_validate_trial_status.json', // PA
+            'ABSTRACTION_VALIDATE_TRIAL_STATUS': '/ctrp/pa/abstraction_validate_trial_status.json', // PA
             'VALIDATE_MILESTONE': '/ctrp/registry/trials/validate_milestone.json',
             'VALIDATE_SR_STATUS': '/ctrp/registry/participating_sites/validate_status.json',
             'SEARCH_CLINICAL_TRIALS_GOV': '/ctrp/registry/trials/search_clinical_trials_gov.json',
@@ -74,10 +83,10 @@
             'NCI_DIV_PA': '/ctrp/pa/nih_nci_div_pa.json',
             'NCI_PROG_PA': '/ctrp/pa/nih_nci_prog_pa.json',
             'SUBMISSION_METHODS': '/ctrp/pa/submission_methods.json',
-            'AUDIT_HISTORY': '/ctrp/trial_versions/history',
-            'TRIAL_UPDATES_HISTORY': '/ctrp/trial_versions/updates_history',
-            'TRIAL_SUBMISSIONS_HISTORY': '/ctrp/trial_versions/submissions_history',
-            'TRIAL_DELETED_DOCUMENTS' : '/ctrp/registry/trial_documents/deleted_documents',
+            'AUDIT_HISTORY': '/ctrp/trial_versions/history.json',
+            'TRIAL_UPDATES_HISTORY': '/ctrp/trial_versions/updates_history.json',
+            'TRIAL_SUBMISSIONS_HISTORY': '/ctrp/trial_versions/submissions_history.json',
+            'TRIAL_DELETED_DOCUMENTS' : '/ctrp/registry/trial_documents/deleted_documents.json',
             'OUTCOME_MEASURE_TYPES': '/ctrp/outcome_measure_types.json',
             'OUTCOME_MEASURE_LIST' : '/ctrp/registry/outcome_measures.json',
             'A_OUTCOME_MEASURE' : '/ctrp/registry/outcome_measures/',
@@ -85,7 +94,7 @@
             'EVALUATION_TYPES': '/ctrp/evaluation_types.json',
             'SPECIMEN_TYPES': '/ctrp/specimen_types.json',
             'BIOMARKER_USES': '/ctrp/biomarker_uses.json',
-            'BIOMARKER_PURPOSES': '/ctrp/biomarker_purposes',
+            'BIOMARKER_PURPOSES': '/ctrp/biomarker_purposes.json',
             'SUB_GROUP_LIST' : '/ctrp/registry/sub_groups.json',
             'A_SUB_GROUP' : '/ctrp/registry/sub_groups/',
             'A_SUBMISSION' : '/ctrp/registry/submissions/',
@@ -93,7 +102,9 @@
             'NCIT_DISEASE_CODE_LIST': '/ctrp/ncit_disease_codes.json',
             'NCIT_TREE': '/ctrp/ncit_disease_codes/get_tree.json',
             'SEARCH_DISEASE': '/ctrp/ncit_disease_codes/search.json',
-
+            'COUNTRIES_LIST': '/ctrp/countries_for_registry.json',
+            'AUTHORITIES_FOR_A_COUNTRY' : '/ctrp/get_authorities_for_a_country.json',
+            'SERVICE_REQUESTS': '/ctrp/service_requests.json',
             'TRIALS': {
                 'STATUS_WITH_ID': '/ctrp/registry/trial_statuses/{:id}.json',
                 'PARTICIPATING_SITE_WITH_ID': '/ctrp/registry/participating_sites/{:id}.json',
@@ -139,7 +150,9 @@
                 'SEARCH_CTRP_INTERVENTIONS': '/ctrp/registry/trials/search_ctrp_interventions.json?c_code={:c_code}',
                 'MAIL_LOGS': '/ctrp/registry/trials/get_mail_logs.json?trial_id={:trial_id}',
                 'CHECKOUT_HISTORY': '/ctrp/registry/trials/get_trial_checkout_history.json?trial_id={:trial_id}',
-                'INTERNAL_SOURCES': '/ctrp/registry/internal_sources.json'
+                'INTERNAL_SOURCES': '/ctrp/registry/internal_sources.json',
+                'AMENDMENT_REASONS': '/ctrp/registry/trials/amendment_reasons.json',
+                'VALIDATE_ABSTRACTION': '/ctrp/model/validation_rules/trial/{:trial_id}.json',
             }
         })
         .constant('MESSAGES', {
@@ -160,6 +173,9 @@
             //key mirrors value
             'READONLY': 'READONLY',
             'CURATOR': 'CURATOR'
+        })
+        .constant('FORMATS', {
+            'NUMERIC': /^\d+$/
         });
 
 })();

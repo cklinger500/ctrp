@@ -1,0 +1,98 @@
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">Abstraction Validation</div>
+        </div>
+        <div class="panel-body">
+            <div class="row" ng-show="abstractValidView.isValidationPassed">
+                <div class="alert alert-success">
+                    <strong>Congratulations! Abstraction Validation Passed.</strong>
+                </div>
+            </div>
+            <div class="row" ng-show="abstractValidView.issues.errors.admin.length > 0">
+                <div class="alert alert-danger">
+                    <strong>Abstraction Validation Failed: </strong> Errors in Administrative Data: {{abstractValidView.issues.errors.admin.length}}
+                </div>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Description
+                            </th>
+                            <th>
+                                Comment
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="error in abstractValidView.issues.errors.admin">
+                            <td>
+                                {{error.description}}
+                            </td>
+                            <td>
+                                {{error.remark}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row" ng-show="abstractValidView.issues.errors.scientific.length > 0">
+                <div class="alert alert-danger">
+                    <strong>Abstraction Validation Failed: </strong> Errors in Scientific Data: {{abstractValidView.issues.errors.scientific.length}}
+                </div>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Description
+                            </th>
+                            <th>
+                                Comment
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="error in abstractValidView.issues.errors.scientific">
+                            <td>
+                                {{error.description}}
+                            </td>
+                            <td>
+                                {{error.remark}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row" ng-show="abstractValidView.issues.warnings.length > 0">
+                <div class="alert alert-warning">
+                    <strong>Abstraction Validation Warnings:</strong> {{abstractValidView.issues.warnings.length}}
+                </div>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Description
+                            </th>
+                            <th>
+                                Comment
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="warning in abstractValidView.issues.warnings">
+                            <td>
+                                {{warning.description}}
+                            </td>
+                            <td>
+                                {{warning.remark}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>

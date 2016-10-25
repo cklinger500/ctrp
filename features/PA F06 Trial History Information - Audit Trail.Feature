@@ -1,5 +1,5 @@
-﻿@PA @global
-Feature: PA F05 Trial History Information - Audit Trail.Feature
+@PA @global
+Feature: PA F05 Trial History Information - Audit Trail.Feature  (update 6/23/16: participating sites removed.)
 
 As any CTRP PA User, I can View the Trial History Information Audit Trail
 
@@ -39,7 +39,7 @@ Then the audit trail will be displayed for the Trial ordered by date with newest
 |Investigator (investigator_id: People/Last Name, First Name, Middle Name)|
 |created_at|
 |updated_at|
-|research category (research_category_id:  research_categories/Name)|
+|Clinical Research category (clinical_research_category_id:  clinical_research_categories/Name)|
 |accrual disease term (accrual_disease_term_id: accrual_disease_terms/name)|
 |investigator_title|
 |investigator aff id (investigator_aff_id: Organizations/Name)|
@@ -121,14 +121,15 @@ Then the audit trail will be displayed for the Trial ordered by date with newest
 |submissions (multiple) xxxx submission.submission_num, submission_date, amendment_date,amendment_reason_id: cccc, submission_type_id: cccc, submission_source_id: submission_sources.name, submission_method_id: submission_methods.name|
 
 | oversight_authorities (multiple) xxxx oversight_authorities.country, organization|
-| participating_sites (multiple) xxxx participating_sites.protocol_id, program_code, contact_name, contact_phone, contact_email, organization_id: organizations.name, person_id: people.fname, mname, lname|
+
 
 |Processing Status processing_status_wrappers.status_date, processing_status_id: processing_statuses.name |
 | Trial co leads (multiple) xxxx trial_co_lead_orgs.organization_id: organizations.name|
 | Co-PIs trial_co_pis.person_id : people.fname, mname, lname|
-| Trial Status trial_status_wrappers.status_date, why_stopped, trial_status_id: trial_statuses.name|
+| Trial Status trial_status_wrappers.status_date, Comments, why_stopped, trial_status_id: trial_statuses.name|
 
 Examples:
+|field name| data example|
 |NCI-ID| NCI-2015-01299 |
 |Lead Protocol| 9226 |
 |official_title|Individualized Treatment for Relapsed/Refractory Acute Leukemia Based on Chemosensitivity and Genomics/Gene Expression Data|
@@ -157,7 +158,7 @@ Examples:
 |Investigator Last Name, First Name, Middle Name | Becker, Pamela |
 |Created At | July 29, 2015|
 |updated_at |September 18, 2015|
-|research category|Interventional   |
+|Clinical Research Category|Interventional   |
 |accrual disease term|ICD9|
 |investigator_title|XXX|
 |investigator aff id (investigator_aff_id: Organizations/Name)|XXX|
@@ -247,7 +248,7 @@ Examples:
 |submissions (multiple) xxxx submission.submission_num, submission_date, amendment_date,amendment_reason_id: cccc, submission_type_id: cccc, submission_source_id: submission_sources.name, submission_method_id: submission_methods.name|XXX|
 
 | oversight_authorities (multiple) xxxx oversight_authorities.country, organization|XXX|
-| participating_sites (multiple) xxxx participating_sites.protocol_id, program_code, contact_name, contact_phone, contact_email, organization_id: organizations.name, person_id: people.fname, mname, lname|XXX|
+
 
 |Processing Status processing_status_wrappers.status_date, processing_status_id: processing_statuses.name |XXX|
 | Trial co leads (multiple) xxxx trial_co_lead_orgs.organization_id: organizations.name|XXX|
@@ -270,4 +271,10 @@ And I will be able to open and save the spreadsheet
       Then the audit trail will be displayed the trial 
       And the list will be paganiated  
 
+Scenario: #3a Displaying Deleted values
+Given I am logged into the CTRP Protocol Abstraction application 
+And I have selected a Trial
+And I am on the Trial History Information Audit Trail Screen 
+When a value is deleted 
+Then the value will be displayed with the (D) suffix
 

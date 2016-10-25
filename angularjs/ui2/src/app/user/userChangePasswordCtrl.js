@@ -29,7 +29,11 @@
 
         vm.updateUser = function () {
             UserService.upsertUserChangePassword(vm.userObj).then(function (response) {
-                //toastr.success('User ' + vm.userObj + ' has been recorded', 'Operation Successful!');
+                var status = response.server_response.status;
+
+                if (status >= 200 && status <= 210) {
+                    //toastr.success('User ' + vm.userObj + ' has been recorded', 'Operation Successful!');
+                }
             }).catch(function (err) {
                 console.log('Error in Changing the Password ' + JSON.stringify(vm.userObj));
             });

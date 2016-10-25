@@ -46,6 +46,7 @@
                 usedInModal: '=?', //boolean, optional; default to false
                 maxRowSelectable : '=', //int, optional; if not not set, use MAX_VALUE -> can select all results
                 curationMode: '=?', // boolean, optional; default to false unless maxRowSelectable is set to > 0
+                sourceContextOnly: '=?', // enable source context only. If not set, default to 'CTRP' if used in modal
                 personSearchResults: '@personSearchResults',
                 selectedPersonsArray: '@selectedPersonsArray',
             },
@@ -59,23 +60,26 @@
 
         function linkFn(scope, element, attrs) {
             //actions
+            scope.searchParams.source_context = scope.sourceContextOnly;
         } //linkFn
 
 
 
         function advPersonSearchDirectiveController($scope, uiGridConstants, UserService, DateService, OrgService, $state) {
 
-
             var fromStateName = $state.fromState.name || '';
             $scope.maxRowSelectable = $scope.maxRowSelectable === 'undefined' ? Number.MAX_VALUE : $scope.maxRowSelectable ; //default to MAX_VALUE
             $scope.searchParams = PersonService.getInitialPersonSearchParams();
             $scope.sourceContextArr = []; //sourceContextObj;
             $scope.sourceStatusArr = []; //sourceStatusObj;
+            $scope.curSourceStatuses = []; // subset of source statuses for the selected source context
             $scope.nullifiedId = '';
             $scope.warningMessage = '';
             $scope.selectedRows = [];
             $scope.curationShown = false;
             $scope.curationModeEnabled = false;
+            $scope.processingStatuses = OrgService.getProcessingStatuses();
+            $scope.serviceRequests = [];
             $scope.dateFormat = DateService.getFormats()[1];
             // console.log('dateFormat: ' + $scope.dateFormat);
             $scope.dateOptions = DateService.getDateOptions();
@@ -83,7 +87,6 @@
             $scope.endDateOpened = ''; // false;
             $scope.searchWarningMessage = '';
             $scope.searching = false;
-            console.log('in person search form directive');
 
             if ($scope.maxRowSelectable > 0) {
                 $scope.curationModeEnabled = true;
@@ -94,9 +97,15 @@
             //override the inferred curationModeEnabled if 'curationMode' attribute has been set in the directive
             $scope.curationModeEnabled = angular.isDefined($scope.curationMode) ? $scope.curationMode : $scope.curationModeEnabled;
             $scope.usedInModal = angular.isDefined($scope.usedInModal) ? $scope.usedInModal : false;
+            if ($scope.usedInModal) {
+                $scope.sourceContextOnly = $scope.sourceContextOnly || 'CTRP';
+                $scope.searchParams.source_context = $scope.sourceContextOnly;
+            }
+            // $scope.sourceContextOnly = angular.isDefined($scope.sourceContextOnly) && $scope.usedInModal ? $scope.sourceContextOnly : undefined;
             $scope.showGrid = angular.isDefined($scope.showGrid) ? $scope.showGrid : false;
 
             $scope.searchPeople = function (newSearchFlag) {
+                console.info('searching people: ', $scope.searchParams);
                 if (newSearchFlag === 'fromStart') {
                     $scope.searchParams.start = 1;
                 }
@@ -125,30 +134,32 @@
                     $scope.searching = true;
                     if ($scope.usedInModal) {
                         // in modal, search against CTRP context and Active people!
-                        $scope.searchParams.source_context = 'CTRP';
-                        $scope.searchParams.source_status = 'Active';
+                        $scope.searchParams.source_context = $scope.sourceContextOnly || 'CTRP';
+                        // $scope.searchParams.source_status = 'Active'; // TODO: source status should be active in the search for in modal use
                     }
                     PersonService.searchPeople($scope.searchParams).then(function (data) {
-                        // console.log('received data for person search: ' + JSON.stringify(data));
-                        if ($scope.showGrid && data.data.people) {
-                            // console.log("received person search results: " + JSON.stringify(data.data.people));
-                            $scope.gridOptions.data = data.data.people;
-                            $scope.gridOptions.totalItems = data.data.total;
-                            //pin the selected rows, if any, at the top of the results
-                            _.each($scope.selectedRows, function (curRow, idx) {
-                                var ctrpId = curRow.entity.id;
-                                var indexOfCurRowInGridData = Common.indexOfObjectInJsonArray($scope.gridOptions.data, 'id', ctrpId);
-                                if (indexOfCurRowInGridData > -1) {
-                                    $scope.gridOptions.data.splice(indexOfCurRowInGridData, 1);
-                                    $scope.gridOptions.totalItems--;
-                                }
-                                $scope.gridOptions.data.unshift(curRow.entity);
-                                $scope.gridOptions.totalItems++;
+                        var status = data.status;
 
-                            });
-                            // $scope.gridApi.grid.refresh();
+                        if (status >= 200 && status <= 210) {
+                            if ($scope.showGrid && data.data.people) {
+                                // console.log("received person search results: " + JSON.stringify(data.data.people));
+                                $scope.gridOptions.data = data.data.people;
+                                $scope.gridOptions.totalItems = data.data.total;
+                                //pin the selected rows, if any, at the top of the results
+                                _.each($scope.selectedRows, function (curRow, idx) {
+                                    var ctrpId = curRow.entity.id;
+                                    var indexOfCurRowInGridData = Common.indexOfObjectInJsonArray($scope.gridOptions.data, 'id', ctrpId);
+                                    if (indexOfCurRowInGridData > -1) {
+                                        $scope.gridOptions.data.splice(indexOfCurRowInGridData, 1);
+                                        $scope.gridOptions.totalItems--;
+                                    }
+                                    $scope.gridOptions.data.unshift(curRow.entity);
+                                    $scope.gridOptions.totalItems++;
+
+                                });
+                            }
+                            $scope.$parent.personSearchResults = data.data; //{people: [], total, }
                         }
-                        $scope.$parent.personSearchResults = data.data; //{people: [], total, }
                     }).catch(function (err) {
                         console.log('search people failed');
                     }).finally(function() {
@@ -196,15 +207,19 @@
                 var wildcardOrgName = $scope.searchParams.affiliated_org_name.indexOf('*') > -1 ? $scope.searchParams.affiliated_org_name : '*' + $scope.searchParams.affiliated_org_name + '*';
 
                 return OrgService.searchOrgs({name: wildcardOrgName, source_context: "CTRP"}).then(function (res) {
-                    var uniqueNames = [];
-                    var orgNames = [];
-                    orgNames = res.orgs.map(function (org) {
-                        return org.name;
-                    });
+                    var status = res.server_response.status;
 
-                    return uniqueNames = orgNames.filter(function (name) {
-                        return uniqueNames.indexOf(name) === -1;
-                    });
+                    if (status >= 200 && status <= 210) {
+                        var uniqueNames = [];
+                        var orgNames = [];
+                        orgNames = res.orgs.map(function (org) {
+                            return org.name;
+                        });
+
+                        return uniqueNames = orgNames.filter(function (name) {
+                            return uniqueNames.indexOf(name) === -1;
+                        });
+                    }
                 });
             }; //typeAheadOrgNameSearch
 
@@ -256,13 +271,16 @@
             $scope.commitNullification = function() {
                 console.log('tobeCurated: ' + JSON.stringify($scope.toBeCurated));
                 PersonService.curatePerson($scope.toBeCurated).then(function(res) {
-                    // console.log('successful in curation: res is: ' + JSON.stringify(res));
-                    initCurationObj();
-                    clearSelectedRows();
-                    $scope.searchPeople();
-                    toastr.success('Curation was successful', 'Curated!');
+                    var status = res.server_response.status;
+
+                    if (status >= 200 && status <= 210) {
+                        initCurationObj();
+                        clearSelectedRows();
+                        $scope.searchPeople();
+                        toastr.success('Curation was successful', 'Curated!');
+                    }
                 }).catch(function(err) {
-                    toastr.error('There was an error in curation', 'Curation error');
+                    toastr.error('There was an error in curation', 'Curation error', { timeOut: 0});
                 });
             }; //commitNullification
 
@@ -363,10 +381,9 @@
              * @param row
              */
             function rowSelectionCallBack(row) {
-
                 if ($scope.maxRowSelectable > 0 && $scope.curationShown || $scope.usedInModal) {
                     if (row.isSelected) {
-                        //console.log('row is selected: ' + JSON.stringify(row.entity));
+                        console.log('row is selected: ', row.entity);
                         if ($scope.selectedRows.length < $scope.maxRowSelectable) {
                             $scope.selectedRows.unshift(row);
                             $scope.$parent.selectedPersonsArray.push(row.entity);
@@ -411,13 +428,40 @@
 
 
             function getPromisedData() {
-
                 OrgService.getSourceContexts().then(function(data) {
-                    $scope.sourceContextArr = data.sort(Common.a2zComparator());
+                    var status = data.server_response.status;
+
+                    if (status >= 200 && status <= 210) {
+                        $scope.sourceContextArr = data.sort(Common.a2zComparator());
+                        if ($scope.usedInModal && !!$scope.sourceContextOnly) {
+                            $scope.sourceContextArr = $scope.sourceContextArr.filter(function(c) {
+                                return c.code === $scope.sourceContextOnly; // show only the source context assigned
+                            });
+                        }
+                    }
                 });
 
-                OrgService.getSourceStatuses().then(function(data) {
-                    $scope.sourceStatusArr = data.sort(Common.a2zComparator());
+                OrgService.getSourceStatuses2().then(function(data) {
+                    var status = data.server_response.status;
+
+                    if (status >= 200 && status <= 210) {
+                        $scope.sourceStatusArr = data.sort(Common.a2zComparator());
+                        if ($scope.usedInModal) {
+                            $scope.sourceStatusArr = $scope.sourceStatusArr.filter(function(s) {
+                                return s.code === 'ACT';
+                            });
+                        }
+                        watchSourceContext(); // trigger the watch for source context selection
+                    }
+                });
+
+                OrgService.getServiceRequests().then(function (requests) {
+                    var status = requests.server_response.status;
+
+                    if (status >= 200 && status <= 210) {
+                        $scope.serviceRequests = requests;
+                    }
+                    delete requests.server_response;
                 });
             } //getPromisedData
 
@@ -431,7 +475,8 @@
                 $scope.gridOptions = PersonService.getGridOptions($scope.usedInModal);
                 $scope.gridOptions.isRowSelectable = function (row) {
                     var isCTEPContext =row.entity.source_context  && row.entity.source_context.indexOf('CTEP') > -1;
-                    if (isCTEPContext) {
+                    if (isCTEPContext && $scope.sourceContextOnly != 'CTEP') {
+                        // if set to show sourceContextOnly to 'CTEP', then we should allow selection
                         return false;
                     } else {
                         return true;
@@ -439,6 +484,28 @@
                 };
                 $scope.gridOptions.enableVerticalScrollbar = 2; //uiGridConstants.scrollbars.NEVER;
                 $scope.gridOptions.enableHorizontalScrollbar = 2; //uiGridConstants.scrollbars.NEVER;
+
+                $scope.gridOptions.exporterAllDataFn = function () {
+                    var allSearchParams = angular.copy($scope.searchParams);
+                    var origGridColumnDefs = angular.copy($scope.gridOptions.columnDefs);
+
+                    allSearchParams.start = null;
+                    allSearchParams.rows = 10000000; // To get back all results, for now
+
+                    return PersonService.searchPeople(allSearchParams).then(
+                        function (data) {
+                            var status = data.status;
+
+                            if (status >= 200 && status <= 210) {
+                                $scope.gridOptions.useExternalPagination = false;
+                                $scope.gridOptions.useExternalSorting = false;
+                                $scope.gridOptions.data = data['data']['people'];
+                                $scope.gridOptions.columnDefs = origGridColumnDefs;
+                            }
+                        }
+                    );
+                };
+
                 $scope.gridOptions.onRegisterApi = function (gridApi) {
                     $scope.gridApi = gridApi;
                     $scope.gridApi.core.on.sortChanged($scope, sortChangedCallBack);
@@ -486,7 +553,7 @@
 
 
                     //$scope.$parent.selectedPersonsArray = []; //$scope.selectedRows;
-                    if (newVal != oldVal) {
+                    if (newVal != oldVal && $scope.gridApi) {
                         $scope.gridApi.grid.refresh();
                     }
                 }, true);
@@ -562,7 +629,6 @@
                 return deselectedRow;
             }
 
-
             function watchCurationMode() {
                 $scope.$on(MESSAGES.CURATION_MODE_CHANGED, function() {
                    watchCurationModeSubRoutine();
@@ -571,6 +637,26 @@
 
             function watchCurationModeSubRoutine() {
                 $scope.curationShown = UserService.isCurationModeEnabled() || false;
+            }
+
+            // dynamically select the list of source statuses for the selected source context
+            function watchSourceContext() {
+                $scope.$watch('searchParams.source_context', function(newVal, oldVal) {
+
+                    if (!newVal) {
+                        // for All source contexts
+                        $scope.curSourceStatuses = _.uniq($scope.sourceStatusArr, function(status, key, code) {
+                            return status.code;
+                        });
+                    } else {
+                        var context = _.findWhere($scope.sourceContextArr, {code: newVal});
+                        var contextId = !!context ? context.id : 2;
+                        $scope.curSourceStatuses = $scope.sourceStatusArr.filter(function(status) {
+                            return status.source_context_id === contextId;
+                        });
+                    }
+
+                });
             }
 
         } //advPersonSearchDirectiveController

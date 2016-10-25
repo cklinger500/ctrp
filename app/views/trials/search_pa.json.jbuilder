@@ -8,8 +8,13 @@ json.trials do
     json.sponsor trial.sponsor.present? ? trial.sponsor.name : nil
     json.study_source trial.study_source.present? ? trial.study_source.name : nil
     json.current_trial_status trial.trial_status_wrappers.present? ? trial.trial_status_wrappers.last.trial_status.name : nil
-    json.current_processing_status trial.processing_status_wrappers.present? ? trial.processing_status_wrappers.last.processing_status.name : nil
-    current_milestone = trial.milestone_wrappers.present? ? trial.milestone_wrappers.last.milestone.name : nil
+    current_submission = trial.current_submission
+    if current_submission.present? && current_submission.processing_status_wrappers.last.present?
+      json.current_processing_status current_submission.processing_status_wrappers.last.processing_status.name
+    else
+      json.current_precessing_status nil
+    end
+    current_milestone = current_submission.milestone_wrappers.present? ? current_submission.milestone_wrappers.last.milestone.name : nil
     json.current_milestone current_milestone
     json.scientific_milestone  ""
     if  trial.milestone_wrappers.present?
@@ -51,21 +56,22 @@ json.trials do
       end
       json.other_ids  other_ids_string
     end
+
     #json.current_processing_status trial.processing_status_wrappers.present? ? trial.processing_status_wrappers.last.processing_status.name : nil
     json.research_category trial.research_category.present? ? trial.research_category.name : nil
-    last_submission = trial.submissions.present? ? trial.submissions.last : nil
-    if !last_submission.nil? && !last_submission.submission_type.nil?
-      json.submission_type  last_submission.submission_type.name
+
+    if !current_submission.nil? && !current_submission.submission_type.nil?
+      json.submission_type  current_submission.submission_type.name
     else
       json.submission_type ""
     end
-    if !last_submission.nil? && !last_submission.submission_method.nil?
-      json.submission_method  last_submission.submission_method.name
+    if !current_submission.nil? && !current_submission.submission_method.nil?
+      json.submission_method  current_submission.submission_method.name
     else
       json.submission_method ""
     end
-    if !last_submission.nil? && !last_submission.submission_source.nil?
-      json.submission_source  last_submission.submission_source.name
+    if !current_submission.nil? && !current_submission.submission_source.nil?
+      json.submission_source  current_submission.submission_source.name
     else
       json.submission_source ""
     end

@@ -7,9 +7,9 @@
     angular.module('ctrp.app.po')
         .controller('familyDetailCtrl', familyDetailCtrl);
     familyDetailCtrl.$inject = ['familyDetailObj', 'FamilyService', 'familyStatusObj','familyTypeObj','familyRelationshipObj','OrgService','DateService','toastr',
-        '$scope', '$state', 'Common', '$uibModal'];
+        '$scope', '$state', 'Common', '$uibModal', '$timeout'];
     function familyDetailCtrl(familyDetailObj, FamilyService, familyStatusObj,familyTypeObj,familyRelationshipObj,
-                              OrgService, DateService, toastr, $scope, $state, Common, $uibModal ) {
+                              OrgService, DateService, toastr, $scope, $state, Common, $uibModal, $timeout) {
         var vm = this;
         vm.curFamily = familyDetailObj || {name: ""}; //familyDetailObj.data;
         console.log('familyDetailObj: ' + JSON.stringify(familyDetailObj));
@@ -27,8 +27,8 @@
             vm.curFamily.family_memberships_attributes = prepareFamilyMembershipsArr(vm.savedSelection); //append an array of affiliated organizations
             _.each(vm.curFamily.family_memberships_attributes, function (aff, idx) {
                 //convert the ISO date to Locale Date String
-                aff['effective_date'] = aff.effective_date ? DateService.convertISODateToLocaleDateStr(aff['effective_date']) : '';
-                aff['expiration_date'] = aff.expiration_date ? DateService.convertISODateToLocaleDateStr(aff['expiration_date']) : '';
+                aff['effective_date'] = aff.effective_date ? moment(aff['effective_date']).format('DD-MMM-YYYY') : ''; // DateService.convertISODateToLocaleDateStr(aff['effective_date']) : '';
+                aff['expiration_date'] = aff.expiration_date ? moment(aff['expiration_date']).format('DD-MMM-YYYY') : ''; // DateService.convertISODateToLocaleDateStr(aff['expiration_date']) : '';
                 vm.curFamily.family_memberships_attributes[idx] = aff; //update the family memberships with the correct data format
             });
 
@@ -47,11 +47,13 @@
                     vm.curFamily.new = false;
                     vm.curFamily.family_memberships = response.data.family_memberships_attributes || [];
                     $state.go('main.familyDetail', {familyId: response.data.id});
-                    toastr.success('Family ' + vm.curFamily.name + ' has been recorded', 'Operation Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    });
+                    toastr.success('Family ' + vm.curFamily.name + ' has been recorded', 'Operation Successful!');
                 }
+
+                // To make sure setPristine() is executed after all $watch functions are complete
+                $timeout(function() {
+                   $scope.family_form.$setPristine();
+               }, 1);
             }).catch(function(err) {
                 console.log("error in updating family " + JSON.stringify(vm.curFamily));
             }).finally(function() {
@@ -136,6 +138,7 @@
             if (vm.curFamily.family_memberships && vm.curFamily.family_memberships.length > 0) {
                 populateFamilyMemberships();
             }
+            $scope.family_form.$setPristine();
         };
 
         activate();
@@ -183,7 +186,7 @@
                     });
 
                     modalInstance.result.then(function (selectedItem) {
-                        console.log("about to delete the familyDetail " + vm.curFamily.id);
+                        $scope.family_form.$submitted = true;
                         $state.go('main.families');
                     }, function () {
                         console.log("operation canceled")
@@ -200,6 +203,7 @@
                     //prevent pushing duplicated org
                     if (Common.indexOfObjectInJsonArray(vm.savedSelection, "id", anOrg.id) == -1) {
                         vm.savedSelection.unshift(OrgService.initSelectedOrg(anOrg));
+                        $scope.family_form.$setDirty();
                     }
                 });
 
@@ -263,15 +267,18 @@
             //find the organization name with the given id
             var findOrgName = function(familyAff, cb) {
                 OrgService.getOrgById(familyAff.organization_id).then(function(organization) {
-                    var curOrg = {"id" : familyAff.organization_id, "name": organization.name, "ctep_id": organization.ctep_id};
-                    curOrg.effective_date = DateService.convertISODateToLocaleDateStr(familyAff.effective_date);
-                    curOrg.expiration_date = DateService.convertISODateToLocaleDateStr(familyAff.expiration_date);
-                    curOrg.family_membership_id = familyAff.id; //family affiliation id
-                    curOrg.family_relationship_id=familyAff.family_relationship_id;
-                    curOrg.lock_version = familyAff.lock_version;
-                    curOrg._destroy = familyAff._destroy || false;
-                    vm.savedSelection.push(curOrg);
-                    // console.log("@@@@@@ "+JSON.stringify(curOrg));
+                    var status = organization.server_response.status;
+
+                    if (status >= 200 && status <= 210) {
+                        var curOrg = {"id" : familyAff.organization_id, "name": organization.name, "ctep_id": organization.ctep_id};
+                        curOrg.effective_date = moment(familyAff.effective_date).toDate(); //DateService.convertISODateToLocaleDateStr(familyAff.effective_date);
+                        curOrg.expiration_date = moment(familyAff.expiration_date).toDate(); //DateService.convertISODateToLocaleDateStr(familyAff.expiration_date);
+                        curOrg.family_membership_id = familyAff.id; //family affiliation id
+                        curOrg.family_relationship_id=familyAff.family_relationship_id;
+                        curOrg.lock_version = familyAff.lock_version;
+                        curOrg._destroy = familyAff._destroy || false;
+                        vm.savedSelection.push(curOrg);
+                    }
                 }).catch(function(err) {
                     console.log("error in retrieving organization name with id: " + familyAff.organization_id);
                 });

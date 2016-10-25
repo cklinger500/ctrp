@@ -61,6 +61,49 @@
                     parent: 'main.defaultContent',
                     label: 'Search Trials (PA)'
                 }
+            })
+            .state('main.pamTrialSearch', {
+                url: '/trial-abstraction-search',
+                templateUrl: 'app/pa/dashboard/abstraction/search/pam_trial_search.html',
+                controller: 'pamTrialSearchCtrl as pamTrialsSearchView',
+                section: 'pam',
+                resolve: {
+                    UserService: 'UserService',
+                    TrialService: 'TrialService',
+                    PATrialService: 'PATrialService',
+                    userDetailObj: function(UserService) {
+                        return UserService.getCurrentUserDetails();
+                    },
+                    onholdReasonObj: function (TrialService) {
+                        return TrialService.getOnholdReasons();
+                    },
+                    milestoneObj: function(TrialService) {
+                        return TrialService.getMilestones();
+                    },
+                    processingStatuses: function(PATrialService) {
+                        return PATrialService.getProcessingStatuses();
+                    }
+                },
+                ncyBreadcrumb: {
+                    parent: 'main.pamTrialSearchList',
+                    label: 'Abstraction Dashboard Search'
+                }
+            })
+            .state('main.pamTrialSearchList', {
+                url: '/trial-abstraction-list',
+                templateUrl: 'app/pa/dashboard/abstraction/search/pam_trial_list.html',
+                controller: 'pamTrialListCtrl as pamTrialsView',
+                section: 'pam',
+                resolve: {
+                    UserService: 'UserService',
+                    userDetailObj: function(UserService) {
+                        return UserService.getCurrentUserDetails();
+                    }
+                },
+                ncyBreadcrumb: {
+                    parent: 'main.defaultContent',
+                    label: 'Abstraction Dashboard'
+                }
             });
     } //paRoutes
 })();

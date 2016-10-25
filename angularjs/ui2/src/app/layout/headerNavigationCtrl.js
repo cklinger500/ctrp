@@ -22,8 +22,11 @@
         vm.isCurationModeSupported = false;
         vm.warning = null;
         vm.timedout = null;
+        vm.userRoleName = null;
         vm.currrentState = $state;
         vm.navbarIsActive = navbarIsActive;
+
+        UserService.getUserRoleName(vm);
 
         vm.toggleCurationMode = function() {
             UserService.saveCurationMode(vm.isCurationEnabled);
@@ -31,12 +34,16 @@
         };
 
         vm.logOut = function() {
-            vm.signedIn = false;
-            vm.username = '';
-            vm.userRole = '';
-            vm.isCurationEnabled = false;
-            vm.isCurationModeSupported = false;
-            UserService.logout();
+            UserService.setUserConfig(vm);
+
+            if (!UserService.getUnsavedFormFlag()) {
+                UserService.logout();
+                return;
+            }
+
+            UserService.setSignoutFlagValue(true);
+
+            $state.go('main.sign_in', {}, {reload: true});
         }; //logOut
 
         activate();
@@ -67,6 +74,7 @@
             vm.userRole = UserService.getUserRole().split('_')[1] || '';
             vm.userRole = !!vm.userRole ? vm.userRole.toLowerCase() : '';
             vm.isCurationEnabled = UserService.isCurationModeEnabled();
+            UserService.getUserRoleName(vm);
         } //pullUserInfo
 
         function listenToSectionWriteMode() {

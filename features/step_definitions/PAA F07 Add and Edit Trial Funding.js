@@ -96,66 +96,73 @@ module.exports = function() {
      Then the FDAAA required Grant Information for the trial will be complete
      */
 
-    this.Given(/^I am logged into the CTRP Protocol Abstraction application to abstract$/, function (callback) {
-        commonFunctions.onPrepareLoginTest('ctrpabstractor');
-        browser.sleep(25).then(callback);
-    });
-
-    this.Given(/^I have selected trial$/, function (callback) {
-        pageMenu.homeSearchTrials.click();
-        login.clickWriteMode('On');
-        commonFunctions.verifySearchTrialsPAScreen();
-        browser.sleep(25).then(callback);
-    });
-
-    this.Given(/^I am on the Trial Funding Screen$/, function (callback) {
-        pageSearchTrail.setSearchTrialProtocolID(leadProtocolIDA);
-        pageSearchTrail.clickSearchTrialSearchButton();
-        commonFunctions.verifyPASearchResultCount(searchResultCountText);
-        commonFunctions.clickLinkText(leadProtocolIDA);
-        commonFunctions.adminCheckOut();
-        trialFunding.clickAdminDataTrialFunding();
-        browser.sleep(25).then(callback);
-    });
-
-    this.When(/^I have selected "([^"]*)" for the NCI Grant question "([^"]*)"$/, function (arg1, arg2, callback) {
-        var getQueNCIGrant = arg2;
-        console.log('NCI Grant Que?: '+getQueNCIGrant);
-        var getYesNoFlag = arg1;
-        console.log('Condition: '+getYesNoFlag);
-        trialFunding.nciGrantQuelbl.getText().then(function(value){
-            var pasNCIGrantQue = ''+value+'';
-            function retNciGrantQueVal(){
-                return pasNCIGrantQue;
-            };
-            nciGrantQueVal = retNciGrantQueVal();
-            console.log('System Identified ['+nciGrantQueVal+'] as the current NCI Grant value');
+    this.Given(/^I am logged into the CTRP Protocol Abstraction application to abstract$/, function () {
+        return browser.sleep(25).then(function() {
+            commonFunctions.onPrepareLoginTest('ctrpabstractor');
         });
-        if (arg2 === nciGrantQueVal){
-            trialFunding.verifyNCIGrantlblValue(getQueNCIGrant);
-        };
-        if (arg1 === 'No'){
-            trialFunding.selectNCIGrantQueRdo('1');
-        }else if(arg1 === 'Yes'){
-            trialFunding.selectNCIGrantQueRdo('0');
-        }
-        browser.sleep(25).then(callback);
     });
 
-    this.Then(/^the FDAAA required Grant Information for the trial will not be complete$/, function (callback) {
-        trialFunding.verifyNCIGrantYesOrNoOption('1', true);
-        //Fudning Mechanism Fields
-        helper.verifyElementDisplayed(trialFunding.nciGrantFundingMechanism, false);
-        helper.verifyElementDisplayed(trialFunding.nciGrantInstitueCode, false);
-        helper.verifyElementDisplayed(trialFunding.nciGrantSerialNumber, false);
-        helper.verifyElementDisplayed(trialFunding.nciGrantNCIDivisionProgCode, false);
-        helper.verifyElementDisplayed(trialFunding.nciGrantAddButton, false);
-        //Fudning Mechanism Labels
-        helper.verifyElementDisplayed(trialFunding.nciGrantLblFundingMechanism, false);
-        helper.verifyElementDisplayed(trialFunding.nciGrantLblInstitueCode, false);
-        helper.verifyElementDisplayed(trialFunding.nciGrantLblSerialNumber, false);
-        helper.verifyElementDisplayed(trialFunding.nciGrantLblNCIDivisionProgCode, false);
-        browser.sleep(25).then(callback);
+    this.Given(/^I have selected trial$/, function () {
+        return browser.sleep(25).then(function() {
+            pageMenu.homeSearchTrials.click();
+            login.clickWriteMode('On');
+            commonFunctions.verifySearchTrialsPAScreen();
+        });
+    });
+
+    this.Given(/^I am on the Trial Funding Screen$/, function () {
+        return browser.sleep(25).then(function() {
+            pageSearchTrail.setSearchTrialProtocolID(leadProtocolIDA);
+            pageSearchTrail.clickSearchTrialSearchButton();
+            commonFunctions.verifyPASearchResultCount(searchResultCountText);
+            commonFunctions.clickLinkText(leadProtocolIDA);
+            commonFunctions.adminCheckOut();
+            trialFunding.clickAdminDataTrialFunding();
+        });
+    });
+
+    this.When(/^I have selected "([^"]*)" for the NCI Grant question "([^"]*)"$/, function (arg1, arg2) {
+        return browser.sleep(25).then(function() {
+            var getQueNCIGrant = arg2;
+            console.log('NCI Grant Que?: ' + getQueNCIGrant);
+            var getYesNoFlag = arg1;
+            console.log('Condition: ' + getYesNoFlag);
+            trialFunding.nciGrantQuelbl.getText().then(function (value) {
+                var pasNCIGrantQue = '' + value + '';
+
+                function retNciGrantQueVal() {
+                    return pasNCIGrantQue;
+                };
+                nciGrantQueVal = retNciGrantQueVal();
+                console.log('System Identified [' + nciGrantQueVal + '] as the current NCI Grant value');
+            });
+            if (arg2 === nciGrantQueVal) {
+                trialFunding.verifyNCIGrantlblValue(getQueNCIGrant);
+            }
+            ;
+            if (arg1 === 'No') {
+                trialFunding.selectNCIGrantQueRdo('1');
+            } else if (arg1 === 'Yes') {
+                trialFunding.selectNCIGrantQueRdo('0');
+            }
+        });
+    });
+
+    this.Then(/^the FDAAA required Grant Information for the trial will not be complete$/, function () {
+        return browser.sleep(25).then(function() {
+            trialFunding.verifyNCIGrantYesOrNoOption('1', true);
+            //Fudning Mechanism Fields
+            helper.verifyElementDisplayed(trialFunding.nciGrantFundingMechanism, false);
+            helper.verifyElementDisplayed(trialFunding.nciGrantInstitueCode, false);
+            helper.verifyElementDisplayed(trialFunding.nciGrantSerialNumber, false);
+            helper.verifyElementDisplayed(trialFunding.nciGrantNCIDivisionProgCode, false);
+            helper.verifyElementDisplayed(trialFunding.nciGrantAddButton, false);
+            //Fudning Mechanism Labels
+            helper.verifyElementDisplayed(trialFunding.nciGrantLblFundingMechanism, false);
+            helper.verifyElementDisplayed(trialFunding.nciGrantLblInstitueCode, false);
+            helper.verifyElementDisplayed(trialFunding.nciGrantLblSerialNumber, false);
+            helper.verifyElementDisplayed(trialFunding.nciGrantLblNCIDivisionProgCode, false);
+        });
     });
 
     /*
@@ -171,17 +178,19 @@ module.exports = function() {
      Then the FDAAA required Grant Information for the trial will be complete
      */
 
-    this.When(/^I have look for the funding mechanism serial number and entered the serial number$/, function (callback) {
-        addTrial.setAddTrialSerialNumber(grantSerialNumberFirst);
-        console.log('This checks for Grant Serial number has Serial Number, Organization, Project Title, and Contact Principal Investigator');
-        expect(addTrial.addTrialSerialNumberSelect.getText()).to.eventually.equal(grantEntireSerialNumberFirst).and.notify(callback);
-        browser.sleep(25).then(callback);
+    this.When(/^I have look for the funding mechanism serial number and entered the serial number$/, function () {
+        return browser.sleep(25).then(function() {
+            addTrial.setAddTrialSerialNumber(grantSerialNumberFirst);
+            console.log('This checks for Grant Serial number has Serial Number, Organization, Project Title, and Contact Principal Investigator');
+            expect(addTrial.addTrialSerialNumberSelect.getText()).to.eventually.equal(grantEntireSerialNumberFirst);
+        });
     });
 
-    this.Then(/^the FDAAA required Grant Information for the trial will be complete$/, function (callback) {
-        trialFunding.clickAddGrantButton();
-        helper.wait_for(9000);
-        browser.sleep(25).then(callback);
+    this.Then(/^the FDAAA required Grant Information for the trial will be complete$/, function () {
+        return browser.sleep(25).then(function() {
+            trialFunding.clickAddGrantButton();
+            helper.wait_for(9000);
+        });
     });
 
 

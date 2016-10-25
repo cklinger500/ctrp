@@ -32,7 +32,8 @@
         'ngMaterial',
         'toastr',
         'ngFileUpload',
-        'angularMoment'
+        'angularMoment',
+        'ngMaterial'
     ]);
 
-})();
+}());

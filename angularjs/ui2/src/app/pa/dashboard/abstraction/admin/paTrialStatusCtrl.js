@@ -16,7 +16,7 @@
         UserService, toastr) {
 
         var vm = this;
-        vm.trialStatusDict = trialStatuses.sort(Common.a2zComparator()); // array of trial statuses
+        vm.trialStatusDict = trialStatuses //.sort(Common.a2zComparator()); // array of trial statuses
         vm.statusObj = _initStatusObj();
         vm.dateFormat = DateService.getFormats()[1];
         vm.startDateRequired = true;
@@ -111,21 +111,15 @@
         function addTrialStatus() {
             vm.statusErrorMsg = '';
             if (vm.statusObj.status_date && vm.statusObj.trial_status_id) {
-                var statusExists = _.findIndex(vm.tempTrialStatuses, {trial_status_id: vm.statusObj.trial_status_id}) > -1;
-                if (statusExists) {
-                    vm.statusErrorMsg = 'Status already exists';
-                    return;
-                }
                 var clonedStatusObj = angular.copy(vm.statusObj);
-                // clonedStatusObj.status_date = clonedStatusObj.status_date.toISOString(); // ISOString for POST to backend
-                clonedStatusObj.status_date = DateService.convertISODateToLocaleDateStr(clonedStatusObj.status_date); // for display in table
                 var selectedStatus = _.findWhere(vm.trialStatusDict, {id: clonedStatusObj.trial_status_id});
 
                 if (!!selectedStatus) {
                     clonedStatusObj.trial_status_name = selectedStatus.name;
                     clonedStatusObj.trial_status_code = selectedStatus.code;
                 }
-                vm.tempTrialStatuses.push(clonedStatusObj);
+                // vm.tempTrialStatuses.push(clonedStatusObj);
+                TrialService.addStatus(vm.tempTrialStatuses, clonedStatusObj);
 
                 // Validate statuses:
                 validateStatuses();
@@ -155,8 +149,7 @@
             if (statusArr.length === 0) return;
 
             vm.disableBtn = true;
-
-            TrialService.validateStatus({"statuses": statusArr}).then(function(res) {
+            PATrialService.validatePAATrialStatus({"statuses": statusArr}).then(function(res) {
                 var status = res.server_response.status;
 
                 if (status >= 200 && status <= 210) {
@@ -202,6 +195,7 @@
         function editTrialStatus(index) {
             if (index < vm.tempTrialStatuses.length) {
                 vm.statusObj = angular.copy(vm.tempTrialStatuses[index]);
+                vm.statusObj.status_date = moment(vm.statusObj.status_date).toDate();
                 vm.statusObj.edit = true;
                 vm.statusObj.index = index;
             }
@@ -214,9 +208,6 @@
                 return;
             }
             if (vm.statusObj.edit) {
-                // vm.statusObj.status_date = moment(vm.statusObj.status_date).format("DD-MMM-YYYY"); // e.g. 03-Feb-2016
-                // format date from 'yyyy-mm-DD' to 'yyyy-MMM-DD' (e.g. from 2009-12-03 to 03-Feb-2009)
-                vm.statusObj.status_date = DateService.convertISODateToLocaleDateStr(vm.statusObj.status_date);
                 var selectedStatus = _.findWhere(vm.trialStatusDict, {id: vm.statusObj.trial_status_id});
                 if (!!selectedStatus) {
                     vm.statusObj.trial_status_name = selectedStatus.name;
@@ -277,9 +268,7 @@
                      _loadComments(commentField);
 
                      toastr.clear();
-                     toastr.success('Your comment has been added', 'Successful!', {
-                         timeOut: 1000
-                     });
+                     toastr.success('Your comment has been added', 'Successful!');
                   }
              }).finally(function() {
                  vm.disableBtn = false;
@@ -307,11 +296,10 @@
 
         function _convertDates() {
             // format the trial-associated date fields
-            vm.trialDetailObj.start_date = !!vm.trialDetailObj.start_date ? moment(vm.trialDetailObj.start_date).format("DD-MMM-YYYY") : '';
-            // DateService.convertISODateToLocaleDateStr()
-            vm.trialDetailObj.primary_comp_date = !!vm.trialDetailObj.primary_comp_date ? moment(vm.trialDetailObj.primary_comp_date).format("DD-MMM-YYYY") : '';
-            vm.trialDetailObj.comp_date = !!vm.trialDetailObj.comp_date ? moment(vm.trialDetailObj.comp_date).format("DD-MMM-YYYY") : '';
-            vm.trialDetailObj.amendment_date = !!vm.trialDetailObj.amendment_date ? moment(vm.trialDetailObj.amendment_date).format("DD-MMM-YYYY") : '';
+            vm.trialDetailObj.start_date = !!vm.trialDetailObj.start_date ? moment(vm.trialDetailObj.start_date).toDate() : '';
+            vm.trialDetailObj.primary_comp_date = !!vm.trialDetailObj.primary_comp_date ? moment(vm.trialDetailObj.primary_comp_date).toDate() : '';
+            vm.trialDetailObj.comp_date = !!vm.trialDetailObj.comp_date ? moment(vm.trialDetailObj.comp_date).toDate() : '';
+            vm.trialDetailObj.amendment_date = !!vm.trialDetailObj.amendment_date ? moment(vm.trialDetailObj.amendment_date).toDate() : '';
         }
 
         function openCalendar ($event, type) {
@@ -354,11 +342,9 @@
                     $scope.$emit('updatedInChildScope', {});
 
                     toastr.clear();
-                    toastr.success('Trial statuses has been updated', 'Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    });
+                    toastr.success('Trial statuses has been updated', 'Successful!');
                     _getTrialDetailCopy();
+                    $scope.trial_status_form.$setPristine();
                 }
             }).finally(function() {
                 vm.disableBtn = false;
@@ -367,6 +353,7 @@
 
         function resetForm() {
             _getTrialDetailCopy();
+            $scope.trial_status_form.$setPristine();
         }
 
         function _watchTrialStatusChanges() {

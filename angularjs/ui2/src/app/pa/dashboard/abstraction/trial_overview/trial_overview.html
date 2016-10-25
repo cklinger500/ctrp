@@ -86,7 +86,7 @@
 
                     <p>
                         <strong>Amendment Date:</strong>
-                        <span>{{paTrialOverview.trialDetailObj.last_amendment_date | date: "dd-MMM-yyyy"}}</span>
+                        <span>{{paTrialOverview.trialDetailObj.last_amendment_date | dateFormat }}</span>
                     </p>
                 </div>
                 <!-- end of column 1-->
@@ -139,13 +139,17 @@
                         <span>{{paTrialOverview.trialDetailObj.internal_source.name}}</span>
                     </p>
                     <p>
+                        <strong>Data Table 4 Funding Source: </strong>
+                        <span ng-hide="paTrialOverview.trialDetailObj.trial_funding_sources.length === 0">{{paTrialOverview.trialDetailObj.trial_funding_sources[0].source_name}}</span>
+                    </p>
+                    <p>
                         <strong>Current Trial Status:</strong>
                         <span>{{paTrialOverview.trialDetailObj.current_trial_status}}</span>
                     </p>
 
                     <p>
                         <strong>Current Trial Status Date:</strong>
-                        <span>{{paTrialOverview.trialDetailObj.current_trial_status_date | date: "dd-MMM-yyyy"}}</span>
+                        <span>{{paTrialOverview.trialDetailObj.current_trial_status_date | dateFormat }}</span>
                     </p>
 
                     <p>

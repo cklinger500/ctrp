@@ -5,7 +5,7 @@
 (function() {
     'use strict';
     angular.module('ctrp.app.pa.dashboard')
-    .controller('paTrialRelatedDocsCtrl', paTrialRelatedDocsCtrl)
+    .controller('paTrialRelatedDocsCtrl', paTrialRelatedDocsCtrl);
 
     paTrialRelatedDocsCtrl.$inject = ['$scope', '_', 'PATrialService', 'TrialService', '$popover',
         'Common', 'DateService', '$timeout', 'CommentService', 'documentTypes', '$mdToast',
@@ -19,7 +19,6 @@
             var DOC_STATUSES = ['active', 'inactive', 'deleted']; // for storing document status in database
             vm.acceptedFileExtensions = acceptedFileTypesObj.accepted_file_extensions;
             vm.acceptedFileTypes = acceptedFileTypesObj.accepted_file_types;
-            // console.info('accepted file types: ', vm.acceptedFileTypes);
             vm.downloadBaseUrl = HOST + '/ctrp/registry/trial_documents/download';
             vm.curTrialDetailObj = {};
             vm.curDoc = _initCurDoc();
@@ -62,6 +61,7 @@
                 $timeout(function() {
                     vm.curTrialDetailObj = PATrialService.getCurrentTrialFromCache();
                     _filterActiveDocs();
+                    vm.curTrialDetailObj.trial_documents = _sortDocsLatestFirst(vm.curTrialDetailObj.trial_documents);
                 }, 0);
             } //getTrialDetailCopy
 
@@ -86,7 +86,7 @@
                             vm.curTrialDetailObj.trial_documents[index].deletion_date = null;
                         } else {
                             vm.curTrialDetailObj.trial_documents[index].deleted_by = UserService.getLoggedInUsername();
-                            vm.curTrialDetailObj.trial_documents[index].deletion_date = DateService.convertISODateToLocaleDateStr(new Date().toISOString());
+                            vm.curTrialDetailObj.trial_documents[index].deletion_date = moment().format('DD-MMM-YYYY');
                         }
                     }, 0);
                 }
@@ -166,12 +166,10 @@
                     return;
                 }
                 if (index !== null && !vm.curDoc.file.size) {
-                    console.info('update without uploading');
                     // update without uploading
                     vm.curDoc.file = prevFile !== '' ? prevFile : vm.curDoc.file;
                     vm.curTrialDetailObj.trial_documents[index] = angular.copy(vm.curDoc);
                 } else if (!!vm.curDoc.file.size) {
-                    console.info('file to be uploaded: ', vm.curDoc.file);
                     // file to be uploaded
                     // replacing document id
                     vm.curDoc.replacedDocId = vm.curDoc.id || null; // what if vm.curDoc.document_type.indexOf('Other') > -1 ?????
@@ -189,7 +187,7 @@
                         vm.curDoc.created_at = new Date();
                         vm.curDoc.added_by = {username: UserService.getLoggedInUsername()};
                         vm.curDoc.added_by_id = UserService.getCurrentUserId();
-                        vm.curTrialDetailObj.trial_documents.push(vm.curDoc);
+                        vm.curTrialDetailObj.trial_documents.unshift(vm.curDoc);
                     }
                 }
                 // re-initialize the vm.curDoc
@@ -216,6 +214,7 @@
             function resetForm() {
                 _getTrialDetailCopy();
                 vm.curDoc = _initCurDoc();
+                $scope.trial_docs_form.$setPristine();
             }
 
             /**
@@ -248,7 +247,7 @@
                                 }
                             });
                         }
-                        console.info('vm.curTrialDetailObj.trial_documents: ', vm.curTrialDetailObj.trial_documents);
+
                         vm.curTrialDetailObj.trial_documents_attributes = vm.curTrialDetailObj.trial_documents;
                         var outerTrial = {};
                         outerTrial.new = false;
@@ -257,20 +256,26 @@
                         // get the most updated lock_version
                         outerTrial.trial.lock_version = PATrialService.getCurrentTrialFromCache().lock_version;
                         TrialService.upsertTrial(outerTrial).then(function(res) {
-                            vm.curTrialDetailObj = res;
-                            vm.curTrialDetailObj.lock_version = res.lock_version;
-                            PATrialService.setCurrentTrial(vm.curTrialDetailObj); // update to cache
-                            // $scope.$emit('updatedInChildScope', {});
-                            _filterActiveDocs();
-                            vm.curDoc = _initCurDoc();
-                            vm.docTypeError = '';
-                            vm.formError = '';
-                            if (showToastr) {
-                                toastr.clear();
-                                toastr.success('Trial related documents have been saved', 'Successful!', {
-                                    extendedTimeOut: 1000,
-                                    timeOut: 0
-                                });
+                            var status = res.server_response.status;
+
+                            if (status >= 200 && status <= 210) {
+                                vm.curTrialDetailObj = res;
+                                vm.curTrialDetailObj.lock_version = res.lock_version;
+                                PATrialService.setCurrentTrial(vm.curTrialDetailObj); // update to cache
+                                // $scope.$emit('updatedInChildScope', {});
+                                _filterActiveDocs();
+                                vm.curDoc = _initCurDoc();
+                                vm.docTypeError = '';
+                                vm.formError = '';
+                                if (showToastr) {
+                                    toastr.clear();
+                                    toastr.success('Trial related documents have been saved', 'Successful!');
+                                }
+
+                                // To make sure setPristine() is executed after all $watch functions are complete
+                                $timeout(function() {
+                                   $scope.trial_docs_form.$setPristine();
+                                }, 1);
                             }
                         }).catch(function(err) {
                             console.log('trial update error: ', err);
@@ -296,6 +301,14 @@
                     filteredDoc.deletion_date = filteredDoc.deletion_date || null;
                     return filteredDoc;
                 });
+            }
+
+            function _sortDocsLatestFirst(trialDocs){
+                var sortedDocs = [];
+                if (!!trialDocs && angular.isArray(trialDocs)) {
+                    sortedDocs = trialDocs.sort(function(a, b) { return a.updated_at > b.updated_at ? -1 : 1; });
+                }
+                return sortedDocs;
             }
 
             function cancelEdit() {

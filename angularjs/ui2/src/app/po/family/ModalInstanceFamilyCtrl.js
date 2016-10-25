@@ -15,15 +15,24 @@
         var vm = this;
         vm.modalTitle = 'Please confirm';
         vm.deletionStatus = '';
+        vm.disableBtn = false;
+
         vm.ok = function() {
+            vm.disableBtn = true;
+
             FamilyService.deleteFamily(familyId).then(function(data) {
-                console.log('delete data returned: ' + JSON.stringify(data));
-                vm.modalTitle = 'Deletion is successful';
-                timeoutCloseModal('Permanently deleted', data.status); //204 for successful deletion
+                var status = data.status;
+
+                if (status >= 200 && status <= 210) {
+                    vm.modalTitle = 'Deletion is successful';
+                    timeoutCloseModal('Permanently deleted', status); //204 for successful deletion
+                }
             }).catch(function(err) {
                 vm.modalTitle = 'Deletion failed';
                 console.log('failed to delete the family, error code: ' + err.status);
                 timeoutCloseModal(err.data || 'Failed to delete', err.status);
+            }).finally(function() {
+                vm.disableBtn = false;
             });
         };
 

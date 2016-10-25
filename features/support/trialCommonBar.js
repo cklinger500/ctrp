@@ -22,19 +22,28 @@ var trialCommonBar = function(){
     this.registerExternallyPeerReviewedTrial = element(by.css('a[href="#/main/new-trial/epr"]'));
     this.registerInstitutional = element(by.css('a[href="#/main/new-trial/ins"]'));
     this.pageHeaderTextTrial = element(by.css('div.row > h4'));
-    var pageHeaderText = element(by.css('div.row > h4'));
+    this.pageHeaderText = element(by.css('div.row > h4'));
 
     var helper = new helperFunctions();
-    var search_Trial_Header_Text = 'Search Trials * for wild card';
-    var register_Trial_Header_Text = 'Register Trial';
-    var register_Import_Trial_Header_Text = 'Import ClinicalTrials.gov Trials';
+    this.search_Trial_Header_Text = 'Search Trials * for wild card';
+    this.register_Trial_Header_Text = 'Register Trial';
+    this.register_Import_Trial_Header_Text = 'Import ClinicalTrials.gov Trials';
+
+    var self = this;
 
     this.clickHomeSearchTrial = function(){
         homeSearchTrial.isPresent().then(function(retVal){
             console.log('value of ret val : ' + retVal);
             if (retVal === true) {
-                helper.clickLink(homeSearchTrial, "Home Search Trial link");
-                expect(pageHeaderText.getText()).to.eventually.equal(search_Trial_Header_Text);
+                homeSearchTrial.isDisplayed().then(function(state){
+                    if(state) {
+                        helper.clickLink(homeSearchTrial, "Home Search Trial link");
+                        expect(self.pageHeaderText.getText()).to.eventually.equal(self.search_Trial_Header_Text);
+                    }
+                    else {
+                        console.log('Home link not Displayed');
+                    }
+                });
             }
         });
     };
@@ -42,7 +51,7 @@ var trialCommonBar = function(){
 
     this.clickHomeRegisterTrial = function(){
         helper.clickLink(this.homeRegisterTrial, "Home Register Trial link");
-        expect(pageHeaderText.getText()).to.eventually.equal(register_Trial_Header_Text);
+        expect(this.pageHeaderText.getText()).to.eventually.equal(this.register_Trial_Header_Text);
     };
 
     this.clickTrials = function(){
@@ -51,7 +60,7 @@ var trialCommonBar = function(){
 
     this.clickListSearchTrialLink = function(){
         helper.clickLink(this.searchTrialLink, "Search Trial link");
-        expect(pageHeaderText.getText()).to.eventually.equal(search_Trial_Header_Text);
+        expect(this.pageHeaderText.getText()).to.eventually.equal(this.search_Trial_Header_Text);
     };
 
     this.clickRegisterTrialLink = function(){
@@ -69,28 +78,28 @@ var trialCommonBar = function(){
       //    //  elm[0].click();
       // // });
      //   helper.clickLink(this.registerNationalTrial, "Register National Trial link");
-        expect(pageHeaderText.getText()).to.eventually.equal(register_Trial_Header_Text);
+        expect(this.pageHeaderText.getText()).to.eventually.equal(this.register_Trial_Header_Text);
     };
 
     this.clickRegisterExternallyPeerReviewedTrialLink = function(){
         browser.get('ui/#/main/new-trial/epr');
        // helper.clickLink(this.registerExternallyPeerReviewedTrial, "Register Externally Peer Reviewed Trial link");
-        expect(pageHeaderText.getText()).to.eventually.equal(register_Trial_Header_Text);
+        expect(this.pageHeaderText.getText()).to.eventually.equal(this.register_Trial_Header_Text);
     };
 
     this.clickRegisterInstitutionalTrialLink = function(){
         browser.get('ui/#/main/new-trial/ins');
        // helper.clickLink(this.registerInstitutional, "Register Institutional Trial link");
-        expect(pageHeaderText.getText()).to.eventually.equal(register_Trial_Header_Text);
+        expect(this.pageHeaderText.getText()).to.eventually.equal(this.register_Trial_Header_Text);
     };
 
     this.clickRegisterIndustrialOtherTrialLink = function(){
         browser.get('ui/#/main/import-trial');
-        expect(pageHeaderText.getText()).to.eventually.equal(register_Import_Trial_Header_Text);
+        expect(this.pageHeaderText.getText()).to.eventually.equal(this.register_Import_Trial_Header_Text);
     };
 
     this.verifyRegisterTrial = function(){
-        expect(pageHeaderText.getText()).to.eventually.equal(register_Trial_Header_Text);
+        expect(this.pageHeaderText.getText()).to.eventually.equal(this.register_Trial_Header_Text);
     };
 
 };

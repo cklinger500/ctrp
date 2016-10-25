@@ -7,11 +7,11 @@
     angular.module('ctrp.app.pa.dashboard')
     .controller('generalTrialDetailsCtrl', generalTrialDetailsCtrl);
 
-    generalTrialDetailsCtrl.$inject = ['$scope', 'TrialService', 'PATrialService', 'toastr',
-            'MESSAGES', 'protocolIdOriginObj', '_', '$timeout', 'centralContactTypes', 'PersonService'];
+    generalTrialDetailsCtrl.$inject = ['$scope', 'FORMATS', 'TrialService', 'PATrialService', 'toastr',
+            'MESSAGES', 'protocolIdOriginObj', '_', '$timeout', 'centralContactTypes', 'PersonService', '$state'];
 
-    function generalTrialDetailsCtrl($scope, TrialService, PATrialService, toastr,
-        MESSAGES, protocolIdOriginObj, _, $timeout, centralContactTypes, PersonService) {
+    function generalTrialDetailsCtrl($scope, FORMATS, TrialService, PATrialService, toastr,
+        MESSAGES, protocolIdOriginObj, _, $timeout, centralContactTypes, PersonService, $state) {
       var vm = this;
       var _defaultCountry = 'United States'; // for phone number validation
       var _curCentralContactId = '';
@@ -37,6 +37,7 @@
       vm.leadProtocolId = '';
       vm.leadProtocolIdEdit = false;
       vm.disableBtn = false;
+      vm.phoneNumberFormat = FORMATS.NUMERIC;
 
       var otherIdsClone = [];
       var regex = new RegExp('-', 'g');
@@ -49,7 +50,10 @@
       vm.curAlternateTitleObj = {category: '', source: '', title: '', _destroy: false};
       vm.centralContactType = ''; // default to None
       vm.otherIdentifier = {protocol_id_origin_id: '', protocol_id: ''};
-      vm.protocolIdOriginArr = protocolIdOriginObj;
+      vm.protocolIdOriginArr = protocolIdOriginObj.filter(function(idType) {
+          var types = idType.section.split(',') || [];
+          return _.contains(types, 'pa');
+      });
       // identifiers allowing for duplication
       var duplicateAllowedIds = vm.protocolIdOriginArr.filter(function(pId) {
           var idName = pId.name.toLowerCase();
@@ -59,6 +63,10 @@
       }).map(function(idObj) { return idObj.name});
 
       vm.centralContactTypes = centralContactTypes.types;
+      var piObj = _.findWhere(vm.centralContactTypes, {'code': 'PI'});
+      if (!!piObj) {
+          piObj.name = 'PI'; // change the value for the key 'name' to 'PI'
+      }
 
       activate();
 
@@ -111,18 +119,19 @@
           outerTrial.trial.lock_version = PATrialService.getCurrentTrialFromCache().lock_version;
           TrialService.upsertTrial(outerTrial).then(function(res) {
               var status = res.server_response.status;
-              toastr.clear();
-
               if (status >= 200 && status <= 210) {
                   vm.generalTrialDetailsObj = res;
                   vm.generalTrialDetailsObj.lock_version = res.lock_version;
-                  PATrialService.setCurrentTrial(vm.generalTrialDetailsObj); // update to cache
+                  PATrialService.setCurrentTrial(res); // update to cache
                   $scope.$emit('updatedInChildScope', {});
-                  toastr.success('Trial general details has been updated', 'Successful!', {
-                      extendedTimeOut: 1000,
-                      timeOut: 0
-                  });
+                  toastr.success('Trial general details has been updated', 'Successful!');
                   getTrialDetailCopy();
+
+                  // To make sure setPristine() is executed after all $watch functions are complete
+                  $timeout(function() {
+                     $scope.general_trial_details_form.$setPristine();
+                 }, 1);
+
               }
           }).catch(function(err) {
               // handle err
@@ -138,10 +147,15 @@
           vm.sponsor = {name: '', array: []};
           vm.otherIdDestroyAll = false;
          // vm.centralContact = [];
+
+         $scope.general_trial_details_form.$setPristine();
+
           $timeout(function() {
              getTrialDetailCopy();
              vm.centralContactType = _getCentralContactType(); // restore vm.centralContactType
           }, 0);
+
+
           // vm.generalTrialDetailsObj = angular.copy($scope.$parent.paTrialOverview.trialDetailObj);
       }
 
@@ -301,6 +315,11 @@
                  vm.leadOrg.name = newVal[0].name;
                  vm.generalTrialDetailsObj.lead_org = newVal[0];
                  vm.generalTrialDetailsObj.lead_org_id = newVal[0].id; // update lead organization
+
+                 if (oldVal.length && !angular.equals(newVal[0], oldVal[0])) {
+                     $scope.general_trial_details_form.$setDirty();
+                     console.log('lead org: form dirty status is now: ', $scope.general_trial_details_form.$dirty);
+                 }
              }
           });
       }
@@ -310,10 +329,15 @@
           if (angular.isArray(newVal) && newVal.length > 0) {
               vm.principalInvestigator.name = PersonService.extractFullName(newVal[0]); // firstName + ' ' + middleName + ' ' + lastName;
               vm.generalTrialDetailsObj.pi = vm.principalInvestigator.array[0];
-              vm.generalTrialDetailsObj.pi_id = vm.principalInvestigator.array[0].id; // update PI
+              vm.generalTrialDetailsObj.pi_id = !!vm.generalTrialDetailsObj.pi ? vm.generalTrialDetailsObj.pi.id : ''; // vm.principalInvestigator.array[0].id; // update PI
 
               if (vm.centralContactType === 'PI') {
                   _usePIAsCentralContact();
+              }
+
+              if (oldVal.length && !angular.equals(newVal[0], oldVal[0])) {
+                  $scope.general_trial_details_form.$setDirty();
+                  console.log('pi: form dirty status is now: ', $scope.general_trial_details_form.$dirty);
               }
           }
         });
@@ -325,6 +349,11 @@
                  vm.sponsor.name = !!newVal[0].name ? newVal[0].name : '';
                  vm.generalTrialDetailsObj.sponsor = newVal[0];
                  vm.generalTrialDetailsObj.sponsor_id = !!newVal[0].id ? newVal[0].id : ''; // update sponsor
+
+                 if (oldVal.length && !angular.equals(newVal[0], oldVal[0])) {
+                     $scope.general_trial_details_form.$setDirty();
+                     console.log('sponsor: form dirty status is now: ', $scope.general_trial_details_form.$dirty);
+                 }
              }
           });
       }
@@ -342,6 +371,11 @@
               vm.generalTrialDetailsObj.central_contacts[0].person_id = newVal[0].id || '';
               vm.generalTrialDetailsObj.central_contacts[0].phone = newVal[0].phone.replace(regex, '');
               delete vm.generalTrialDetailsObj.central_contacts[0].id;
+
+              if (!angular.equals(newVal, oldVal)) {
+                  $scope.general_trial_details_form.$setDirty();
+                  console.log('cc: form dirty status is now: ', $scope.general_trial_details_form.$dirty);
+              }
           }
         });
       }

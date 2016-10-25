@@ -2,6 +2,9 @@ var HtmlReporter = require('protractor-html-screenshot-reporter');
 var path = require('path');
 var databaseConnection = require('./features/support/databaseConnection.js');
 var eventsPG = require('events');
+var fs = require('fs');
+var junit = require('cucumberjs-junitxml');
+var testConfiguration = process.env.TEST_RESULTS_DIR || process.cwd() + '/tests/testConfig/';
 
 exports.config = {
 
@@ -30,9 +33,18 @@ exports.config = {
 
 
     onPrepare: function() {
-    var dbConnect = new databaseConnection();
-   getDBConnection = dbConnect.buildDBConnection();
+        browser.driver.manage().window().maximize();
+        var dbConnect = new databaseConnection();
+        getDBConnection = dbConnect.buildDBConnection();
         eventsPG.EventEmitter.defaultMaxListeners = 100;
+        var configurationFile;
+        console.log('file path'+testConfiguration);
+        configurationFile = ''+testConfiguration+'/testSettings.json';
+        var configuration = JSON.parse(
+            fs.readFileSync(configurationFile)
+        );
+        console.log(configuration.uiUrl);
+        return browser.get(''+configuration.uiUrl+'');
     },
 
 
@@ -53,7 +65,9 @@ exports.config = {
         'features/PAA\ F03\ Add\ and\ Edit\ Regulatory\ Information.Feature',
         'features/PAA\ F04\ Add\ and\ Edit\ Regulatory\ Information\ Human\ Subject\ Safety.Feature',
         'features/PAA\ F05\ Add\ and\ Edit\ Regulatory\ Information\ IND-IDE.Feature',
+        'features/PAA\ F06\ Add\ and\ Edit\ Trial\ Status.Feature',
         'features/PAA\ F07\ Add\ and\ Edit\ Trial\ Funding.Feature',
+        'features/PAA\ F08\ Add\ and\ Edit\ Trial\ Participating\ Sites.Feature',
         'features/PAA\ F09\ Add\ and\ Edit\ Trial\ Collaborators.Feature',
 
         /************* Registry Features ************/
@@ -74,7 +88,14 @@ exports.config = {
         'features/Reg\ F13\ Register\ Trial\ Documents.feature',
         'features/Reg\ F14\ Register\ Trial\ Review\ and\ Submit.feature',
         'features/Reg\ F15\ Register\ Trial\ Save\ as\ Draft.feature',
+        'features/Reg\ F16\ Import\ Trial.feature',
+        'features/Reg\ F21\ Verify\ Trial\ Data.feature',
 
+        /************* PAS Features ************/
+        'features/PAS\ F01\ Add\ and\ Edit\ Trial\ Descriptions.feature',
+        'features/PAS\ F02\ Add\ and\ Edit\ Trial\ Design.feature',
+        'features/PAS\ F04\ Outcome\ Measures.feature',
+        'features/PAS\ F06\ Associated\ Trials.feature',
 
         /************* PO F2-F15 ************/
         'features/PO\ F2\ Search\ for\ Organizations.feature',

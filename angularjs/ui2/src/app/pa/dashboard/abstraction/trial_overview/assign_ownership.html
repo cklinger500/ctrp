@@ -1,10 +1,92 @@
-<div class="row">
+
+<div class="row" ng-if="userView.gridOptions.data && !userView.setAddMode" ng-init="userView.searchUsers(userView.initMode)">
+    <div class="owners-list">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-title">Assign Ownership - Owners List</div>
+            </div>
+            <div class="panel-body">
+                <div class="form-group no-bottom-margin">
+                    <!-- list of Users -->
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="row" ng-if="userView.gridOptions.totalItems > 0">
+                                <a href="" id="user_search_results"></a>
+                                <h4>{{userView.gridOptions.totalItems}} Owner(s) found</h4>
+                            </div>
+                            <div class="row animated-item" ng-if="userView.gridOptions.data.length > 0">
+                                <div ui-grid="userView.gridOptions" ui-grid-exporter ui-grid-selection ui-grid-pagination="" ng-class="{'edit-off': !userView.curationMode}"
+                                     external-scopes="clickHandler" ui-grid-exporter ui-grid-move-columns class="grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row top-offset-xs" ng-if="userView.gridOptions.data && userView.gridOptions.totalItems > 0"></div>
+                    <div class="btn-toolbar">
+                        <button type="button" class="btn btn-primary pull-right" id="add_btn" restriction-field ng-click="userView.setAddMode = true" ng-if="!userView.curTrial.is_rejected">
+                            <i class="glyphicon glyphicon-plus"></i> Add Ownership
+                        </button>
+                        <button type="submit" class="btn btn-danger pull-right" id="delete" restriction-field ng-click="userView.removeOwnersSubmit()"
+                                ng-show="userView.gridOptions.totalItems"
+                                ng-disabled="!userView.gridApi.selection.getSelectedRows().length"
+                        >
+                            <i class="glyphicon glyphicon-trash"></i> Delete Selected
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <modal visible="userView.confirmRemoveTrialOwnershipsPopUp" title="Please confirm" id="confirmRemoveTrials">
+            <div class="modal-body">You have chosen to remove selected user(s) from this trial.</div>
+            <div class="modal-footer">
+                <div class="btn-toolbar">
+                    <button type="button" class="btn btn-primary pull-right" id="cancelRemOwn"
+                            ng-click="userView.confirmRemoveTrialOwnershipsPopUp = false"><i class="glyphicon glyphicon-ok"></i>
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger pull-right"  id="remOwn"
+                            ng-click="userView.removeTrialsOwnerships()"><i class="glyphicon glyphicon-ok"></i>
+                        Remove Ownership
+                    </button>
+                </div>
+            </div>
+        </modal>
+    </div>
+</div>
+<div ng-if="userView.setAddMode === true" class="add-owner-section">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <div class="panel-title">Assign Ownership</div>
+            <div class="panel-title">Assign Ownership - Add Owners</div>
         </div>
         <div class="panel-body">
-            <strong>Placeholder ....</strong>
+            <div ng-controller="userListCtrl as userView">
+                <div ng-include src="'app/user/user_list.html'" ng-init="userView.setAddMode = true; userView.ownerListMode = false;"></div>
+                <div class="row top-offset-xs"></div>
+
+                <modal visible="userView.confirmAddTrialOwnershipsPopUp" title="Please confirm" id="confirmAddTrials">
+                    <div class="modal-body">You have chosen to add ownership this trial to selected user(s).</div>
+                    <div class="modal-footer">
+                        <div class="btn-toolbar">
+                            <button type="button" class="btn btn-warning pull-right" id="cancelAddOwn"
+                                    ng-click="userView.confirmAddTrialOwnershipsPopUp = false"><i class="glyphicon glyphicon-remove"></i>
+                                Cancel
+                            </button>
+                            <button type="button" class="btn btn-primary pull-right"  id="addOwn"
+                                    ng-click="userView.addTrialsOwnerships()"><i class="glyphicon glyphicon-ok"></i>
+                                Add Ownership
+                            </button>
+                        </div>
+                    </div>
+                </modal>
+            </div>
+            <div class="add-buttons">
+                <div class="form-group">
+                    <div class="btn-toolbar" ng-if="userView.curationMode">
+                        <button type="button" class="btn btn-warning pull-right" id="owners_list" restriction-field ng-click="userView.setAddMode = false">
+                            <i class="glyphicon glyphicon-arrow-left"></i> Back to Trial Owners List
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

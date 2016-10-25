@@ -122,6 +122,18 @@ class DataImport
         trial.sponsor = Organization.all[rand(0..total_organizations-1)]
         # Internal Source
         trial.internal_source = InternalSource.all[rand(0..(InternalSource.all.size-1))]
+
+        # Is Rejected trial? No
+        #trial.is_rejected = false
+        trial_rejected = trial_spreadsheet.cell(row,'DT')
+        trial.is_rejected = trial_rejected
+        puts "trial is_rejected: #{trial.is_rejected}"
+#        puts "trial is_rejected: #{trial.is_rejected.to_s}"
+
+        #if trial_spreadsheet.cell(row,'DT').present? && (trial_spreadsheet.cell(row,'DT').to_s == 'true' || trial_spreadsheet.cell(row,'DT') == true || trial_spreadsheet.cell(row,'DT').to_s == 't')
+        sub_status = trial.is_rejected ? 'Rejected' : 'Active'
+    #    puts "sub_status: #{sub_status}"
+
         #Responsible party
         #resp_party = trial_spreadsheet.cell(row,'CJ')
         #responsible_party = ResponsibleParty.find_by_code(resp_party)
@@ -193,7 +205,9 @@ class DataImport
         trial.arms_groups << arm2
 
         # Submissions
-        sub = Submission.new(submission_num: 1, submission_date: Date.today, user: trial.users[0], submission_type: SubmissionType.find_by_code('ORI'), submission_source: SubmissionSource.find_by_code('CCT'), submission_method: SubmissionMethod.find_by_code('REG'))
+
+#        sub = Submission.new(submission_num: 1, submission_date: Date.today, user: trial.users[0], submission_type: SubmissionType.find_by_code('ORI'), submission_source: SubmissionSource.find_by_code('CCT'), submission_method: SubmissionMethod.find_by_code('REG'),status: trial.is_rejected ? 'Rejected' : 'Active')
+        sub = Submission.new(submission_num: 1, status: sub_status, acknowledge_comment: 'test', submission_date: Date.today, user: trial.users[0], submission_type: SubmissionType.find_by_code('ORI'), submission_source: SubmissionSource.find_by_code('CCT'), submission_method: SubmissionMethod.find_by_code('REG'))
         trial.submissions << sub
 
         # Processing status
@@ -325,4 +339,39 @@ class DataImport
       trial.save!
     end
   end
+
+  def self.import_ctep_org_types
+    spreadsheet = Roo::Excel.new(Rails.root.join('db', 'ctep_org_types.xls'))
+    spreadsheet.default_sheet = spreadsheet.sheets.first
+    ((spreadsheet.first_row+1)..spreadsheet.last_row).each do |row|
+       code = spreadsheet.cell(row,'A')
+       name = spreadsheet.cell(row,'B')
+       sent_to_ctrp = spreadsheet.cell(row,'C')
+
+          org = CtepOrgType.new
+          org.code = code
+          org.name = name
+          org.sent_to_ctrp = sent_to_ctrp
+          org.record_status = "Active"
+          org.save!
+        end
+  end
+
+  def self.import_org_funding_mechanisms
+    spreadsheet = Roo::Excel.new(Rails.root.join('db', 'org_funding_mechanisms.xls'))
+    spreadsheet.default_sheet = spreadsheet.sheets.first
+    ((spreadsheet.first_row+1)..spreadsheet.last_row).each do |row|
+      code = spreadsheet.cell(row,'A')
+      name = spreadsheet.cell(row,'B')
+
+      fm = OrgFundingMechanism.new
+      fm.code = code
+      fm.name = name
+      fm.record_status = "Active"
+      fm.save!
+    end
+  end
+
+
 end
+

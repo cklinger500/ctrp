@@ -2,6 +2,7 @@ class FamiliesController < ApplicationController
   before_action :set_family, only: [:show, :edit, :update, :destroy]
   before_filter :wrapper_authenticate_user unless Rails.env.test?
   load_and_authorize_resource unless Rails.env.test?
+  before_action :set_paper_trail_whodunnit, only: [:create,:update, :destroy]
 
   # GET /families
   # GET /families.json
@@ -83,7 +84,13 @@ class FamiliesController < ApplicationController
   def search
     # Pagination/sorting params initialization
     params[:start] = 1 if params[:start].blank?
-    params[:rows] = 20 if params[:rows].blank?
+
+    if params[:allrows] != true
+      params[:rows] = 20 if params[:rows].blank?
+    else
+      params[:rows] = nil
+    end
+
     params[:sort] = 'name' if params[:sort].blank?
     params[:order] = 'asc' if params[:order].blank?
     print "ke;;;;;;;";
@@ -95,7 +102,11 @@ class FamiliesController < ApplicationController
       @families = @families.matches_wc('name', params[:name],params[:wc_search]) if params[:name].present?
       @families = @families.with_family_status(params[:family_status]) if params[:family_status].present?
       @families = @families.with_family_type(params[:family_type]) if params[:family_type].present?
-      @families = @families.sort_by_col(params[:sort], params[:order]).group(:'families.id').page(params[:start]).per(params[:rows])
+      @families = @families.sort_by_col(params[:sort], params[:order]).group(:'families.id')
+
+      if params[:rows] != nil
+        @families = @families.page(params[:start]).per(params[:rows])
+      end
     else
       @families = []
     end

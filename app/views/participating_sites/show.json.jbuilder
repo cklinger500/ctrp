@@ -1,3 +1,4 @@
+p "#####################"
 json.extract! @participating_site, :id, :protocol_id, :program_code, :contact_name, :contact_phone, :contact_email,
               :trial_id, :trial, :organization_id, :organization, :person_id, :person, :extension,
               :created_at, :updated_at
@@ -17,6 +18,11 @@ end
 person_id = @participating_site.person_id
 person = nil
 person = Person.find_by_id(person_id) unless person_id.nil?
+p "&&&&&&&&&&&&&&&&&"
+p @participating_site.contact_name
+p @participating_site.contact_type
+p "&&&&&&&&&&&&&&&&&"
+
 json.contact_name @participating_site.contact_name
 json.contact_phone @participating_site.contact_phone
 json.contact_email @participating_site.contact_email

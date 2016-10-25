@@ -32,7 +32,7 @@ Feature: Reg F03 Search Organizations
       |Source Status|
       |Source Context|
       |Source ID|
-      |Families|
+      |Family Name|
       |Phone|
       |Email|
       |City|

@@ -3,9 +3,9 @@
     <h3 class="popover-title" ng-bind-html="title" ng-show="title"></h3>
     <div class="popover-content">
         <div class="popover-message" ng-bind-html="content"></div>
-        <div class="form-actions">
-            <button type="button" class="btn btn-warning" id="cancel_confirm_btn" ng-click="cancel()">Cancel</button>
-            <button type="button" class="btn btn-danger" id="confirmed_btn" ng-click="confirm()">OK</button>
-        </div>
+    </div>
+    <div class="form-actions btn-toolbar">
+        <button type="button" class="btn btn-danger pull-right" id="confirmed_btn" ng-click="confirm()">OK</button>
+        <button type="button" class="btn btn-warning pull-right" id="cancel_confirm_btn" ng-click="cancel()">Cancel</button>
     </div>
 </div>

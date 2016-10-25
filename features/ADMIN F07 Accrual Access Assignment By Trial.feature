@@ -1,4 +1,9 @@
 @Admin @Global 
+
+
+#On Hold- Accrual ownership to be tied to trial ownership
+
+
 Feature: ADMIN F07 Accrual Access Assignment By Trial
 
 As a CTRP User with Administration privileges, I can view and manage accrual access

@@ -3,8 +3,8 @@
 # Table name: interventions
 #
 #  id                   :integer          not null, primary key
-#  name                 :string(255)
-#  other_name           :string(255)
+#  name                 :string(1000)
+#  other_name           :string(1000)
 #  description          :text
 #  intervention_type_id :integer
 #  trial_id             :integer
@@ -13,11 +13,11 @@
 #  uuid                 :string(255)
 #  lock_version         :integer          default(0)
 #  index                :integer
-#  arms_group_id        :integer
+#  c_code               :string
 #
 # Indexes
 #
-#  index_interventions_on_arms_group_id         (arms_group_id)
+#  index_interventions_on_c_code                (c_code)
 #  index_interventions_on_intervention_type_id  (intervention_type_id)
 #  index_interventions_on_trial_id              (trial_id)
 #

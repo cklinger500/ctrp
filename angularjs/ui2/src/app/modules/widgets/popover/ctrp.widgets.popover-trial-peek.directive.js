@@ -55,12 +55,14 @@
             function fetchTrial(trialId) {
                 scope.loadingTrial = true;
                 TrialService.getTrialById(trialId).then(function(res) {
-                    console.info('res is: ', res);
-                    scope.curTrial = res;
+                    var status = res.server_response.status;
+
+                    if (status >= 200 && status <= 210) {
+                        scope.curTrial = res;
+                    }
                 }).catch(function(err) {
                     console.error('error: ', err);
                 }).finally(function() {
-                    console.info('done!');
                     scope.loadingTrial = false;
                 });
             }

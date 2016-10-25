@@ -59,6 +59,12 @@
             <p>
                 <strong>To:</strong> <span ng-hide="emailsView.curEmail.to.indexOf('@') === -1">{{emailsView.curEmail.to}}</span>
             </p>
+            <p ng-if="emailsView.curEmail.cc">
+                <strong>cc:</strong> <span ng-hide="emailsView.curEmail.cc.indexOf('@') === -1">{{emailsView.curEmail.cc}}</span>
+            </p>
+            <p ng-if="emailsView.curEmail.bcc">
+                <strong>bcc:</strong> <span ng-hide="emailsView.curEmail.bcc.indexOf('@') === -1">{{emailsView.curEmail.bcc}}</span>
+            </p>
             <p>
                 <strong>Time:</strong> {{emailsView.curEmail.created_at | date: "dd-MMM-yyyy H:mm"}}
             </p>

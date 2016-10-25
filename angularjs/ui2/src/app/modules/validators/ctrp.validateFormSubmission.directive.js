@@ -28,11 +28,11 @@
 
                     /* Hook for ctrp-confirm directive (and potentially other similar directives) as needed */
                     if (hasSecondaryTask) {
-                        $rootScope.$on('deleteConfirmationComplete', function(e) {
+                        scope.$on('deleteConfirmationComplete', function(e) {
                             if (!e.defaultPrevented) {
                                 e.preventDefault();
                                 if (!formController.$invalid) { // Confirm that form is valid before submitting form via the event broadcast
-                                    scope.formAction(scope);
+                                    scope.formAction(scope, {$event: e});
                                 }
                             }
                         });
@@ -40,9 +40,8 @@
 
                     element.bind('submit', function(event) {
                         var formAction = $parse(attrs.ctrpSubmit);
-
                         submitController.attempted = formController.$submitted;
-                        $log.info('form is submitted: ' + formController.$submitted);
+                        //$log.info('form is submitted: ' + formController.$submitted);
 
                         if (!scope.$$phase) {
                             scope.$apply();
@@ -65,7 +64,6 @@
                     var formController = null;
 
                     this.setFormController = function(controller) {
-                        console.log('setting form controller!');
                         formController = controller;
                     };
 
@@ -79,6 +77,7 @@
                     this.needsAttention = function(fieldModelController, isFieldInvalid) {
                         if (angular.isDefined(isFieldInvalid) && isFieldInvalid === true) {
                             formController.$invalid = true;
+
                             return formController.$submitted && isFieldInvalid;
                         }
 

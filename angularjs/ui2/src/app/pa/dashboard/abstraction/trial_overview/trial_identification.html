@@ -56,7 +56,7 @@
             <hr />
 
             <div class="row">
-                <form name="abstraction_form" class="form form-horizontal" role="form" novalidate ctrp-submit="trialIdView.saveProcessingInfo()">
+                <form name="abstraction_form" class="form form-horizontal" role="form" novalidate ctrp-submit="trialIdView.saveProcessingInfo()" unsaved-changes>
                     <div class="col-xs-12">
                         <!-- first form-group -->
                         <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.abstraction_form.needsAttention(abstraction_form.priority_selection)}">
@@ -86,9 +86,12 @@
                                     name="processing_comment" id="trial_processing_comment" rows="6" ng-maxlength="4000"
                                     ng-model="trialIdView.trialProcessingObj.comment">
                                 </textarea>
+                                <span class="help-block" ng-show="abstraction_form.processing_comment.$dirty">
+                                    {{4000 - abstraction_form.processing_comment.$viewValue.length}} characters left
+                                </span>
                             </div>
                         </div>
-                        <div class="form-group no-bottom-margin" ng-if="paTrialOverview.trialDetailObj.pa_editable">
+                        <div class="form-group no-bottom-margin">
                             <div class="btn-toolbar">
                                 <button type="submit" class="btn btn-primary pull-right" id="submit_processing" ng-disabled="!abstraction_form.$valid || trialIdView.disableBtn" restriction-field>
                                     <i class="glyphicon glyphicon-ok"></i> Save

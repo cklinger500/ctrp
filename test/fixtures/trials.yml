@@ -92,6 +92,7 @@
 #  internal_source_id            :integer
 #  nci_specific_comment          :string(4000)
 #  send_trial_flag               :string
+#  is_rejected                   :boolean
 #
 # Indexes
 #

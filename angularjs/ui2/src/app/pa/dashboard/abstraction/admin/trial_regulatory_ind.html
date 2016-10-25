@@ -1,10 +1,10 @@
-<div class="row">
+<div class="row" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">FDA IND/IDE Information for applicable trials</div>
         </div>
         <div class="panel-body">
-            <form class="form form-horizontal" role="form" name="trial_form" novalidate ctrp-submit="trialDetailView.updateTrial()">
+            <form class="form form-horizontal" role="form" name="trial_form" novalidate ctrp-submit="trialDetailView.updateTrial()" unsaved-changes>
                 <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_editable || trialDetailView.disableBtn">
                     <legend class="sub-bordered">FDA IND/IDE</legend>
 
@@ -30,7 +30,7 @@
 
                     <!-- <div class="form-group" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.ind_ide_dummy)}"> -->
                     <div class="col-sm-12 table-responsive">
-                        <table class="table table-striped table-condensed" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1 || trialDetailView.curTrial.ind_ide_question === 'No'">
+                        <table class="table table-striped table-condensed" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1 || trialDetailView.curTrial.ind_ide_question === 'No'" ctrp-hint hint-append-element="fieldset">
                             <thead>
                             <th>IND/IDE Types</th>
                             <th>IND/IDE Number</th>
@@ -87,7 +87,7 @@
                                 </td>
                                 <td class="col-md-1">
                                     <div>
-                                        <button type="button" restriction-field class="btn btn-primary" ng-click="trialDetailView.addIndIde()">
+                                        <button type="button" restriction-field class="btn btn-primary btn-add" ng-click="trialDetailView.addIndIde()">
                                             <i class="glyphicon glyphicon-plus"></i> Add
                                         </button>
                                     </div>
@@ -153,7 +153,7 @@
                         <button type="submit" class="btn btn-primary pull-right" id="submit_processing" restriction-field ng-disabled="trialDetailView.disableBtn">
                             <i class="glyphicon.glyphicon-ok"></i> Save
                         </button>
-                        <button type="button" class="btn btn-warning pull-right" ng-click="trialDetailView.reload()" restriction-field ng-disabled="trialDetailView.disableBtn">
+                        <button type="button" class="btn btn-warning pull-right" ng-click="trialDetailView.reset()" restriction-field ng-disabled="trialDetailView.disableBtn">
                             <i class="glyphicon glyphicon-remove"></i> Reset
                         </button>
                     </div>

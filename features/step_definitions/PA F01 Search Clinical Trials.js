@@ -46,37 +46,43 @@ module.exports = function() {
                 |NCI Trial Identifier|
      */
 
-    this.Given(/^I am logged into the CTRP Protocol Abstraction application$/, function (callback) {
-        commonFunctions.onPrepareLoginTest('ctrpabstractor');
-        browser.sleep(25).then(callback);
-    });
-
-    this.Given(/^I am on the Search Clinical Trials Screen$/, function (callback) {
-        /** Updated by Shilpi to test for both PA search screen and Registry Search screen **/
-        login.loginUser.getText().then(function(loggedInUserName) {
-            if(loggedInUserName === 'ctrpabstractor') {
-                pageMenu.homeSearchTrials.click();
-                commonFunctions.verifySearchTrialsPAScreen();
-            }
-            if(loggedInUserName === 'ctrptrialsubmitter') {
-                trialMenuItem.clickTrials();
-                trialMenuItem.clickListSearchTrialLink();
-            }
+    this.Given(/^I am logged into the CTRP Protocol Abstraction application$/, function () {
+        return browser.sleep(25).then(function() {
+            commonFunctions.alertMsgOK();
+            commonFunctions.onPrepareLoginTest('ctrpabstractor');
+            commonFunctions.alertMsgOK();
         });
-        browser.sleep(25).then(callback);
     });
 
-    this.When(/^I select one or more of the values to search all trials$/, function (table, callback) {
-        data = table.raw();
-        console.log('value of table' + data);
-        pageSearchTrail.setSearchTrialProtocolID('*');
-        pageSearchTrail.clickSearchTrialSearchButton();
-        browser.sleep(25).then(callback);
+    this.Given(/^I am on the Search Clinical Trials Screen$/, function () {
+        return browser.sleep(25).then(function() {
+            /** Updated by Shilpi to test for both PA search screen and Registry Search screen **/
+            login.loginUser.getText().then(function (loggedInUserName) {
+                if (loggedInUserName === 'ctrpabstractor') {
+                    //pageMenu.clickSearchTrialAbstractor();
+                    //commonFunctions.verifySearchTrialsPAScreen();
+                }
+                if (loggedInUserName === 'ctrptrialsubmitter') {
+                    trialMenuItem.clickTrials();
+                    trialMenuItem.clickListSearchTrialLink();
+                }
+            });
+        });
     });
 
-    this.Then(/^CTRP will then display the results for all the Clinical Trials Search Results$/, function (table, callback) {
-        helper.wait_for(9000);
-        browser.sleep(25).then(callback);
+    this.When(/^I select one or more of the values to search all trials$/, function (table) {
+        return browser.sleep(25).then(function() {
+            data = table.raw();
+            console.log('value of table' + data);
+            pageSearchTrail.setSearchTrialProtocolID('*');
+            pageSearchTrail.clickSearchTrialSearchButton();
+        });
+    });
+
+    this.Then(/^CTRP will then display the results for all the Clinical Trials Search Results$/, function (table) {
+        return browser.sleep(25).then(function() {
+
+        });
     });
 
     /*

@@ -138,6 +138,15 @@ And Study Population Description is Null
 When I select Save 
 Then an error message will appear “Study Population is Required”
 
+Scenario: #9'  Study Population Description character count
+Given I am logged into the CTRP Protocol Abstraction application
+And I am on the Eligibility Criteria Screen
+When I am typing into the Study Polulation Description Field
+Then information text appears below the Study Polulation Description Field to display the number of characters available to enter into the field 
+|1000 characters left|
+When 1000 characters have been entered
+Then no additional text can be entered
+
 Scenario: #10  Add Inclusion Criteria
 Given I am logged into the CTRP Protocol Abstraction application
 And I am on the Eligibility Criteria screen
@@ -202,10 +211,13 @@ Scenario:  #14 Character display for Eligibility Criterion Description
 And I have selected a trial
       And I am on the Add/Edit Eligibility Criteria screen
   When I am entering text for Eligibility Criteria Description
-     Then information text appears to display the number of characters available to enter into the field
-      | 5000 characters left | 
-And a cumulative message displays with the Total Character of all Eligibility Criterion Descriptions that have been saved 
-     "Total characters for all 'Other Criteria is ####"   
+   Then information text appears below the Eligibility Criteria Description field to display the number of characters available to enter into the field.
+|5000 characters left|
+ And "x characters left" will be displayed as characters are added
+When 5000 characters have been entered into the Eligibility Criteria Description field
+Then no additional text can be entered at the Eligibility Criteria Description field  
+ And a cumulative message displays with the Total Character of all Eligibility Criterion Descriptions that have been saved 
+     "Total characters for all 'Other Criteria is x"   
 
 Scenario:  #15 I can Delete Eligibility Criterion for a Trial
 Given I am logged into the CTRP Protocol Abstraction application

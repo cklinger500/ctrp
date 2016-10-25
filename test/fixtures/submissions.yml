@@ -21,6 +21,7 @@
 #  acknowledge_comment  :text
 #  acknowledge_date     :date
 #  acknowledged_by      :string(255)
+#  status               :string
 #
 # Indexes
 #
@@ -47,3 +48,9 @@ two:
   amendment_reason_id: 
   amendment_num: 1
   amendment_date: 2015-08-18
+
+three:
+  submission_num: 1
+  submission_type: three
+  trial: three
+  status: Active

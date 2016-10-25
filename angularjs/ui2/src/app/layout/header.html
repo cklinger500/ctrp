@@ -22,7 +22,7 @@
   </script>
 
 
-    <div class="container">
+    <div class="container header-logo">
         <div class="row">
             <div class="col-xs-12 col-sm-7">
                 <img class="img-responsive" src="./images/nci-logo-full.svg" alt="National Cancer Institute">
@@ -33,7 +33,7 @@
                     <ul class="list-inline animated-item">
                         <li ng-show="headerView.signedIn">Welcome, <strong><a ui-sref="main.myprofile">{{headerView.username}}</a></strong></li>
                         <li ng-show="headerView.signedIn"> | &nbsp;&nbsp;<a href="" ng-click="headerView.logOut()"><strong>Sign Out</strong></a></li><br />
-                        <li ng-show="headerView.signedIn">&nbsp;&nbsp;&nbsp;&nbsp;Role: {{headerView.userRole}}</li>
+                        <li ng-show="headerView.signedIn">&nbsp;&nbsp;&nbsp;&nbsp;Role: {{headerView.userRoleName}}</li>
                     </ul>
                 </div>
                 <div class="row" ng-show="headerView.signedIn && headerView.isCurationModeSupported &&

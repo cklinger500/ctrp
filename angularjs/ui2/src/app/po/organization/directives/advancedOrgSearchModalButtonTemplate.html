@@ -1,5 +1,9 @@
 <div class="row">
-    <button type="button" class="btn btn-primary" restriction-field id="org_search_modal" ng-click="searchOrgs('lg')"><i class="glyphicon glyphicon-search"></i> Search Organizations</button>
+    <button type="button" class="btn btn-primary" restriction-field
+            id="org_search_modal" ng-click="searchOrgs('lg')" ng-disabled="preSearch.disable">
+        <span ng-if="!buttonLabel"><i class="glyphicon glyphicon-search"></i> Search Organizations</span>
+        <span ng-if="buttonLabel">{{buttonLabel}}</span>
+    </button>
     <button ng-if="useBuiltInTemplate" class="btn btn-danger" ng-click="batchSelect('removeAll')" ng-show="savedSelection.length > 0">
         <i class="glyphicon glyphicon-remove"></i> Remove All Organizations
     </button>

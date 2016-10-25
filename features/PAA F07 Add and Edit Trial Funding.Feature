@@ -2,7 +2,7 @@
 Feature: PAA F07 Add and Edit Trial Funding
 
 As any CTRP PA User, I can add and edit a grant and its information
-   @runthis
+
 Scenario: #1 I can indicate that the trial does not have an associated grant
 Given I am logged into the CTRP Protocol Abstraction application to abstract
 And I have selected trial

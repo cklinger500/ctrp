@@ -19,7 +19,7 @@
         /*************** implementations below ****************/
 
         function request(config) {
-            config.timeout = 15000; //15 seconds timeout
+            config.timeout = 150000; //150 seconds timeout
             var token = LocalCacheService.getCacheWithKey('token');
             //console.log('token is: ' + token);
             if (token) {
@@ -46,19 +46,19 @@
             var ignoredFields = ['new', 'id', 'server_response']; // fields ignored in the response body
 
             if (!rejection.data) {
-                $injector.get('toastr').error('Please try again.', 'The server may be down');
+                $injector.get('toastr').error('Please try again.', 'The server may be down', { timeOut: 0});
             }
 
             if(rejection.status === 401) {
               //if unauthenticated or unauthorized, kick the user back to sign_in
               $injector.get('$state').go('main.sign_in');
-              $injector.get('toastr').error('Access to the resources is not authorized', 'Please sign in to continue');
-            } else if (rejection.status > 226 && errorCount < 3) {
+              $injector.get('toastr').error('Access to the resources is not authorized', 'Please sign in to continue', { timeOut: 0});
+            } else if (rejection.status > 226 && errorCount < 7) {
                 $injector.get('toastr').clear();
                 var errorMsg = '<u>Error Code</u>: ' + rejection.status;
                 errorMsg += '\nError Message: ' + ErrorHandlingService.getErrorMsg(rejection.status);
                 errorMsg += '\nCause(s): ';
-
+                /*
                 if ('data' in rejection) {
                     Object.keys(rejection.data).forEach(function(field, index) {
                         if (ignoredFields.indexOf(field) === -1 && !angular.isNumber(field)) {
@@ -66,6 +66,8 @@
                         }
                     });
                 }
+                */
+               console.info('rejection: ', rejection);
                 if ('errors' in rejection) {
                     Object.keys(rejection.errors).forEach(function(field, index) {
                         if (ignoredFields.indexOf(field) === -1 && !angular.isNumber(field)) {
@@ -73,11 +75,29 @@
                         }
                     });
                 }
+                var validationErrors = '\n';
+                delete rejection.data.server_response;
+                if (!!rejection.data && angular.isArray(rejection.data)) {
+                    rejection.data.forEach(function(errMsg) {
+                        validationErrors += '\n ' + errMsg;
+                    });
+                } else if (!!rejection.data) {
+                    Object.keys(rejection.data).forEach(function(key) {
+                        var arr = rejection.data[key];
+                        if (angular.isArray(arr)) {
+                            arr.forEach(function(msg) {
+                                validationErrors += '\n' + key + ' ' + msg;
+                            });
+                        }
+                    });
+                }
+                // console.info('Validation Errors: ', validationErrors);
 
-                $injector.get('toastr').error(errorMsg, {
-                    extendedTimeOut: 1000,
-                    timeOut: 0
-                });
+                errorMsg += validationErrors; // concatenate
+                var toastrService = $injector.get('toastr');
+                // toastrService.error(validationErrors, '', { timeOut: 0 });
+
+                toastrService.error(errorMsg, '', { timeOut: 0 });
                 // $injector.get('UserService').logout();
                 errorCount++;
             }

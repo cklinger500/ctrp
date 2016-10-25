@@ -65,7 +65,7 @@ When I have selected a file to attach from the list below as a trial document
       
 Then The Trial Related Documents section will not indicate any errors during Trial Review
 When the file selected is not from the file list 
-Then an error will be displayed "Select a valid file. Allowed file types: pdf,doc,docx,docm,xls,xlsx,xlsm,xlsb,rtf,txt" 
+Then an error will be displayed "Valid file is Required. Allowed file types: pdf,doc,docx,docm,xls,xlsx,xlsm,xlsb,rtf,txt" 
       
      
       

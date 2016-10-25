@@ -27,6 +27,24 @@ Feature: Reg F09 Register Trial Regulatory Information FDAAA
       |Institutional            |
 
 
+Scenario Outline: #1a Rule for Character length for Trial Regulatory Information 
+  Given I have selected the option to register a trial <trialType>
+  And I am on the Register Trial Regulatory Information screen
+  Then a comment appears below the field to display the number of characters available to enter into the field
+    | Field                                | Number of Characters left          |
+    | Investigator Title                   | 254 characters left                         |
+
+  And "x characters left" will be displayed as characters are added
+  When all the characters mentioned above for field have been entered
+  Then no additional text can be entered
+
+  Examples:
+    |trialType  |
+    |National                 |
+    |Externally Peer-Reviewed |
+    |Institutional            |
+
+
   Scenario Outline: #2 Responsible Party Rules - When the Responsible Party is the Sponsor
     Given I have selected the option to register a trial <trialType>
     And I am on the Register Trial Regulatory Information screen
@@ -47,7 +65,7 @@ Feature: Reg F09 Register Trial Regulatory Information FDAAA
     And the Investigator Title will be displayed as "Principal Investigator"
     And the Investigator Title may be edited
     And the Investigator Affiliation will be the Sponsor Organization
-    And the Investigation Affiliation can be changed
+    And the Investigator Affiliation can be changed
 
      Examples:
       |trialType                |
@@ -64,7 +82,7 @@ Feature: Reg F09 Register Trial Regulatory Information FDAAA
       |The Investigator Affiliation|
     When the field type is not entered
     Then the error type will be displayed
-      |Investigator is required            |
+      |Investigator is Required            |
       |Investigator Title is Required      |
       |Investigator Affiliation is Required|
 
@@ -84,8 +102,8 @@ Feature: Reg F09 Register Trial Regulatory Information FDAAA
     Then the person selected will be recorded as the Sponsor-Investigator
     And the Investigator Title will be displayed as "Principal Investigator"
     And the Investigator Title may be edited
-    And the Investigation Affiliation will be the Sponsor Organization
-    And the Investigation Affiliation cannot be changed
+    And the Investigator Affiliation will be the Sponsor Organization
+    And the Investigator Affiliation cannot be changed
 
     Examples:
       |trialType              |
@@ -103,7 +121,7 @@ Feature: Reg F09 Register Trial Regulatory Information FDAAA
       |Investigator Affiliation|
     When the field type is not entered
     Then the error type will be displayed
-      |Investigator is required            |
+      |Investigator is Required            |
       |Investigator Title is Required      |
       |Investigator Affiliation is Required|
 
@@ -114,7 +132,7 @@ Feature: Reg F09 Register Trial Regulatory Information FDAAA
       |Institutional            |
 
 
-  Scenario Outline:#5 I can select the Trial's information for FDAAA required Regulatory Information for a non FDA Regulated Interventional trial
+    Scenario Outline:#5 I can select the Trial's information for FDAAA required Regulatory Information for a non FDA Regulated Interventional trial
     Given I have selected the option to register a trial <trialType>
     And I am on the Register Trial Regulatory Information screen
     When I have selected "NA" for FDA Regulated Intervention Indicator

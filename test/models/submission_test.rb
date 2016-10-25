@@ -21,6 +21,7 @@
 #  acknowledge_comment  :text
 #  acknowledge_date     :date
 #  acknowledged_by      :string(255)
+#  status               :string
 #
 # Indexes
 #

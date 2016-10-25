@@ -122,7 +122,8 @@ module.exports = function() {
      And the organizations will be displyed orderd assending alphanumeric by Collaborator Name
      */
 
-    this.Given(/^I am on the Trial Collaborators screen$/, function (callback) {
+    this.Given(/^I am on the Trial Collaborators screen$/, function () {
+        return browser.sleep(25).then(function() {
         pageMenu.homeSearchTrials.click();
         login.clickWriteMode('On');
         commonFunctions.verifySearchTrialsPAScreen();
@@ -137,34 +138,39 @@ module.exports = function() {
         helper.verifyElementDisplayed(trialCollaborators.collaboratorsAddButton, true);
         helper.verifyElementDisplayed(trialCollaborators.collaboratorsDeleteButton, true);
         helper.verifyElementDisplayed(trialCollaborators.collaboratorsTableListTHead, true);
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Given(/^I have selected organization look\-up at the Trial Collaborators screen$/, function (callback) {
+    this.Given(/^I have selected organization look\-up at the Trial Collaborators screen$/, function () {
+        return browser.sleep(25).then(function() {
         trialCollaborators.clickAddCollaboratorButton();
         organizationSearch.clickSearchOrganization();
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.When(/^a list of unique organizations including my organization, the organizations in my family and the organizations associated with this trial \(sponsor, Lead, Org, IRB\) are displayed$/, function (callback) {
+    this.When(/^a list of unique organizations including my organization, the organizations in my family and the organizations associated with this trial \(sponsor, Lead, Org, IRB\) are displayed$/, function () {
+        return browser.sleep(25).then(function() {
         searchOrg.setOrgName(orgSearchNameB);
         searchOrg.clickSearchButton();
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^I can select an organization from the list of organization$/, function (callback) {
+    this.Then(/^I can select an organization from the list of organization$/, function () {
+        return browser.sleep(25).then(function() {
         searchOrg.selectOrgModelItem();
         searchOrg.clickOrgModelConfirm();
         trialCollaborators.clickSave();
-        browser.sleep(250).then(callback);
+    });
     });
 
-    this.Then(/^the selected organization will be associated to the trail as a Trial Collaborator$/, function (callback) {
+    this.Then(/^the selected organization will be associated to the trail as a Trial Collaborator$/, function () {
+        return browser.sleep(25).then(function() {
         trialCollaborators.findOrgOnTheTableList(orgSearchNameB);
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^the system will list$/, function (table, callback) {
+    this.Then(/^the system will list$/, function (table) {
+        return browser.sleep(25).then(function() {
         var strVal = '';
         collaboratorsOptions = table.raw();
         strVal = collaboratorsOptions.toString().replace(/,/g, "\n", -1);
@@ -176,10 +182,11 @@ module.exports = function() {
         helper.verifyTableRowText(trialCollaborators.collaboratorsTableTHeadColA, optionA, "PO ID");
         helper.verifyTableRowText(trialCollaborators.collaboratorsTableTHeadColB, optionB, "Name");
         helper.verifyTableRowText(trialCollaborators.collaboratorsTableTHeadColC, optionC, "Deletion");
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^the organizations will be displyed orderd assending alphanumeric by Collaborator Name$/, function (callback) {
+    this.Then(/^the organizations will be displyed orderd assending alphanumeric by Collaborator Name$/, function () {
+        return browser.sleep(25).then(function() {
         trialCollaborators.selectAllOrg();
         trialCollaborators.clickDeleteCollaborator();
         helper.wait_for(2000);
@@ -207,7 +214,7 @@ module.exports = function() {
         helper.wait_for(3000);
         helper.verifyTableRowText(trialCollaborators.collaboratorsTableTBodyRowAColB, orgSearchNameB, "Verifying assending alphanumeric by Collaborator Name");
         helper.verifyTableRowText(trialCollaborators.collaboratorsTableTBodyRowBColB, orgSearchNameC, "Verifying assending alphanumeric by Collaborator Name");
-        browser.sleep(25).then(callback);
+        });
     });
 
     /*
@@ -223,7 +230,8 @@ module.exports = function() {
      And the organizations will be displyed orderd assending alphanumeric by Collaborator Name
      */
 
-    this.Given(/^the list of collaborators is displayed$/, function (callback) {
+    this.Given(/^the list of collaborators is displayed$/, function () {
+        return browser.sleep(25).then(function() {
         login.logout();
         commonFunctions.onPrepareLoginTest('ctrpabstractor');
         pageMenu.homeSearchTrials.click();
@@ -242,10 +250,11 @@ module.exports = function() {
         helper.verifyElementDisplayed(trialCollaborators.collaboratorsDeleteButton, true);
         helper.verifyElementDisplayed(trialCollaborators.collaboratorsTableListTHead, true);
         //trialCollaborators.findOrgOnTheTableList(orgNameToBeEdited);
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^I can edit the name of a collaborator that does not have a CTRP organization ID$/, function (callback) {
+    this.Then(/^I can edit the name of a collaborator that does not have a CTRP organization ID$/, function () {
+        return browser.sleep(25).then(function() {
         trialCollaborators.selectAllListOfOrgExcept(orgNameToBeEdited);
         trialCollaborators.clickDeleteCollaborator();
         trialCollaborators.clickAdminDataGeneralTrial();
@@ -254,10 +263,11 @@ module.exports = function() {
         trialCollaborators.clickInLineEditingTextBox();
         trialCollaborators.setInLineEditingText(orgNameEdited);
         trialCollaborators.clickInLineEditingSave();
-        browser.sleep(250).then(callback);
+        });
     });
 
-    this.Then(/^the edited organizations will be displyed orderd assending alphanumeric by Collaborator Name$/, function (callback) {
+    this.Then(/^the edited organizations will be displyed orderd assending alphanumeric by Collaborator Name$/, function () {
+        return browser.sleep(25).then(function() {
         trialCollaborators.clickAdminDataGeneralTrial();
         trialCollaborators.clickAdminDataCollaborators();
         trialCollaborators.findOrgOnTheTableList(orgNameEdited);
@@ -280,7 +290,7 @@ module.exports = function() {
         trialCollaborators.clickAdminDataCollaborators();
         helper.verifyTableRowText(trialCollaborators.collaboratorsTableTBodyRowAColB, orgSearchNameA, "Verifying assending alphanumeric by Collaborator Name");
         helper.verifyTableRowText(trialCollaborators.collaboratorsTableTBodyRowBColB, orgNameToBeEdited, "Verifying assending alphanumeric by Collaborator Name");
-        browser.sleep(25).then(callback);
+        });
     });
 
 
@@ -293,7 +303,8 @@ module.exports = function() {
      Then the collaborator(s) will be unassociated with the trial
      */
 
-    this.When(/^I have selected one or more collaborators$/, function (callback) {
+    this.When(/^I have selected one or more collaborators$/, function () {
+        return browser.sleep(25).then(function() {
         trialCollaborators.clickAddCollaboratorButton();
         organizationSearch.clickSearchOrganization();
         searchOrg.setOrgName(orgSearchNameB);
@@ -302,20 +313,22 @@ module.exports = function() {
         searchOrg.clickOrgModelConfirm();
         trialCollaborators.clickSave();
         trialCollaborators.findOrgOnTheTableList(orgSearchNameB);
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.When(/^have selected Delete Collaborator$/, function (callback) {
+    this.When(/^have selected Delete Collaborator$/, function () {
+        return browser.sleep(25).then(function() {
         trialCollaborators.selectAllOrg();
         trialCollaborators.clickDeleteCollaborator();
         helper.wait_for(300);
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^the collaborator\(s\) will be unassociated with the trial$/, function (callback) {
+    this.Then(/^the collaborator\(s\) will be unassociated with the trial$/, function () {
+        return browser.sleep(25).then(function() {
         trialCollaborators.verifyListOfCollboratorsNameExists('0');
         helper.verifyElementDisplayed(trialCollaborators.collaboratorsTableListTHead, true);
-        browser.sleep(25).then(callback);
+        });
     });
 
     /*
@@ -326,7 +339,8 @@ module.exports = function() {
      Then the information entered or edited on the Trial Collaborators screen will be saved to the trial record
      */
 
-    this.When(/^select save Collaborator$/, function (callback) {
+    this.When(/^select save Collaborator$/, function () {
+        return browser.sleep(25).then(function() {
         trialCollaborators.clickAddCollaboratorButton();
         organizationSearch.clickSearchOrganization();
         searchOrg.setOrgName(orgSearchNameB);
@@ -334,12 +348,13 @@ module.exports = function() {
         searchOrg.selectOrgModelItem();
         searchOrg.clickOrgModelConfirm();
         trialCollaborators.clickSave();
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^the information entered or edited on the Trial Collaborators screen will be saved to the trial record$/, function (callback) {
+    this.Then(/^the information entered or edited on the Trial Collaborators screen will be saved to the trial record$/, function () {
+        return browser.sleep(25).then(function() {
         trialCollaborators.findOrgOnTheTableList(orgSearchNameB);
-        browser.sleep(25).then(callback);
+        });
     });
 
     /*
@@ -351,7 +366,8 @@ module.exports = function() {
      And the Trial Collaborators screen will be refreshed with the existing data
      */
 
-    this.When(/^I select Reset Collaborator$/, function (callback) {
+    this.When(/^I select Reset Collaborator$/, function () {
+        return browser.sleep(25).then(function() {
         login.logout();
         commonFunctions.onPrepareLoginTest('ctrpabstractor');
         pageMenu.homeSearchTrials.click();
@@ -360,7 +376,7 @@ module.exports = function() {
         pageSearchTrail.setSearchTrialProtocolID(leadProtocolIDB);
         pageSearchTrail.clickSearchTrialSearchButton();
         commonFunctions.verifyPASearchResultCount(searchResultCountText);
-        commonFunctions.clickGridFirstLink(1,1);
+        commonFunctions.clickGridFirstLink(1, 1);
         commonFunctions.clickLinkText(leadProtocolIDB);
         commonFunctions.adminCheckOut();
         trialCollaborators.clickAdminDataCollaborators();
@@ -403,17 +419,19 @@ module.exports = function() {
         //Refresh page
         trialCollaborators.clickAdminDataGeneralTrial();
         trialCollaborators.clickAdminDataCollaborators();
-        browser.sleep(2500).then(callback);
+        });
     });
 
-    this.Then(/^the information entered or edited on the Collaborators screen will not be saved to the trial record$/, function (callback) {
+    this.Then(/^the information entered or edited on the Collaborators screen will not be saved to the trial record$/, function () {
+        return browser.sleep(25).then(function() {
         trialCollaborators.verifyListOfCollboratorsNameExists('1');
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^the Trial Collaborators screen will be refreshed with the existing list of Collaborators data$/, function (callback) {
+    this.Then(/^the Trial Collaborators screen will be refreshed with the existing list of Collaborators data$/, function () {
+        return browser.sleep(25).then(function() {
         trialCollaborators.findOrgOnTheTableList(orgSearchNameC);
-        browser.sleep(25).then(callback);
+        });
     });
 
 

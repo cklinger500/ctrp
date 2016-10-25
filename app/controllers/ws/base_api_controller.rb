@@ -2,6 +2,7 @@ class Ws::BaseApiController < ApplicationController
   #force_ssl
 
   CONTENT_TYPE        =   "application/xml"
+  IMPORT_TRIAL_ACTION = "import_trial"
 
   before_filter :check_auth, :is_valid_mime
 
@@ -48,10 +49,16 @@ class Ws::BaseApiController < ApplicationController
   end
 
   def is_valid_mime
+    action = request.path_parameters[:action]
+    p request.content_type
+
     ##check content_type
-    if  request.content_type != CONTENT_TYPE
+    if  action != IMPORT_TRIAL_ACTION &&request.content_type != CONTENT_TYPE
+      render nothing:true, status: '415'
+    elsif action == IMPORT_TRIAL_ACTION && !request.content_type.nil?
       render nothing:true, status: '415'
     end
+
 
   end
 

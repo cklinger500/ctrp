@@ -8,7 +8,7 @@ Scenario: #1 Rules for Search Families
     Given I am logged in to CTRP PO application
     And I am on the search Family screen
     When I have completed a family search 
-    Then Only Active Organization count will be displayed on the Family Search Membership Size Results
+    Then Only Active Organization count will be displayed on the Family Search "Membership Size" column Results
     When I have selected a family name from the family search results table
     Then All affiliated organizations will be displayed
     And Only Active Organization count will be displayed for the Membership size on the Edit Family screen
@@ -26,7 +26,7 @@ Scenario: #1 Rules for Search Families
     
       |CTRP ID        |
       |CTEP ID        |
-      |Organization   |
+      |Organization (Hyperlink to Org Details)   |
       |Relationship   |
       |Effective Date |
       |Expiration Date|

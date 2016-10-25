@@ -3,10 +3,10 @@
     angular.module('ctrp.app.pa.dashboard')
         .controller('pasTrialSubGroupsCtrl', pasTrialSubGroupsCtrl);
 
-    pasTrialSubGroupsCtrl.$inject = ['$scope', 'TrialService', 'PATrialService','OutcomeMeasureService', 'toastr',
+    pasTrialSubGroupsCtrl.$inject = ['$scope', 'TrialService','UserService', 'PATrialService','OutcomeMeasureService', '$state', 'toastr',
         'MESSAGES', '_', '$timeout','uiGridConstants','trialDetailObj','assayTypes', '$location', '$anchorScroll'];
 
-    function pasTrialSubGroupsCtrl($scope, TrialService, PATrialService,OutcomeMeasureService, toastr,
+    function pasTrialSubGroupsCtrl($scope, TrialService,UserService, PATrialService,OutcomeMeasureService, $state, toastr,
                                          MESSAGES, _, $timeout, uiGridConstants,trialDetailObj,assayTypes, $location, $anchorScroll) {
         var vm = this;
         vm.curTrial = trialDetailObj;
@@ -16,9 +16,13 @@
         vm.deleteListHandler = deleteListHandler;
         vm.deleteSelected = deleteSelected;
         vm.resetSubGroup = resetSubGroup;
+        vm.reload = reload;
+        vm.isCurationEnabled = UserService.isCurationModeEnabled() || false;
 
         vm.trialDetailObj = {};
-        vm.sortableListener = {};
+        vm.sortableListener = {
+            cancel: '.locked'
+        };
         vm.sortableListener.stop = dragItemCallback;
         vm.disableBtn = false;
 
@@ -28,6 +32,10 @@
             getTrialDetailCopy();
             console.log(JSON.stringify(assayTypes))
         }
+
+        $scope.$on(MESSAGES.CURATION_MODE_CHANGED, function() {
+               vm.isCurationEnabled = UserService.isCurationModeEnabled();
+        });
 
         $scope.deleteRow = function(row) {
             OutcomeMeasureService.getGridOptions().data.splice(row.entity.id, 1);
@@ -72,15 +80,15 @@
 
                 if (status >= 200 && status <= 210) {
                     vm.curTrial.lock_version = response.lock_version || '';
-                    vm.curTrial.sub_groups = response["sub_groups"];
+                    vm.curTrial.sub_groups = response['sub_groups'];
                     PATrialService.setCurrentTrial(vm.curTrial);
                     $scope.$emit('updatedInChildScope', {});
 
                     toastr.clear();
-                    toastr.success('Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded', 'Operation Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    })
+                    toastr.success('Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded', 'Operation Successful!');
+
+                    $scope.sg_form.$setPristine();
+
                     vm.addEditMode=false;
                     vm.selectedAllSG = false;
                 }
@@ -90,6 +98,10 @@
                 vm.disableBtn = false;
             });
         };//saveSubGroup
+
+        function reload() {
+            $state.go($state.$current, null, { reload: true });
+        };
 
         function deleteListHandler(subGroupsSelectedInCheckboxes){
             var deleteList = [];
@@ -132,10 +144,7 @@
                     $scope.$emit('updatedInChildScope', {});
 
                     toastr.clear();
-                    toastr.success('Record(s) deleted.', 'Operation Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    });
+                    toastr.success('Record(s) deleted.', 'Operation Successful!');
                 }
             }).catch(function(err) {
                 console.log("error in creating or updating Trial sub group " + JSON.stringify(outerTrial));
@@ -190,6 +199,7 @@
                 getTrialDetailCopy();
             }, 0);
 
+            $scope.sg_form.$setPristine();
         }
 
         function getTrialDetailCopy() {

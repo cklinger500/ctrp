@@ -13,4 +13,6 @@
 
 class SiteRecruitmentStatus < ActiveRecord::Base
   include BasicConcerns
+  validates :code, uniqueness: true
+
 end

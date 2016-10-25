@@ -189,7 +189,8 @@ module.exports = function() {
      And the document will be ordered by date with the newest document first
      */
 
-    this.Given(/^I am on the Trial Related Documents screen$/, function (callback) {
+    this.Given(/^I am on the Trial Related Documents screen$/, function () {
+        return browser.sleep(25).then(function() {
         var datTm = new Date();
         pageMenu.homeSearchTrials.click();
         login.clickWriteMode('On');
@@ -219,10 +220,11 @@ module.exports = function() {
                 trialDoc.clickSave();
             }
         });
-        browser.sleep(2500).then(callback);
+        });
     });
 
-    this.When(/^I select add a document$/, function (callback) {
+    this.When(/^I select add a document$/, function () {
+        return browser.sleep(25).then(function() {
         randomDocSelection = '';
         var randomDoc = '';
         var randNmbr = Math.floor(Math.random()*(1-8+1)+9).toString();
@@ -264,15 +266,17 @@ module.exports = function() {
             randomDocSelection = ''+randomDoc+'';
             console.log("Current Selected File Name:["+randomDocSelection+"]");
         }
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.When(/^have browsed and selected file to attach$/, function (callback) {
+    this.When(/^have browsed and selected file to attach$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.trialRelatedFileUpload('PA', '1', randomDocSelection);
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.When(/^have selected the Document type from the list of:$/, function (table, callback) {
+    this.When(/^have selected the Document type from the list of:$/, function (table) {
+        return browser.sleep(25).then(function() {
         var strVal = '';
         selectDcoumentTableVal = table.raw();
         strVal = selectDcoumentTableVal.toString().replace(/,/g, "\n", -1);
@@ -333,22 +337,25 @@ module.exports = function() {
             console.log("Document Type:["+randomDocTypSelection+"]");
         }
         trialDoc.selectADocument(randomDocTypSelection);
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.When(/^have entered a Description of the Document when the document type is Other$/, function (callback) {
+    this.When(/^have entered a Description of the Document when the document type is Other$/, function () {
+        return browser.sleep(25).then(function() {
         if (randomDocTypSelection === selectOptionOther){
             trialDoc.setSubType('Test Subtype');
         }
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^the Trial Related Document will be associated with the trail$/, function (callback) {
+    this.Then(/^the Trial Related Document will be associated with the trail$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.clickAddButton();
-        browser.sleep(2500).then(callback);
+        });
     });
 
-    this.Then(/^the date the document was will be listed with the document$/, function (callback) {
+    this.Then(/^the date the document was will be listed with the document$/, function () {
+        return browser.sleep(25).then(function() {
         //Handalling Required Document Type Upload
         trialDoc.trialRelatedFileUpload('PA', '1', 'testSampleDocFile_IRB.docx');
         trialDoc.selectADocument(selectOptionIRB);
@@ -367,18 +374,20 @@ module.exports = function() {
             getMemCrntUsrNm = getUsrNm();
             console.log('Current User Name : ' + getMemCrntUsrNm);
         });
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^the users name that added the document will be listed with the document$/, function (callback) {
+    this.Then(/^the users name that added the document will be listed with the document$/, function () {
+        return browser.sleep(25).then(function() {
         var getCurrentUserName = getMemCrntUsrNm;
         console.log("getCurrentUserName: "+getCurrentUserName);
         trialDoc.findDocumentAndVerifyUserAdded(randomDocSelection, getCurrentUserName);
         trialDoc.clickSave();
-        browser.sleep(2500).then(callback);
+        });
     });
 
-    this.Then(/^the document will be ordered by date with the newest document first$/, function (callback) {
+    this.Then(/^the document will be ordered by date with the newest document first$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.verifyTrialDocTblHeaders(trialDocHdrs[0], trialDocHdrs[1], trialDocHdrs[2], trialDocHdrs[3], trialDocHdrs[4], trialDocHdrs[5], trialDocHdrs[6]);
         trialDoc.findDocumentAndVerifyFileName(randomDocSelection);
         trialDoc.findDocumentAndVerifyDocumentType(randomDocSelection, randomDocTypSelection);
@@ -387,7 +396,7 @@ module.exports = function() {
         }
         trialDoc.findDocumentAndVerifyDateAdded(randomDocSelection, getExpectedDate);
         trialDoc.findDocumentAndVerifyUserAdded(randomDocSelection, getMemCrntUsrNm);
-        browser.sleep(25).then(callback);
+        });
     });
 
     /*
@@ -420,26 +429,30 @@ module.exports = function() {
      And the prior file will be annotated as Revised
      */
 
-    this.When(/^I select Edit a Trial Related Document$/, function (callback) {
+    this.When(/^I select Edit a Trial Related Document$/, function () {
+        return browser.sleep(25).then(function() {
         console.log('Current Document to Edit : ' + randomDocSelection);
         trialDoc.findDocumentAndClickEdit(randomDocSelection);
-        browser.sleep(2500).then(callback);
+        });
     });
 
-    this.When(/^have browsed and selected a new file to attach$/, function (callback) {
-        trialDoc.trialRelatedFileUpload('PA', '1', getReplacedFile);
-        trialDoc.clickUpdate();
-        browser.sleep(250).then(callback);
+    this.When(/^have browsed and selected a new file to attach$/, function () {
+        return browser.sleep(25).then(function() {
+            trialDoc.trialRelatedFileUpload('PA', '1', getReplacedFile);
+            trialDoc.clickUpdate();
+        });
     });
 
-    this.Then(/^the Trial Related edited Document will be associated with the trail$/, function (callback) {
+    this.Then(/^the Trial Related edited Document will be associated with the trail$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.findDocumentAndVerifyFileName(getReplacedFile);
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^the prior file will be annotated as Revised$/, function (callback) {
+    this.Then(/^the prior file will be annotated as Revised$/, function () {
+        return browser.sleep(25).then(function() {
 
-        browser.sleep(25).then(callback);
+        });
     });
 
     /*
@@ -452,7 +465,8 @@ module.exports = function() {
      And the file will be annotated as Deleted
      */
 
-    this.Given(/^I select one or more documents to delete$/, function (callback) {
+    this.Given(/^I select one or more documents to delete$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.trialTable.isDisplayed().then(function(condition) {
             if (condition){
                 console.log("Condition: "+condition);
@@ -460,22 +474,25 @@ module.exports = function() {
                 trialDoc.clickSave();
             }
         });
-        browser.sleep(2500).then(callback);
+        });
     });
 
-    this.Given(/^enter a comment for why the document is deleted$/, function (callback) {
+    this.Given(/^enter a comment for why the document is deleted$/, function () {
+        return browser.sleep(25).then(function() {
         console.log("- enter a comment for why the document is deleted - dev team need to develop comment feature (it's not developed yet as 03252016)");
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^the Trial Related Document will not be visible on the Trial Related Documents screen$/, function (callback) {
+    this.Then(/^the Trial Related Document will not be visible on the Trial Related Documents screen$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.findDocumentDoesNotExists(randomDocSelection);
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^the file will be annotated as Deleted$/, function (callback) {
+    this.Then(/^the file will be annotated as Deleted$/, function () {
+        return browser.sleep(25).then(function() {
         console.log("- the file will be annotated as Deleted - dev team need to develop comment feature (it's not developed yet as 03252016)");
-        browser.sleep(25).then(callback);
+        });
     });
 
     /*
@@ -486,7 +503,8 @@ module.exports = function() {
      Then the information entered or edited on the Trial Related Documents screen will be saved to the trial record
      */
 
-    this.When(/^select save documents$/, function (callback) {
+    this.When(/^select save documents$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.trialRelatedFileUpload('PA', '1', getTestUploadFileA);
         trialDoc.selectADocument(selectOptionComplete);
         trialDoc.clickAddButton();
@@ -505,10 +523,11 @@ module.exports = function() {
             console.log('Current User Name : ' + getMemCrntUsrNm);
         });
         trialDoc.clickSave();
-        browser.sleep(2500).then(callback);
+        });
     });
 
-    this.Then(/^the information entered or edited on the Trial Related Documents screen will be saved to the trial record$/, function (callback) {
+    this.Then(/^the information entered or edited on the Trial Related Documents screen will be saved to the trial record$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.verifyTrialDocTblHeaders(trialDocHdrs[0], trialDocHdrs[1], trialDocHdrs[2], trialDocHdrs[3], trialDocHdrs[4], trialDocHdrs[5], trialDocHdrs[6]);
         trialDoc.findDocumentAndVerifyFileName(getTestUploadFileA);
         trialDoc.findDocumentAndVerifyDocumentType(getTestUploadFileA, selectOptionComplete);
@@ -519,7 +538,7 @@ module.exports = function() {
         console.log("getCurrentUserName: "+getCurrentUserName);
         trialDoc.findDocumentAndVerifyUserAdded(getTestUploadFileA, getCurrentUserName);
         trialDoc.findDocumentAndVerifyDateAdded(getTestUploadFileA, getExpectedDate);
-        browser.sleep(25).then(callback);
+        });
     });
 
     /*
@@ -531,7 +550,8 @@ module.exports = function() {
      And the Trial Related Document screen will be refreshed with the existing data
      */
 
-    this.When(/^I select Reset documents$/, function (callback) {
+    this.When(/^I select Reset documents$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.trialRelatedFileUpload('PA', '1', getIRBUploadFile);
         trialDoc.selectADocument(selectOptionIRB);
         trialDoc.clickAddButton();
@@ -544,18 +564,20 @@ module.exports = function() {
         trialDoc.selectADocument(selectOptionComplete);
         trialDoc.clickAddButton();
         trialDoc.clickReset();
-        browser.sleep(2500).then(callback);
+        });
     });
 
-    this.Then(/^the information entered or edited on the Trial Related Documents screen will not be saved to the trial record$/, function (callback) {
+    this.Then(/^the information entered or edited on the Trial Related Documents screen will not be saved to the trial record$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.findDocumentDoesNotExists(getTestUploadFileB);
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^the Trial Related Document screen will be refreshed with the existing data$/, function (callback) {
+    this.Then(/^the Trial Related Document screen will be refreshed with the existing data$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.findDocumentAndVerifyFileName(getIRBUploadFile);
         trialDoc.findDocumentAndVerifyFileName(getProtocolUploadFile);
-        browser.sleep(25).then(callback);
+        });
     });
 
     /*
@@ -570,7 +592,8 @@ module.exports = function() {
      Then the system will display a Error message that the Protocol Document and or IRB Approval Document cannot be deleted
      */
 
-    this.When(/^I select Delete one or more documents$/, function (callback) {
+    this.When(/^I select Delete one or more documents$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.clickBackToSearchResultsButton();
         commonFunctions.verifySearchTrialsPAScreen();
         pageSearchTrail.setSearchTrialProtocolID(leadProtocolIDB);
@@ -601,10 +624,11 @@ module.exports = function() {
         trialDoc.selectADocument(selectOptionChangeMemo);
         trialDoc.clickAddButton();
         trialDoc.clickSave();
-        browser.sleep(2500).then(callback);
+        });
     });
 
-    this.When(/^have selected a document with a type of :$/, function (table, callback) {
+    this.When(/^have selected a document with a type of :$/, function (table) {
+        return browser.sleep(25).then(function() {
         var strVal = '';
         selectDcoumentTableVal = table.raw();
         strVal = selectDcoumentTableVal.toString().replace(/,/g, "\n", -1);
@@ -630,14 +654,15 @@ module.exports = function() {
                 trialDoc.clickSave();
             }
         });
-        browser.sleep(2500).then(callback);
+        });
     });
 
-    this.Then(/^the system will display a Error message that the Protocol Document and or IRB Approval Document cannot be deleted$/, function (callback) {
+    this.Then(/^the system will display a Error message that the Protocol Document and or IRB Approval Document cannot be deleted$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.findDocumentAndVerifyFileName(getProtocolUploadFile);
         trialDoc.findDocumentAndVerifyFileName(getIRBUploadFile);
         trialDoc.findDocumentAndVerifyFileName(getChangeMemoUploadFile);
-        browser.sleep(25).then(callback);
+        });
     });
 
     /*
@@ -659,7 +684,8 @@ module.exports = function() {
      Then the system will display a Error message that "The selected document is not a valid document type"
      */
 
-    this.When(/^I select a document to add$/, function (callback) {
+    this.When(/^I select a document to add$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.clickBackToSearchResultsButton();
         commonFunctions.verifySearchTrialsPAScreen();
         pageSearchTrail.setSearchTrialProtocolID(leadProtocolIDI);
@@ -675,10 +701,11 @@ module.exports = function() {
         helper.verifyElementDisplayed(trialDoc.trialDocReset, true);
         trialDoc.selectADocument(selectOptionComplete);
         trialDoc.trialRelatedFileUpload('PA', '1', getNonSupportedUploadFile);
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.When(/^the document is not one of the valid extensions listed below$/, function (table, callback) {
+    this.When(/^the document is not one of the valid extensions listed below$/, function (table) {
+        return browser.sleep(25).then(function() {
         var extSplt = getNonSupportedUploadFile.split(".");
         var extSpltVal = extSplt[1];
         var strVal = '';
@@ -708,13 +735,14 @@ module.exports = function() {
         expect(tblOptionI).to.not.equal(extSpltVal);
         expect(tblOptionJ).to.not.equal(extSpltVal);
         expect(tblOptionK).to.not.equal(extSpltVal);
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^the system will display a Error message that "([^"]*)"$/, function (arg1, callback) {
+    this.Then(/^the system will display a Error message that "([^"]*)"$/, function (arg1) {
+        return browser.sleep(25).then(function() {
         var bldErrorMsg = "Error: "+arg1+". Allowed file types: pdf,doc,docx,docm,xls,xlsx,xlsm,xlsb,rtf,txt";
         trialDoc.verifyErrorMsg(bldErrorMsg);
-        browser.sleep(25).then(callback);
+        });
     });
 
     /*
@@ -726,7 +754,8 @@ module.exports = function() {
      |IRB Approval|
      */
 
-    this.Then(/^the following docuuments will be required$/, function (table, callback) {
+    this.Then(/^the following docuuments will be required$/, function (table) {
+        return browser.sleep(25).then(function() {
         var strVal = '';
         selectDcoumentTableVal = table.raw();
         strVal = selectDcoumentTableVal.toString().replace(/,/g, "\n", -1);
@@ -753,7 +782,7 @@ module.exports = function() {
         trialDoc.clickSave();
         var buildRequiredErrorMsg = "Error: Both "+tblOptionA+" and "+tblOptionB+" Document are required";
         trialDoc.verifyRequiredErrorMsg(buildRequiredErrorMsg);
-        browser.sleep(25).then(callback);
+        });
     });
 
     /*
@@ -777,7 +806,8 @@ module.exports = function() {
      Then the system displays a Error message that "Error: The selected document type already exists."
      */
 
-    this.When(/^I add a new document$/, function (callback) {
+    this.When(/^I add a new document$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.clickBackToSearchResultsButton();
         commonFunctions.verifySearchTrialsPAScreen();
         pageSearchTrail.setSearchTrialProtocolID(leadProtocolIDG);
@@ -791,10 +821,11 @@ module.exports = function() {
         helper.verifyElementDisplayed(trialDoc.trialDocAddButton, true);
         helper.verifyElementDisplayed(trialDoc.trialDocSave, true);
         helper.verifyElementDisplayed(trialDoc.trialDocReset, true);
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.When(/^I have selected the Document type from the list of:$/, function (table, callback) {
+    this.When(/^I have selected the Document type from the list of:$/, function (table) {
+        return browser.sleep(25).then(function() {
         var strVal = '';
         selectDcoumentTableVal = table.raw();
         strVal = selectDcoumentTableVal.toString().replace(/,/g, "\n", -1);
@@ -825,15 +856,17 @@ module.exports = function() {
         trialDoc.trialRelatedFileUpload('PA', '1', getProtocolHighlightedDocumentUploadFile);
         trialDoc.selectADocument(tblOptionE);
         trialDoc.clickAddButton();
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.When(/^select save on the trial related documents screen$/, function (callback) {
+    this.When(/^select save on the trial related documents screen$/, function () {
+        return browser.sleep(25).then(function() {
         trialDoc.clickSave();
-        browser.sleep(2500).then(callback);
+        });
     });
 
-    this.When(/^there is already a Document type from the list of:$/, function (table, callback) {
+    this.When(/^there is already a Document type from the list of:$/, function (table) {
+        return browser.sleep(25).then(function() {
         var strValDup = '';
         selectDcoumentTableValDup = table.raw();
         strValDup = selectDcoumentTableValDup.toString().replace(/,/g, "\n", -1);
@@ -848,10 +881,11 @@ module.exports = function() {
         trialDoc.trialRelatedFileUpload('PA', '1', getProtocolUploadFile);
         trialDoc.selectADocument(tblOptionADup);
         trialDoc.clickAddButton();
-        browser.sleep(25).then(callback);
+        });
     });
 
-    this.Then(/^the system displays a Error message that "([^"]*)"$/, function (arg1, callback) {
+    this.Then(/^the system displays a Error message that "([^"]*)"$/, function (arg1) {
+        return browser.sleep(25).then(function() {
         trialDoc.verifyDocErrorMsg(arg1);
         trialDoc.clickSave();
         //IRB Approval
@@ -877,7 +911,7 @@ module.exports = function() {
         trialDoc.selectADocument(tblOptionEDup);
         trialDoc.clickAddButton();
         trialDoc.verifyDocErrorMsg(arg1);
-        browser.sleep(25).then(callback);
+        });
     });
 
     /*
@@ -896,7 +930,8 @@ module.exports = function() {
      |Other|
      */
 
-    this.Then(/^I can see Document that have the following types:$/, function (table, callback) {
+    this.Then(/^I can see Document that have the following types:$/, function (table) {
+        return browser.sleep(25).then(function() {
         trialDoc.clickBackToSearchResultsButton();
         commonFunctions.verifySearchTrialsPAScreen();
         pageSearchTrail.setSearchTrialProtocolID(leadProtocolIDH);
@@ -988,7 +1023,7 @@ module.exports = function() {
         if (tblOptionI === selectOptionOther){
             trialDoc.findDocumentAndVerifyDocumentSubType(getOtherUploadFile, 'Other Subtype');
         }
-        browser.sleep(25).then(callback);
+        });
     });
 
 

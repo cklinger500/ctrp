@@ -11,8 +11,7 @@
   ctrpPaTrialSearch.$inject = ['$compile', '$log', '$timeout', '_', 'PATrialService',
       'UserService', '$mdToast', '$document', 'Common', 'MESSAGES', 'DateService', '$state'];
 
-  function ctrpPaTrialSearch($compile, $log, $timeout, _, PATrialService,
-      $mdToast, $document, Common, MESSAGES, DateService, $state) {
+  function ctrpPaTrialSearch($compile, $log, $timeout, _, PATrialService, $mdToast, $document, Common, MESSAGES, DateService, $state) {
 
         var directive = {
           link: link,
@@ -53,7 +52,6 @@
 
             function _resolveFormFieldsData() {
                 PATrialService.groupPATrialSearchFieldsData().then(function(res) {
-                    // $log.info('res is: ', res);
                     vm.studySourceArr = res[0];
                     vm.phaseArr = res[1];
                     vm.primaryPurposeArr = res[2];
@@ -75,10 +73,14 @@
             function searchTrials() {
                 vm.searching = true;
                 PATrialService.searchTrialsPa(vm.searchParams).then(function (data) {
-                    $log.info('received research results: ', data.trials);
-                    vm.gridOptions.api.setRowData(data.trials);
-                    vm.gridOptions.api.refreshView();
-                    vm.numTrialsFound = data.trials.length;
+                    var status = res.server_response.status;
+
+                    if (status >= 200 && status <= 210) {
+                        $log.info('received research results: ', data.trials);
+                        vm.gridOptions.api.setRowData(data.trials);
+                        vm.gridOptions.api.refreshView();
+                        vm.numTrialsFound = data.trials.length;
+                    }
                 }).catch(function (err) {
                     console.log('search trial failed');
                 }).finally(function() {
@@ -130,15 +132,10 @@
                     // vm.gridOptions.api.deselectNode(oldestNode, false); // deselect
                     vm.gridOptions.api.deselectIndex(0, true);
                 }
-
-                console.info('selectedRows: ', selectedRows);
-                console.info('selectedNodes: ', selectedNodes); // row object is nested in the 'data' field of node
             } // onRowSelectionChanged
 
             function rowSelectedCallback(event) {
-                console.info('is node selected? ', vm.gridOptions.api.isNodeSelected(event.node), event.node.id);
                 var curSelectedNode = event.node;
-                console.log('node props: ', curSelectedNode);
                 var curSelectedRowObj = curSelectedNode.data;
                 // var selectionCounts = vm.gridOptions.api.getSelectedNodes().length;
                 var selectedRows = vm.gridOptions.api.getSelectedRows();

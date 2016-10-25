@@ -13,7 +13,9 @@
                                 <li class="text-danger" ng-hide="checkinModalView.isValidatingStatus || checkinModalView.isTrialStatusValid">
                                     <strong>There are Trial Status Warnings with this trial</strong> (<a ui-sref="main.pa.trialOverview.paTrialStatus" ng-click="checkinModalView.cancel()">View Trial Status History</a>)
                                 </li>
-
+                                <li class="text-danger" ng-hide="checkinModalView.isAbstractionValid">
+                                    <strong>There are Abstraction Warnings/Errors with this trial</strong> (<a ui-sref="main.pa.trialOverview.abstractValidation" ng-click="checkinModalView.cancel()">View Trial Abstraction Validation Results</a>)
+                                </li>
                             </ul>
                         </div>
                     </div>

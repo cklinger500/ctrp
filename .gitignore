@@ -40,8 +40,14 @@ config/environments/ci.rb
 config/environments/demo.rb
 config/environments/stage.rb
 config/environments/production.rb
+
+
 ## Environment normalisation:
+dump.rdb
+Gemfile.lock
+
 /.bundle
+
 /vendor/bundle
 ./db/add_users.rb
 # these should all be checked in to normalise the environment:
@@ -63,6 +69,9 @@ config/environments/production.rb
 # Ignore cucumber tests dir
 /tests/features/output
 
+# Ignore cucumber tests Screenshot dir
+/tests/testScreenShot
+
 # Ignore cucumber tests cred
 /tests/features/testConfig
 
@@ -71,6 +80,7 @@ config/environments/production.rb
 
 # Robots.txt We want this set to disallow on EC2 server. This file is set to disallow out there.
 robots.txt
+dump.rdb
 
 # Ignore Node and Bower packages
 /bower_components
@@ -79,3 +89,29 @@ angularjs/ui2/src/bower_components/
 angularjs/ui2/bower_components/
 angularjs/ui2/.tmp
 public/ctrp/ui2/
+bin/annotate
+bin/bundler
+bin/byebug
+bin/dbi
+bin/erubis
+bin/haml
+bin/nokogiri
+bin/oletool
+bin/rackup
+bin/rdoc
+bin/restclient
+bin/ri
+bin/safe_yaml
+bin/sass
+bin/sass-convert
+bin/scss
+bin/sdoc
+bin/sdoc-merge
+bin/sprockets
+bin/test_broken_dbi
+bin/thor
+bin/tilt
+bin/xlsopcodes
+.rbenv-gemsets
+.ruby-version
+dump-rdb

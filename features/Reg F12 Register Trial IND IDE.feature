@@ -6,7 +6,7 @@ Feature: Reg F12 Register Trial IND IDE
   Scenario Outline: #1 I can indicate that the trial does not have an associated IND or IDE
     Given I have selected the option to register a trial <trialType>
     And I am on the Register Trial IND/IDE Information screen
-    When I have selected "No" for the question "Does this trial have an associated IND/IDE?"
+    When I have selected "No" for the question "Does this trial have an associated IND/IDE?:"
     Then the IND/IDE Information section for the trial registration will not indicate any errors during trial review
 
 
@@ -21,7 +21,7 @@ Feature: Reg F12 Register Trial IND IDE
   Scenario Outline: #2 I can enter the IND or IDE information for a trial
     Given I have selected the option to register a trial <trialType>
     And I am on the Register Trial IND/IDE Information screen
-    And I have selected "Yes" for the question "Does this trial have an associated IND/IDE?"
+    And I have selected "Yes" for the question "Does this trial have an associated IND/IDE?:"
     When I have selected the IND/IDE Type:
       |IND|
       |IDE|
@@ -60,7 +60,7 @@ Scenario Outline:#3 FDA IND/IDE Information Validation check rule
       |IND/IDE Grantor  |
       |IND/IDE Holder Type  |
     And I have clicked on the Add IND/IDE Button
-     Then A message will be displayed "IND/IDE Type,IND/IDE Number,IND/IDE Grantor and IND/IDE Holder Type are Required"
+     Then A message will be displayed "IND/IDE Type, IND/IDE Number, IND/IDE Grantor and IND/IDE Holder Type are Required"
      When I have selected the <INDIDEholder> Type as
            |NIH|
            |NCI|
@@ -69,8 +69,8 @@ Scenario Outline:#3 FDA IND/IDE Information Validation check rule
            
      
       |INDIDEholder  |Error  |
-      |NIH           |NIH Istitution is Required  |
-      |NCI           |NCI Division/Program Code is Required  |
+      |NIH           |NIH Institution is Required  |
+      |NCI           |NCI Division/Program is Required  |
 
       
    Examples:

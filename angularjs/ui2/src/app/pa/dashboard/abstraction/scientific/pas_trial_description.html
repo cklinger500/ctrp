@@ -1,10 +1,10 @@
-<div class="row">
+<div class="row" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidProtocol || paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">Trial Descriptions</div>
         </div>
         <div class="panel-body">
-            <form name="desc_form" role="form" class="form form-horizontal" novalidate ctrp-submit="descView.saveTrialDescription()">
+            <form name="desc_form" role="form" class="form form-horizontal" novalidate ctrp-submit="descView.saveTrialDescription()" unsaved-changes>
                 <!-- fieldset for Title -->
                 <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || descView.disableBtn">
                     <legend class="sub-bordered">Title</legend>
@@ -67,6 +67,7 @@
                                       id="objective"
                                       rows="5"
                                       class="form-control"
+                                      maxlength="32000"
                                       ng-model="descView.curTrial.objective">
                             </textarea>
                             <span class="help-block" ng-show="desc_form.objective.$dirty">
@@ -101,7 +102,7 @@
                         <button type="submit" class="btn btn-primary pull-right" id="submit_processing" restriction-field ng-disabled="descView.disableBtn">
                             <i class="glyphicon glyphicon-ok"></i> Save
                         </button>
-                        <button type="button" class="btn btn-warning pull-right" ng-click="descView.reload()" restriction-field ng-disabled="descView.disableBtn">
+                        <button type="button" class="btn btn-warning pull-right" id="reset_desc" ng-click="descView.reset()" restriction-field ng-disabled="descView.disableBtn">
                             <i class="glyphicon glyphicon-remove"></i> Reset
                         </button>
                     </div>

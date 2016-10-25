@@ -1,0 +1,17 @@
+<%= form_for(@import_trial_log_datum) do |f| %>
+  <% if @import_trial_log_datum.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@import_trial_log_datum.errors.count, "error") %> prohibited this import_trial_log_datum from being saved:</h2>
+
+      <ul>
+      <% @import_trial_log_datum.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

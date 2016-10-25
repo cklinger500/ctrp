@@ -14,6 +14,7 @@ Scenario Outline: #1 I am able to search for person in CTRP as a Registry user
   When I provide the First Name <firstName> of the Person
   And I provide the Last Name <lastName> of the Person
   And I provide the Organization Affiliation <organizationAffiliation> of the Person
+  And I provide the CTRP Org ID <CTRPOrgID> of the person affiliation
   And I provide the Source ID <sourceID> of the Person
   And I provide the Email <email> of the Person
   And I provide the Phone <phone> of the Person

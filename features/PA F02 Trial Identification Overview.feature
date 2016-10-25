@@ -1,4 +1,4 @@
-@PA @global
+@PA  @global
 Feature: PA F02 Trail Identification Overview
 Description:  As any CTRP PA User, I can view the Trail Identification Overview and check out a trial for abstraction with the appropriate role
 
@@ -6,14 +6,14 @@ Scenario: #1 I can view the Trail Overview and the Trial Identification for a Tr
 Given I am logged into the CTRP Protocol Abstraction application
 And I have selected a trial 
 And I have selected Trail Identification Overview
-Then the Trail Identification Overview and the Trial Identifications will be displayed
+Then the Trail Identification Overview and the Trial Identification sections will be displayed
 
 Scenario: #2 I can view the Trail Overview for a Trial
 Given I am logged into the CTRP Protocol Abstraction application
 And I have selected a trial 
 And I have selected Trail Identification Overview
-Then the Trail Identification Overview and the Trial Identifications will be displayed 
-And the Trail Overview for a Trial will include the following fields:
+Then the Trail Identification Overview and the Trial Identification sections will be displayed 
+And the Trail Overview for the last active submission for a Trial will include the following fields:
 |NCI ID|
 |Brief Title|
 |NCT ID|
@@ -27,16 +27,17 @@ And the Trail Overview for a Trial will include the following fields:
 |Clinical Research Category|
 |Amendment Date|
 |Last Updated by - last user to update the trial|
-|Last Updated Date – last date any data for a trial was updated|
+|Last Updated Date ï¿½ last date any data for a trial was updated|
 |Current Trial Status|
 |Current Trial Status Date|
-|Processing Status|
+|Processing Status (for the last active submission)|
 |Checked Out For Admin. Use By|
 |Checked Out For Scientific Use By|
 |Admin Check Out Button|
 |Scientific Check Out Button|
 |Admin and Scientific Check Out Button|
 |Information Source (Trials.internal_source_id Internal_Sources.name )|
+|Data Table 4 Funding Source|
 
 Scenario: #3 I can view the Lead Organization for a Trial
 Given I am logged into the CTRP Protocol Abstraction application
@@ -83,7 +84,7 @@ Then that section of the trial record will be locked by my user account for edit
 And my user name will be displayed in the check out field
 |Checked out for Admin Use by - Admin Check Out Button|
 |Checked out for Scientific Use by - Scientific Check Out Button|
-| Checked out for Admin. Use and Checked out for Scientific Use by – Admin. And Scientific Check Out Button|
+| Checked out for Admin. Use and Checked out for Scientific Use by ï¿½ Admin. And Scientific Check Out Button|
 And that button will be a check in button
 |Admin Check In Button|
 |Scientific Check Out Button|

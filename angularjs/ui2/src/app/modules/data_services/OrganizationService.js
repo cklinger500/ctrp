@@ -9,31 +9,32 @@
         .factory('OrgService', OrgService);
 
     OrgService.$inject = ['URL_CONFIGS', 'MESSAGES', '$log', '_',
-        'GeoLocationService', 'Common', '$rootScope', 'PromiseTimeoutService','UserService'];
+        'GeoLocationService', 'Common', '$rootScope', 'PromiseTimeoutService','UserService', 'uiGridExporterConstants', 'uiGridExporterService'];
 
     function OrgService(URL_CONFIGS, MESSAGES, $log, _,
                         GeoLocationService, Common, $rootScope,
-                        PromiseTimeoutService,UserService) {
+                        PromiseTimeoutService,UserService, uiGridExporterConstants, uiGridExporterService) {
 
         var statesOrProvinces = [];
         var initOrgSearchParams = {
             name : '',
             alias: true,
             wc_search: true,
-            // po_id : '',
-            ctrp_id : '',
-            source_context : '',
-            source_id : '',
-            source_status : '',
-            family_name : '',
-            address : '',
-            address2 : '',
-            city : '',
+            ctrp_id: '',
+            source_context: '',
+            source_id: '',
+            source_status: '',
+            family_name: '',
+            address: '',
+            address2: '',
+            city: '',
             state_province : '',
-            country : '', //default country ? United States ?
-            email : '',
-            postal_code : '',
+            country: '', //default country ? United States ?
+            email: '',
+            postal_code: '',
             phone: '',
+            processing_status: '',
+            service_request_name: '',
 
             //for pagination and sorting
             sort: '',
@@ -60,7 +61,18 @@
             useExternalPagination: true,
             useExternalSorting: true,
             enableGridMenu: true,
-            enableFiltering: true,
+            enableFiltering: false,
+            exporterCsvFilename: 'organizations.csv',
+            exporterMenuAllData: true,
+            exporterMenuPdf: false,
+            exporterMenuCsv: false,
+            gridMenuCustomItems: [{
+                title: 'Export All Data As CSV',
+                order: 100,
+                action: function ($event){
+                    this.grid.api.exporter.csvExport(uiGridExporterConstants.ALL, uiGridExporterConstants.ALL);
+                }
+            }],
             columnDefs: [
                 {name: 'Nullify', displayName: 'Nullify',
                     enableSorting: false,
@@ -75,7 +87,7 @@
                     minWidth: '100',
                     width: '*'},
 
-                {name: 'ctep_id', displayName: 'CTEP ID', enableSorting: true, minWidth: '100', width: '*'},
+                {name: 'multiview_ctep_id', displayName: 'CTEP ID', enableSorting: true, minWidth: '100', width: '*'},
 
                 {
                     name: 'name', enableSorting: true, minWidth: '300', width: '*', sort: { direction: 'asc', priority: 1},
@@ -87,31 +99,41 @@
 
                 },
                 {name: 'source_status', displayName: 'Source Status',
-                    enableSorting: true, minWidth: '175', width: '*'},
+                    enableSorting: true, width: '150'},
                 {name: 'source_context', displayName: 'Source Context',
-                    enableSorting: true, minWidth: '175', width: '*'},
+                    enableSorting: true, width: '150'},
                 {name: 'source_id', displayName: 'Source ID',
-                    enableSorting: true, minWidth: '175', width: '*'},
+                    enableSorting: true, width: '150'},
 
-                {name: 'aff_families_names', displayName: 'Families',
-                    enableSorting: true, minWidth: '100', width: '*',height: '50%',
-                    cellTemplate: '<div class="ngCellText" ng-repeat="fam in row.entity.aff_families_names"' +
-                    ' title="{{fam.Name}}">{{fam.Name}}</div>'
+                {name: 'aff_families_names', displayName: 'Family Name',
+                    enableSorting: true, minWidth: '150', width: '*',height: '50%',
+                    cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" ng-repeat="fam in row.entity.aff_families_names track by $index"' +
+                    ' title="{{COL_FIELD}}">{{COL_FIELD}}</div>'
                 },
-                {name: 'phone', enableSorting: true, minWidth: '100', width: '*'},
-                {name: 'email', enableSorting: true, minWidth: '150', width: '*',
+                {name: 'phone_with_ext', displayName: 'Phone', enableSorting: true, minWidth: '170', width: '*'},
+                {name: 'email', enableSorting: true, minWidth: '200', width: '*',
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' +
                     '{{COL_FIELD CUSTOM_FILTERS}}</div>'
                 },
+                {name: 'city', displayName: 'City',
+                    enableSorting: true, minWidth: '150', width: '*'},
+                {name: 'state_province', displayName: 'State',
+                    enableSorting: true, minWidth: '150', width: '*'},
+                {name: 'country', displayName: 'Country',
+                    enableSorting: true, minWidth: '150', width: '*'},
+                {name: 'postal_code', displayName: 'Postal Code',
+                    enableSorting: true, minWidth: '150', width: '*'},
+                {name: 'id', displayName: 'Context Org ID',
+                    enableSorting: true, minWidth: '150', width: '150'},
+                {name: 'processing_status', displayName: 'Processing Status',
+                    enableSorting: true, minWidth: '150', width: '150'},
+                {name: 'service_request_name', displayName: 'Service Request',
+                    enableSorting: true, minWidth: '150', width: '150'},
                 {name: 'updated_by', displayName: 'Last Updated By',
                     enableSorting: true, minWidth: '150', width: '*'},
                 {name: 'updated_at', displayName: 'Last Updated Date',
                     type: 'date', cellFilter: 'date: "dd-MMM-yyyy H:mm"',
-                    enableSorting: true, minWidth: '160', width: '*'},
-                {name: 'city', enableSorting: true, minWidth: '100', width: '*'},
-                {name: 'state_province', displayName: 'State', enableSorting: true, minWidth: '100', width: '*'},
-                {name: 'country', displayName: 'Country', enableSorting: true, minWidth: '100', width:'*'},
-                {name: 'postal_code', displayName: 'Postal Code', enableSorting: true, minWidth: '120', width:'*'}
+                    enableSorting: true, minWidth: '160', width: '*'}
 
 
             ]
@@ -121,6 +143,8 @@
             getAllOrgs: getAllOrgs,
             getOrgById: getOrgById,
             upsertOrg: upsertOrg,
+            getAssociatedOrgs: getAssociatedOrgs,
+            disAssociateOrgs: disAssociateOrgs,
             searchOrgs: searchOrgs,
             getInitialOrgSearchParams: getInitialOrgSearchParams,
             getGridOptions: getGridOptions,
@@ -135,7 +159,12 @@
             curateOrg: curateOrg,
             findContextId: findContextId,
             checkUniqueOrganization: checkUniqueOrganization,
-            typeAheadOrgNameSearch: typeAheadOrgNameSearch
+            typeAheadOrgNameSearch: typeAheadOrgNameSearch,
+            setTypeAheadOrg: setTypeAheadOrg,
+            getServiceRequests: getServiceRequests,
+            getProcessingStatuses: getProcessingStatuses,
+            cloneCtepOrg: cloneCtepOrg,
+            getSourceStatuses2: getSourceStatuses2
         };
 
         return services;
@@ -162,8 +191,6 @@
          */
         function upsertOrg(orgObj) {
             if (orgObj.new) {
-                //create a new org
-                $log.info('creating an organization: ' + JSON.stringify(orgObj));
                 return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.ORG_LIST, orgObj);
             }
 
@@ -172,8 +199,26 @@
             return PromiseTimeoutService.updateObj(URL_CONFIGS.AN_ORG + orgObj.id + '.json', orgObj, configObj);
         } //upsertOrg
 
+        /**
+         * Get associated organizations
+         *
+         * @param getAssociatedOrgs
+         * @returns {*}
+         */
+        function getAssociatedOrgs(orgObj) {
+            return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.ASSOCIATED_ORGS, orgObj);
+        } //getAssociatedOrgs
 
 
+        /**
+         * dis associate organizations
+         *
+         * @param disAssociateOrgs
+         * @returns {*}
+         */
+        function disAssociateOrgs(orgObj) {
+            return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.DISASSOCIATE_ORGS, orgObj);
+        } //disAssociateOrgs
 
         /**
          *
@@ -208,11 +253,13 @@
 
 
         function getGridOptions(usedInModal) {
-            var user_role= !!UserService.getUserRole() ? UserService.getUserRole().split('_')[1].toLowerCase() : '';
+            var allowedROLES= ['ROLE_ADMIN', 'ROLE_SUPER', 'ROLE_ABSTRACTOR', 'ROLE_CURATOR'];
+            var user_role = UserService.getUserRole() ? UserService.getUserRole().toUpperCase() : '';
+
             var updated_at_index = Common.indexOfObjectInJsonArray(gridOptions.columnDefs, 'name', 'updated_at');
             var updated_by_index = Common.indexOfObjectInJsonArray(gridOptions.columnDefs, 'name', 'updated_by');
-            var curator_role = 'curator';
-            if(user_role.toUpperCase() !== curator_role.toUpperCase()) {
+
+            if(!_.contains(allowedROLES, user_role)) {
                 if (updated_at_index >= 0 )
                     gridOptions.columnDefs.splice(updated_at_index,1);
                 if (updated_by_index >= 0)
@@ -226,7 +273,17 @@
             return gridOptions;
         }
 
-        function typeAheadOrgNameSearch(resObj, field, family) {
+        function setTypeAheadOrg (searchObj) {
+            var splitVal = searchObj.split('<span class="hide">');
+            var org_search_name = splitVal[0];
+            var userChosenOrg = JSON.parse(splitVal[1].split('</span>')[0].replace(/"null"/g, 'null'));
+            return  {
+                organization_name: org_search_name,
+                organization_details: userChosenOrg
+            }
+        };
+
+        function typeAheadOrgNameSearch(field, family) {
 
             var wildcardOrgName = field.indexOf('*') > -1 ? field : '*' + field + '*';
             //search context: 'CTRP', to avoid duplicate names
@@ -237,7 +294,13 @@
             };
 
             if(family && family.length){
-                queryObj['family_name'] = family
+                if (family === 'no_family') {
+                    queryObj['alias'] = false;
+                    queryObj['rows'] = 25;
+                    queryObj['no_family'] = true;
+                } else {
+                    queryObj['family_name'] = family;
+                }
             }
 
             return searchOrgs(queryObj).then(function(res) {
@@ -245,15 +308,30 @@
                 var uniqueNames = [];
                 var orgNames = [];
 
-                orgNames = res.orgs.map(function (org) {
-                    resObj.organization_id = org.id;
-                    resObj.organization_name = org.name;
-                    return org.name;
-                });
+                var status = res.server_response.status;
 
-                return uniqueNames = orgNames.filter(function (name) {
-                    return uniqueNames.indexOf(name) === -1;
-                });
+                if (status >= 200 && status <= 210) {
+                    orgNames = res.orgs.map(function (org) {
+                        return org.name + ', ' + org.city + ', ' + org.state_province + ' ' + org.postal_code  + ', ' + org.country +
+                        '<span class="hide">{' +
+                                '"id":' + org.id +
+                                ',"name": "' + org.name + '"' +
+                                ',"address": "' + org.address + '"' +
+                                ',"address2": "' + org.address2 + '"' +
+                                ',"city": "' + org.city + '"' +
+                                ',"state_province": "' + org.state_province + '"' +
+                                ',"postal_code": "' + org.postal_code + '"' +
+                                ',"country": "' + org.country + '"' +
+                                ',"email": "' + org.email + '"' +
+                                ',"phone": "' + org.phone + '"' +
+                                ',"fax": "' + org.fax + '"' +
+                            '}</span>';
+                    });
+
+                    return uniqueNames = orgNames.filter(function (name) {
+                        return uniqueNames.indexOf(name) === -1;
+                    });
+                }
             });
         }
 
@@ -267,14 +345,18 @@
 
                     GeoLocationService.getStateListInCountry(countryName)
                         .then(function (response) {
-                            statesOrProvinces = response;
+                            var status = response.server_response.status;
 
-                            //states or provinces are not available
-                            if (statesOrProvinces.length === 0) {
-                                broadcastMsg(MESSAGES.STATES_UNAVAIL, 'states or provinces are not available');
-                                return;
+                            if (status >= 200 && status <= 210) {
+                                statesOrProvinces = response;
+
+                                //states or provinces are not available
+                                if (statesOrProvinces.length === 0) {
+                                    broadcastMsg(MESSAGES.STATES_UNAVAIL, 'states or provinces are not available');
+                                    return;
+                                }
+                                broadcastMsg(MESSAGES.STATES_AVAIL, 'come get your states or provinces');
                             }
-                            broadcastMsg(MESSAGES.STATES_AVAIL, 'come get your states or provinces');
                         }).catch(function (err) {
                             $log.info('error in retrieving states for country: ' + countryName);
                         });
@@ -319,9 +401,14 @@
          * retrieve source statuses from backend service
          * @return {promise}
          */
-        function getSourceStatuses() {
-            return PromiseTimeoutService.getData(URL_CONFIGS.SOURCE_STATUSES);
+        function getSourceStatuses(searchParams) {
+            return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.SOURCE_STATUSES, searchParams);
         } //getSourceStatuses
+
+        // retrieve ALL source statuses using GET
+        function getSourceStatuses2() {
+            return PromiseTimeoutService.getData(URL_CONFIGS.SOURCE_STATUSES2);
+        }
 
 
         /**
@@ -334,9 +421,12 @@
             return PromiseTimeoutService.deleteObjFromBackend(URL_CONFIGS.AN_ORG + orgId + '.json');
         }
 
-
-
-
+        function getProcessingStatuses() {
+            return [
+                {id: 1, name: 'Complete'},
+                {id: 2, name: 'Incomplete'}
+            ];
+        }
 
         /**
          * Check if targetOrgsArr contains orgObj by checking the 'id' field
@@ -409,6 +499,14 @@
          */
         function curateOrg(curationObject) {
             return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.CURATE_ORG, curationObject);
+        }
+
+        function getServiceRequests() {
+            return PromiseTimeoutService.getData(URL_CONFIGS.SERVICE_REQUESTS);
+        }
+
+        function cloneCtepOrg(orgId) {
+            return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.CLONE_CTEP_ORG, {org_id: orgId});
         }
 
 

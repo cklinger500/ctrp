@@ -51,13 +51,17 @@ Then an error message will appear that "The On Hold Reason must be entered to pl
 Scenario: #4 PA On Hold Reason note
 Given I am logged into the CTRP Protocol Abstraction application
 And I am on the Add Trial On Hold Information Screen
-Then a comment appears below the On Hold Reason field “Pending” Reasons are for the CTRO, “Submission” Reasons are for the Submitter
+Then a comment appears below the On Hold Reason field ï¿½Pendingï¿½ Reasons are for the CTRO, ï¿½Submissionï¿½ Reasons are for the Submitter
 
 Scenario: #5 PA On Hold Reason Description field character count
 Given I am logged into the CTRP Protocol Abstraction application
 And I am on the Add Trial On Hold Information Screen
 Then a comment appears below the On Hold Reason Description field to display the number of characters available to enter into the field.  
 |4000 characters left|
+And "x characters left" will be displayed as characters are added
+ When all the characters mentioned above for field have been entered
+ Then no additional text can be entered
+
 
 Scenario: #6 I can take a trial off Hold 
 Given I am logged into the CTRP Protocol Abstraction application
@@ -88,4 +92,14 @@ And the trial is On Hold
 And the trial has an on hold date
 Then I will not be able to add another on hold until the trial is off hold
 And the trial has an Off Hold date
+
+Scenario: #9 I cannot place a trial on On Hold when it is rejected
+Given I am logged into the CTRP Protocol Abstraction application
+And I have selected a trial 
+And I have selected On Hold Information
+And the trial is rejected (Late Rejection Date milestone or Submission Rejection Date milesonte with no active submssion)|
+Then I can not place the trial on hold
+
+
+
 

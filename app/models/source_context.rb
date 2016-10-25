@@ -13,6 +13,6 @@
 
 class SourceContext < ActiveRecord::Base
   include BasicConcerns
-
+  has_many :source_statuses
   validates :code, uniqueness: true
 end

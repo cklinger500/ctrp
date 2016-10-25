@@ -9,10 +9,10 @@
         .factory('PersonService', PersonService);
 
     PersonService.$inject = ['PromiseService', 'URL_CONFIGS','$log',
-            '$rootScope', 'PromiseTimeoutService','UserService','Common'];
+            '$rootScope', 'PromiseTimeoutService','UserService','Common', 'uiGridExporterConstants', 'uiGridExporterService'];
 
     function PersonService(PromiseService, URL_CONFIGS, $log,
-                $rootScope, PromiseTimeoutService,UserService,Common) {
+                $rootScope, PromiseTimeoutService,UserService,Common, uiGridExporterConstants, uiGridExporterService) {
 
         var initPersonSearchParams = {
             fname: '',
@@ -58,9 +58,20 @@
             useExternalPagination: true,
             useExternalSorting: true,
             enableGridMenu: true,
-            enableFiltering: true,
+            enableFiltering: false,
             enableHorizontalScrollbar: 2,
             enableVerticalScrollbar: 2,
+            exporterCsvFilename: 'persons.csv',
+            exporterMenuAllData: true,
+            exporterMenuPdf: false,
+            exporterMenuCsv: false,
+            gridMenuCustomItems: [{
+                title: 'Export All Data As CSV',
+                order: 100,
+                action: function ($event){
+                    this.grid.api.exporter.csvExport(uiGridExporterConstants.ALL, uiGridExporterConstants.ALL);
+                }
+            }],
             columnDefs: [
                 {name: 'Nullify', displayName: 'Nullify',
                     enableSorting: false, enableFiltering: false,
@@ -70,7 +81,7 @@
                     visible: false
                 },
                 {name: 'ctrp_id', enableSorting: true, displayName: 'CTRP ID', minWidth: '100', width: '*'},
-                {name: 'ctep_id', enableSorting: true, displayName: 'CTEP ID', minWidth: '100', width: '*'},
+                {name: 'ctep_source_id', enableSorting: true, displayName: 'CTEP ID', minWidth: '100', width: '*'},
                 {name: 'fname', displayName: 'First', enableSorting: true,  minWidth: '100', width: '*',
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' +
                     '<a ui-sref="main.personDetail({personId : row.entity.id })">{{COL_FIELD CUSTOM_FILTERS}}</a></div>'
@@ -79,7 +90,7 @@
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' +
                     '<a ui-sref="main.personDetail({personId : row.entity.id })">{{COL_FIELD CUSTOM_FILTERS}}</a></div>'
                 },
-                {name: 'lname', displayName: 'Last', enableSorting: true, minWidth: '100', width: '*', sort: { direction: 'asc', priority: 1}, 
+                {name: 'lname', displayName: 'Last', enableSorting: true, minWidth: '100', width: '*', sort: { direction: 'asc', priority: 1},
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' +
                     '<a ui-sref="main.personDetail({personId : row.entity.id })">{{COL_FIELD CUSTOM_FILTERS}}</a></div>'
                 },
@@ -96,19 +107,22 @@
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' +
                     '{{COL_FIELD CUSTOM_FILTERS}}</div>'
                 },
-                {name: 'affiliated_orgs_first5', displayName:'Affiliated Orgs',
-                    minWidth: '150', width: '*',
-                    cellTemplate:'<div ng-if="row.entity.affiliated_orgs_first5.length > 0">' +
-                    ' <master-directive button-label="Click to see" mod="row.entity.affiliated_orgs_first5">' +
-                    '</master-directive></div>' +
-                    '<div class="text-center" ng-show="row.entity.affiliated_orgs_first5.length == 0">--</div>'},
+                {name: 'affiliated_orgs', displayName:'Affiliated Orgs',
+                    minWidth: '150', width: '*', enableSorting: false, enableFiltering: false,
+                    cellTemplate:'<div class="ui-grid-cell-contents tooltip-uigrid" ng-if="row.entity.affiliated_orgs.length > 0" title="{{COL_FIELD}}">{{COL_FIELD}}</div>' +
+                    //' <master-directive button-label="Click to see" mod="row.entity.affiliated_orgs">' +
+                    //'</master-directive></div>' +
+                    '<div class="text-center" ng-show="row.entity.affiliated_orgs.length == 0">--</div>'},
                 {name: 'updated_at', displayName: 'Last Updated Date',
                     type: 'date', cellFilter: 'date: "dd-MMM-yyyy H:mm"',
                     enableSorting: true, minWidth: '150', width: '*'},
                 {name: 'updated_by', displayName: 'Last Updated By',
                     enableSorting: true, minWidth: '150', width: '*'},
                 {name: 'prefix', enableSorting: true, minWidth: '75', width: '*'},
-                {name: 'suffix', enableSorting: true, minWidth: '75', width: '*'}
+                {name: 'suffix', enableSorting: true, minWidth: '75', width: '*'},
+                {name: 'context_person_id', displayName: 'Context Person ID', enableSorting: false, minWidth: '75', width: '*'},
+                {name: 'processing_status', displayName: 'Processing Status', enableSorting: true, minWidth: '100', width: '*'},
+                {name: 'service_request', displayName: 'Service Request', enableSorting: false, minWidth: '75', width: '*'},
             ]
         };
 
@@ -125,7 +139,10 @@
             getPoAffStatuses : getPoAffStatuses,
             curatePerson : curatePerson,
             checkUniquePerson : checkUniquePerson,
-            extractFullName: extractFullName
+            extractFullName: extractFullName,
+            associatePersonContext: associatePersonContext,
+            removePersonAssociation: removePersonAssociation,
+            cloneCtepPerson: cloneCtepPerson,
         };
 
         return services;
@@ -267,6 +284,24 @@
             return PromiseTimeoutService.getData(URL_CONFIGS.PO_AFF_STATUSES);
         }
 
+        function associatePersonContext(ctepPersonId, ctrpId) {
+            // plug in the url params
+            var url = URL_CONFIGS.ASSOCIATE_PERSON;
+            url = url.replace('{:ctep_person_id}', ctepPersonId);
+            url = url.replace('{:ctrp_id}', ctrpId);
+            return PromiseTimeoutService.getData(url);
+        }
+        /**
+         * Remove person context association
+         * @param  {[type]} ctepPersonId [description]
+         * @return {[type]}              [description]
+         */
+        function removePersonAssociation(ctepPersonId) {
+            var url = URL_CONFIGS.REMOVE_PERSON_ASSOCIATION;
+            url = url.replace('{:ctep_person_id}', ctepPersonId);
+            return PromiseTimeoutService.getData(url);
+        }
+
 
         /**
          * Nullify a person and merge his/her association to the retained person
@@ -275,6 +310,14 @@
          */
         function curatePerson(curationObject) {
             return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.CURATE_PERSON, curationObject);
+        }
+
+        function cloneCtepPerson(ctepPersonId, forceClone) {
+            var data = {
+                ctep_person_id: ctepPersonId,
+                force_clone: forceClone || false,
+            };
+            return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.CLONE_CTEP_PERSON, data);
         }
 
 
@@ -291,9 +334,10 @@
         /**
          * Extract the person's full name from the personObj
          * @param  {JSON} personObj [required fields: fname (String); mname (String); lname (String)]
+         * @param  {String} format  'fl': 'first name last name', 'lf': 'last name, first name', 'lfm': 'last name, first name middle name'
          * @return {String}           [full name, e.g. 'John Middle Doe']
          */
-        function extractFullName(personObj) {
+        function extractFullName(personObj, format) {
             if (!personObj) {
                 return '';
             }
@@ -302,16 +346,24 @@
             var middleName = personObj.mname || '';
             var lastName = personObj.lname || '';
 
-            fullName += firstName;
-            fullName += !!middleName ? (' ' + middleName) : '';
-            fullName += !!lastName ? (' ' + lastName) : '';
+            if (format) {
+                switch (format) {
+                    case 'lf':
+                        fullName = lastName + ', ' + firstName;
+                        break;
+                    case 'lfm':
+                        fullName = lastName + ', ' + firstName + ' ' + middleName;
+                        break;
+                    default:
+                        fullName = firstName + lastName;
+                }
+            } else {
+                fullName += firstName;
+                fullName += !!middleName ? (' ' + middleName) : '';
+                fullName += !!lastName ? (' ' + lastName) : '';
+            }
 
             return fullName;
         }
-
-
-
     }
-
-
 })();

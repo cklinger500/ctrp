@@ -13,8 +13,10 @@ And the current processing status type is displayed
 When I select Action from the Available Actions
 Then the View TSR option will available
 When I click on the view TSR option
-Then the TSR document will be downloaded 
+Then the TSR document will be downloaded with data for the last active submission for the trial
 And I can view TSR document
+
+
 
   Scenario: #1 TSR Heading Section Display Rules
     Given I can view TSR document
@@ -30,7 +32,7 @@ And I can view TSR document
      |		        |		                 |		            |		
      |TSR HEADING   |Trial Summary Report    |Required	        |		  
      |		       	|Date                    |Required		    |	
-     |		        |Record Verification Date|Required		    |
+     |		        |Record Verification Date(Trials.Verification_Date)|Required		    |
      
       Scenario: #2 Official Title Section Display Rules
     Given I can view TSR document
@@ -64,7 +66,7 @@ And I can view TSR document
      And the TSR Trial Details Section fields will be displayed following the rules below
      
      
-      |TSR Section     |Field                                        |Field Required  |Conditional Fields                                      |Display Rule when Field t  |General Details |Research Category                            |Required        |                                                        |Display "No data available"    |
+      |TSR Section     |Field                                        |Field Required  |Conditional Fields                                      |Display Rule when Field t  |
       |                |Lead Organization                            |Required        |                                                        |Display "No data available"    |
       |                |Sponsor                                      |Required        |                                                        |Display "No data available"    |
       |                |Responsible Party                            |Required        |                                                        |Display "No data available"    |
@@ -130,7 +132,7 @@ And I can view TSR document
       |                      |Affiliation               |Required        |Display "No data available"    |  
       
       
-  Scenario:#8 Trial Design Section Display Rules Associated with Interventional Research Category
+  Scenario:#8 Trial Design Section Display Rules Associated with Interventional/Expanded Access Clinical Research Category
      Given I can View TSR document
      And the Trial Design Section fields will be displayed following the rules below
      
@@ -145,18 +147,18 @@ And I can view TSR document
      |               |Masking                               |Required        |                                  |Display "No data available" 
      |               |Masking Roles                         |Required        |Conditional if Masking is not Open|Display "No data available" 
      |               |Allocation                            |Required        |                                  |Display "No data available" 
-     |               |Classification                        |Required        |                                  |Display "No data available" 
+     |               |Study Classification                  |Required        |                                  |Display "No data available" 
      |               |Target Enrollment                     |Required        |                                  |Display "No data available" 
     
          
       
-    Scenario:#8a Trial Design Section Display Rules Associated with Observational Research Category
+    Scenario:#8a Trial Design Section Display Rules Associated with Observational/Ancillary Correlative Clinical Research Category
      Given I can View TSR document
      And the Trial Design Section fields will be displayed following the rules below 
      
       |TSR Section    |Field                                 |Field Required |Display Rule when Field Blank|
       |Trial Design   |Primary purpose                       |Required       |Display "No data available"  |
-      |               |Description og Other Primary Purpose  |Not Required   |Field not Displayed          |  
+      |               |Description of Other Primary Purpose  |Not Required   |Field not Displayed          |  
       |               |Trial Phase                           |Required       |Display "No data available"  |  
       |               |Study Model                           |Required       |Display "No data available"  |  
       |               |Time Perspective                      |Required       |Display "No data available"  |  
@@ -204,15 +206,15 @@ And I can view TSR document
      Given I can View TSR document
      And the Eligibility Criteria Section fields will be displayed following the rules below
       
-      |TSR Section           |Field                       |Field Required |Conditional Fields                               |Display Rule when Field Blank|
-      |Eligibility Criteria  |Accepts Healthy Volunteers  |Required       |                                                 |Display "No data available"
-      |                      |Gender                      |Required       |                                                 |Display "No data available"
-      |                      |Minimum Age                 |Required       |                                                 |Display "No data available"
-      |                      |Maximum Age                 |Required       |                                                 |Display "No data available"
-      |                      |Sampling Method             |Required       |Conditional if Research Category is Observational|Display "No data available"
-      |                      |Study Population            |Required       |Conditional if Research Category is Observational|Display "No data available"
-      |                      |Inclusion Criteria          |Required       |                                                 |Display "No data available"
-      |                      |Exclusion Criteria          |Required       |                                                 |Display "No data available"
+      |TSR Section           |Field                       |Field Required |Conditional Fields                                        |Display Rule when Field Blank|
+      |Eligibility Criteria  |Accepts Healthy Volunteers  |Required       |                                                          |Display "No data available"
+      |                      |Gender                      |Required       |                                                          |Display "No data available"
+      |                      |Minimum Age                 |Required       |                                                          |Display "No data available"
+      |                      |Maximum Age                 |Required       |                                                          |Display "No data available"
+      |                      |Sampling Method             |Required       |Conditional if Clinical Research Category is Observational|Display "No data available"
+      |                      |Study Population            |Required       |Conditional if Clinical Research Category is Observational|Display "No data available"
+      |                      |Inclusion Criteria          |Required       |                                                          |Display "No data available"
+      |                      |Exclusion Criteria          |Required       |                                                          |Display "No data available"
 
 
 

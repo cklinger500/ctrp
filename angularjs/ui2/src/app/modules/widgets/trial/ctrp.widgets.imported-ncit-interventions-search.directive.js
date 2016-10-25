@@ -58,13 +58,15 @@
               }
               vm.errorMsg = '';
               PATrialService.lookupNcitInterventions(params).then(function(res) {
-                 // console.info('res from the interventions lookup: ', res);
-                 res.server_response = null;
-                 vm.searchResults = res;
-                 vm.gridOptions.data = res.data;
-                 vm.gridApi.core.refresh();
-                 // console.info('search results: ', res.data);
-                 vm.gridOptions.totalItems = res.total;
+                  var status = res.server_response.status;
+
+                  if (status >= 200 && status <= 210) {
+                     res.server_response = null;
+                     vm.searchResults = res;
+                     vm.gridOptions.data = res.data;
+                     vm.gridApi.core.refresh();
+                     vm.gridOptions.totalItems = res.total;
+                 }
               }).catch(function(err) {
                   console.error('err in the lookup: ', err);
                   vm.searchResults = _initResultsObj();

@@ -5,14 +5,20 @@ As any CTRP User, I am able to View Existing Persons
 
 
 Scenario: #1 I am able to view existing person in CTRP as a Registry user
-  Given I am logged into the CTRP Registration application
+  Given  Given I am a CTRP user with the the Role Type
+     
+     |Trial Submitter|
+     |Site Administrator: Site SU|
+     
+  And I am logged into the CTRP Registration application
   And the following parameters of a Person exist:
-    |Prefix|PersonFirstName|PersonMiddleName|PersonLastName|Suffix|SourceContext|SourceID|SourceStatus |email |phone|OrgAffiliation|
-    |Ms|shiFNameTrRegF02 vw|shiMNameTrial |shiLNameTrial |Suffix|CTRP|shiSID|Active |shiPercukeTrial@pr.com| 420-999-8906|ShiOrg|
+    |CTRP Person ID|Prefix|PersonFirstName|PersonMiddleName|PersonLastName|Suffix|SourceContext|SourceID|SourceStatus |email |phone|OrgAffiliation|
+   |12345|Ms|shiFNameTrRegF02 vw|shiMNameTrial |shiLNameTrial |Suffix|CTRP|shiSID|Active |shiPercukeTrial@pr.com| 420-999-8906|ShiOrg|
   And I have completed a person search 
   When I have cliked on the name of the person I want to view
   Then the View Person screen opens with the page title as "View Person"
   And I will view person details type
+      |CTRP Person ID|12345|
       |Prefix  | Ms|
       |First Name  | shiFNameTrRegF02 vw|
       |Middle Name  | shiMNameTrial     |
@@ -22,8 +28,20 @@ Scenario: #1 I am able to view existing person in CTRP as a Registry user
       |Source ID  | shiSID|
       |Source Status  |Active|
       |Email  |shiPercukeTrial@pr.com| 
-      |Phone Number  |420-999-8906|
+      |Phone Number:extension  |420-999-8906:9877|
       |Org Affiliation|ShiOrg|
+      
+      And Org Affiliation view details type will be displayed
+      
+
+      |CTRPID  |
+      |CTEPID|
+      |Organization Name  |
+      |Relationship  |
+      |Effective Date  |
+      |Expiration Date  |
+      
+    
       
 And I should not be allowed to edit person parameters
 And I should not be allowed to delete a person

@@ -1,4 +1,4 @@
-<div class="row" id="section_top">
+<div class="row" id="section_top" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidProtocol || paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection" unsaved-changes>
     <div class="panel panel-default" ng-show="diseaseView.addMode">
         <div class="panel-heading">
             <div class="panel-title">Add Disease/Condition</div>
@@ -94,7 +94,7 @@
                         <button type="button" class="btn btn-warning pull-right" id="reset_btn" restriction-field ng-disabled="!diseaseView.addedDiseases.length || diseaseView.disableBtn" ng-click="diseaseView.resetDiseases()">
                             <i class="glyphicon glyphicon-remove"></i> Reset
                         </button>
-                        <button type="button" class="btn btn-warning pull-right" id="back_btn" restriction-field ng-click="diseaseView.setAddMode(false)" ng-disabled="diseaseView.disableBtn">
+                        <button type="button" class="btn btn-warning pull-right" id="back_btn" restriction-field ng-click="diseaseView.reload()" ng-disabled="diseaseView.disableBtn">
                             <i class="glyphicon glyphicon-arrow-left"></i> Back to Disease List
                         </button>
                     </div>

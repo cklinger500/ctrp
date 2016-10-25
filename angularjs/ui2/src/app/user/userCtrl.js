@@ -8,11 +8,19 @@
     angular.module('ctrp.app.user')
         .controller('userCtrl', userCtrl);
 
-    userCtrl.$inject = ['$scope', 'UserService', 'loginBulletin'];
+    userCtrl.$inject = ['$scope', 'UserService', 'AppSettingsService'];
 
-    function userCtrl($scope, UserService, loginBulletin) {
+    function userCtrl($scope, UserService, AppSettingsService) {
         var vm = this;
-        vm.loginBulletin = loginBulletin['login_bulletin'] || '';
+
+        AppSettingsService.getSettings({ setting: 'LOGIN_BULLETIN', external: true }).then(function (response) {
+            var status = response.status;
+
+            if (status >= 200 && status <= 210) {
+                vm.loginBulletin = response.data[0] ? response.data[0].settings : null;
+            }
+        });
+
         vm.processing = false;
 
         vm.userObj = {

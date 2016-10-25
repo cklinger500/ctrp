@@ -1,3 +1,5 @@
+@trial.current_user = @current_user
+
 json.extract! @trial, :id, :nci_id, :lead_protocol_id, :official_title, :pilot, :research_category_id, :masking_id, :biospecimen_retention_id, :biospecimen_desc,
               :masking_role_caregiver, :masking_role_investigator, :masking_role_outcome_assessor, :masking_role_subject, :accept_vol, :min_age, :max_age, :min_age_unit_id, :max_age_unit_id, :gender_id,
               :research_category, :allocation_id, :study_classification_id, :target_enrollment, :final_enrollment, :study_model_id, :study_model_other, :study_pop_desc, :sampling_method,
@@ -12,11 +14,18 @@ json.extract! @trial, :id, :nci_id, :lead_protocol_id, :official_title, :pilot, 
               :brief_title, :brief_summary, :objective, :detailed_description, :intervention_model_id, :num_of_arms,
               :actions, :is_owner, :research_category, :admin_checkout, :scientific_checkout, :process_priority, :process_comment, :nci_specific_comment,
               :nih_nci_div, :nih_nci_prog, :alternate_titles, :acronym, :keywords, :central_contacts, :board_name, :board_affiliation_id,
-              :board_approval_num, :board_approval_status_id, :available_family_orgs, :verification_date, :submission_nums, :uuid
+              :board_approval_num, :board_approval_status_id, :available_family_orgs, :verification_date, :submission_nums, :uuid, :is_rejected
 
 json.other_ids do
   json.array!(@trial.other_ids) do |id|
     json.extract! id, :trial_id, :id, :protocol_id_origin_id, :protocol_id_origin, :protocol_id
+  end
+end
+
+json.trial_funding_sources do
+  json.array!(@trial.trial_funding_sources) do |source|
+    json.extract! source, :trial_id, :id, :organization_id
+    json.set! :source_name, Organization.find(source.organization_id).name
   end
 end
 
@@ -149,6 +158,8 @@ json.collaborators_attributes do
   end
 end
 
+@trial.participating_sites = @trial.participating_sites_with_active_orgs
+
 json.participating_sites do
   json.array!(@trial.participating_sites) do |participating_site|
     json.id participating_site.id
@@ -169,6 +180,7 @@ json.participating_sites do
     json.extension participating_site.extension
     json.contact_email participating_site.contact_email
     json.contact_type participating_site.contact_type
+    json.local_trial_identifier participating_site.local_trial_identifier
     json.protocol_id participating_site.protocol_id
     json.program_code participating_site.program_code
     json.person participating_site.person
@@ -244,7 +256,8 @@ json.milestone_wrappers do
 
     if milestone.submission.present?
       json.submission do
-        json.extract! milestone.submission, :id, :submission_num
+        json.extract! milestone.submission, :id, :submission_num, :submission_type_id
+        json.set! :submission_type_code, SubmissionType.find_by_id(milestone.submission.submission_type_id).code
       end
     end
 
@@ -301,6 +314,8 @@ json.submissions do
   json.array!(@trial.submissions) do |submission|
     json.extract! submission, :trial_id, :id, :submission_num, :submission_date, :amendment_num, :amendment_date,
                   :amendment_reason_id, :amendment_reason, :created_at, :updated_at, :user_id, :submission_source_id
+
+    json.set! :submission_type_code, SubmissionType.find(submission.submission_type_id).nil? ? nil : SubmissionType.find(submission.submission_type_id).code
   end
 end
 
@@ -313,8 +328,10 @@ json.current_trial_status_date @trial.trial_status_wrappers.present? ?
 json.current_trial_why_stopped @trial.trial_status_wrappers.present? ?
     @trial.trial_status_wrappers.last.why_stopped : nil
 
-json.processing_status @trial.processing_status_wrappers.present? ?
-    @trial.processing_status_wrappers.last.processing_status.name : nil
+json.processing_status @trial.current_processing_status.nil? ? nil : @trial.current_processing_status.name
+
+# Returns a check to see if it's an amendment
+json.has_amd @trial.has_atleast_one_active_amendment_sub
 
 if SubmissionType.find_by_code('AMD')
   last_amd = @trial.submissions.where('submission_type_id = ?', SubmissionType.find_by_code('AMD').id).last
@@ -324,10 +341,12 @@ end
 json.last_amendment_num last_amd.amendment_num if last_amd.present?
 json.last_amendment_date last_amd.amendment_date if last_amd.present?
 
-json.submission_method @trial.submissions.empty? ? '' : (@trial.submissions.last.submission_method.nil? ? '' : @trial.submissions.last.submission_method.name)
+json.submission_method @trial.current_submission.nil? ? '' : (@trial.current_submission.submission_method.nil? ? '' : @trial.current_submission.submission_method.name)
+
+json.last_submission_type_code @trial.submissions.empty? ? '' : (@trial.submissions.last.submission_type.nil? ? '' : @trial.submissions.last.submission_type.code)
 
 ## get trial's last submitter
-submitter = @trial.submissions.empty? ? nil : (@trial.submissions.last.user_id.nil? ? nil : @trial.submissions.last.user)
+submitter = @trial.current_submission.nil? ? nil : (@trial.current_submission.user_id.nil? ? nil : @trial.current_submission.user)
 
 ## submitter's username
 #json.submitter submitter.nil? ? '' : submitter.username
@@ -377,3 +396,8 @@ end
 
 json.current_submission_num @trial.current_submission.submission_num if @trial.current_submission.present?
 json.current_submission_id @trial.current_submission.id if @trial.current_submission.present?
+json.current_submission_type_code @trial.current_submission.submission_type.code if @trial.current_submission.present?
+
+json.most_recent_submission_num @trial.most_recent_submission.submission_num if @trial.most_recent_submission.present?
+json.most_recent_submission_id @trial.most_recent_submission.id if @trial.most_recent_submission.present?
+json.most_recent_submission_type_code @trial.most_recent_submission.submission_type.code if @trial.most_recent_submission.present?

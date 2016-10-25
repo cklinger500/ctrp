@@ -1,11 +1,11 @@
 <!-- Grid the shows all the Arms Groups -->
-<div class="row" id="section_top">
-    <div class="panel panel-default" ng-if="armView.addEditMode">
+<div class="row" id="section_top" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidProtocol || paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
+    <div class="panel panel-default" ng-show="armView.addEditMode">
         <div class="panel-heading">
             <div class="panel-title">Arms Group Details</div>
         </div>
         <div class="panel-body">
-            <form class="form form-horizontal" role="form" name="arm_form" novalidate ctrp-submit="armView.checkDuplicates()">
+            <form class="form form-horizontal" role="form" name="arm_form" novalidate ctrp-submit="armView.checkDuplicates()" unsaved-changes>
                 <fieldset class="sub-bordered" ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || armView.disableBtn"> 
                     <legend class="sub-bordered">Arms Group</legend>
                     <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.arm_form.needsAttention(arm_form.label)}">
@@ -92,7 +92,7 @@
                         <button type="button" class="btn btn-warning pull-right" ng-click="armView.resetArmsGroup()" ng-disabled="armView.disableBtn" restriction-field>
                             <i class="glyphicon glyphicon-remove"></i> Reset
                         </button>
-                        <button type="button" class="btn btn-warning pull-right" id="arms_groups_list" restriction-field ng-click="armView.setAddMode(false)" ng-disabled="armView.disableBtn">
+                        <button type="button" class="btn btn-warning pull-right" id="arms_groups_list" restriction-field ng-click="armView.reload()" ng-disabled="armView.disableBtn">
                             <i class="glyphicon glyphicon-arrow-left"></i> Back to Arms Groups List
                         </button>
                     </div>
@@ -120,7 +120,7 @@
                         </th>
                         </thead>
                         <tbody ui-sortable="armView.sortableListener" ng-model="armView.curTrial.arms_groups">
-                        <tr ng-repeat="arms_group in armView.curTrial.arms_groups track by $index" class="animated-item">
+                        <tr ng-repeat="arms_group in armView.curTrial.arms_groups track by $index" class="animated-item" ng-class="{'locked': !(paTrialOverview.trialDetailObj.pa_sci_editable && armView.isCurationEnabled) }">
                             <td>{{arms_group.label}}</td>
                             <td>{{arms_group.arms_groups_type}}</td>
                             <td>{{arms_group.display_interventions}}</td>

@@ -1,0 +1,106 @@
+<div class="row top-offset-xs" ng-show="personDetailView.curPerson.associated_persons.length > 0 && personDetailView.curPerson.is_ctrp_context">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">Associated Persons</div>
+        </div>
+        <div class="panel-body">
+            <div class="col-xs-12">
+                <div class="row">
+                        <div ui-grid="personDetailView.associatedPersonsOptions" ui-grid-move-columns ui-grid-selection class="grid auto-height" ></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="col-xs-12" restriction-field="ROLE_CURATOR,ROLE_SUPER,ROLE_ADMIN,ROLE_ABSTRACTOR,ROLE_RO" ignore-rw>
+        <div class="row top-offset-tiny table-responsive search-calendar-grid">
+            <h4>Associated Person Contexts:</h4>
+            <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                    <th width="6%" class="nowrap">CTRP ID</th>
+                    <th width="6%" class="nowrap">CTEP ID</th>
+                    <th>Prefix</th>
+                    <th width="7%" class="min-width-md">First Name</th>
+                    <th width="3%" class="min-width-md">Middle Name</th>
+                    <th width="7%" class="min-width-md">Last Name</th>
+                    <th width="2%" class="nowrap">Suffix</th>
+                    <th width="3%" class="nowrap">Source Status</th>
+                    <th width="3%" class="nowrap">Source Context</th>
+                    <th width="3%" class="nowrap">Source ID</th>
+                    <th width="10%" class="nowrap">Email</th>
+                    <th width="6%" class="nowrap">Phone</th>
+                    <th width="10%" class="nowrap">Affiliated Orgs</th>
+                    <th width="5%" class="nowrap">Context Person ID</th>
+                    <th width="5%" class="nowrap">Processing Status</th>
+                    <th width="5%" class="nowrap">Service Request</th>
+                    <th width="8%" class="nowrap">Last Updated Date</th>
+                    <th width="8%" class="nowrap">Last Updated By</th>
+                    <th width="8%" class="nowrap">Association Start Date</th>
+                    <th width="3%" class="td-icon">Delete</th>
+                </thead>
+                <tbody>
+                <tr ng-repeat="person in personDetailView.curPerson.associated_persons" ng-class="person._destroy == true ? 'deleted-text animated-item' : 'animated-item'">
+                    <td>{{person.ctrp_source_id}}</td>
+                    <td>{{person.source_id}}</td>
+                    <td>{{person.prefix}}</td>
+                    <td>{{person.fname}}</td>
+                    <td>
+                        {{person.mname}}
+                    </td>
+                    <td>
+                        {{person.lname}}
+                    </td>
+                    <td>
+                        {{person.suffix}}
+                    </td>
+                    <td>
+                        {{person.source_status}}
+                    </td>
+                    <td>
+                        {{person.source_context}}
+                    </td>
+                    <td>
+                        {{person.source_id}}
+                    </td>
+                    <td>
+                        {{person.email}}
+                    </td>
+                    <td>
+                        {{person.phone}}
+                    </td>
+                    <td>
+                        <span ng-repeat="org in person.affiliated_orgs track by $index">{{org}}</span>
+                    </td>
+                    <td>
+                        {{person.context_person_id}}
+                    </td>
+                    <td>
+                        {{person.processing_status}}
+                    </td>
+                    <td>
+                        {{person.service_request}}
+                    </td>
+                    <td>
+                        {{person.updated_at | date: "dd-MMM-yyyy H:mm"}}
+                    </td>
+                    <td>
+                        {{person.updated_by}}
+                    </td>
+                    <td>
+                        {{person.association_start_date | date: "dd-MMM-yyyy H:mm"}}
+                    </td>
+                    <td class="text-center td-icon">
+                        <button type="button" restriction-field class="btn btn-danger"
+                        ctrp-confirm
+                        placement="left"
+                        ctrp-click="personDetailView.removeAssociation(person.id, person.ctrp_source_id)"
+                        confirm-msg="Click OK to remove the selected association. Click Cancel to abort."
+                        title="Delete now" ng-hide="person.source_context === 'CTRP'">
+                            <i ng-class="org._destroy == true ? 'glyphicon glyphicon-floppy-saved' : 'glyphicon glyphicon-floppy-remove'"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div> -->
+</div>

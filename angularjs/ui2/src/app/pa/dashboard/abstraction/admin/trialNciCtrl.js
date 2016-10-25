@@ -106,10 +106,12 @@
                     appendFses();
                     $scope.$emit('updatedInChildScope', {});
                     toastr.clear();
-                    toastr.success('Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded', 'Operation Successful!', 'Successful!', {
-                        extendedTimeOut: 1000,
-                        timeOut: 0
-                    });
+                    toastr.success('Trial ' + vm.curTrial.lead_protocol_id + ' has been recorded', 'Operation Successful!', 'Successful!');
+
+                    // To make sure setPristine() is executed after all $watch functions are complete
+                    $timeout(function() {
+                       $scope.trial_form.$setPristine();
+                   }, 1);
                 }
             }).catch(function(err) {
                 console.log("error in updating trial " + JSON.stringify(outerTrial));
@@ -120,8 +122,11 @@
 
         } //updateTrial
 
-        vm.reload = function() {
-            $state.go($state.$current, null, { reload: true });
+        vm.reset = function() {
+            getTrialDetailCopy();
+            vm.addedFses = [];
+            appendFses();
+            $scope.trial_form.$setPristine();
         };
 
 
@@ -151,6 +156,8 @@
                 newFs._destroy = false;
                 vm.addedFses.push(newFs);
                 vm.fsNum++;
+
+                $scope.trial_form.$setDirty();
             }
         });
 
@@ -171,7 +178,6 @@
             appendFses();
             getTrialDetailCopy();
             watchTrialDetailObj();
-
         }
 
         /**

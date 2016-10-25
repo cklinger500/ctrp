@@ -9,9 +9,9 @@
     angular.module('ctrp.app.pa')
     .controller('paModuleMenuPanel', paModuleMenuPanel);
 
-    paModuleMenuPanel.$inject = ['$scope', 'MESSAGES', 'PATrialService'];
+    paModuleMenuPanel.$inject = ['$scope', 'MESSAGES', 'PATrialService', '_'];
 
-    function paModuleMenuPanel($scope, MESSAGES, PATrialService) {
+    function paModuleMenuPanel($scope, MESSAGES, PATrialService, _) {
         var vm = this;
         var currentTrialDetailObj = {};
         var menuOpen = true;
@@ -22,18 +22,24 @@
             'trialOverviewOpen': true,
             'adminDataOpen': true,
             'scientificDataOpen': true,
-            'completeOpen': true
+            'completeOpen': true,
+            'trialValidOpen': true,
+        };
+        vm.menuTypes = {
+            'abstraction': false,
+            'trialValidProtocol': false,
+            'trialValidImport': false,
+            'rejection': false,
+            'hideFlagForRejection': false
         };
 
         activate();
-
         function activate() {
-
             //Listen to the update to the current trial detail object
             $scope.$on(MESSAGES.TRIAL_DETAIL_SAVED, function() {
                 currentTrialDetailObj = PATrialService.getCurrentTrialFromCache();
                 vm.nciTrialId = currentTrialDetailObj.nci_id;
-                console.log('nciTrialId: ', vm.nciTrialId);
+                vm.menuTypes = currentTrialDetailObj.menuTypes;
             });
         } //activate
 
@@ -44,13 +50,5 @@
                 vm.menuAccordions[key] = !vm.trialGlobalOpen;
             });
         }
-
-
-        /*
-        //get curUrlLink, e.g. '#/main/pa/trial/12/history'
-        var curUrlLink = vm.curState.ncyBreadcrumbLink || '';
-        var match = curUrlLink.match(/trial\/(\d+)/); //get the trialId, e.g. 12
-        vm.trialId = match ? match[1] : '';
-        */
     }
 })();

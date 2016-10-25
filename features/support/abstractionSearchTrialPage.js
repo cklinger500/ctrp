@@ -8,11 +8,20 @@ var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 var expect = require('chai').expect;
-
+var moment = require ('moment');
+var should = chai.should();
 var helperFunctions = require('../support/helper');
-
+var addTrialPage = require('../support/registerTrialPage');
+//File System
+var fs = require('fs');
+var junit = require('cucumberjs-junitxml');
+var testFileUpload = process.env.TEST_RESULTS_DIR || process.cwd() + '/tests/testSamples';
 
 var abstractionSearchTrialPage = function(){
+
+    var dateFunctions = new addTrialPage();
+    var helper = new helperFunctions();
+    var self = this;
 
     this.searchTrialProtocolID = element(by.model('trialView.searchParams.protocol_id'));
     this.searchTrialOfficialTitle = element(by.model('trialView.searchParams.official_title'));
@@ -27,7 +36,7 @@ var abstractionSearchTrialPage = function(){
     //this.searchTrialStudySource = element(by.model('trialView.searchParams.study_source')); // need to update the model name
     this.searchTrialMilestone = element(by.model('trialView.searchParams.milestone'));
     this.searchTrialProcessingStatus = element(by.id('processingStatus'));
-    this.searchTrialResearchCategory = element(by.model('trialView.searchParams.research_category'));
+    this.searchTrialResearchCategory = element.all(by.css('input[ng-model="$select.search"]'));
     this.searchTrialNIHNCIDivDeptIdentifier = element(by.model('trialView.searchParams.nih_nci_div'));
     this.searchTrialNIHNCIProgramIdentifier = element(by.model('trialView.searchParams.nih_nci_prog'));
     this.searchTrialSearchButton = element(by.id('submission_btn'));
@@ -128,8 +137,18 @@ var abstractionSearchTrialPage = function(){
     };
 
     //Research Category : Drop Down
+    //this.selectSearchTrialResearchCategory = function(trialResearchCategory)  {
+    //    this.searchTrialResearchCategory.click();
+    //    //element(by.buttonText(trialResearchCategory)).click();
+    //};
+
     this.selectSearchTrialResearchCategory = function(trialResearchCategory)  {
-        helper.selectValueFromList(this.searchTrialResearchCategory,trialResearchCategory,"Search Trial by Research Category field");
+        if (trialResearchCategory !== '') {
+            helper.wait(this.searchTrialResearchCategory.get(9), 'Search Trial by Research Category field');
+            this.searchTrialResearchCategory.get(9).click();
+            helper.wait(element(by.linkText(trialResearchCategory)), 'Search Trial Research Category with provided -- ' + trialResearchCategory + ' -- Option');
+            element(by.linkText(trialResearchCategory)).click();
+        }
     };
 
     //NIH/NCI Div/Dept Identifier : Drop Down

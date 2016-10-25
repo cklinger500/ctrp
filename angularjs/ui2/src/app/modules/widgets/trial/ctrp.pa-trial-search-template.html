@@ -167,10 +167,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="research_category" class="control-label col-xs-12 col-sm-5">Research Category: </label>
+                    <label for="research_category" class="control-label col-xs-12 col-sm-5">Clinical Research Category: </label>
                     <div class="col-xs-12 col-sm-7">
                         <ui-select multiple id="research_category" ng-model="trialSearchView.searchParams.research_category">
-                            <ui-select-match placeholder="-Select Research Category -">{{$item.name}}</ui-select-match>
+                            <ui-select-match placeholder="-Select Clinical Research Category -">{{$item.name}}</ui-select-match>
                             <ui-select-choices repeat="rc in trialSearchView.researchCategoriesArr">{{rc.name}}</ui-select-choices>
                         </ui-select>
                     </div>
