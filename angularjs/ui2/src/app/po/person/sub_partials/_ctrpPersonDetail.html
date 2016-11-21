@@ -129,21 +129,21 @@
             <!-- ctrpbtn.person_form.needsAttention(null, personDetailView.savedSelection.length === 0 && personDetailView.curPersonEditable) -->
         </div>
         <div class="col-sm-3" ng-show="personDetailView.savedSelection.length">
-            <toggle-visibility element-to-toggle="#affiliatedOrgsGrid" element-label="Affiliated Organizations" toggle-visibility-default="true" class="pull-right small-sm"></toggle-visibility>
+            <toggle-visibility element-to-toggle="#affiliatedOrgsGrid" element-label="Affiliated Organizations" toggle-visibility-default="true" class="pull-right"></toggle-visibility>
         </div>
     </div>
     <div class="form-group" ng-show="personDetailView.isAllowedToComment">
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
-            <div id="affiliatedOrgsGrid" class="row animated-item top-offset-tiny table-responsive search-calendar-grid" ng-show="personDetailView.savedSelection.length > 0">
+            <div id="affiliatedOrgsGrid" class="row animated-item table-responsive" ng-show="personDetailView.savedSelection.length > 0">
                 <input type="text" ng-model="personDetailView.selectedOrgFilter" restriction-field="ROLE_CURATOR,ROLE_SUPER,ROLE_ADMIN,ROLE_ABSTRACTOR,ROLE_RO,ROLE_TRIAL-SUBMITTER,ROLE_SITE-SU" class="form-control input-sm" placeholder="Filter selected organizations"/>
                 <table class="table table-bordered table-striped table-condensed">
                     <thead>
                     <th width="6%" class="nowrap">CTRP ID</th>
                     <th>Organization</th>
-                    <th width="14%" class="min-width-md">Effective Date</th>
-                    <th width="14%" class="min-width-md">Expiration Date</th>
-                    <th width="1%" class="td-icon"></th>
+                    <th width="14%">Effective Date</th>
+                    <th width="14%">Expiration Date</th>
+                    <th width="1%"></th>
                     </thead>
                     <tbody>
                     <tr ng-repeat="org in personDetailView.savedSelection | filter: {'name': personDetailView.selectedOrgFilter} track by $index" ng-class="org._destroy == true ? 'deleted-text animated-item' : 'animated-item'">
@@ -177,7 +177,7 @@
                                 </span>
                             </div>
                         </td>
-                        <td class="text-center td-icon">
+                        <td class="text-center">
                             <button type="button" restriction-field class="btn btn-warning" ng-click="personDetailView.toggleSelection($index)" title="Mark for deletion">
                                 <i ng-class="org._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
                             </button>

@@ -77,17 +77,17 @@
                         </div>
                     </div>
 
-                    <div class="row top-offset-xss" ng-show="trialRelatedDocsView.curTrialDetailObj.trial_documents.length > 0">
+                    <div class="row " ng-show="trialRelatedDocsView.curTrialDetailObj.trial_documents.length > 0">
                          <table st-table="rowCollection" class="table table-bordered table-striped table-hover">
                              <thead>
                                  <tr>
                                     <th>File Name</th>
                                     <th>Document Type</th>
                                     <th>Document Subtype</th>
-                                    <th class="td-time">Date Added</th>
-                                    <th class="td-name">Added By</th>
-                                    <th class="text-center td-icon">Edit</th>
-                                    <th class="text-center td-icon">Delete</th>
+                                    <th>Date Added</th>
+                                    <th>Added By</th>
+                                    <th class="text-center">Edit</th>
+                                    <th class="text-center">Delete</th>
                                 </tr>
                              </thead>
                              <tbody>
@@ -98,12 +98,12 @@
                                      <td>{{doc.document_subtype}}</td>
                                      <td>{{doc.created_at | date: "dd-MMM-yyyy H:mm"}}</td>
                                      <td>{{doc.added_by.username}} <!-- to be replaced with full name when available --></td>
-                                     <td class="text-center td-icon">
+                                     <td class="text-center">
                                          <button type="button" class="btn btn-primary" restriction-field ng-disabled="doc.status == 'deleted' || trialRelatedDocsView.curDoc.edit" ng-click="trialRelatedDocsView.editDoc($index)">
                                              <i class="glyphicon glyphicon-edit"></i>
                                          </button>
                                      </td>
-                                     <td class="text-center td-icon">
+                                     <td class="text-center">
                                          <button type="button" class="btn btn-warning" restriction-field
                                              comment-popover="doc"
                                              on-save="trialRelatedDocsView.deleteDoc(why_deleted, $index)"
@@ -119,7 +119,7 @@
                      </div>
                  </fieldset>
                  <!-- end of fieldset for trial related documents -->
-                 <div class="form-group no-bottom-margin">
+                 <div class="form-group">
                      <div class="has-feedback required has-error" ng-show="paTrialOverview.trialDetailObj.pa_editable">
                         <span class="help-block" ng-show="trialRelatedDocsView.formError.length > 0">
                                 {{trialRelatedDocsView.formError}}

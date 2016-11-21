@@ -1,4 +1,4 @@
-<div class="sidebar drop-shadow" ng-controller="paModuleMenuPanel as paMenuPanel">
+<div class="sidebar" ng-controller="paModuleMenuPanel as paMenuPanel">
     <!-- <span flex class="animated-item" ng-hide="paMenuPanel.nciTrialId==''"><strong>NCI Trial ID: {{paMenuPanel.nciTrialId}}</strong></span> -->
   <uib-accordion close-others="false">
       <div uib-accordion-group ng-hide="paMenuPanel.nciTrialId==''" is-open="paMenuPanel.trialGlobalOpen">
@@ -39,7 +39,7 @@
                   <li ng-hide="paMenuPanel.menuTypes.trialValidImport"><a ui-sref="main.pa.trialOverview.funding" ui-sref-opts="{reload: true}" class="menu-funding">Trial Funding</a></li>
                   <li ng-hide="paMenuPanel.menuTypes.trialValidProtocol"><a ui-sref="main.pa.trialOverview.participatingSites" ui-sref-opts="{reload: true}" class="menu-participating-sites">Participating Sites</a></li>
                   <li ng-hide="paMenuPanel.menuTypes.trialValidProtocol || paMenuPanel.menuTypes.trialValidImport"><a ui-sref="main.pa.trialOverview.collaborators" ui-sref-opts="{reload: true}" class="menu-collaborators">Collaborators</a></li>
-                  <li ng-hide="paMenuPanel.menuTypes.trialValidImport"><a ui-sref="main.pa.trialOverview.paTrialRelatedDocs" ui-sref-opts="{reload: true}" class="menu-trial-related-documents">Trial Related Documents</a></li>
+                  <li ng-hide="paMenuPanel.menuTypes.trialValidImport"><a ui-sref="main.pa.trialOverview.paTrialRelatedDocs" ui-sref-opts="{reload: true}">Trial Related Documents</a></li>
                   <li><a ui-sref="main.pa.trialOverview.nciInfo" ui-sref-opts="{reload: true}" class="menu-nci-info">NCI Specific Information</a></li>
               </ul>
           </div>

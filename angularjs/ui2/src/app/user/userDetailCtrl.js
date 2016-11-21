@@ -806,7 +806,9 @@
         });
 
         $timeout(function() {
-            vm.userDetail_form.$setPristine();
+            if (vm.userDetail_form) {
+                vm.userDetail_form.$setPristine();
+            }
         }, 1000);
     }
 }());

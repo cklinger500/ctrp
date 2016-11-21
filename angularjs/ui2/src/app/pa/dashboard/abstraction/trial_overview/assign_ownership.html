@@ -6,7 +6,7 @@
                 <div class="panel-title">Assign Ownership - Owners List</div>
             </div>
             <div class="panel-body">
-                <div class="form-group no-bottom-margin">
+                <div class="form-group">
                     <!-- list of Users -->
                     <div class="row">
                         <div class="col-xs-12">
@@ -20,7 +20,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row top-offset-xs" ng-if="userView.gridOptions.data && userView.gridOptions.totalItems > 0"></div>
+                    <div class="row" ng-if="userView.gridOptions.data && userView.gridOptions.totalItems > 0"></div>
                     <div class="btn-toolbar">
                         <button type="button" class="btn btn-primary pull-right" id="add_btn" restriction-field ng-click="userView.setAddMode = true" ng-if="!userView.curTrial.is_rejected">
                             <i class="glyphicon glyphicon-plus"></i> Add Ownership
@@ -60,7 +60,7 @@
         <div class="panel-body">
             <div ng-controller="userListCtrl as userView">
                 <div ng-include src="'app/user/user_list.html'" ng-init="userView.setAddMode = true; userView.ownerListMode = false;"></div>
-                <div class="row top-offset-xs"></div>
+                <div class="row"></div>
 
                 <modal visible="userView.confirmAddTrialOwnershipsPopUp" title="Please confirm" id="confirmAddTrials">
                     <div class="modal-body">You have chosen to add ownership this trial to selected user(s).</div>

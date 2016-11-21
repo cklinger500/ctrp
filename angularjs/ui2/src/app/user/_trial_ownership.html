@@ -24,7 +24,7 @@
                            typeahead-min-length="3" typeahead-wait-ms="50" typeahead-no-results="noResults" />
                                     <span id="typeAheadResults" ng-if="trialOwnershipView.userChosenOrg">
                                             <b>{{trialOwnershipView.userChosenOrg.name}}</b>
-                                            <span class="btn-danger crn-rounded" ng-click="trialOwnershipView.removeOrgChoice()"
+                                            <span class="btn-danger" ng-click="trialOwnershipView.removeOrgChoice()"
                                                   title="Change organization">
                                                 <i class="glyphicon glyphicon-trash"></i>
                                             </span>
@@ -42,7 +42,7 @@
                                             </i>
                                     </span>
                 </div>
-                <div class="row top-offset-xs"></div>
+                <div class="row"></div>
             </div>
         </div>
         <div class="row" ng-if="trialOwnershipView.curUser.role === 'ROLE_SITE-SU'">
@@ -98,6 +98,6 @@
             <li ng-if="trialOwnershipView.userOptions.selectedItems.length === 0">Please first select the 'users'.</li>
             <li ng-if="!trialOwnershipView.trialId && trialOwnershipView.trialOptions.selectedItems.length === 0">Please first select the 'trials'.</li>
         </ul>
-        <div class="row top-offset-xs"></div>
+        <div class="row"></div>
     </div>
 </div>

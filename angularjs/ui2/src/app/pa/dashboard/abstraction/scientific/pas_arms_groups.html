@@ -24,7 +24,7 @@
                     <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.arm_form.needsAttention(arm_form.arms_groups_type)}" ng-show="armView.interventional">
                         <label for="arms_groups_type" class="control-label col-xs-12 col-sm-3">Type:</label>
                         <div class="col-xs-12 col-sm-3">
-                            <select class="form-control input-sm min-width-md" name="arms_groups_type" id="arms_groups_type" ng-model="armView.currentArmsGroup.arms_groups_type" ng-required="armView.interventional" restriction-field>
+                            <select class="form-control input-sm" name="arms_groups_type" id="arms_groups_type" ng-model="armView.currentArmsGroup.arms_groups_type" ng-required="armView.interventional" restriction-field>
                                 <option value="">-Select Type-</option>
                                 <option value="Experimental">Experimental</option>
                                 <option value="Active Comparator">Active Comparator</option>
@@ -84,7 +84,7 @@
                         </span>
                 </fieldset>
 
-                <div class="form-group no-bottom-margin">
+                <div class="form-group">
                     <div class="btn-toolbar" ng-show="paTrialOverview.trialDetailObj.pa_sci_editable">
                         <button type="submit" class="btn btn-primary pull-right" id="submission_btn" ng-disabled="armView.disableBtn">
                             <i class="glyphicon glyphicon-ok"></i> Save
@@ -114,8 +114,8 @@
                         <th>Type</th>
                         <th>Assigned Interventions</th>
                         <th>Description</th>
-                        <th class="text-center td-icon">Edit</th>
-                        <th class="text-center td-icon">
+                        <th class="text-center">Edit</th>
+                        <th class="text-center">
                             <input type="checkbox" restriction-field ng-model="armView.selectedAllAG" ng-click="armView.checkAllAG(armView.selectedAllAG)" ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable"/>
                         </th>
                         </thead>
@@ -125,12 +125,12 @@
                             <td>{{arms_group.arms_groups_type}}</td>
                             <td>{{arms_group.display_interventions}}</td>
                             <td>{{arms_group.description}}</td>
-                            <td class="text-center td-icon">
+                            <td class="text-center">
                                 <button class="btn btn-primary" restriction-field ng-disabled="status._destroy || !paTrialOverview.trialDetailObj.pa_sci_editable" ng-click="armView.setEditMode($index)">
                                     <i class="glyphicon glyphicon-edit"></i>
                                 </button>
                             </td>
-                            <td class="text-center td-icon">
+                            <td class="text-center">
                                 <input type="checkbox" restriction-field ng-click="armView.selectedAllAG = false" ng-model="arms_group._destroy" ng-change="!arms_group._destroy" ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable"/>
                             </td>
                         </tr>

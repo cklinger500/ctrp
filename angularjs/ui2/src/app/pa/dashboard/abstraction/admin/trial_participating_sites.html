@@ -90,11 +90,11 @@
                                 <!-- fieldset for Site Recruitment -->
                                 <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_editable || psView.disableBtn">
                                     <legend class="sub-bordered">Site Recruitment</legend>
-                                    <div class="row table-responsive search-calendar-grid">
+                                    <div class="row table-responsive">
                                         <table class="table table-striped table-condensed" ctrp-hint hint-append-element="fieldset">
                                             <thead>
-                                                <th width="15%" class="min-width-md">Status Date</th>
-                                                <th width="15%" class="min-width-lg">Status</th>
+                                                <th width="15%">Status Date</th>
+                                                <th width="15%">Status</th>
                                                 <th>Comment</th>
                                                 <th width="10%" ng-if="psView.current_site_recruitment.edit">Cancel/Confirm</th>
                                                 <th width="10%" ng-if="!psView.current_site_recruitment.edit"></th>
@@ -182,8 +182,8 @@
                                                 <th width="10%">Status</th>
                                                 <th width="30%">Comment</th>
                                                 <th width="35%">Errors/Warnings</th>
-                                                <th class="text-center td-icon">Edit</th>
-                                                <th class="text-center td-icon">Delete</th>
+                                                <th class="text-center">Edit</th>
+                                                <th class="text-center">Delete</th>
                                             </thead>
                                             <tbody>
                                             <tr ng-repeat="site_rec in psView.siteRecruitmentGrid track by $index" class="animated-item" ng-class="{'deleted-text' : site_rec._destroy, 'edit-selected': site_rec.uiEdit}">
@@ -204,12 +204,12 @@
                                                         WARNING: {{warning.message}}
                                                     </div>
                                                 </td>
-                                                <td class="text-center td-icon">
+                                                <td class="text-center">
                                                     <button type="button" class="btn btn-primary" restriction-field ng-disabled="site_rec._destroy || psView.current_site_recruitment.edit" ng-click="psView.editSiteRecruitment($index)">
                                                         <i class="glyphicon glyphicon-edit"></i>
                                                     </button>
                                                 </td>
-                                                <td class="text-center td-icon">
+                                                <td class="text-center">
                                                     <button type="button" class="btn btn-warning" restriction-field ng-click="psView.deleteSiteRecruitment($index)" ng-disabled="psView.current_site_recruitment.edit">
                                                         <i class="glyphicon" ng-class="site_rec._destroy ? 'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i>
                                                     </button>
@@ -221,7 +221,7 @@
                                 </fieldset>
                                 <!-- End fieldset for Site Recruitment -->
                             <!-- Saving the form for the Participating site tab" -->
-                            <div class="form-group no-bottom-margin">
+                            <div class="form-group">
                                 <div class="btn-toolbar" ng-if="paTrialOverview.trialDetailObj.pa_editable">
                                     <button type="submit" class="btn btn-primary pull-right" id="submit_pacticipating" restriction-field ng-disabled="psView.current_site_recruitment.edit || psView.disableBtn">
                                         <i class="glyphicon glyphicon-ok"></i> Save
@@ -258,14 +258,14 @@
                                     </div>
                                 </div>
 
-                                <div class="row table-responsive top-offset-xs" ng-show="psView.current_investigator.edit || psView.current_investigator.new">
+                                <div class="row table-responsive" ng-show="psView.current_investigator.edit || psView.current_investigator.new">
                                     <h5>Edit Investigator</h5>
                                     <table class="table table-striped table-condensed">
                                         <thead>
                                             <th width="15%">PO ID</th>
                                             <th width="20%">Last Name</th>
                                             <th width="30%">First Name</th>
-                                            <th width="25%" class="min-width-lg">Role</th>
+                                            <th width="25%">Role</th>
                                             <!--<th width="20%">Set as Primary Contact</th>-->
                                             <th width="10%">Cancel/Confirm</th>
                                         </thead>
@@ -306,7 +306,7 @@
                                     </table>
                                 </div>
 
-                                <div ng-if="psView.current_investigator.uiEdit" ng-class="{'has-error': psView.showInvestigatorRoleError && !psView.current_investigator.investigator_type && psView.current_investigator.uiEdit, 'bottom-offset-xs': psView.investigatorGrid.length}">
+                                <div ng-if="psView.current_investigator.uiEdit" ng-class="{'has-error': psView.showInvestigatorRoleError && !psView.current_investigator.investigator_type && psView.current_investigator.uiEdit}">
                                     <span class="help-block">
                                         Investigator Role is Required
                                     </span>
@@ -327,8 +327,8 @@
                                             <th width="20%">First Name</th>
                                             <th width="20%">Role</th>
                                             <th width="20%">Primary Contact?</th>
-                                            <th class="text-center td-icon">Edit</th>
-                                            <th class="text-center td-icon">Delete</th>
+                                            <th class="text-center">Edit</th>
+                                            <th class="text-center">Delete</th>
                                         </thead>
                                         <tbody>
                                         <tr ng-repeat="inv in psView.investigatorGrid track by $index" class="animated-item" ng-class="{'deleted-text': inv._destroy || inv.uiDestroy, 'edit-selected': inv.uiEdit}">
@@ -337,12 +337,12 @@
                                             <td>{{inv.person.fname}}</td>
                                             <td>{{inv.investigator_type}}</td>
                                             <td ng-bind="inv.set_as_contact ? 'Yes' : 'No'"></td>
-                                            <td class="text-center td-icon">
+                                            <td class="text-center">
                                                 <button type="button" class="btn btn-primary" restriction-field ng-disabled="inv._destroy || psView.current_investigator.edit || psView.current_investigator.uiEdit" ng-click="psView.editInvestigator($index)">
                                                     <i class="glyphicon glyphicon-edit"></i>
                                                 </button>
                                             </td>
-                                            <td class="text-center td-icon">
+                                            <td class="text-center">
                                                 <button type="button" class="btn btn-warning" restriction-field ng-click="psView.markInvestigatorForDeletion($index)" ng-disabled="psView.current_investigator.edit || psView.current_investigator.uiEdit">
                                                     <i class="glyphicon" ng-class="inv._destroy || inv.uiDestroy ? 'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i>
                                                 </button>
@@ -355,7 +355,7 @@
                             <!-- End fieldset for Investigator  -->
 
                             <!-- Saving the form for the Investigator tab" -->
-                            <div class="form-group no-bottom-margin">
+                            <div class="form-group">
                                 <div class="btn-toolbar" ng-if="paTrialOverview.trialDetailObj.pa_editable">
                                     <button type="submit" class="btn btn-primary pull-right" id="submit_investigators" restriction-field ng-disabled="psView.current_investigator.uiEdit || psView.disableBtn">
                                         <i class="glyphicon glyphicon-ok"></i> Save
@@ -471,7 +471,7 @@
                                 </div>
                             </fieldset>
                             <!-- Saving the form for the Contact tab" -->
-                            <div class="form-group no-bottom-margin">
+                            <div class="form-group">
                                 <div class="btn-toolbar" ng-if="paTrialOverview.trialDetailObj.pa_editable">
                                     <button type="submit" class="btn btn-primary pull-right" id="submit_contact" restriction-field ng-disabled="psView.disableBtn">
                                         <i class="glyphicon glyphicon-ok"></i> Save
@@ -509,8 +509,8 @@
                 <th>Site Recruitment Status</th>
                 <th>Site Recruitment Status Date</th>
                 <th>Primary Contact</th>
-                <th class="text-center td-icon">Edit</th>
-                <th class="text-center td-icon">
+                <th class="text-center">Edit</th>
+                <th class="text-center">
                     <input type="checkbox" restriction-field ng-model="psView.selectedAllSites" ng-click="psView.checkAllSites()" ng-disabled="!paTrialOverview.trialDetailObj.pa_editable" />
                 </th>
                 </thead>
@@ -534,12 +534,12 @@
                     <td>
                         {{participating_site.contact_name}}
                     </td>
-                    <td class="text-center td-icon">
+                    <td class="text-center">
                         <button class="btn btn-primary" restriction-field ng-disabled="status._destroy || !paTrialOverview.trialDetailObj.pa_editable" ng-click="psView.setEditMode($index)">
                             <i class="glyphicon glyphicon-edit"></i>
                         </button>
                     </td>
-                    <td class="text-center td-icon">
+                    <td class="text-center">
                         <input type="checkbox" restriction-field ng-model="participating_site.selected" ng-change="psView.deleteListHandler(psView.curTrial.participating_sites)" ng-click="psView.selectedAllSites = false" ng-disabled="!paTrialOverview.trialDetailObj.pa_editable"/>
                     </td>
                 </tr>

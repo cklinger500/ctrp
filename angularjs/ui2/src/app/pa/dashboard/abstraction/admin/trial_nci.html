@@ -39,7 +39,7 @@
                         <div class="col-xs-12 col-sm-5">
                             <span ng-class="fs._destroy == true ? 'deleted-text animated-item' : 'animated-item'">{{fs.organization_name}}</span>
                         </div>
-                        <div class="col-xs-12 col-sm-1 td-icon">
+                        <div class="col-xs-12 col-sm-1">
                             <label restriction-field class="btn btn-warning" ng-click="trialNciView.toggleSelection($index, 'funding_source')" ng-hide="['update'].indexOf(trialNciView.curTrial.edit_type) > -1">
                                 <i ng-class="fs._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
                             </label>
@@ -116,8 +116,8 @@
                         </div>
                     </div>
                 </fieldset>
-                <!--div class="form-group no-bottom-margin" ng-if="trialNciView.curTrial.admin_checkout != nil"-->
-                <div class="form-group no-bottom-margin" ng-if="paTrialOverview.trialDetailObj.pa_editable">
+                <!--div class="form-group" ng-if="trialNciView.curTrial.admin_checkout != nil"-->
+                <div class="form-group" ng-if="paTrialOverview.trialDetailObj.pa_editable">
                     <div class="btn-toolbar">
                         <button type="submit" class="btn btn-primary pull-right" id="submit_processing" restriction-field ng-click="trialNciView.updateTrial()" ng-disabled="trialNciView.disableBtn">Save</button>
                         <button type="button" class="btn btn-warning pull-right" ng-click="trialNciView.reset()"  restriction-field ng-disabled="trialNciView.disableBtn">

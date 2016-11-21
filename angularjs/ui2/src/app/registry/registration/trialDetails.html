@@ -1,5 +1,5 @@
 <div class="row-fluid">
-    <div class="col-xs-12 drop-shadow">
+    <div class="col-xs-12">
         <div class="row">
             <p>
                 <h4 ng-if="trialDetailView.curTrial.new">Register Trial</h4>
@@ -145,7 +145,7 @@
                                         <tr ng-repeat="otherId in trialDetailView.addedOtherIds track by $index" ng-class="otherId._destroy == true ? 'deleted-text animated-item' : 'animated-item'">
                                             <td class="col-md-4 protocol-id-origin">{{otherId.protocol_id_origin_name}}</td>
                                             <td class="col-md-6 protocol-id">{{otherId.protocol_id}}</td>
-                                            <td class="text-center td-icon">
+                                            <td class="text-center">
                                                 <label restriction-field class="btn btn-warning" ng-click="trialDetailView.toggleSelection($index, 'other_id')">
                                                     <i ng-class="otherId._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
                                                 </label>
@@ -506,7 +506,7 @@
                                             <td class="col-md-2">{{grant.institute_code}}</td>
                                             <td class="col-md-3">{{grant.serial_number}}</td>
                                             <td class="col-md-4">{{grant.nci}}</td>
-                                            <td class="text-center td-icon">
+                                            <td class="text-center">
                                                 <label restriction-field class="btn btn-warning" ng-click="trialDetailView.toggleSelection($index, 'grant')">
                                                     <i ng-class="grant._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
                                                 </label>
@@ -629,7 +629,7 @@
                                                     WARNING: Statuses [{{warning.from}}] and [{{warning.to}}] have the same date
                                                 </div>
                                             </td>
-                                            <td class="text-center td-icon">
+                                            <td class="text-center">
                                                 <!-- <label restriction-field class="btn btn-warning" ng-click="trialDetailView.toggleSelection($index, 'trial_status')">
                                                     <i ng-class="status._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
                                                 </label> -->
@@ -896,7 +896,7 @@
                                             <td class="col-md-2">{{indIde.grantor}}</td>
                                             <td class="col-md-2">{{indIde.holder_type_name}}</td>
                                             <td class="col-md-3">{{indIde.nih_nci}}</td>
-                                            <td class="text-center td-icon" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
+                                            <td class="text-center" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
                                                 <label restriction-field class="btn btn-warning" ng-click="trialDetailView.toggleSelection($index, 'ind_ide')">
                                                     <i ng-class="indIde._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
                                                 </label>
@@ -1028,7 +1028,7 @@
                                         <tr ng-repeat="authority in trialDetailView.addedAuthorities track by $index" ng-class="authority._destroy == true ? 'deleted-text animated-item' : 'animated-item'">
                                             <td class="col-md-4">{{authority.country}}</td>
                                             <td class="col-md-6">{{authority.organization}}</td>
-                                            <td class="text-center td-icon" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
+                                            <td class="text-center" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
                                                 <label restriction-field class="btn btn-warning" ng-click="trialDetailView.toggleSelection($index, 'authority')">
                                                     <i ng-class="authority._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
                                                 </label>
@@ -1099,16 +1099,16 @@
                             Trial Related Documents <i class="glyphicon glyphicon-edit" title="Editable Section" aria-label="Editable Section" ng-if="!trialDetailView.curTrial.new && trialDetailView.curTrial.edit_type === 'update'"></i> <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': trialDetailView.accordions[10], 'glyphicon-chevron-right': !trialDetailView.accordions[10]}"></i>
                         </uib-accordion-heading>
 
-                        <p class="text-left text-block">
+                        <p class="text-left">
                             To ensure successful registration, upload a Protocol document and an IRB Approval document. If the Protocol document does not include the Informed Consent and/or participating sites, upload the Informed Consent document and a list of participating sites separately. You can use the Participating Sites template to submit your list of participating sites.
                         </p>
-                        <p class="text-left text-block">
+                        <p class="text-left">
                             CTRP accepts most standard document types. For additional information about what document types are accepted, please refer to the Help section.
                         </p>
 
                         <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.protocol_document)}">
                             <label class="control-label col-xs-12 col-sm-3">Protocol Document:</label>
-                            <div class="col-xs-12 col-sm-9 form-file-upload">
+                            <div class="col-xs-12 col-sm-9">
                                 <input type="file" restriction-field ngf-select ng-model="trialDetailView.protocol_document" name="protocol_document" ngf-max-size="10MB"
                                        validate-file-type="{{trialDetailView.acceptedFileExtensions}}"
                                        ng-required="['update', 'complete'].indexOf(trialDetailView.curTrial.edit_type) < 0 || trialDetailView.protocolDocNum === 0">
@@ -1132,7 +1132,7 @@
                         <div ng-if="['amend'].indexOf(trialDetailView.curTrial.edit_type) > -1">
                             <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.change_memo)}">
                                 <label class="control-label col-xs-12 col-sm-3">Change Memo Document:</label>
-                                <div class="col-xs-12 col-sm-9 form-file-upload">
+                                <div class="col-xs-12 col-sm-9">
                                     <input type="file" restriction-field ngf-select ng-model="trialDetailView.change_memo" name="change_memo" ngf-max-size="10MB"
                                            validate-file-type="{{trialDetailView.acceptedFileExtensions}}"
                                            ng-required="!trialDetailView.protocol_highlighted">
@@ -1155,7 +1155,7 @@
 
                             <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.protocol_highlighted)}">
                                 <label class="control-label col-xs-12 col-sm-3">Protocol Highlighted Document:</label>
-                                <div class="col-xs-12 col-sm-9 form-file-upload">
+                                <div class="col-xs-12 col-sm-9">
                                     <input type="file" restriction-field ngf-select ng-model="trialDetailView.protocol_highlighted" name="protocol_highlighted" ngf-max-size="10MB"
                                            validate-file-type="{{trialDetailView.acceptedFileExtensions}}"
                                            ng-required="!trialDetailView.change_memo">
@@ -1179,7 +1179,7 @@
 
                         <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.irb_approval)}">
                             <label class="control-label col-xs-12 col-sm-3">IRB Approval:</label>
-                            <div class="col-xs-12 col-sm-9 form-file-upload">
+                            <div class="col-xs-12 col-sm-9">
                                 <input type="file" restriction-field ngf-select ng-model="trialDetailView.irb_approval" name="irb_approval" ngf-max-size="10MB"
                                        validate-file-type="{{trialDetailView.acceptedFileExtensions}}"
                                        ng-required="['update', 'complete'].indexOf(trialDetailView.curTrial.edit_type) < 0 || trialDetailView.irbApprovalNum === 0">
@@ -1202,7 +1202,7 @@
 
                         <div class="form-group has-feedback" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.participating_sites)}">
                             <label class="control-label col-xs-12 col-sm-3">List of Participating Sites:</label>
-                            <div class="col-xs -12 col-sm-9 form-file-upload">
+                            <div class="col-xs -12 col-sm-9">
                                 <input type="file" restriction-field ngf-select ng-model="trialDetailView.participating_sites" name="participating_sites" ngf-max-size="10MB" validate-file-type="{{trialDetailView.acceptedFileExtensions}}">
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.participating_sites) && trial_form.participating_sites.$error.validateFileType">
                                     Valid file is Required. Allowed file types: {{trialDetailView.acceptedFileExtensions}}
@@ -1220,7 +1220,7 @@
 
                         <div class="form-group has-feedback" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.informed_consent)}">
                             <label class="control-label col-xs-12 col-sm-3">Informed Consent Document:</label>
-                            <div class="col-xs-12 col-sm-9 form-file-upload">
+                            <div class="col-xs-12 col-sm-9">
                                 <input type="file" restriction-field ngf-select ng-model="trialDetailView.informed_consent" name="informed_consent" ngf-max-size="10MB"
                                        validate-file-type="{{trialDetailView.acceptedFileExtensions}}">
                                 <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.informed_consent) && trial_form.informed_consent.$error.validateFileType">
@@ -1261,7 +1261,7 @@
                         <div ng-repeat="i in trialDetailView.getNumArr(trialDetailView.otherDocNum) track by $index">
                             <div class="form-group has-feedback" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.other_documents{{$index}})}">
                                 <label class="control-label col-xs-12 col-sm-3">Other:</label>
-                                <div class="col-xs-12 col-sm-3 form-file-upload">
+                                <div class="col-xs-12 col-sm-3">
                                     <input type="file" restriction-field ngf-select ng-model="trialDetailView.other_documents[$index]" name="other_documents{{$index}}" ngf-max-size="10MB"
                                            validate-file-type="{{trialDetailView.acceptedFileExtensions}}">
                                     <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.other_documents{{$index}}) && trial_form.other_documents{{$index}}.$error.validateFileType">
@@ -1381,7 +1381,7 @@
                     </div>
                 </div>
 
-                <div class="form-group no-bottom-margin">
+                <div class="form-group">
                     <div class="btn-toolbar col-xs-12">
                         <button ng-show="trialDetailView.curTrial.new || trialDetailView.curTrial.is_draft" type="button" restriction-field class="btn btn-primary pull-right"
                                 id="save_draft_btn" ng-click="trialDetailView.saveDraft()" ng-disabled="trialDetailView.disableBtn">
@@ -1397,6 +1397,6 @@
                 </div>
             </form>
         </div>
-        <div class="row top-offset-xs"></div>
+        <div class="row"></div>
     </div>
 </div>

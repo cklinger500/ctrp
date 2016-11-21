@@ -19,7 +19,7 @@
                             <td>{{onhold.onhold_desc}}</td>
                             <td>{{onhold.onhold_date | date: 'dd-MMM-yyyy'}}</td>
                             <td>{{onhold.offhold_date | date: 'dd-MMM-yyyy'}}</td>
-                            <td class="text-center td-icon">
+                            <td class="text-center">
                                 <button ng-hide="onhold.offhold_date" class="btn btn-primary" restriction-field ng-click="onholdView.setEditMode($index)">
                                     <i class="glyphicon glyphicon-edit"></i>
                                 </button>
@@ -29,7 +29,7 @@
                 </table>
             </div>
 
-            <div class="form-group no-bottom-margin">
+            <div class="form-group">
                 <div class="btn-toolbar">
                     <button ng-if="onholdView.showAddBtn" type="button" class="btn btn-primary pull-right" id="add_btn" restriction-field ng-click="onholdView.setAddMode(true)">
                         <i class="glyphicon glyphicon-plus"></i> Add On Hold
@@ -44,7 +44,7 @@
             <div class="panel-title">Add On Hold</div>
         </div>
         <div class="panel-body">
-            <div class="form-group no-bottom-margin">
+            <div class="form-group">
                 <form class="form form-horizontal" role="form" name="onhold_form" novalidate ctrp-submit="onholdView.saveOnhold()" unsaved-changes>
                     <fieldset class="sub-bordered" restriction-field>
                         <legend class="sub-bordered">On Hold Details</legend>
@@ -110,7 +110,7 @@
                         <input type="hidden" ng-model="onholdView.onhold_id">
                     </fieldset>
 
-                    <div class="form-group no-bottom-margin">
+                    <div class="form-group">
                         <div class="btn-toolbar">
                             <button type="submit" class="btn btn-primary pull-right" id="save_btn" restriction-field ng-disabled="onholdView.disableBtn">
                                 <i class="glyphicon glyphicon-ok"></i> Save

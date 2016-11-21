@@ -106,7 +106,7 @@
                         </table>
 
                         <input type="hidden" name="grant_dummy" ng-model="trialDetailView.dummyField" ng-required="trialDetailView.curTrial.grant_question === 'Yes' && trialDetailView.grantNum === 0">
-                        <div ng-if="trialDetailView.curTrial.grant_question === 'Yes'" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.grant_dummy) || trialDetailView.showAddGrantError, 'bottom-offset-xs': trialDetailView.showAddGrantError && trialDetailView.addedGrants.length}">
+                        <div ng-if="trialDetailView.curTrial.grant_question === 'Yes'" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.grant_dummy) || trialDetailView.showAddGrantError}">
                             <span class="help-block" ng-show="trialDetailView.showAddGrantError && !trialDetailView.funding_mechanism">
                                 Funding Mechanism is Required
                             </span>
@@ -133,7 +133,7 @@
                             <th>Institute Code</th>
                             <th>Serial Number</th>
                             <th>NCI Division/Program</th>
-                            <th class="text-center td-icon">Delete</th>
+                            <th class="text-center">Delete</th>
                             </thead>
                             <tbody>
                             <tr ng-repeat="grant in trialDetailView.addedGrants track by $index" ng-class="grant._destroy == true ? 'deleted-text animated-item' : 'animated-item'">
@@ -141,7 +141,7 @@
                                 <td>{{grant.institute_code}}</td>
                                 <td>{{grant.serial_number}}</td>
                                 <td>{{grant.nci}}</td>
-                                <td class="text-center td-icon">
+                                <td class="text-center">
                                     <label restriction-field class="btn btn-warning" ng-click="trialDetailView.toggleSelection($index, 'grant')">
                                         <i ng-class="grant._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
                                     </label>
@@ -151,7 +151,7 @@
                         </table>
                     </div>
                 </fieldset>
-                <div class="form-group no-bottom-margin" ng-if="paTrialOverview.trialDetailObj.pa_editable">
+                <div class="form-group" ng-if="paTrialOverview.trialDetailObj.pa_editable">
                     <div class="btn-toolbar">
                         <button type="submit" class="btn btn-primary pull-right" id="submit_processing" restriction-field ng-disabled="trialDetailView.disableBtn">
                             <i class="glyphicon glyphicon-ok"></i> Save

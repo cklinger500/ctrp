@@ -11,7 +11,7 @@
 </script>
 
 <script type="text/ng-template" id="innerTable.html">
-    <div class="col-sm-12 top-offset-xss table-responsive">
+    <div class="col-sm-12 table-responsive">
     <table class="table table-bordered" ng-show="row.entity.subGridOptions.data.length">
     <thead>
     <th>Updated Field</th>
@@ -234,7 +234,7 @@
                         <div class="row">
                             <div class="col-sm-12" ng-class="{'top-offset-xs': trialHistoryView.deleteDocsGridOptions.data.length > 0 }">
                                 <div>
-                                    <h4>Total deleted docs found: {{trialHistoryView.deleteDocsGridOptions.totalItems}} <span class="small-header-text">(<a class="cursor-pointer" ng-if="trialHistoryView.deleteDocsGridOptions.totalItems != null" ng-click="trialHistoryView.toggleDeletedDocs()">{{trialHistoryView.toggleText}}</a>)</span></h4>
+                                    <h4>Total deleted docs found: {{trialHistoryView.deleteDocsGridOptions.totalItems}} <span>(<a ng-if="trialHistoryView.deleteDocsGridOptions.totalItems != null" ng-click="trialHistoryView.toggleDeletedDocs()">{{trialHistoryView.toggleText}}</a>)</span></h4>
 
                                 </div>
                                 <div class="row animated-item" ng-if="trialHistoryView.showDeletedDocuments && trialHistoryView.deleteDocsGridOptions.data.length > 0">
@@ -307,7 +307,7 @@
                                 </div>
                                 <!--div class="col-xs-12 col-sm-4"></div-->
 
-                            <!--div class="form-group no-bottom-margin" -->
+                            <!--div class="form-group" -->
                                 <!--div class="col-sm-3"></div-->
                                 <div class="btn-toolbar col-xs-12 col-sm-2">
                                     <button type="button" class="btn btn-primary pull-right" id="search_btn" ng-click="trialHistoryView.loadAuditTrials()" ng-disabled="trialHistoryView.disableBtn">

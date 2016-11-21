@@ -23,7 +23,7 @@
         <tbody>
         <tr ng-repeat="person in savedSelection track by $index"
             class="animated-item" ng-class="person._destroy == true ? 'deleted-text' : ''">
-            <td class="text-center td-icon">
+            <td class="text-center">
                 <label class="btn btn-warning"
                        ng-click="toggleSelection($index)">
                     <i class="glyphicon" ng-class="person._destroy == true ? 'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i>

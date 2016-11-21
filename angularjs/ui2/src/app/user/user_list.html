@@ -3,7 +3,7 @@
     <strong>{{userView.searchWarningMessage}}</strong>
 </div>
 <div class="row">
-    <div class="col-xs-12 drop-shadow">
+    <div class="col-xs-12">
         <div class="row">
             <h4>Search User
                 <small>* for wild card (e.g. university* for any university)</small>
@@ -109,7 +109,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row top-offset-xs" ng-if="userView.gridOptions.totalItems == null"></div>
+                <div class="row" ng-if="userView.gridOptions.totalItems == null"></div>
             </form>
         </div>
 
@@ -131,7 +131,7 @@
                 </div>
             </div>
         </div>
-        <div class="row top-offset-xs" ng-if="userView.gridOptions.totalItems != null"></div>
+        <div class="row" ng-if="userView.gridOptions.totalItems != null"></div>
 
         <!-- Saving the form for the Add Ownership -->
         <div class="add-buttons" ng-if="userView.setAddMode === true && userView.trialId && userView.gridOptions.totalItems">

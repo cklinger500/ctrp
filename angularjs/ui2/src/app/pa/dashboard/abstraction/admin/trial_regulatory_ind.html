@@ -97,7 +97,7 @@
                         </table>
 
                         <input type="hidden" name="ind_ide_dummy" ng-model="trialDetailView.dummyField" ng-required="trialDetailView.curTrial.ind_ide_question === 'Yes' && !trialDetailView.addedIndIdes.length">
-                        <div ng-if="trialDetailView.curTrial.ind_ide_question === 'Yes'" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.ind_ide_dummy) || trialDetailView.showAddIndIdeError, 'bottom-offset-xs': trialDetailView.showAddIndIdeError && trialDetailView.addedIndIdes.length}">
+                        <div ng-if="trialDetailView.curTrial.ind_ide_question === 'Yes'" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.ind_ide_dummy) || trialDetailView.showAddIndIdeError}">
                             <span class="help-block" ng-show="trialDetailView.showAddIndIdeError && !trialDetailView.ind_ide_type">
                                 IND/IDE Type is Required<br>
                             </span>
@@ -128,7 +128,7 @@
                             <th>IND/IDE Grantor</th>
                             <th>IND/IDE Holder Type</th>
                             <th>NIH Institution, NCI Division/Program (if applicable)</th>
-                            <th class="text-center td-icon" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">Delete</th>
+                            <th class="text-center" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">Delete</th>
                             </thead>
                             <tbody>
                             <tr ng-repeat="indIde in trialDetailView.addedIndIdes track by $index" ng-class="indIde._destroy == true ? 'deleted-text animated-item' : 'animated-item'">
@@ -137,7 +137,7 @@
                                 <td>{{indIde.grantor}}</td>
                                 <td>{{indIde.holder_type_name}}</td>
                                 <td>{{indIde.nih_nci}}</td>
-                                <td class="text-center td-icon"  ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
+                                <td class="text-center"  ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
                                     <label restriction-field class="btn btn-warning" ng-click="trialDetailView.toggleSelection($index, 'ind_ide')">
                                         <i ng-class="indIde._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
                                     </label>
@@ -148,7 +148,7 @@
                     </div>
                 <!-- </div> -->
                 </fieldset>
-                <div class="form-group no-bottom-margin" ng-if="paTrialOverview.trialDetailObj.pa_editable">
+                <div class="form-group" ng-if="paTrialOverview.trialDetailObj.pa_editable">
                     <div class="btn-toolbar">
                         <button type="submit" class="btn btn-primary pull-right" id="submit_processing" restriction-field ng-disabled="trialDetailView.disableBtn">
                             <i class="glyphicon.glyphicon-ok"></i> Save

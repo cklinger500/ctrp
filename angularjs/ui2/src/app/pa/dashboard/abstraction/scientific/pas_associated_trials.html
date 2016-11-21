@@ -66,7 +66,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group no-bottom-margin">
+                    <div class="form-group">
                         <div class="btn-toolbar">
                             <button type="button" id="associated_save" class="btn btn-primary pull-right" ng-disabled="assoTrialsView.foundTrialObj.official_title.length==0" ng-click="assoTrialsView.associateTrial(assoTrialsView.foundTrialObj)">
                                 <i class="glyphicon glyphicon-ok"></i> Save
@@ -98,7 +98,7 @@
                             <th class="col-sm-2">Identifier Type</th>
                             <th class="col-sm-1">Trial Type</th>
                             <th>Official Title</th>
-                            <th class="text-center td-icon"><input type="checkbox" name="delete_all_asso" id="delete_all_asso" ng-model="assoTrialsView.deleteAllAssoCheckbox" ng-change="assoTrialsView.deleteAllAssociations(assoTrialsView.deleteAllAssoCheckbox)"></th>
+                            <th class="text-center"><input type="checkbox" name="delete_all_asso" id="delete_all_asso" ng-model="assoTrialsView.deleteAllAssoCheckbox" ng-change="assoTrialsView.deleteAllAssociations(assoTrialsView.deleteAllAssoCheckbox)"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -121,7 +121,7 @@
                                 <td>
                                     {{t.official_title}}
                                 </td>
-                                <td class="text-center td-icon">
+                                <td class="text-center">
                                     <input type="checkbox" ng-model="t._destroy" ng-change="!t._destroy" ng-click="assoTrialsView.deleteAllAssoCheckbox = false"/>
                                 </td>
                             </tr>

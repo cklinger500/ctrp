@@ -93,11 +93,11 @@
             <tbody>
             <thead>
             <th>Alias</th>
-            <th class="td-icon" ng-show="orgDetailView.curOrgEditable">Delete</th>
+            <th ng-show="orgDetailView.curOrgEditable">Delete</th>
             </thead>
             <tr ng-repeat="nameAlias in orgDetailView.addedNameAliases track by $index" ng-class="nameAlias._destroy == true ? 'deleted-text animated-item' : 'animated-item'">
                 <td>{{nameAlias.name}}</td>
-                <td class="text-center td-icon" ng-show="orgDetailView.curOrgEditable">
+                <td class="text-center" ng-show="orgDetailView.curOrgEditable">
                     <label class="btn btn-warning" restriction-field ng-click="orgDetailView.toggleSelection($index, 'other_id')">
                         <i ng-class="nameAlias._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
                     </label>
@@ -144,7 +144,7 @@
     </div>
 </div>
 <div class="form-group">
-    <div class="col-sm-6 has-feedback required no-padding" ng-class="{'has-error': organization_form.city.$error && ctrpbtn.organization_form.needsAttention(organization_form.city)}">
+    <div class="col-sm-6 has-feedback required" ng-class="{'has-error': organization_form.city.$error && ctrpbtn.organization_form.needsAttention(organization_form.city)}">
         <label class="control-label col-sm-6">City:</label>
         <div class="col-sm-6">
             <input type="text" restriction-field class="form-control input-sm" placeholder="City" id="city" ng-model="orgDetailView.ctrpOrg.city" required name="city">
@@ -152,7 +152,7 @@
             <span class="help-block" ng-show="organization_form.city.$error.required && ctrpbtn.organization_form.needsAttention(organization_form.city)">City is Required</span>
         </div>
     </div>
-    <div class="col-sm-6 has-feedback no-padding" ng-class="{'has-error': organization_form.postal_code.$error && ctrpbtn.organization_form.needsAttention(organization_form.postal_code), 'required': orgDetailView.ctrpOrg.country === 'United States'}">
+    <div class="col-sm-6 has-feedback" ng-class="{'has-error': organization_form.postal_code.$error && ctrpbtn.organization_form.needsAttention(organization_form.postal_code), 'required': orgDetailView.ctrpOrg.country === 'United States'}">
         <label class="control-label col-sm-3">Postal Code:</label>
         <div class="col-sm-3">
             <input type="text" restriction-field class="form-control input-sm" id="postal_code" ng-model="orgDetailView.ctrpOrg.postal_code" placeholder="Postal Code" name="postal_code" ng-required="orgDetailView.ctrpOrg.country==='United States'">

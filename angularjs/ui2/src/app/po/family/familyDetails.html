@@ -24,7 +24,7 @@
     </script>
 
     <ctrp-comment instance-uuid="{{familyDetailView.curFamily.uuid}}" button-type="icon" field="" model="family"></ctrp-comment>
-    <div class="col-xs-12 drop-shadow">
+    <div class="col-xs-12">
         <div class="row">
             <p>
                 <h4 ng-if="familyDetailView.curFamily.new">Add Family</h4>
@@ -88,16 +88,16 @@
                        <button class="btn btn-danger" ng-click="familyDetailView.batchSelect('removeAll')" ng-show="familyDetailView.savedSelection.length > 0">
                            <i class="glyphicon glyphicon-remove"></i> Remove All Family Members
                        </button> -->
-                       <div class="row animated-item top-offset-tiny table-responsive search-calendar-grid" ng-show="familyDetailView.savedSelection.length > 0">
+                       <div class="row animated-item table-responsive" ng-show="familyDetailView.savedSelection.length > 0">
                            <input type="text" ng-model="familyDetailView.selectedOrgFilter" restriction-field class="form-control input-sm" placeholder="Filter selected organizations"/>
                            <table class="table table-bordered table-striped table-condensed">
                                <thead>
                                    <th width="6%" class="nowrap">CTRP ID</th>
                                    <th width="6%" class="nowrap">CTEP ID</th>
                                    <th>Organization</th>
-                                   <th width="18%" class="min-width-md">Relationship</th>
-                                   <th width="14%" class="min-width-md">Effective Date</th>
-                                   <th width="14%" class="min-width-md">Expiration Date</th>
+                                   <th width="18%">Relationship</th>
+                                   <th width="14%">Effective Date</th>
+                                   <th width="14%">Expiration Date</th>
                                    <th width="1%"></th>
                                </thead>
                                <tbody>
@@ -156,7 +156,7 @@
                    </div>
                </div>
 
-                <div class="form-group no-bottom-margin">
+                <div class="form-group">
                     <div class="col-sm-3"></div>
                     <div class="btn-toolbar col-sm-8">
                         <button type="submit" restriction-field class="btn btn-primary pull-right" id="save_btn" ng-disabled="familyDetailView.disableBtn">
@@ -172,6 +172,6 @@
                 </div>
             </form>
         </div>
-        <div class="row top-offset-xs"></div>
+        <div class="row"></div>
     </div>
 </div>

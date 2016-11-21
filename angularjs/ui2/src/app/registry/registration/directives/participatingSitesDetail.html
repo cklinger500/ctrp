@@ -1,4 +1,4 @@
-<div class="col-xs-12" ng-class="{'drop-shadow': !usedInModal}">
+<div class="col-xs-12">
     <div class="row" ng-hide="usedInModal">
         <h4 ng-show="addMode && curPs.new">Add Participating Site</h4>
         <h4 ng-show="editMode && !curPs.new">Update Participating Site</h4>
@@ -7,7 +7,7 @@
 
     <div class="row">
         <form class="form form-horizontal" role="form" name="ps_form" novalidate ctrp-submit="updatePs()" unsaved-changes>
-            <div class="bottom-offset-xss" ng-show="isManageScreen && !(editMode || addMode)">
+            <div ng-show="isManageScreen && !(editMode || addMode)">
                 <div class="col-sm-12 table-responsive" ng-show="curTrial.participating_sites.length">
                     <h5>List of Participating Sites:</h5>
                     <table st-table="curTrial.participating_sites" class="table table-bordered table-striped table-condensed">
@@ -236,7 +236,7 @@
                                             WARNING: Statuses [{{warning.from}}] and [{{warning.to}}] have the same date
                                         </div>
                                     </td>
-                                    <td class="text-center td-icon">
+                                    <td class="text-center">
                                         <label restriction-field class="btn btn-warning" ng-click="toggleSelection($index, 'sr_status')">
                                             <i ng-class="status._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
                                         </label>

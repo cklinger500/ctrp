@@ -1,7 +1,7 @@
 <div class="row" ng-if="orgDetailView.associatedOrgs && !orgDetailView.defaultTab">
     You have reached this page by mistake.
 </div>
-<div class="col-xs-12 drop-shadow" ng-show="orgDetailView.defaultTab">
+<div class="col-xs-12" ng-show="orgDetailView.defaultTab">
     <h4>{{orgDetailView.ctrpOrg.new?'Add':((orgDetailView.tabOpen === 'CTRP' || orgDetailView.tabOpen === 'CTEP') && orgDetailView.curOrgEditable?'Edit':'View')}} Organization</h4>
     <div class="row">
         <ctrp-comment ng-if="orgDetailView.currentUserIsAdmin" instance-uuid="{{orgDetailView.ctrpOrg.uuid}}" button-type="icon" field="" model="organization"></ctrp-comment>

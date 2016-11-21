@@ -87,8 +87,8 @@
                         <div class="col-xs-12 col-sm-10 table-responsive">
                             <table class="table table-striped table-condensed" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1" ctrp-hint hint-append-element="fieldset">
                                 <thead>
-                                    <th width="30%" class="min-width-xxxl">Country</th>
-                                    <th class="min-width-xxxl">Organization</th>
+                                    <th width="30%">Country</th>
+                                    <th>Organization</th>
                                     <th></th>
                                 </thead>
                                 <tbody>
@@ -141,13 +141,13 @@
                             <thead>
                                 <th width="30%">Country</th>
                                 <th>Organization</th>
-                                <th class="text-center td-icon" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">Delete</th>
+                                <th class="text-center" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">Delete</th>
                             </thead>
                             <tbody>
                             <tr ng-repeat="authority in trialDetailView.addedAuthorities track by $index" ng-class="authority._destroy == true ? 'deleted-text animated-item' : 'animated-item'">
                                 <td>{{authority.country}}</td>
                                 <td>{{authority.organization}}</td>
-                                <td class="text-center td-icon" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
+                                <td class="text-center" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1">
                                     <label restriction-field class="btn btn-warning" ng-click="trialDetailView.toggleSelection($index, 'authority')">
                                         <i ng-class="authority._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
                                     </label>
@@ -214,7 +214,7 @@
                         </div>
                     </div>
                 </fieldset>
-                <div class="form-group no-bottom-margin" ng-if="paTrialOverview.trialDetailObj.pa_editable">
+                <div class="form-group" ng-if="paTrialOverview.trialDetailObj.pa_editable">
                     <div class="btn-toolbar">
                         <button type="submit" class="btn btn-primary pull-right" id="submit_processing" restriction-field ng-disabled="trialDetailView.disableBtn">
                             <i class="glyphicon glyphicon-ok"></i> Save

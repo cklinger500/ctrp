@@ -3,7 +3,7 @@
 </div>
 <div class="col-xs-12" ng-if="pamTrialsView.gridTrialsSubmittedOptions.data && pamTrialsView.read_access">
     <div class="row" ng-class="{no_edit: !pamTrialsView.isCurationEnabled}">
-        <div class="col-xs-12 drop-shadow">
+        <div class="col-xs-12">
             <div class="row">
                 <p>
                 <h4>Abstraction Dashboard</h4>
@@ -96,7 +96,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row top-offset-xs"></div>
+            <div class="row"></div>
             <div ng-if="pamTrialsView.gridTrialsSubmittedOptions.data.length > 0">
                 <h4>{{pamTrialsView.gridTrialsSubmittedOptions.totalItems}} Trial(s) found</h4>
                 <div class="row animated-item">
@@ -105,7 +105,7 @@
                 </div>
             </div>
             <div ng-if="pamTrialsView.gridTrialsSubmittedOptions.data.length === 0">No trials submitted at this time.</div>
-            <div class="row top-offset-xs"></div>
+            <div class="row"></div>
         </div>
     </div>
 </div>

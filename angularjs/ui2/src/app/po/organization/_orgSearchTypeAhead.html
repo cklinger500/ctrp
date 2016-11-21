@@ -11,7 +11,7 @@
                ng-if="!page_view.userChosenOrg"
                uib-typeahead="org for org in page_view.typeAheadNameSearch($viewValue)" ui-typeahead-loading="loadingOrganizations"
                typeahead-min-length="3" typeahead-wait-ms="50" typeahead-no-results="noResults" />
-        <div class="type-ahead-results" ng-if="page_view.userChosenOrg"
+        <div ng-if="page_view.userChosenOrg"
              ng-click="page_view.removeOrgChoice()"
              title="Change organization">
             <b>{{page_view.userChosenOrg.name}}</b>,<br>

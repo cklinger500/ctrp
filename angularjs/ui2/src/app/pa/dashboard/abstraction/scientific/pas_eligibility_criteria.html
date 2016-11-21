@@ -73,7 +73,7 @@
                             <label for="min_age_unit" class="control-label col-xs-12 col-sm-1">Unit:</label>
                             <div class="col-xs-12 col-sm-2">
                                 <select name="min_age_unit" id="min_age_unit"
-                                    class="form-control input-sm min-width-lg"
+                                    class="form-control input-sm"
                                     ng-model="criteriaView.trialDetailObj.min_age_unit_id"
                                     ng-options="unit.id as unit.name for unit in criteriaView.ageUnits"
                                     required>
@@ -100,7 +100,7 @@
                             <label for="max_age_unit" class="control-label col-xs-12 col-sm-1">Unit:</label>
                             <div class="col-xs-12 col-sm-2">
                                 <select name="max_age_unit" id="max_age_unit"
-                                    class="form-control input-sm min-width-lg"
+                                    class="form-control input-sm"
                                     ng-model="criteriaView.trialDetailObj.max_age_unit_id"
                                     ng-options="unit.id as unit.name for unit in criteriaView.ageUnits"
                                     required>
@@ -172,7 +172,7 @@
                                             <span ng-if="!criteriaView.otherCriterion.edit">
                                                 {{criteriaView.otherCriterion.criteria_type}}
                                             </span>
-                                            <select class="form-control input-sm min-width-sm" name="criterion_type" id="criterion_type" ng-model="criteriaView.otherCriterion.criteria_type" ng-if="criteriaView.otherCriterion.edit">
+                                            <select class="form-control input-sm" name="criterion_type" id="criterion_type" ng-model="criteriaView.otherCriterion.criteria_type" ng-if="criteriaView.otherCriterion.edit">
                                                 <option value="Inclusion" selected="selected">Inclusion</option>
                                                 <option value="Exclusion" ng-selected="criteriaView.otherCriterion.criteria_type === 'Exclusion'">Exclusion</option>
                                             </select>
@@ -216,8 +216,8 @@
                                 <tr>
                                     <th class="col-sm-4">Eligibility Criterion Type</th>
                                     <th class="col-sm-5">Eligibility Criterion Description</th>
-                                    <th class="text-center td-icon">Edit</th>
-                                    <th class="text-center td-icon"><input type="checkbox" name="delete_allOC" id="delete_allOC" ng-model="criteriaView.deleteAllOCCheckbox" ng-change="criteriaView.deleteAllOC(criteriaView.deleteAllOCCheckbox)"></th>
+                                    <th class="text-center">Edit</th>
+                                    <th class="text-center"><input type="checkbox" name="delete_allOC" id="delete_allOC" ng-model="criteriaView.deleteAllOCCheckbox" ng-change="criteriaView.deleteAllOC(criteriaView.deleteAllOCCheckbox)"></th>
                                 </tr>
                                 </thead>
                                 <tbody ui-sortable="criteriaView.sortableListener" ng-model="criteriaView.trialDetailObj.other_criteria">
@@ -228,12 +228,12 @@
                                     <td>
                                         {{row.criteria_desc}}
                                     </td>
-                                    <td class="text-center td-icon">
+                                    <td class="text-center">
                                         <button type="button" class="btn btn-primary" restriction-field ng-disabled="row._destroy || criteriaView.otherCriterion.edit" ng-click="criteriaView.editOtherCriterion($index)">
                                             <i class="glyphicon glyphicon-edit"></i>
                                         </button>
                                     </td>
-                                    <td  class="text-center td-icon">
+                                    <td  class="text-center">
                                         <button type="button" class="btn btn-warning" restriction-field ng-click="criteriaView.deleteOtherCriterion($index)" ng-disabled="criteriaView.otherCriterion.edit">
                                             <i class="glyphicon" ng-class="row._destroy == true ? 'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i>
                                         </button>
@@ -250,7 +250,7 @@
                                 </tfoot> -->
                             </table>
                         </div>
-                        <div class="form-group no-bottom-margin">
+                        <div class="form-group">
                             <div class="btn-toolbar">
                                 <button type="button" class="btn btn-primary pull-right" ng-click="criteriaView.prepareOtherCriterion('Inclusion')">
                                     <i class="glyphicon glyphicon-plus"></i> Add Inclusion Criterion
@@ -262,7 +262,7 @@
                         </div>
                     </fieldset>
                 <!-- end of fieldset for other criteria -->
-                <div class="form-group no-bottom-margin" ng-show="paTrialOverview.trialDetailObj.pa_sci_editable">
+                <div class="form-group" ng-show="paTrialOverview.trialDetailObj.pa_sci_editable">
                    <div class="row">
                       <div class="col-sm-3"></div>
                       <div class="btn-toolbar col-xs-12 col-sm-9">

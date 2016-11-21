@@ -130,7 +130,7 @@
                 {field: 'first_four_docs',displayName:'Documents', enableSorting: true, minWidth: '380', width: '*',
                     cellTemplate: '<div class="ui-grid-cell-contents">' +
                     '<ul ng-repeat="doc in row.entity[col.field]"><li><a href="{{grid.appScope.downloadBaseUrl}}/{{doc.id}}">{{doc.file_name}}</a>  {{doc.source_document}} </li></ul>' +
-                    '<a  class="cursor-pointer" ng-show="(row.entity.docs_size > 4)" ng-click="grid.appScope.showTrialDocuments(grid,row)">Show more ...</a>'+
+                    '<a  ng-show="(row.entity.docs_size > 4)" ng-click="grid.appScope.showTrialDocuments(grid,row)">Show more ...</a>'+
                     '</div>'},
                 {field: 'milestone', displayName: 'Current Milestone', minWidth: '220',width: '*',enableSorting:true, cellTemplate:'<div class="ui-grid-cell-contents"><div ng-repeat="item in row.entity[col.field]">{{item}}</div></div>'},
 

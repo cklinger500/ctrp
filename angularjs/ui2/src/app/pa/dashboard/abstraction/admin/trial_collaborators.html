@@ -29,7 +29,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group no-bottom-margin" ng-if="paTrialOverview.trialDetailObj.pa_editable">
+                        <div class="form-group" ng-if="paTrialOverview.trialDetailObj.pa_editable">
                             <div class="btn-toolbar">
                                 <button type="submit" class="btn btn-primary pull-right" id="submit_processing" restriction-field ng-disabled="trialDetailView.disableBtn">
                                     <i class="glyphicon glyphicon-ok"></i> Save
@@ -55,7 +55,7 @@
                     <thead>
                     <th>CTRP ID</th>
                     <th>Name</th>
-                    <th class="text-center td-icon">
+                    <th class="text-center">
                         <input type="checkbox" restriction-field ng-model="trialDetailView.selectedAllCos" ng-click="trialDetailView.checkAllCos()" ng-disabled="!paTrialOverview.trialDetailObj.pa_editable" />
                     </th>
                     </thead>
@@ -74,7 +74,7 @@
                                 {{collaborator.org_name}}
                             </div>
                         </td>
-                        <td class="text-center td-icon">
+                        <td class="text-center">
                             <input type="checkbox" ng-model="collaborator.selected" restriction-field ng-change="trialDetailView.deleteListHandler(trialDetailView.curTrial.collaborators)" ng-click="trialDetailView.selectedAllCos = false" ng-disabled="!paTrialOverview.trialDetailObj.pa_editable" />
                         </td>
                     </tr>
