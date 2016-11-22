@@ -109,3 +109,4 @@ gem "lograge"
 
 ##gem for reddis
 gem 'redis'
+gem 'simplecov', :require => false, :group => :test
