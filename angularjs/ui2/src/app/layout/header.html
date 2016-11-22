@@ -53,10 +53,10 @@
 
     <div class="contain-to-grid">
         <nav class="navbar navbar-default navbar-static">
-            <div class="container">
+            <div class="container" ng-if="headerView.currrentState.current.name != 'main.sign_in'">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="navbar-header" ng-if="headerView.currrentState.current.name != 'main.sign_in' && headerView.currrentState.current.name != 'main.defaultContent'">
+                <div class="navbar-header">
                     <button class="collapsed navbar-toggle" type="button" data-toggle="collapse" data-target=".ctrp-navbar-collapse">
                         <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
                     </button>
