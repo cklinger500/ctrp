@@ -1,17 +1,17 @@
-<footer class="footer" ng-controller="footerCtrl">
-    <div class="container center-block">
-        <ul class="list-inline">
+<footer ng-controller="footerCtrl">
+    <div class="container">
+        <ul>
             <li><a href="http://www.hhs.gov/" tabindex="150">U.S. Department of Health and Human Services</a>&nbsp;&nbsp;&nbsp;&nbsp;|</li>
             <li><a href="http://www.nih.gov" tabindex="151">National Institutes of Health</a>&nbsp;&nbsp;&nbsp;&nbsp;| </li>
             <li><a href="http://www.cancer.gov/" tabindex="152">National Cancer Institute</a>&nbsp;&nbsp;&nbsp;&nbsp;| </li>
             <li class="last"><a href="http://usa.gov" tabindex="153">USA.gov</a></li>
         </ul>
         <br /><br />
-        <div class="text-center">
+        <div>
             NIH ... Turning Discovery Into Health<sup>®</sup>
         </div>
         <br /><br />
-        <div class="text-center" ng-show="appVersion !=''">
+        <div ng-show="appVersion !=''">
             CTRP v{{appVersion}} {{appRelMilestone}}
         </div>
     </div>

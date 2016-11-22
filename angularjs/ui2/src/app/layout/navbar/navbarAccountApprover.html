@@ -1,11 +1,9 @@
-<ul class="nav navbar-nav">
-    <li ng-class="{ active: headerView.navbarIsActive('main.defaultContent') }">
-        <a tabindex="1" ui-sref="main.defaultContent" ui-sref-opts="{reload:true}">Home<span class="sr-only">(current)</span></a>
-    </li>
-    <li class="dropdown" ng-class="{ active: headerView.navbarIsActive('main.registeredUsers, main.users, main.assignTrials, main.administrative, main.manageSiteAdmins, main.newBiomarkerRequests, main.manageNcltTerms') }">
-        <a tabindex="7" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Administrative <span class="caret"></span></a>
-        <ul class="dropdown-menu" role="menu">
-            <li><a ui-sref="main.users" ui-sref-opts="{reload:true}">User Management</a></li>
-        </ul>
-    </li>
-</ul>
+<li ng-class="{ active: headerView.navbarIsActive('main.defaultContent') }">
+    <a tabindex="1" ui-sref="main.defaultContent" ui-sref-opts="{reload:true}">Home<span class="sr-only">(current)</span></a>
+</li>
+<li class="dropdown" ng-class="{ active: headerView.navbarIsActive('main.registeredUsers, main.users, main.assignTrials, main.administrative, main.manageSiteAdmins, main.newBiomarkerRequests, main.manageNcltTerms') }">
+    <a tabindex="7" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Administrative <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+        <li><a ui-sref="main.users" ui-sref-opts="{reload:true}">User Management</a></li>
+    </ul>
+</li>
