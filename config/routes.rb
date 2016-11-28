@@ -36,7 +36,21 @@ Rails.application.routes.draw do
               post '/:id' => 'api_trials#import_trial'
             end
           end
-        end
+
+          scope '/organizations' do
+              post '/' => 'api_organizations#create'
+              post '/:idType/:id' => 'api_organizations#update', constraints: {
+                                                                            idType: 'ctrp'
+                                                                    }
+          end
+
+          scope '/persons' do
+            post '/' => 'api_people#create'
+            post '/:idType/:id' => 'api_people#update', constraints: {
+                idType: 'ctrp'
+            }
+          end
+          end
       end
     end
 
@@ -53,6 +67,7 @@ Rails.application.routes.draw do
         get 'search'
         get '/associated/:id', to: 'organizations#associated'
         post 'associated', to: 'organizations#associated', defaults: {format: 'json'}
+        post 'nullifiable', to: 'organizations#nullifiable', defaults: {format: 'json'}
         post 'dis_associate', to: 'organizations#dis_associate', defaults: {format: 'json'}
         post 'search'
         post 'select'
@@ -141,11 +156,12 @@ Rails.application.routes.draw do
       collection do
         get 'search'
         post 'search'
+        get 'nullifiable/:id', to: 'people#nullifiable', defaults: {format: 'json'}
         post 'curate'
         post 'unique', defaults: {format: 'json'}
         get '/associate_context/:ctep_person_id/:ctrp_id', to: 'people#associate_person'
         get '/association/remove/:ctep_person_id', to: 'people#remove_association'
-        post '/clone_ctep', to: 'people#clone_ctep_person'
+        post 'clone_ctep' #, to: 'people#clone_ctep'
       end
     end
 

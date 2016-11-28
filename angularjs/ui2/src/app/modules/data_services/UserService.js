@@ -434,7 +434,7 @@
                                         'id': user.id,
                                         'col1': user.last_name + ', ' + user.first_name + ' (' + user.username + ')',
                                         'col2': user.email,
-                                        'col3': user.organization_name
+                                        'col3': user.user_org_name
                                     });
                                 }
                             });
@@ -446,18 +446,21 @@
 
         };
 
+        function _getMenuArr() {
+            return [
+                {
+                    title: 'Export All Data As CSV',
+                    order: 100,
+                    action: function ($event){
+                        this.grid.api.exporter.csvExport(uiGridExporterConstants.ALL, uiGridExporterConstants.ALL);
+                    }
+                }
+            ];
+        }
+
         this.TransferTrialsRemoveGridItem = function (scope, controller) {
             var curUserRole = service.getUserRole();
-            var menuArr =
-                [
-                    {
-                        title: 'Export All Data As CSV',
-                        order: 100,
-                        action: function ($event){
-                            this.grid.api.exporter.csvExport(uiGridExporterConstants.ALL, uiGridExporterConstants.ALL);
-                        }
-                    }
-                ]
+            var menuArr = _getMenuArr();
             if (service.isCurationModeEnabled() && (curUserRole === 'ROLE_SUPER' || curUserRole === 'ROLE_ADMIN') && controller.ownerListMode) {
                 menuArr.push(
                     {
@@ -477,16 +480,7 @@
 
         this.TransferTrialsAddGridItem = function (scope, controller) {
             var curUserRole = service.getUserRole();
-            var menuArr =
-                [
-                    {
-                        title: 'Export All Data As CSV',
-                        order: 100,
-                        action: function ($event){
-                            this.grid.api.exporter.csvExport(uiGridExporterConstants.ALL, uiGridExporterConstants.ALL);
-                        }
-                    }
-                ]
+            var menuArr = _getMenuArr();
             if (service.isCurationModeEnabled() && (curUserRole === 'ROLE_SUPER' || curUserRole === 'ROLE_ADMIN') && controller.setAddMode) {
                 menuArr.push(
                     {

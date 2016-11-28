@@ -21,6 +21,8 @@
         vm.registeredUsersPage = $state.includes('main.registeredUsers');
         vm.searching = false;
 
+        OrgService.setTypeAheadOrgNameSearch(vm);
+
         // Initial User Search Parameters
         var SearchParams = function (){
             return {
@@ -242,23 +244,6 @@
                 vm.searchParams[key] = '';
             });
         }; //resetSearch
-
-        vm.typeAheadParams = {};
-        vm.typeAheadNameSearch = function () {
-            return OrgService.typeAheadOrgNameSearch(vm.organization_name, vm.searchOrganizationFamily);
-        };
-
-        vm.setUserListTypeAheadOrg = function (searchObj) {
-            var orgSearch = OrgService.setTypeAheadOrg(searchObj);
-            vm.organization_name = orgSearch.organization_name;
-            vm.userChosenOrg = orgSearch.organization_details;
-            vm.searchParams.organization_id = vm.userChosenOrg.id;
-        };
-
-        vm.removeOrgChoice = function () {
-            vm.userChosenOrg = null;
-            vm.organization_name = vm.searchParams.user_org_name = vm.searchParams.organization_id = undefined;
-        };
 
         /* remove ownership */
         vm.trialOwnershipRemoveIdArr = null;

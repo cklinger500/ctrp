@@ -205,8 +205,6 @@ class ApplicationController < ActionController::Base
           user_type: user.type,
           env: Rails.env
                     }
-
-      Rails.logger.info "In create_authorization_json auth_json = #{auth_json.inspect}"
       return auth_json
     rescue => e
       Rails.logger.info "In Application Controller, exception handling"
@@ -340,6 +338,27 @@ class ApplicationController < ActionController::Base
       role_details = all_roles.select { |role| role["id"] == user_role }[0]
     end
     return role_details
+  end
+
+  def matches_wc results, column, value, wc_search
+    str_len = value.length
+    if value[0] == '*' && value[str_len - 1] != '*'
+      results = results.where("#{column} ilike ?", "%#{value[1..str_len - 1]}")
+    elsif value[0] != '*' && value[str_len - 1] == '*'
+      results = results.where("#{column} ilike ?", "#{value[0..str_len - 2]}%")
+    elsif value[0] == '*' && value[str_len - 1] == '*'
+      results = results.where("#{column} ilike ?", "%#{value[1..str_len - 2]}%")
+    else
+      if !wc_search
+        if !value.match(/\s/).nil?
+          value = value.gsub!(/\s+/, '%')
+        end
+        results = results.where("#{column} ilike ?", "%#{value}%")
+      else
+        results = results.where("#{column} ilike ?", "#{value}")
+      end
+    end
+    return results
   end
 
   def global_request_logging

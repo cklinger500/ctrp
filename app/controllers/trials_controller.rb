@@ -325,14 +325,15 @@ class TrialsController < ApplicationController
           @trials = Trial.matches('lead_org_id', current_user.organization_id).where(nih_nci_prog: nil).filter_rejected.active_submissions
         end
       end
-    elsif params[:org].present? || params[:protocol_id].present? || params[:official_title].present? || params[:phases].present? || params[:purposes].present? || params[:pilot].present? || params[:pi].present? || params[:org].present?  || params[:study_sources].present?
+    elsif params[:org].present? || params[:organization_id].present? || params[:protocol_id].present? || params[:official_title].present? || params[:phases].present? || params[:purposes].present? || params[:pilot].present? || params[:pi].present? || params[:org].present?  || params[:study_sources].present?
       @trials = Trial.filter_rejected
       @trials = @trials.with_protocol_id(params[:protocol_id]) if params[:protocol_id].present?
-      @trials = @trials.matches_wc('official_title', params[:official_title]) if params[:official_title].present?
+      @trials = matches_wc(@trials, 'official_title', params[:official_title], true) if params[:official_title].present?
       @trials = @trials.with_phases(params[:phases]) if params[:phases].present?
       @trials = @trials.with_purposes(params[:purposes]) if params[:purposes].present?
       @trials = @trials.matches('pilot', params[:pilot]) if params[:pilot].present?
       @trials = @trials.with_org(params[:org], params[:org_types]) if params[:org].present?
+      @trials = @trials.with_org_id(params[:organization_id], params[:org_types]) if params[:organization_id].present?
       if params[:pi].present?
         splits = params[:pi].split(',').map(&:strip)
         @trials = @trials.with_pi_lname(splits[0])
@@ -354,42 +355,27 @@ class TrialsController < ApplicationController
       @trials = @trials.is_not_draft if params[:searchType] == 'All Trials'
       @trials = @trials.is_draft(@current_user.username) if params[:searchType] == 'Saved Drafts'
       #@trials = @trials.sort_by_col(params).group(:'trials.id').page(params[:start]).per(params[:rows])
-      @trials = @trials.order("#{params[:sort]} #{params[:order]}").page(params[:start]).per(params[:rows])
+      @trials = @trials.order("#{params[:sort]} #{params[:order]}").group(:'trials.id').page(params[:start]).per(params[:rows])
 
        #@trials = @trials.filter(@trials, {:phases => params[:phases], :purposes => params[:purposes]})
 
 
       #### Write here a join query to avoid the access of db tables from View.
       ###
-      Rails.logger.info "Started querying multitable with Trials to avoid the access of db tables from View"
+      Rails.logger.error "Started querying multitable with Trials to avoid the access of db tables from View"
 
-      join_clause  = "LEFT OUTER JOIN phases ON trials.phase_id = phases.id LEFT OUTER JOIN primary_purposes ON trials.primary_purpose_id = primary_purposes.id "
-      join_clause += "LEFT JOIN organizations as trial_lead_org ON trial_lead_org.id = trials.lead_org_id "
-      join_clause += "LEFT JOIN organizations as sponsor ON sponsor.id = trials.sponsor_id "
-      join_clause += "LEFT JOIN people as pi ON pi.id = trials.pi_id "
-      join_clause += "LEFT JOIN study_sources as study_source ON study_source.id = trials.study_source_id "
-
-      join_clause += "LEFT JOIN research_categories as research_category ON research_category.id = trials.research_category_id "
-      join_clause += "LEFT JOIN responsible_parties as responsible_party ON responsible_party.id = trials.responsible_party_id "
-      join_clause += "LEFT JOIN accrual_disease_terms as accrual_disease_term ON accrual_disease_term.id = trials.accrual_disease_term_id "
-
-      #join_clause += "LEFT JOIN organizations as trial_lead_org ON trial_lead_org.id = trials.lead_org_id "
-      #join_clause += "LEFT JOIN organizations as trial_lead_org ON trial_lead_org.id = trials.lead_org_id "
-      #join_clause += "LEFT JOIN organizations as trial_lead_org ON trial_lead_org.id = trials.lead_org_id "
-
-
-      @trials = @trials.joins(join_clause).select('trials.*, phases.name as phase_name,primary_purposes.name as purpose,
-                            trial_lead_org.name as lead_org_name,sponsor.name as sponsor_name,
-                            pi.fname  as pi_name, study_source.name as study_source_name ,
-                            research_category.name as research_category_name, responsible_party.name as responsible_party_name,
-                            accrual_disease_term.name as accrual_disease_term_name').group(:'trials.id',:'phases.name',
-                                                                                           :'primary_purposes.name',:'trial_lead_org.name',
-                                                                                           :'sponsor.name',:'pi.fname',
-                                                                                           :'study_source.name',:'research_category.name',
-                                                                                           :'responsible_party.name',:'accrual_disease_term.name')
-
-     # @trials = @trials.uniq
-
+      #@trials = @trials.uniq
+      #@trials = @trials.my_available_actions
+      #@trials = @trials.includes(:phase).references(:phase)
+      #@trials = @trials.includes(:primary_purpose).references(:primary_purpose)
+      #@trials = @trials.includes(:research_category).references(:research_category)
+      #@trials = @trials.includes(:responsible_party).references(:responsible_party)
+      #@trials = @trials.includes(:accrual_disease_term).references(:accrual_disease_term)
+      #@trials = @trials.includes(:lead_org).references(:lead_org)
+      #@trials = @trials.includes(:pi).references(:pi)
+      #@trials = @trials.includes(:sponsor).references(:sponsor)
+      #@trials = @trials.includes(:study_source).references(:study_source)
+      #@trials = @trials.includes(:trial_status_wrappers).references(:trial_status_wrappers)
 
       @trials.each do |trial|
         trial.current_user = @current_user
@@ -495,10 +481,10 @@ class TrialsController < ApplicationController
     params[:sort] = 'lead_protocol_id' if params[:sort].blank?
     params[:order] = 'asc' if params[:order].blank?
 
-    if params[:checkout].present? || params[:scientific_checkout].present? || params[:admin_checkout].present? || params[:submission_type].present? ||  params[:submission_method].present? ||params[:nih_nci_prog].present? || params[:nih_nci_div].present? || params[:milestone].present? || params[:protocol_origin_type] || params[:processing_status].present? || params[:trial_status].present? || params[:research_category].present? || params[:other_id].present? || params[:protocol_id].present? || params[:official_title].present? || params[:phases].present? || params[:purposes].present? || params[:pilot].present? || params[:pi].present? || params[:org].present?  || params[:study_sources].present? || params[:internal_sources].present?
+    if params[:checkout].present? || params[:scientific_checkout].present? || params[:admin_checkout].present? || params[:submission_type].present? ||  params[:submission_method].present? ||params[:nih_nci_prog].present? || params[:nih_nci_div].present? || params[:milestone].present? || params[:protocol_origin_type] || params[:processing_status].present? || params[:trial_status].present? || params[:research_category].present? || params[:other_id].present? || params[:protocol_id].present? || params[:official_title].present? || params[:phases].present? || params[:purposes].present? || params[:pilot].present? || params[:pi].present? || params[:org].present? || params[:organization_id].present?   || params[:study_sources].present? || params[:internal_sources].present?
       @trials = Trial.all
       @trials = @trials.with_protocol_id(params[:protocol_id]) if params[:protocol_id].present?
-      @trials = @trials.matches_wc('official_title', params[:official_title]) if params[:official_title].present?
+      @trials = matches_wc(@trials, 'official_title', params[:official_title], true) if params[:official_title].present?
       @trials = @trials.with_phases(params[:phases]) if params[:phases].present?
       @trials = @trials.with_purposes(params[:purposes]) if params[:purposes].present?
       @trials = @trials.matches('pilot', params[:pilot]) if params[:pilot].present?
@@ -509,6 +495,7 @@ class TrialsController < ApplicationController
       end
       @trials = @trials.user_trials(params[:user_id]) if params[:user_id].present?
       @trials = @trials.with_org(params[:org], params[:org_types]) if params[:org].present?
+      @trials = @trials.with_org_id(params[:organization_id], params[:org_types]) if params[:organization_id].present?
       @trials = @trials.with_study_sources(params[:study_sources]) if params[:study_sources].present?
       @trials = @trials.with_internal_sources(params[:internal_sources]) if params[:internal_sources].present?
       @trials = @trials.sort_by_col(params).group(:'trials.id').page(params[:start]).per(params[:rows])
@@ -729,7 +716,12 @@ class TrialsController < ApplicationController
       @search_result[:error_msg] = 'Trial is not found'
     else
       @search_result[:nct_id] = xml.xpath('//id_info/nct_id').text
-      @search_result[:official_title] = xml.xpath('//official_title').text
+
+      if xml.xpath('//official_title').present?
+        @search_result[:official_title] = xml.xpath('//official_title').text
+      elsif xml.xpath('//brief_title').present?
+        @search_result[:official_title] = xml.xpath('//brief_title').text
+      end
       @search_result[:research_category] = xml.xpath('//study_type').text
       # @search_result[:status] = xml.xpath('//overall_status').text
       # @search_result[:condition] = ''
@@ -751,7 +743,9 @@ class TrialsController < ApplicationController
   def search_clinical_trials_gov
     @search_result = {}
 
-    existing_nct_ids = OtherId.joins(:trial).where('protocol_id = ? AND protocol_id_origin_id = ? AND (trials.is_rejected = ? OR trials.is_rejected IS NULL)', params[:nct_id].upcase, ProtocolIdOrigin.find_by_code('NCT').id, FALSE)
+    #existing_nct_ids = OtherId.joins(:trial).where('protocol_id = ? AND protocol_id_origin_id = ? AND (trials.is_rejected = ? OR trials.is_rejected IS NULL)', params[:nct_id].upcase, ProtocolIdOrigin.find_by_code('NCT').id, FALSE)
+
+    existing_nct_ids = OtherId.joins(:trial).where('protocol_id = ? AND protocol_id_origin_id = ? ', params[:nct_id].upcase, ProtocolIdOrigin.find_by_code('NCT').id)
     if existing_nct_ids.length > 0
       @search_result[:error_msg] = 'A study with the given identifier already exists in CTRP. To find this trial in CTRP, go to the Search Trials page.'
       return
@@ -768,14 +762,20 @@ class TrialsController < ApplicationController
       org_name = xml.xpath('//sponsors/lead_sponsor/agency').text
 
       dup_trial = Trial.joins(:lead_org).where('organizations.name ilike ? AND lead_protocol_id = ?', org_name, lead_protocol_id)
-      dup_trial = dup_trial.filter_rejected
+      ##dup_trial_filtered_rejected = dup_trial.filter_rejected
+
+
       if dup_trial.length > 0
         @search_result[:error_msg] = 'Combination of Lead Organization Trial ID and Lead Organization must be unique.'
         return
       end
 
       @search_result[:nct_id] = xml.xpath('//id_info/nct_id').text
-      @search_result[:official_title] = xml.xpath('//official_title').text
+      if xml.xpath('//official_title').present?
+        @search_result[:official_title] = xml.xpath('//official_title').text
+      elsif xml.xpath('//brief_title').present?
+        @search_result[:official_title] = xml.xpath('//brief_title').text
+      end
       @search_result[:status] = xml.xpath('//overall_status').text
       @search_result[:condition] = ''
       xml.xpath('//condition').each_with_index do |condition, i|
@@ -793,31 +793,43 @@ class TrialsController < ApplicationController
   end
 
   def import_clinical_trials_gov
-    url = AppSetting.find_by_code('CLINICAL_TRIALS_IMPORT_URL').value
-    url = url.sub('NCT********', params[:nct_id])
-    xml = Nokogiri::XML(open(url))
+    begin
+        url = AppSetting.find_by_code('CLINICAL_TRIALS_IMPORT_URL').value
+        url = url.sub('NCT********', params[:nct_id])
+        xml = Nokogiri::XML(open(url))
 
-    import_trial_service = ImportTrialService.new()
-    @trial = Trial.new(import_trial_service.import_params(xml, @current_user))
-    @trial.current_user = @current_user
-    import_log_service = ImportTrialLogService.new
-    request_record = import_log_service.request_logging(xml,"Create","request",@current_user,ImportTrialLogDatum)
+        import_trial_service = ImportTrialService.new()
+        @trial = Trial.new(import_trial_service.import_params(xml, @current_user))
+        @trial.current_user = @current_user
+        import_log_service = ImportTrialLogService.new
+        request_record = import_log_service.request_logging(xml,"Create","request",@current_user,ImportTrialLogDatum)
+    rescue =>e
+      @error= e.message
+      Rails.logger.error "Exception caught when trying to import an error #{@error}"
+    end
     respond_to do |format|
       if @trial.save
-        format.html { redirect_to @trial, notice: 'Trial was successfully imported.' }
-        format.json { render :show, status: :created, location: @trial }
-        import_log_service.response_logging(@trial,"sucess", "Created Sucessfully",ImportTrialLogDatum,request_record)
-        FileUtils.mkdir_p('../../storage/tmp')
-        file_name = "import_#{params[:nct_id]}_#{Date.today.strftime('%d-%b-%Y')}"
-        File.open("../../storage/tmp/#{file_name}.xml", 'wb') do |file|
-          file << open(url).read
+        begin
+          format.html { redirect_to @trial, notice: 'Trial was successfully imported.' }
+          format.json { render :show, status: :created, location: @trial }
+          import_log_service.response_logging(@trial,"sucess", "Created Sucessfully",ImportTrialLogDatum,request_record)
+          FileUtils.mkdir_p('../../storage/tmp')
+          file_name = "import_#{params[:nct_id]}_#{Date.today.strftime('%d-%b-%Y')}"
+          File.open("../../storage/tmp/#{file_name}.xml", 'wb') do |file|
+            file << open(url).read
+          end
+          TrialDocument.create(document_type: 'Other Document', document_subtype: 'Import XML', trial_id: @trial.id, file: File.open("../../storage/tmp/#{file_name}.xml"))
+          Rails.logger.info "Imported a trial successfully and rendered"
+
+        rescue =>e
+          @error= e.message
+          Rails.logger.error "Exception caught when trying to render an import trial #{@error}"
         end
-        TrialDocument.create(document_type: 'Other Document', document_subtype: 'Import XML', trial_id: @trial.id, file: File.open("../../storage/tmp/#{file_name}.xml"))
-      else
+
+        else
         format.html { render :new }
         format.json { render json: @trial.errors, status: :unprocessable_entity }
         import_log_service.response_logging(@trial,"failure", @trial.errors.to_xml,ImportTrialLogDatum,request_record)
-
       end
     end
   end

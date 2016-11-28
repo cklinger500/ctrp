@@ -62,12 +62,12 @@ When I enter or edit information in the following required fields
 |First Name |
 |Last Name |
 |Phone Number |
+|Username|
 And I select the following required information
 |Organizational Affiliation |
-|Username|
 |Status|
 |Role|
-And I enter the folowing option fields
+And I enter the following optional fields
 |Middle Initial |
 |PRS Organization Name |
 And I select to either receive or not receive email notifications

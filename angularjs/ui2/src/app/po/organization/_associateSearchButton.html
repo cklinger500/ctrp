@@ -1,0 +1,13 @@
+<!-- separated to control refresh of directive upon changing values of parameters -->
+<ctrp-org-adv-search-modal-button
+        ng-hide="orgDetailView.ctrpOrg.new"
+        pre-search= '{
+            "nosave": true,
+            "source_contextfilter": {{orgDetailView.ctepOrg ? ["NLM"] : ["CTEP","NLM"]}}
+            }'
+        class="pull-left"
+        button-label="Associate Organization Context"
+        max-row-selectable="1" use-built-in-template="false" allow-overwrite="true"
+        filtered-contexts = "{{orgDetailView.searchFilter}}"
+        selected-orgs-array="orgDetailView.selectedOrgsArray">
+</ctrp-org-adv-search-modal-button>

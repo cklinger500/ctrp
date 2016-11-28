@@ -1,0 +1,23 @@
+<div class="col-sm-12" ng-if="personDetailView.curPerson.associated_persons.length > 0 && personDetailView.curPerson.is_ctrp_context && personDetailView.isAllowedToComment">
+    <hr>
+    <div class="form-group">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-8">
+            <h4>Associated Persons <toggle-visibility element-to-toggle="#associatedGrid, #removeAssociation"></toggle-visibility></h4>
+            <div id="associatedGrid" ui-grid="personDetailView.associatedPersonsOptions" ui-grid-move-columns ui-grid-selection class="grid grid-sm"></div>
+        </div>
+    </div>
+    <div id="removeAssociation" class="form-group">
+        <div class="col-sm-9 btn-toolbar">
+            <button type="button" class="btn btn-danger pull-right" id="delete"
+                ctrp-confirm
+                ctrp-click="personDetailView.confirmDisAssociate()"
+                placement="top"
+                confirm-msg="Click OK to remove the selected association. Click Cancel to abort."
+                restriction-field="ROLE_CURATOR,ROLE_SUPER,ROLE_ADMIN"
+                ng-disabled="!personDetailView.associationForRemoval.length || !personDetailView.isWritable">
+                <i class="glyphicon glyphicon-trash"></i> Remove Selected Associations
+            </button>
+        </div>
+    </div>
+</div>

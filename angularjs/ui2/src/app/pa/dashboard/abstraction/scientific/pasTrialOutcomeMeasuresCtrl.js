@@ -41,12 +41,12 @@
 
         $scope.$on("$destroy", function() {
             for (var i = 0; i < vm.curTrial.outcome_measures.length; i++) {
-                if(vm.curTrial.outcome_measures[i].index !=i) {
+                if(vm.curTrial.outcome_measures[i].index !== i) {
                     vm.curTrial.outcome_measures[i].index=i;
                     var currentOM= vm.curTrial.outcome_measures[i];
                     vm.disableBtn = true;
 
-                     TrialService.upsertOutcomeMeasure(currentOM).then(function (response) {
+                    TrialService.upsertOutcomeMeasure(currentOM).then(function(response) {
                          var status = response.server_response.status;
 
                          if (status >= 200 && status <= 210) {
@@ -54,10 +54,11 @@
                              vm.selectedAllOM = false;
                          }
                     }).catch(function (err) {
-                     console.log("error in re-ordering outcome measures " + JSON.stringify(outerPS));
-                 }).finally(function() {
-                     vm.disableBtn = false;
-                 });
+                        console.log('error is: ', err);
+                        console.log("error in re-ordering outcome measures " + JSON.stringify(outerPS));
+                    }).finally(function() {
+                         vm.disableBtn = false;
+                    });
                 }
             }
         });
@@ -125,7 +126,7 @@
                     if(vm.currentOutcomeMeasure.id) {
                         //setting up "outcome measure type" on the fly to display on grid
                         for (var i = 0; i < vm.om_types.length; i++) {
-                            if(vm.om_types[i].id == vm.currentOutcomeMeasure.outcome_measure_type_id){
+                            if(vm.om_types[i].id === vm.currentOutcomeMeasure.outcome_measure_type_id){
                                 console.log(vm.om_types[i].name)
                                 vm.currentOutcomeMeasure.outcome_measure_type=vm.om_types[i].name;
                             }
@@ -137,9 +138,9 @@
                             vm.curTrial.outcome_measures.push(vm.currentOutcomeMeasure);
                             successMsg = 'Record Created.';
                         } else {
-                            for (var i = 0; i < vm.curTrial.outcome_measures.length; i++) {
-                                if (vm.curTrial.outcome_measures[i].id == vm.currentOutcomeMeasure.id) {
-                                    vm.curTrial.outcome_measures[i] = vm.currentOutcomeMeasure;
+                            for (var j = 0; j < vm.curTrial.outcome_measures.length; j++) {
+                                if (vm.curTrial.outcome_measures[j].id === vm.currentOutcomeMeasure.id) {
+                                    vm.curTrial.outcome_measures[j] = vm.currentOutcomeMeasure;
                                 }
                             }
                             successMsg = 'Record Updated.';
@@ -155,6 +156,7 @@
                     vm.selectedAllOM = false;
                 }
             }).catch(function(err) {
+                console.log('error is: ', err);
                 console.log("error in creating or updating outcome measures trial " + JSON.stringify(outerPS));
             }).finally(function() {
                 vm.disableBtn = false;
@@ -173,10 +175,7 @@
                 }
             });
             vm.selectedDeleteOutcomeMeasuresList = deleteList ;
-            // console.log("In vm.selectedDeleteParticipatingSitesList=" + JSON.stringify(vm.selectedDeleteParticipatingSitesList));
-
-            console.log(deleteList)
-        };
+        }
 
         function deleteSelected(){
             vm.setToDefaultMode();
@@ -185,7 +184,7 @@
                 vm.deleteOutcomeMeasure( vm.selectedDeleteOutcomeMeasuresList[i].id);
             }
             resetOutcomeMeasure();
-        };
+        }
 
         vm.deleteOutcomeMeasure = function(psId){
             vm.disableBtn = true;
@@ -197,7 +196,7 @@
                     vm.curTrial.lock_version = response.lock_version || '';
                     $scope.$emit('updatedInChildScope', {});
                     for (var j = 0; j < vm.curTrial.outcome_measures.length; j++) {
-                        if (vm.curTrial.outcome_measures[j].id == psId){
+                        if (vm.curTrial.outcome_measures[j].id === psId){
                             vm.curTrial.outcome_measures.splice(j, 1);
                         }
                     }
@@ -206,6 +205,7 @@
                     toastr.success('Record(s) deleted.', 'Operation Successful!');
                 }
             }).catch(function(err) {
+                console.log('error is: ', err);
                 console.log("error in deleting outcome measure =" + psId);
             }).finally(function() {
                 vm.disableBtn = false;
@@ -228,7 +228,12 @@
          *  Set Edit Mode.
          **/
         function setEditMode(idx) {
-            vm.editMode || vm.copyMode || vm.addMode ? resetOutcomeMeasure() : vm.addMode = vm.copyMode = false;
+            if (vm.editMode || vm.copyMode || vm.addMode) {
+                resetOutcomeMeasure();
+            } else {
+                vm.addMode = vm.copyMode = false;
+            }
+
             vm.editMode = true;
             vm.currentOutcomeMeasure = angular.copy(vm.curTrial.outcome_measures[idx]);
             saveCopyCurrentOutcomeMeasure(vm.curTrial.outcome_measures[idx]);
@@ -246,14 +251,24 @@
          *  Set Copy Mode.
          **/
         function setCopyMode(idx) {
-            vm.copyMode || vm.addMode || vm.editMode ? resetOutcomeMeasure() : vm.addMode = vm.editMode = false;
+            if (vm.copyMode || vm.addMode || vm.editMode) {
+                resetOutcomeMeasure();
+            } else {
+                vm.addMode = vm.editMode = false;
+            }
+
             vm.copyMode = true;
             vm.currentOutcomeMeasure = angular.copy(vm.curTrial.outcome_measures[idx]);
             saveCopyCurrentOutcomeMeasure(vm.curTrial.outcome_measures[idx]);
         }
 
         function resetOutcomeMeasure() {
-            vm.addMode || vm.editMode || vm.copyMode ? angular.copy(vm.copyOM, vm.currentOutcomeMeasure) : vm.currentOutcomeMeasure = {};
+            if (vm.addMode || vm.editMode || vm.copyMode) {
+                angular.copy(vm.copyOM, vm.currentOutcomeMeasure);
+            } else {
+                vm.currentOutcomeMeasure = {};
+            }
+
             $scope.om_form.$setPristine();
         }
 
@@ -273,7 +288,7 @@
             vm.curTrial.outcome_measures_attributes=[];
 
             for (var i = 0; i < vm.curTrial.outcome_measures.length; i++) {
-                if(vm.curTrial.outcome_measures[i].index !=i) {
+                if(vm.curTrial.outcome_measures[i].index !== i) {
                     var obj = {};
                     obj.id = vm.curTrial.outcome_measures[i].id;
                     obj.index = i;
@@ -299,10 +314,11 @@
                     $scope.$emit('updatedInChildScope', {});
                 }
             }).catch(function(err) {
+                console.log('error is: ', err);
                 console.log("error in re-ordering trial outcome measures " + JSON.stringify(outerTrial));
             });
         }
 
     }
 
-})();
+}());

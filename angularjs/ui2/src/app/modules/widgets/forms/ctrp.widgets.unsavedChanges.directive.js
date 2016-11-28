@@ -25,7 +25,8 @@
 
             function linkerFn(scope, element, attrs) {
                 var formName;
-                var formArray = element.controller() && element.controller.formArray ? element.controller().formArray : null; // Passed in when pages have multiple tabs
+                var formController;
+                var formArray = element.controller() && element.controller().formArray ? element.controller().formArray : null; // Passed in when pages have multiple tabs
                 var currentTabIndex = element.controller() ? element.controller().tabIndex : 0;
                 var newTabIndex = 0;
                 var element = element;
@@ -47,9 +48,11 @@
                 });
 
                 $window.onbeforeunload = function(event) {
+                    var alertMsg = 'Are you sure you want to leave this page? You may have unsaved changes.';
+
                     if (!formArray.length) {
-                        if (formName && scope.$parent[formName] && scope.$parent[formName].$dirty) {
-                            return 'Are you sure you want to leave this page? You may have unsaved changes.';
+                        if (checkFormStatus()) {
+                            return alertMsg;
                         }
                     } else {
                         // For multiple forms
@@ -64,7 +67,7 @@
                         }
 
                         if (dirtyFlag) {
-                            return 'Are you sure you want to leave this page? You may have unsaved changes.';
+                            return alertMsg;
                         }
                     }
                 };
@@ -74,7 +77,8 @@
                         stateEventOccurred = true;
 
                         if (!formArray.length) {
-                            if (formName && scope.$parent[formName].$dirty && !scope.$parent[formName].$submitted) {
+                            if (checkFormStatus('stateChange')) {
+                            //if (formName && scope.$parent[formName].$dirty && !scope.$parent[formName].$submitted) {
                                 checkSignOut(event);
                                 return;
                             }
@@ -114,6 +118,12 @@
                     /* Single form */
                     if (!formArray.length) {
                         formName = attrs.name ? attrs.name : element.parent().prop('name');
+
+                        if (attrs.unsavedFormInChildScope) {
+                            var formLabel = formName.split('.')[1];
+                            formName = element.controller()[formLabel];
+                        }
+
                     }
                 }
 
@@ -166,6 +176,27 @@
                     } else if (UserService.getSignoutFlagValue()) {
                         UserService.logout();
                     }
+                }
+
+                function checkFormStatus(eventType) {
+                    var formCondition;
+
+                    if (eventType === 'stateChange') {
+                        if (typeof formName === 'object') {
+                            formCondition = formName.$dirty && !formName.$submitted;
+                        } else {
+                            formCondition = formName && scope.$parent[formName].$dirty && !scope.$parent[formName].$submitted;
+                        }
+                    } else {
+                        if (typeof formName === 'object') {
+                            formCondition = formName.$dirty;
+                        } else {
+                            formCondition = formName && scope.$parent[formName] && scope.$parent[formName].$dirty;
+                        }
+
+                    }
+
+                    return formCondition;
                 }
             }
         }

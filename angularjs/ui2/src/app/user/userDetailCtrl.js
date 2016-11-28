@@ -49,7 +49,8 @@
 
                 if (status >= 200 && status <= 210) {
                     if (response.username) {
-                        $scope.userDetail_form.$setPristine();
+                        vm.userDetail_form.$setPristine();
+                        // error is:  TypeError: Cannot read property '$setPristine' of undefined(…)
                         vm.userDetails.send_activation_email = false;
                         toastr.success('User with username: ' + response.username + ' has been updated', 'Operation Successful!');
                         if (vm.userDetailsOrig.username !== response.username) {
@@ -59,7 +60,7 @@
                     if (vm.logUserOut === true){
                         vm.logUserOut = false;
                         UserService.logout();
-                    } else if (redirect) {
+                    } else if (redirect || (vm.inactivatingUser && vm.userRole === 'ROLE_SITE-SU') ) {
                         UserService.allOrgUsers = null;
                         $timeout(function() {
                             $state.go('main.users', {}, {reload: true});
@@ -70,6 +71,7 @@
                     }
                 }
             }).catch(function(err) {
+                console.log('error is: ', err);
                 console.log('error in updating user ' + JSON.stringify(vm.userDetails));
             }).finally(function() {
                 vm.disableBtn = false;
@@ -78,7 +80,7 @@
 
         vm.reset = function() {
             vm.userDetails = angular.copy(vm.userDetailsOrig);
-            $scope.userDetail_form.$setPristine();
+            vm.userDetail_form.$setPristine();
             vm.userDetails.send_activation_email = false;
         };
 
@@ -125,11 +127,9 @@
                     if (status >= 200 && status <= 210) {
                         vm.gridTrialsOwnedOptions.data = data['trial_ownerships'];
                         vm.gridTrialsOwnedOptions.totalItems = data.total;
+
                         if (vm.gridTrialsOwnedOptions.totalItems > 0
-                               && (vm.userRole === 'ROLE_ADMIN'
-                                    || vm.userRole === 'ROLE_SUPER'
-                                        || vm.userRole === 'ROLE_ACCOUNT-APPROVER'
-                                            || vm.userRole === 'ROLE_SITE-SU') ) {
+                               && _.contains(['ROLE_ADMIN','ROLE_SUPER','ROLE_ACCOUNT-APPROVER','ROLE_SITE-SU','ROLE_ABSTRACTOR'], vm.userRole) ) {
                                 if ( vm.isCurrentUser && vm.checkForOrgChange() ) {
                                     vm.logUserOut = true;
                                 }
@@ -164,12 +164,10 @@
                     redirect = true;
                 }
 
+
                 //new org is not part of the family and user is not an admin
                 if (!_.where(vm.userDetailsOrig.family_orgs, {id: newOrg.id}).length) {
-                   if (vm.userRole !== 'ROLE_ADMIN'
-                     && vm.userRole !== 'ROLE_SUPER'
-                      && vm.userRole !== 'ROLE_ABSTRACTOR'
-                        && vm.userRole !== 'ROLE_ACCOUNT-APPROVER') {
+                    if (_.contains(['ROLE_SITE-SU', 'ROLE_TRIAL-SUBMITTER'], vm.userRole)) {
                            if (vm.userDetails.role === 'ROLE_SITE-SU') {
                                vm.userDetails.role = 'ROLE_TRIAL-SUBMITTER';
                            }
@@ -250,7 +248,8 @@
                     });
                 } else if (vm.userRole === 'ROLE_ACCOUNT-APPROVER') {
                     vm.statusArrForROLEAPPROVER = _.filter(vm.statusArr, function (item) {
-                        var allowedStatus = ['ACT', 'INR'];
+                        var allowedStatus = ['ACT', 'INR', 'INA'];
+                        console.log("pooo")
                         return _.contains(allowedStatus, item.code);
                     });
                 } else {
@@ -581,6 +580,7 @@
                         vm.gridTrialsSubmittedOptions.totalItems = data.total;
                     }
                 }).catch(function (err) {
+                    console.log('error is: ', err);
                     console.log('Get User Submitted Trials failed');
                 });
             }
@@ -633,6 +633,7 @@
                     vm.gridTrialsParticipationOptions.totalItems = data.total;
                 }
             }).catch(function (err) {
+                console.log('error is: ', err);
                 console.log('Get User Participation Trials failed');
             });
         };
@@ -656,6 +657,7 @@
                         vm.gridTrialsOwnedOptions.totalItems = data.total;
                     }
                 }).catch(function (err) {
+                    console.log('error is: ', err);
                     console.log('Get User Owned Trials failed');
                 });
             }
@@ -713,17 +715,12 @@
             }
         };
         /****************** implementations below ***************/
-        (function() {
-            if(vm.userDetails.organization_id !== null) {
-                OrgService.getOrgById(vm.userDetails.organization_id).then(function(organization) {
-                    var status = organization.server_response.status;
-
-                    if (status >= 200 && status <= 210) {
-                        vm.selectedOrgsArray = [{'id' : vm.userDetails.organization_id, 'name': organization.name}];
-                    }
-                });
+        /* Required to initially popuplate user's Affiliated Organization */
+        $timeout(function () {
+            if (vm.userDetails.organization_id !== null) {
+                vm.selectedOrgsArray[0] = {'id' : vm.userDetails.organization_id, 'name': vm.userDetails.organization.name};
             }
-        }());
+        }, 250);
 
         $scope.$on(vm.redirectToAllUsers, function () {
             vm.states = [];
@@ -807,5 +804,9 @@
         $scope.$on(MESSAGES.CURATION_MODE_CHANGED, function() {
             vm.gridTrialsOwnedOptions.gridMenuCustomItems = new UserService.TransferTrialsGridMenuItems($scope, vm);
         });
+
+        $timeout(function() {
+            vm.userDetail_form.$setPristine();
+        }, 1000);
     }
 }());

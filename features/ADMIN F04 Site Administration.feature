@@ -180,8 +180,19 @@ Then I will see a list of all CTRP Users with the same Site Affiliation as I hav
 And I select a user that has site administrator privileges
 Then the CTRP system will display the user profile for the CTRP User
 And I can change the organization affiliation for the CTRP User to a different organization by selecting organization look up
-And the system will determine if the user is an owner of any trials with an Active Submission 
-And display the message that "The trial(s) owned by this user will need to be reassigned to a new owner"
+When the selected organization is in my organization Family
+And I select save
+Then the new organization will be affilliated to my account
+When I can change the organization affiliation for the CTRP User to a different organization by selecting organization look up
+And the organization is not in my organization Family
+And I select save
+Then the system will determine if the user is an owner of any trials with an Active Submission 
+When the user is not an owner of trials with an Active Submission
+Then the new organization will be assigned to the user
+And the user account status will be pending 
+And the system will send the "CTRP Account Request" email to appsupport for an organization change to a different family (Email list in the shared drive under Functional/Administration: CTRP System Generated Emails Admin) 
+When the user is an owner of trials with an Active Submission
+Then the system will display the message that "The trial(s) owned by this user will need to be reassigned to a new owner"
 And the system will display the following action buttons
 |Save without transferring ownership|
 |Transfer ownership|

@@ -11,8 +11,6 @@ Scenario:#1 CTEP Context of a new Organization record can be created in CTRP
     And the Service Request will be set to "Create"
     And the Processing Status Will be set to "Incomplete"
     
-   
-    
       Scenario: #2 CTEP Context Organization list of fields 
     Given I am logged into the PO application
     And I can search CTEP Context organizations
@@ -23,7 +21,7 @@ Scenario:#1 CTEP Context of a new Organization record can be created in CTRP
    #Phone Number “|” Extension (#Single Field)
     #Context Organization ID is the Organization Primary Key
     
-    |CTRP Organization ID|
+    |Group ID|
     |Source Context: CTEP|
     |Source ID|
     |CTEP Organization Type|
@@ -41,6 +39,9 @@ Scenario:#1 CTEP Context of a new Organization record can be created in CTRP
     |Context Organization ID |
     |Service Request |
     |Processing Status|
+    |Created By|
+    |Updated By|
+   
     
   
      Scenario: #2a Phone Number and phone number extension mapping
@@ -73,8 +74,18 @@ Scenario:#3 Organization Source Status CTEP available list
      |Inactive|Nullified|
      |Legacy  |Inactive |
 
-    
-Scenario: #4 CTEP Context Mandatory Fields
+  Scenario:#3b CTEP Edit screen rules
+    Given I am on the PO application
+     When I am on the Edit Organization screen for context type
+     
+     |CTEP|
+     
+     And I can view the "Reset" and "Save" button
+     Then I can only edit the information type
+     |Processing status|
+     |Service Request|
+
+  Scenario: #4 CTEP Context Mandatory Fields
     Given I am logged into the CTRP 
      When A CTEP Context is created in CTRP
      Then the fields type are mandatory
@@ -220,12 +231,15 @@ Scenario: #4 CTEP Context Mandatory Fields
     Given I am on view organization NLM tab 
      Then I can view NLM fields details
      #Name = Sponsor
-	 |Source Context: NLM|
+	 |Group ID|
+     |Source Context: NLM|
      |Name|
      |NLM Context Organization ID|
      |Source Status|
      |Service Request|
      |Processing Status|
+     |Created By|
+     |Updated By|
 
     Scenario:#14 I can search a NLM Organization to be associated with an Organization in the CTRP Context 
     Given I am logged into the CTRP 
@@ -252,9 +266,9 @@ Scenario: #4 CTEP Context Mandatory Fields
     Scenario:#15 Curator can identify when two organizations are to be merged 
     Given I am logged into the CTRP 
      When CTEP Indicates via REST Service that two Organizations are to be merged
-     And the CTEP Organizations <OrganizationnName> will have CTEP Context Org ID <CTEPContextOrgID>, CTRP Org ID <CTRPOrgID>, Service request <CTEPServiceRequest>, processing status <CTEPProcessingStatus>, and Organization status <CTEPStatus>and CTRP Organization Status <CTRPOrgStatus>
+     And the CTEP Organizations <OrganizationnName> will have CTEP Context Org ID <CTEPContextOrgID>, Group ID <GroupID>, Service request <CTEPServiceRequest>, processing status <CTEPProcessingStatus>, and Organization status <CTEPStatus>and CTRP Organization Status <CTRPOrgStatus>
     
-     |OrganizationName                     |CTEPContextOrgID  |CTRPOrgID          |CTEPServiceRequest       |CTEPprocessingStatus       |CTEPStatus      |CTRPStatusType  |
+     |OrganizationName                     |CTEPContextOrgID  |GroupID          |CTEPServiceRequest       |CTEPprocessingStatus       |CTEPStatus      |CTRPStatusType  |
      |ACORN Research,LLC                   |65016645          |8352734            |Merge ID                 |Incomplete                 |Active          |Active          |       
      |Actelion Pharmaceuticals Switzerland |76983647          |8149074            |Merge ID                 |Incomplete                 |Inactive        |Active          |       
       
@@ -262,9 +276,9 @@ Scenario: #4 CTEP Context Mandatory Fields
      And the curator will search for matching organizations in the CTRP Context
      When Matching CTRP organizations found
      Then The CTRP organization matching CTEP organization with inactive status will be Nullified
-    And  the organizations <OrganizationName> will have PK ID <CTEPContextOrgID>, CTRP ID <CTRPOrgID>, Service request <CTEPServiceRequest>, processing status <CTEPProcessingStatus>, and CTEP Organization status <CTEPStatus> and CTRP Organization Status <CTRPOrgStatus> 
+    And  the organizations <OrganizationName> will have PK ID <CTEPContextOrgID>, Group ID <GroupID>, Service request <CTEPServiceRequest>, processing status <CTEPProcessingStatus>, and CTEP Organization status <CTEPStatus> and CTRP Organization Status <CTRPOrgStatus> 
      
-     |OrganizationName                     |CTEPContextOrgID  |CTRPOrgID          |CTEPServiceRequest       |CTEPprocessingStatus       |CTEPStatus      |CTRPStatus      |
+     |OrganizationName                     |CTEPContextOrgID  |GroupID          |CTEPServiceRequest       |CTEPprocessingStatus       |CTEPStatus      |CTRPStatus      |
      |ACORN Research,LLC                   |65016645          |8352734            |NULL                     |Complete                   |Active          |Active          |         
      |Actelion Pharmaceuticals Switzerland |76983647          |8149074            |NULL                     |complete                   |Inactive        |Nullified       |        
       

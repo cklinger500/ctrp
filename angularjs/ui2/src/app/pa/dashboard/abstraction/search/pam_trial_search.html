@@ -169,45 +169,9 @@
                                     </label>
                                 </div>
                                 <!-- Organization Name-->
-                                <div class="form-group" id="pam_search_organization">
-                                    <div class="label_wrapper">
-                                        <label for="organization_name" class="control-label">Submitter Organization:
+                                <div ng-include src="'app/po/organization/_orgSearchTypeAhead.html'"
+                                     onload="[page_view =  pamTrialsSearchView, label = 'Submitter Organization:', label_class = 'col-sm-4', div_class= 'col-sm-7']" ></div>
 
-                                            <span class="btn-danger crn-rounded" ng-click="pamTrialsSearchView.removeOrgChoice()"
-                                                  ng-if="pamTrialsSearchView.userChosenOrg"
-                                                  title="Change organization">
-                                                <i class="glyphicon glyphicon-trash"></i>
-                                            </span>
-                                        </label>
-                                    </div>
-                                    <div class="field_wrapper col-sm-9 col-md-7 col-lg-7"  id="searchOrganization" ng-if="!pamTrialsSearchView.searchOrganization">
-                                        <input type="text" id="organization_name" class="form-control input-sm" name="organization_name"
-                                               autocomplete="off" placeholder="Organization Name"
-                                               ng-model="pamTrialsSearchView.organization_name"
-                                               typeahead-on-select="pamTrialsSearchView.setPamTrialsTypeAheadOrg($item)"
-                                               ng-if="!pamTrialsSearchView.userChosenOrg"
-                                               uib-typeahead="org for org in pamTrialsSearchView.typeAheadNameSearch($viewValue)" ui-typeahead-loading="loadingOrganizations"
-                                               typeahead-min-length="3" typeahead-wait-ms="50" typeahead-no-results="noResults" />
-                                        <div id="typeAheadResults" ng-if="pamTrialsSearchView.userChosenOrg">
-                                            <b>{{pamTrialsSearchView.userChosenOrg.name}}</b>
-                                            <br>
-                                            <span ng-if="pamTrialsSearchView.userChosenOrg.address">{{pamTrialsSearchView.userChosenOrg.address}}<br></span>
-                                            <span ng-if="pamTrialsSearchView.userChosenOrg.address2">{{pamTrialsSearchView.userChosenOrg.address2}}<br></span>
-                                            <span ng-if="pamTrialsSearchView.userChosenOrg.city">{{pamTrialsSearchView.userChosenOrg.city}},</span>
-                                            <span ng-if="pamTrialsSearchView.userChosenOrg.state_province">{{pamTrialsSearchView.userChosenOrg.state_province}} </span>
-                                            <span ng-if="pamTrialsSearchView.userChosenOrg.postal_code">{{pamTrialsSearchView.userChosenOrg.postal_code}}<br></span>
-                                            <span ng-if="pamTrialsSearchView.userChosenOrg.country">{{pamTrialsSearchView.userChosenOrg.country}}<br></span>
-                                            <i>
-                                                <span ng-if="pamTrialsSearchView.userChosenOrg.phone"><b>Contact:</b> <u>{{pamTrialsSearchView.userChosenOrg.phone}}</u><br></span>
-                                                <span ng-if="pamTrialsSearchView.userChosenOrg.email"><b>Email:</b> <u>{{pamTrialsSearchView.userChosenOrg.email}}</u><br></span>
-                                                <span ng-if="pamTrialsSearchView.userChosenOrg.fax"><b>Fax:</b> <u>{{pamTrialsSearchView.userChosenOrg.fax}}</u></span>
-                                            </i>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-7 control-label text-left" ng-if="pamTrialsSearchView.searchOrganization">
-                                        {{pamTrialsSearchView.searchOrganization}}
-                                    </div>
-                                </div>
                                 <!-- Organization Name ends -->
                             </div>
                             <!-- end current_process_statuses -->

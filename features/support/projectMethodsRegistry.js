@@ -67,7 +67,8 @@ var projectMethodsRegistry = function () {
     var participatingSite = new participatingSitePage();
     var self = this;
     var registryMessage = new registryMessagePage();
-
+    var orgCTRPIDColNumberInOrgModel = '5';
+    var personCTRPIDColNumberInPerModel = '7';
 
 
 
@@ -370,6 +371,10 @@ var projectMethodsRegistry = function () {
         return element(by.css('div.ui-grid-cell-contents')).isPresent().then(function (state) {
             if (state === true) {
                 console.log('Organization exists');
+                orgSourceId = menuItem.searchResult.get(orgCTRPIDColNumberInOrgModel).getText();
+                orgSourceId.then(function(value){
+                console.log('-- Organization CTRP ID is --' + value);
+                });
                 searchOrg.selectOrgModelItem();
                 searchOrg.clickOrgModelConfirm();
             }
@@ -381,7 +386,7 @@ var projectMethodsRegistry = function () {
                 browser.driver.wait(function () {
                     console.log('wait here');
                     return true;
-                }, 5000).then(function () {
+                }, 500).then(function () {
                     commonFunctions.onPrepareLoginTest('ctrpcurator');
                 });
                 //login.login('ctrpcurator', 'Welcome01');
@@ -463,6 +468,10 @@ var projectMethodsRegistry = function () {
         return element(by.css('div.ui-grid-cell-contents')).isPresent().then(function (state) {
             if (state === true) {
                 console.log('Person exists');
+                perSourceId = menuItem.searchResult.get(personCTRPIDColNumberInPerModel).getText();
+                perSourceId.then(function(value){
+                    console.log('-- Person CTRP ID is --' + value);
+                });
                 searchOrg.selectOrgModelItem();
                 searchOrg.clickOrgModelConfirm();
             }
@@ -523,6 +532,7 @@ var projectMethodsRegistry = function () {
                         addPeople.setAddPersonSuffix('suffix');
                         addPeople.setAddPersonEmail('email@eml.com');
                         addPeople.setAddPersonPhone('222-444-5555');
+                        addPeople.setAddPersonPhoneExtension('001');
                         searchOrg.clickOrgSearchModel();
                         cukeOrganization.then(function (value) {
                             console.log('Add org Name' + value);
@@ -554,6 +564,10 @@ var projectMethodsRegistry = function () {
                                 searchPeople.setPersonFirstName(value);
                             });
                             searchOrg.clickSearchButton();
+                            perSourceId = menuItem.searchResult.get(personCTRPIDColNumberInPerModel).getText();
+                            perSourceId.then(function(value){
+                                console.log('-- Person CTRP ID is --' + value);
+                            });
                             searchOrg.selectOrgModelItem();
                             searchOrg.clickOrgModelConfirm();
                         });
@@ -793,6 +807,7 @@ var projectMethodsRegistry = function () {
                       //  addOrg.setAddFax('898-9420-442');
                         addOrg.setAddExtension('01');
                         addOrg.clickSave();
+                        helper.wait(addOrg.addOrgCTRPID,'CTRPID from Organization Page');
                         orgSourceId = addOrg.addOrgCTRPID.getText();
                     });
                 }
@@ -1255,7 +1270,6 @@ var projectMethodsRegistry = function () {
                 return Q.when('');//leadProtocolID = emptyPromise;
             }
         });
-
         nciID = addTrial.viewTrialNCIID.isPresent().then(function (state) {
             if (state) {
                 return addTrial.viewTrialNCIID.getText().then(function (nciIDTrial) {
@@ -1267,7 +1281,6 @@ var projectMethodsRegistry = function () {
                 return Q.when('');//nciID = emptyPromise;
             }
         });
-
         otherIDs = addTrial.viewTrialOtherIdentifierValuePresent.isPresent().then(function (state) {
             if (state) {
                 return addTrial.viewTrialOtherIdentifierAllValues.getText().then(function (otherIDTrial) {
@@ -1279,7 +1292,6 @@ var projectMethodsRegistry = function () {
                 return Q.when('');//otherIDs = emptyPromise;
             }
         });
-
         officialTitle = addTrial.viewTrialOfficialTitle.isPresent().then(function (state) {
             if (state) {
                 return addTrial.viewTrialOfficialTitle.getText().then(function (trialOfficialTitle) {
@@ -1309,14 +1321,11 @@ var projectMethodsRegistry = function () {
                     console.log('Trial Primary Purpose is ----> ' + trialPurpose);
                     return trialPurpose;
                 });
-            }
-            else {
+            } else {
                 console.log('Trial Primary Purpose does not exist in Page.');
                 return Q.when('');//purpose = emptyPromise;
             }
         });
-
-
         principalInvestigator = addTrial.viewTrialPrincipalInvestigator.isPresent().then(function (state) {
             if (state) {
                // principalInvestigator =
@@ -1324,21 +1333,18 @@ var projectMethodsRegistry = function () {
                     console.log('Trial Principal Investigator is ----> ' + trialPrincipalInvestigator);
                     return trialPrincipalInvestigator;
                 });
-            }
-            else {
+            } else {
                 console.log('Trial Principal Investigator is does not exist in Page.');
                 return Q.when('');//principalInvestigator = Q.reject();//Promise.resolve('');//Q('');//Q.promise(function () {});//Q.Deferred().resolve();//emptyPromise;
             }
         });
-
         leadOrganization = addTrial.viewTrialLeadOrganization.isPresent().then(function (state) {
             if (state) {
                return addTrial.viewTrialLeadOrganization.getText().then(function (trialLeadOrganization) {
                     console.log('Trial Lead Organization is ----> ' + trialLeadOrganization);
                     return trialLeadOrganization;
                 });
-            }
-            else {
+            } else {
                 console.log('Trial Lead Organization does not exist in Page.');
                 return Q.when('');//leadOrganization = emptyPromise;
             }
@@ -1349,9 +1355,74 @@ var projectMethodsRegistry = function () {
                     console.log('Trial Sponsor is ----> ' + trialSponsor);
                     return trialSponsor;
                 });
-            }
-            else {
+            } else {
                 console.log('Trial Sponsor does not exist in Page.');
+                return Q.when('');//sponsor = emptyPromise;
+            }
+        });
+        grantTbl = addTrial.viewTrialVerifyGrantTableExist.isPresent().then(function (state) {
+            if (state) {
+                return addTrial.viewTrialVerifyGrantTable.getText().then(function (trialGrant) {
+                    console.log('Trial Grant array is ----> ' + trialGrant);
+                    return trialGrant;
+                });
+            } else {
+                console.log('Trial Grant does not exist in Page.');
+                return Q.when('');//sponsor = emptyPromise;
+            }
+        });
+        trialStatus = addTrial.viewTrialStatus.isPresent().then(function (state) {
+            if (state) {
+                return addTrial.viewTrialStatus.getText().then(function (trialStatus) {
+                    console.log('Trial Sponsor is ----> ' + trialStatus);
+                    return trialStatus;
+                });
+            } else {
+                console.log('Trial Status does not exist in Page.');
+                return Q.when('');//sponsor = emptyPromise;
+            }
+        });
+        trialDate = addTrial.viewTrialStatusDate.isPresent().then(function (state) {
+            if (state) {
+                return addTrial.viewTrialStatusDate.getText().then(function (trialDate) {
+                    console.log('Trial Status Date is ----> ' + trialDate);
+                    return trialDate;
+                });
+            } else {
+                console.log('Trial Status Date does not exist in Page.');
+                return Q.when('');//sponsor = emptyPromise;
+            }
+        });
+        trialStartDateWithOption = addTrial.viewTrialStartDate.isPresent().then(function (state) {
+            if (state) {
+                return addTrial.viewTrialStartDate.getText().then(function (trialStartDateOption) {
+                    console.log('Trial Start Date with Option is ----> ' + trialStartDateOption);
+                    return trialStartDateOption;
+                });
+            } else {
+                console.log('Trial Start Date with Option does not exist in Page.');
+                return Q.when('');//sponsor = emptyPromise;
+            }
+        });
+        trialPrimaryStartDateOption = addTrial.viewTrialPrimaryCompletionDate.isPresent().then(function (state) {
+            if (state) {
+                return addTrial.viewTrialPrimaryCompletionDate.getText().then(function (trialPrimStartDateOption) {
+                    console.log('Trial Primary Start Date with Option is ----> ' + trialPrimStartDateOption);
+                    return trialPrimStartDateOption;
+                });
+            } else {
+                console.log('Trial Primary Start Date with Option does not exist in Page.');
+                return Q.when('');//sponsor = emptyPromise;
+            }
+        });
+        trialCompletionDateOption = addTrial.viewTrialCompletionDate.isPresent().then(function (state) {
+            if (state) {
+                return addTrial.viewTrialCompletionDate.getText().then(function (trialCompDateOption) {
+                    console.log('Trial Completion Date with Option is ----> ' + trialCompDateOption);
+                    return trialCompDateOption;
+                });
+            } else {
+                console.log('Trial Completion Date with Option does not exist in Page.');
                 return Q.when('');//sponsor = emptyPromise;
             }
         });
@@ -1361,8 +1432,7 @@ var projectMethodsRegistry = function () {
                     console.log('Trial Participating Site is ----> ' + trialParticipatingSite);
                     return trialParticipatingSite;
                 });
-            }
-            else {
+            } else {
                 console.log('Trial Participating Site does not exist in Page.');
                 return Q.when('');//participatingSiteInTrial = emptyPromise;
             }
@@ -1373,10 +1443,20 @@ var projectMethodsRegistry = function () {
                     console.log('Trial Document array is ----> ' + trialDocuments);
                     return trialDocuments;
                 });
-            }
-            else {
+            } else {
                 console.log('Trial Documents does not exist in Page.');
                 return Q.when('');//documents = emptyPromise;
+            }
+        });
+        participatingSiteTbl = addTrial.viewTrialPsticipatingSitesTblExist.isPresent().then(function (state) {
+            if (state) {
+                return addTrial.viewTrialPsticipatingSites.getText().then(function (trialPS) {
+                    console.log('Trial Participating Site Tbl array is ----> ' + trialPS);
+                    return trialPS;
+                });
+            } else {
+                console.log('Trial Participating Site Tbl does not exist in Page.');
+                return Q.when('');//sponsor = emptyPromise;
             }
         });
 
@@ -1448,6 +1528,10 @@ var projectMethodsRegistry = function () {
         return element(by.css('div.ui-grid-cell-contents')).isPresent().then(function (state) {
             if (state === true) {
                 console.log('PI exists');
+                perSourceId = menuItem.searchResult.get(personCTRPIDColNumberInPerModel).getText();
+                perSourceId.then(function(value){
+                    console.log('-- Person CTRP ID is --' + value);
+                });
                 searchOrg.selectOrgModelItem();
                 searchOrg.clickOrgModelConfirm();
             }
@@ -1534,6 +1618,10 @@ var projectMethodsRegistry = function () {
                                 searchPeople.setPersonFirstName(value);
                             });
                             searchOrg.clickSearchButton();
+                            perSourceId = menuItem.searchResult.get(personCTRPIDColNumberInPerModel).getText();
+                            perSourceId.then(function(value){
+                                console.log('-- Person CTRP ID is --' + value);
+                            });
                             searchOrg.selectOrgModelItem();
                             searchOrg.clickOrgModelConfirm();
                         });
@@ -2543,6 +2631,10 @@ var projectMethodsRegistry = function () {
         return element(by.css('div.ui-grid-cell-contents')).isPresent().then(function (state) {
             if (state === true) {
                 console.log('Organization: ' + orgName + 'exists');
+                cukeOrganization.then(function (value) {
+                    element(by.linkText(value)).click();
+                    orgSourceId = addOrg.addOrgCTRPID.getText();
+                });
             }
             else {
                 browser.driver.wait(function () {
@@ -2596,6 +2688,76 @@ var projectMethodsRegistry = function () {
         });
     };
 
+
+    /*****************************************************************
+     * Method: Edit Participating Site Update Screen
+     * @param itemFromRow
+     * @param colmNum
+     *****************************************************************/
+    this.editParticipatingSiteFromGrid = function (itemFromRow,colmNum) {
+        return addTrial.addTrialPsticipatingSitesTable.getText().filter(function (row) {
+            // Get the second column's text.
+            return row.$$('td').get(colmNum).getText().then(function (rowName) {
+                // Filter rows matching the name you are looking for.
+                console.log('print row name: ' + rowName + 's');
+                console.log('Item from row: '+ itemFromRow + 's');
+                return rowName.toString() === itemFromRow.toString();
+            });
+        }).then(function (rows) {
+                console.log('value of row' + rows);
+                storePSCTRPID = addTrial.addTrialPsticipatingSitesTableCTRPID.getText();
+                storePSOrgName = addTrial.addTrialPsticipatingSitesTableOrgName.getText();
+               // storePSPIName = addTrial.addTrialPsticipatingSitesTablePIName.getText();
+                storePSLocalID = addTrial.addTrialPsticipatingSitesTableLocalID.getText();
+                storePSPC = addTrial.addTrialPsticipatingSitesTablePC.getText();
+                storePSStatus = addTrial.addTrialPsticipatingSitesTableStatus.getText();
+                storePSStatusDate = addTrial.addTrialPsticipatingSitesTableStatusDate.getText();
+                storePSContactName = addTrial.addTrialPsticipatingSitesTableContactName.getText();
+                storePSContactEmail = addTrial.addTrialPsticipatingSitesTableContactEmail.getText();
+                storePSContactPhone = addTrial.addTrialPsticipatingSitesTableContactPhone.getText();
+            browser.driver.wait(function () {
+                console.log('wait here');
+                return true;
+            }, 40).then(function () {
+               rows[0].element(by.css('.glyphicon.glyphicon-edit')).click();
+            });
+            },
+            function (err) {
+                console.log('There was an error! ' + err);
+            }
+        );
+    };
+
+    /*****************************************************************
+     * Method: Verify a Single Participating Site Update Screen
+     *****************************************************************/
+    this.verifySingleParticipatingSiteFromGrid = function (itemFromRow,colmNum, CTRPOrgID, CTRPOrgName, principalInvestigator, localTrialID, programCode, siteStatus, siteStatusDate, primaryContact, email, phoneExt) {
+        return addTrial.addTrialPsticipatingSitesTable.getText().filter(function (row) {
+            // Get the second column's text.
+            return row.$$('td').get(colmNum).getText().then(function (rowName) {
+                // Filter rows matching the name you are looking for.
+                console.log('print row name: ' + rowName + 's');
+                console.log('Item from row: '+ itemFromRow + 's');
+                return rowName.toString() === itemFromRow.toString();
+            });
+        }).then(function (rows) {
+                console.log('value of row' + rows);
+                expect(rows[0].element(by.binding(addTrial.addTrialPsticipatingSitesTableCTRPIDElement)).getText()).to.eventually.equal(CTRPOrgID.toString(), 'Verification of CTRP org ID in PS table');
+                expect(rows[0].element(by.binding(addTrial.addTrialPsticipatingSitesTableOrgNameElement)).getText()).to.eventually.equal(CTRPOrgName, 'Verification of CTRP org Name in PS table');
+                expect(rows[0].element(by.binding(addTrial.addTrialPsticipatingSitesTablePINameElement)).getText()).to.eventually.equal(principalInvestigator, 'Verification of principal Investigator in PS table');
+                expect(rows[0].element(by.binding(addTrial.addTrialPsticipatingSitesTableLocalIDElement)).getText()).to.eventually.equal(localTrialID, 'Verification of localTrialID in PS table');
+                expect(rows[0].element(by.binding(addTrial.addTrialPsticipatingSitesTablePCElement)).getText()).to.eventually.equal(programCode, 'Verification of programCode in PS table');
+                expect(rows[0].element(by.binding(addTrial.addTrialPsticipatingSitesTableStatusElement)).getText()).to.eventually.equal(siteStatus, 'Verification of siteStatus in PS table');
+                expect(rows[0].element(by.binding(addTrial.addTrialPsticipatingSitesTableStatusDateElement)).getText()).to.eventually.equal(siteStatusDate, 'Verification of siteStatusDatein PS table');
+                expect(rows[0].element(by.binding(addTrial.addTrialPsticipatingSitesTableContactNameElement)).getText()).to.eventually.equal(primaryContact, 'Verification of primaryContact in PS table');
+                expect(rows[0].element(by.binding(addTrial.addTrialPsticipatingSitesTableContactEmailElement)).getText()).to.eventually.equal(email, 'Verification of email in PS table');
+                expect(rows[0].element(by.binding(addTrial.addTrialPsticipatingSitesTableContactPhoneElement)).getText()).to.eventually.equal(phoneExt, 'Verification of phoneExt in PS table');
+            },
+            function (err) {
+                console.log('There was an error! ' + err);
+            }
+        );
+    };
 
 };
 module.exports = projectMethodsRegistry;

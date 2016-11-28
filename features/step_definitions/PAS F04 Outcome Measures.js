@@ -44,10 +44,14 @@ var abstractionTrialDetails = require('../support/abstractionTrialDetails');
 var abstractionTrialRelatedDocument = require('../support/abstractionTrialDoc');
 //Left Navigation
 var abstractionLeftNavigationMenus = require('../support/abstractionLeftNav');
+//Common Message
+var abstractionCommomMsg = require('../support/abstractionCommonMessage');
 //Scientific trial description
 var scientificTrialDesc = require('../support/scientificTrialDesc');
 //Scientific Outcome Measures
 var scientificOutcome = require('../support/scientificOutcomeMeasures');
+//Scientific Trial Design
+var scientificTrialDesign = require('../support/scientificTrialDesign');
 //
 var projectFunctionsPage = require('../support/projectMethods');
 var addTrialPage = require('../support/registerTrialPage');
@@ -60,17 +64,21 @@ module.exports = function () {
 
     var commonFunctions = new abstractionCommonMethods();
     var leftNav = new abstractionLeftNavigationMenus();
+    var commonMsg = new abstractionCommomMsg();
     var outcome = new scientificOutcome();
     var login = new loginPage();
     var trialMenuItem = new trialMenuItemList();
     var addTrial = new addTrialPage();
     var registryMessage = new registryMessagePage();
+    var trialDesign = new scientificTrialDesign();
+    var trialDesc = new scientificTrialDesc();
     var leadProtocolID = 'CTRP_01_1789';
     var leadProtocolIDA = 'CTRP_01_1777';
     var optionA = '';
     var optionB = '';
     var optionC = '';
     var optionD = '';
+    var characterLftTest = 'Characters left verification for description field';
     var pageTtitle = 'List of Outcome Measures';
     var pageTtitleA = 'Outcome Measure Details';
     var outTitle = 'Test Outcome Measure Title';
@@ -798,6 +806,87 @@ module.exports = function () {
 
                                                 }
                                             });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                //PA
+                } else if (loggedInUserName === 'ctrpabstractor') {
+                    //Primary Purpose - Trial Design
+                    trialDesign.descriptionOfOtherPrimaryPurposeTxt.isPresent().then(function (statusPresent){
+                        if (statusPresent){
+                            trialDesign.descriptionOfOtherPrimaryPurposeTxt.isDisplayed().then(function (statusDisplay){
+                                if (statusDisplay){
+                                    trialDesign.descriptionOfOtherPrimaryPurposeTxt.getAttribute('value').then(function (txtValue) {
+                                        if (txtValue !== '') {
+                                            trialDesign.setPrimaryOtherDescription(characterLftTest);
+                                            commonFunctions.verifyTxtByIndex(outcome.characterLeftLbl, commonMsg.oneHundredFiftyCharLeftMsg, '0', 'Verifying Description of Other Primary Purpose field Character left message ---');
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                    //Secondary Purpose - Trial Design
+                    trialDesign.descriptionOfOtherSecondaryPurposeTxt.isPresent().then(function (statusPresent){
+                        if (statusPresent){
+                            trialDesign.descriptionOfOtherSecondaryPurposeTxt.isDisplayed().then(function (statusDisplay){
+                                if (statusDisplay){
+                                    trialDesign.descriptionOfOtherSecondaryPurposeTxt.getAttribute('value').then(function (txtValue) {
+                                        if (txtValue !== '') {
+                                            commonCharacterTxt = ''+ commonMsg.fiveHundredCharTxt +'';
+                                            trialDesign.setSecondaryOtherDescription(commonCharacterTxt);
+                                            commonFunctions.verifyTxtByIndex(outcome.characterLeftLbl, commonMsg.fiveHundredCharLeftMsg, '1', 'Verifying Description of Other Secondary Purpose field Character left message');
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                    //Study Model - Trial Design
+                    trialDesign.descriptionOfOtherStudyModelTxt.isPresent().then(function (statusPresent){
+                        if (statusPresent){
+                            trialDesign.descriptionOfOtherStudyModelTxt.isDisplayed().then(function (statusDisplay){
+                                if (statusDisplay){
+                                    trialDesign.descriptionOfOtherStudyModelTxt.getAttribute('value').then(function (txtValue) {
+                                        if (txtValue !== '') {
+                                            commonCharacterTxt = ''+ commonMsg.oneHundredCharTxt +'';
+                                            trialDesign.setStudyModelOtherDescription(commonCharacterTxt);
+                                            commonFunctions.verifyTxtByIndex(trialDesc.characterLeftLblStudyModel, commonMsg.oneHundredCharLeftMsg, '4', 'Verifying Description of Other Secondary Purpose field Character left message');
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                    //Time Perspective - Trial Design
+                    trialDesign.descriptionOfOtherTimePerspectiveTxt.isPresent().then(function (statusPresent){
+                        if (statusPresent){
+                            trialDesign.descriptionOfOtherTimePerspectiveTxt.isDisplayed().then(function (statusDisplay){
+                                if (statusDisplay){
+                                    trialDesign.descriptionOfOtherTimePerspectiveTxt.getAttribute('value').then(function (txtValue) {
+                                        if (txtValue !== '') {
+                                            commonCharacterTxt = ''+ commonMsg.oneHundredCharTxt +'';
+                                            trialDesign.setTimePerspectiveOtherDescription(commonCharacterTxt);
+                                            commonFunctions.verifyTxtByIndex(trialDesc.characterLeftLblStudyModel, commonMsg.oneHundredCharLeftMsg, '5', 'Verifying Description of Other Secondary Purpose field Character left message');
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                    //Bio-specimen Description
+                    trialDesign.bioSpecimenDescriptionTxt.isPresent().then(function (statusPresent){
+                        if (statusPresent){
+                            trialDesign.bioSpecimenDescriptionTxt.isDisplayed().then(function (statusDisplay){
+                                if (statusDisplay){
+                                    trialDesign.bioSpecimenDescriptionTxt.getAttribute('value').then(function (txtValue) {
+                                        if (txtValue !== '') {
+                                            commonCharacterTxt = ''+ commonMsg.fiveHundredCharTxt +'';
+                                            trialDesign.setBioSpecimenDescription(commonCharacterTxt);
+                                            commonFunctions.verifyTxtByIndex(trialDesc.characterLeftLblBio, commonMsg.fiveHundredCharLeftMsg, '6', 'Verifying Description of Other Bio-specimen Description field Character left message');
                                         }
                                     });
                                 }

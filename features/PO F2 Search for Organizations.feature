@@ -87,10 +87,10 @@ Feature: PO F2 Search and Edit Organization
      Scenario: #5a As a Curator Search Organization Results
     Given I am logged into the CTRP PO application
      When I complete an organization search
-     Then The the organization search results will display the field type
+     Then The organization search results will display the field type
      
-      |CTRP Organization ID (Grouping ID)|
-      |CTEP Organization ID|
+      |CTRP ID|
+      |CTEP ID|
       |Name|
       |Source Staus|
       |Source Context|
@@ -130,8 +130,8 @@ Feature: PO F2 Search and Edit Organization
       
     And a family membership details will be displayed in a table on the same screen with information below
       
-      |CTRP Organization ID|
-      |CTEP Organization ID|
+      |CTRP ID|
+      |CTEP ID|
       |Organization Name (Hyperlink to Organization details)|
       |Organization Relationship (Organizational, Affiliation)|
       |Effective Date|

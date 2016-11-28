@@ -33,6 +33,7 @@
         'ngFileUpload',
         'angularMoment',
         'ui.grid',
+        'ui.grid.autoResize',
         'ui.grid.pagination',
         'ui.grid.selection',
         'ui.scrollpoint',

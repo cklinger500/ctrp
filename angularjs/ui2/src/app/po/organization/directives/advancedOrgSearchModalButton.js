@@ -13,7 +13,7 @@
         .controller('advancedOrgSearchForm2ModalCtrl', advancedOrgSearchForm2ModalCtrl)
         .directive('ctrpOrgAdvSearchModalButton', ctrpOrgAdvSearchModalButton);
 
-    advancedOrgSearchForm2ModalCtrl.$inject = ['$scope', 'MESSAGES', '$uibModalInstance', 'maxRowSelectable', 'filteredContexts', 'preSearch', 'Common']; //for modal controller
+    advancedOrgSearchForm2ModalCtrl.$inject = ['$scope', 'MESSAGES', '$uibModalInstance', 'maxRowSelectable', 'preSearch', 'Common']; //for modal controller
     ctrpOrgAdvSearchModalButton.$inject = ['$uibModal', '$compile', '_', '$timeout', 'Common']; //modal button directive
 
 
@@ -38,7 +38,6 @@
         function linkerFn(scope, element, attrs) {
             $compile(element.contents())(scope);
             scope.buttonLabel   = attrs.buttonLabel;
-            scope.filteredContexts = attrs.filteredContexts || 'CTRP';
             scope.preSearch     = attrs.preSearch ? JSON.parse(attrs.preSearch) : '{"source_status": "Active"}';
         } //linkerFn
 
@@ -64,9 +63,6 @@
                     resolve: {
                         maxRowSelectable: function () {
                             return $scope.maxRowSelectable || undefined;
-                        },
-                        filteredContexts: function () {
-                            return $scope.filteredContexts;
                         },
                         preSearch: function () {
                             return $scope.preSearch || undefined;
@@ -126,10 +122,9 @@
      * @param $scope
      * @param $uibModalInstance
      */
-    function advancedOrgSearchForm2ModalCtrl($scope, MESSAGES, $uibModalInstance, maxRowSelectable, filteredContexts, preSearch, Common) {
+    function advancedOrgSearchForm2ModalCtrl($scope, MESSAGES, $uibModalInstance, maxRowSelectable, preSearch, Common) {
         var vm = this;
         vm.maxRowSelectable = maxRowSelectable || 'undefined'; //to be passed to the adv org search form
-        vm.filteredContexts = filteredContexts; //to be passed to the adv org search form
         vm.preSearch = preSearch;
         $scope.orgSearchResults = {orgs: [], total: 0, start: 1, rows: 10, sort: 'name', order: 'asc'};
         $scope.selectedOrgsArray = [];  // orgs selected in the modal
@@ -141,6 +136,10 @@
             $uibModalInstance.close($scope.selectedOrgsArray);
         }; //confirmSelection
 
+        vm.button3Clicked = function() {
+            Common.broadcastMsg(MESSAGES.ORG_SEARCH_BTN3_CLICKED);
+            vm.cancel();
+        };
 
         activate();
 

@@ -97,7 +97,7 @@
               // columns
               gridOptions.columnDefs = getColumnDefs();
               gridOptions.enableVerticalScrollbar = 2;
-              gridOptions.enableHorizontalScrollbar = 2;
+              gridOptions.enableHorizontalScrollbar = 2; // allow horizontal scroll
               // call backs for events
               gridOptions.onRegisterApi = function(gridApi) {
                   vm.gridApi = gridApi;
@@ -156,35 +156,39 @@
           function getColumnDefs() {
               return [
                   {
-                      name:'preferred_name',
+                      field:'preferred_name',
                       headerName: 'Preferred Name',
-                      width:'20%',
+                      width:'100',
+                      resizable: true,
                       enableSorting: true,
                       enableFiltering: true,
                       sort: {direction: 'asc', priority: 1},
                       cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">{{COL_FIELD CUSTOM_FILTERS}}</div>'
                   },
                   {
-                      name:'c_code',
+                      field:'c_code',
                       headerName: 'C\-Code',
-                      width:'7%',
+                      width:'80',
+                      resizable: true,
                       enableSorting: true,
                       enableFiltering: true,
                       sort: {direction: 'asc', priority: 1},
                       cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">{{COL_FIELD CUSTOM_FILTERS}}</div>'
                   },
                   {
-                      name:'synonyms',
+                      field:'synonyms',
                       headerName: 'Synonyms',
-                      width:'35%',
+                      width:'400',
+                      resizable: true,
                       enableSorting: true,
                       enableFiltering: true,
                       cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">{{COL_FIELD CUSTOM_FILTERS}}</div>'
                   },
                   {
-                      name: 'definition',
+                      field: 'definition',
                       headerName: 'Definition',
-                      width: '*',
+                      width: '600',
+                      resizable: true,
                       enableSorting: false,
                       enableFiltering: false,
                       cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">{{COL_FIELD CUSTOM_FILTERS}}</div>'

@@ -121,6 +121,22 @@ var abstractionCommonMethods = function() {
     };
 
     /*****************************************
+     * Multi Select Common Methods By Value
+     *****************************************/
+    this.selectMultiListItemByVal = function(optionValue, defultValue)  {
+        if (defultValue === ''){
+            defultValue = '- Please select a trial phase...';
+        }
+        var  buildXpath =  element(by.xpath('//*[@id="trial_phase"]/option[.="' + optionValue + '"]'));
+        var  buildDefaultXpath =  element(by.xpath('//*[@id="trial_phase"]/option[.="' + defultValue + '"]'));
+        if(trialPhase === '') {
+            helper.selectValue(buildDefaultXpath, defultValue, "Selecting the default value as: ["+ defultValue +"] from the the list");
+        } else{
+            helper.selectValue(buildXpath, optionValue, "Selecting the default value as: ["+ optionValue +"] from the the list");
+        }
+    };
+
+    /*****************************************
      * Click on the link Text
      *****************************************/
     this.clickLinkText = function (lnkTxt) {
@@ -522,11 +538,34 @@ var abstractionCommonMethods = function() {
         expect(getObject.get(getIndicator).isSelected()).to.eventually.equal(result);
     };
 
+    /*****************************************
+     * Verify expected value : Text Field
+     *****************************************/
     this.getVerifyValue = function (fieldName, fieldValue, errorMessage) {
         this.wait(fieldName, errorMessage);
         expect(fieldName.getAttribute('value')).to.eventually.equal(fieldValue);
         console.log(errorMessage + " - Got value");
     };
+
+    /*****************************************
+     * Verify expected value : Text Field
+     *****************************************/
+    this.verifyTextFieldValue = function (fieldName, expectedValue) {
+        var errorMessage = 'Verifying Text Field Value';
+        this.wait(fieldName, errorMessage);
+        expect(fieldName.getAttribute('value')).to.eventually.equal(expectedValue);
+    };
+
+    //
+    /*****************************************
+     * Verify expected value : List Field
+     *****************************************/
+    this.verifyListFieldValue = function (fieldName, expectedValue) {
+        var errorMessage = 'Verifying List Field Value';
+        this.wait(fieldName, errorMessage);
+        expect(fieldName.$('option:checked').getText()).to.eventually.equal(expectedValue);
+    };
+
 
     /***************************************
      * Set Comment on Deletion button popup

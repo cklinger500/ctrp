@@ -2,21 +2,16 @@
 <div class="form form-horizontal">
     <div class="row md-sidenav-push-in-target">
         <div ng-include src="'app/po/organization/_allOrgDetailRO.html?_rload='+orgDetailView.updateTime" onload="[curOrg = orgDetailView.ctrpOrg]"></div>
-
-        <div class="row">
-            <div class="form-group col-xs-12 col-sm-12 has-feedback">
-                <label class="control-label col-xs-12 col-sm-3">Updated By:</label>
-                <div class="form-group col-xs-12 col-sm-6 form-text">{{curOrg.updated_by}} ({{curOrg.org_updated_date}})</div>
-            </div>
+        <div class="form-group" ng-show="orgDetailView.currentUserIsReadAll">
+            <label class="control-label col-sm-3">Updated By:</label>
+            <div class="col-sm-6 form-text">{{curOrg.updated_by}} ({{curOrg.updated_at | dateFormat:'DD-MMM-YYYY, H:mm:ss': 'DD-MMM-YYYY H:mm'}})</div>
         </div>
-        <div class="row">
-            <div class="form-group col-xs-12 col-sm-12 has-feedback" >
-                <label class="control-label col-xs-12 col-sm-3">Families:</label>
-                <div class="form-group col-xs-12 col-sm-6 form-text">
-                    <p ng-repeat="family in curOrg.families">
-                        <a ui-sref="main.familyDetail({familyId : family.id })">{{family.name}}</a>
-                    </p>
-                </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3">Families:</label>
+            <div class="col-sm-6 form-text">
+                <p ng-repeat="family in curOrg.families">
+                    <a ui-sref="main.familyDetail({familyId : family.id })">{{family.name}}</a>
+                </p>
             </div>
         </div>
     </div>

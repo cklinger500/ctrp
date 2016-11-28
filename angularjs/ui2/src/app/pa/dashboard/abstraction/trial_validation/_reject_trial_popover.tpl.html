@@ -15,7 +15,7 @@
         </div>
         <textarea class="form-control input-sm" id="rejection_comment" name="rejection_comment" ng-model="rejectionObj.comment" placeholder="Rejection Comment"></textarea>
     </div>
-    <div class="form-actions btn-toolbar">
+    <div class="btn-toolbar">
         <button type="button" class="btn btn-danger pull-right" id="confirmed_btn" ng-click="confirmReject()" ng-disabled="!rejectionObj.reason">OK</button>
         <button type="button" class="btn btn-warning pull-right" id="cancel_confirm_btn" ng-click="closePopover()">Cancel</button>
     </div>

@@ -75,7 +75,7 @@ And I select to either receive or not receive email notifications
 And I select the Inactive status when the status is Active
 And I can select the roles
 |Trial Submitter|
-|Site Administratior|
+|Site Administraitor|
 And I can select an Organizational Affiliation
 And I can view
 |Username|
@@ -85,6 +85,7 @@ Then the account information will be updated in CTRP
 Scenario: #4 I can view a users Trials (See Admin F05 Registered User Details)
 Given I am logged into CTRP
 And I select the User from the list
-Then And the Last Active Submission for all the trials the user is an owner of will be displayed (Protocol Trials)
+Then the user's profile can be be displayed (See feature Admin F03 Manage user Account)
+And the Last Active Submission for all the trials the user is an owner of can be displayed (Protocol Trials)
 And the Last Active Submission for all the trials the trials the user submitted can be displayed (Protocol and Imported Trials)
 And the Last Active Submission for all the trials the user is a participating site on can be displayed (Protocol and Imported Trials)

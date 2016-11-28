@@ -1,40 +1,56 @@
 @Admin @Global 
 Feature: ADMIN F05 Display Trial Ownership (Registered User Details) 
 
-As a CTRP User I view registered user details
+As a CTRP User I view Registered User Details
 
 Scenario: #1 I can view Registered User Details - CTRP-RO, Abstractor, Super, Admin
 Given I am logged into CTRP
-And I select the Registered User Details
+And I select the registered User Details
 Then I will see a list of all CTRP Users:
-|Username, Last Name, First Name, Organization Affiliation, Family|
+|Username, First Name, Last Name, Email, Organizational Affiliation, Organization Family, Site Administrator Privileges, e-mails, Status, Status Date|
 And I can select a user
-And the user's profile can be be displayed (See feature Admin F03 Manage user Account)
+Then I will see the users information:
+|Username|
+|Last Name|
+|First Name|
+|Organization Affiliation|
 And the Last Active Submission for all the trials the user is an owner of will be displayed (Protocol Trials)
 And the Last Active Submission for all the trials the trials the user submitted will be displayed (Protocol and Imported Trials)
 And the Last Active Submission for all the trials the user is a participating site on will be displayed (Protocol and Imported Trials)
+And I can select the Username, Last Name, First Name to open the user account information (See feature Admin F03 Manage user Account)
+
 
 Scenario: #1a I can view Registered User Details as a Site Administrator
 Given I am logged into CTRP
 And I select the Registered User Details
 Then I will see a list of all CTRP Users in my Family:
-|Username, Last Name, First Name, Organization Affiliation, Family|
+|Username, First Name, Last Name, Email, Organizational Affiliation, Organization Family, Site Administrator Privileges, e-mails, Status, Status Date|
 And I can select a user
-And the user's profile can be be displayed (See feature Admin F03 Manage user Account)
+Then I will see the users information:
+|Username|
+|Last Name|
+|First Name|
+|Organization Affiliation|
 And the Last Active Submission for all the trials the user is an owner of will be displayed (Protocol Trials)
 And the Last Active Submission for all the trials the trials the user submitted will be displayed (Protocol and Imported Trials)
 And the Last Active Submission for all the trials the user is a participating site on will be displayed (Protocol and Imported Trials)
+And I can select the Username, Last Name, First Name to open the user account information (See feature Admin F03 Manage user Account)
 
 Scenario: #1b I can view Registered User Details as a Site Trial Submitter
 Given I am logged into CTRP
 And I select the Registered User Details
 Then I will only see my name in the list of CTRP Users:
-|Username, Last Name, First Name, Organization Affiliation, Family|
+|Username, First Name, Last Name, Email, Organizational Affiliation, Organization Family, Site Administrator Privileges, e-mails, Status, Status Date|
 And I can select a user
-And the user's profile can be be displayed (See feature Admin F03 Manage user Account)
+Then I will see the users information:
+|Username|
+|Last Name|
+|First Name|
+|Organization Affiliation|
 And the Last Active Submission for all the trials the user is an owner of will be displayed (Protocol Trials)
 And the Last Active Submission for all the trials the trials the user submitted will be displayed (Protocol and Imported Trials)
-And the Last Active Submission for all the trials the user is a participating site on will be displayed (Protocol and Imported Trials
+And the Last Active Submission for all the trials the user is a participating site on will be displayed (Protocol and Imported Trials)
+And I can select the Username, Last Name, First Name to open the user account information (See feature Admin F03 Manage user Account)
 
 
 Scenario: #2 I can search for a Registered User 

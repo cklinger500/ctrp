@@ -12,7 +12,7 @@ ListOfPeoplePage = function () {
 
     this.personFirstName = element(by.model('searchParams.fname'));
     this.personLastName = element(by.model('searchParams.lname'));
-    this.personOrgAffiliation = element(by.model('searchParams.affiliated_org_name'));
+    this.personOrgAffiliation = element(by.model('page_view.organization_name')); //element(by.model('searchParams.affiliated_org_name'));
     this.personPoId = element(by.model('searchParams.ctrp_id'));
     this.personSourceContext = element(by.model('searchParams.source_context'));
     this.personSourceId = element(by.model('searchParams.source_id'));

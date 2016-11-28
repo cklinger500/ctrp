@@ -43,8 +43,8 @@ Feature: PO F3 Create an Organization
     When I select an organization name in the search results
     Then the CTRP Organization Context will be displayed
       
-      |CTRP Organization ID |# Grouping ID
-      |Context Organization ID|# Primary Key
+      |Group ID|
+      |Context Organization ID|
       |Name|
       |Source Context|
       |Source ID|
@@ -58,7 +58,7 @@ Feature: PO F3 Create an Organization
       |City|
       |Postal Code|
       |Email|
-      |Phone Number: Phone Number Extension|
+      |Phone Number Phone Number Extension|
       |Created By|
       |Updated By|
       |Family Name|
@@ -115,8 +115,8 @@ Feature: PO F3 Create an Organization
      Then I can view an associated Organizations grid details type
 
 
-       |CTRP Organization ID|
-       |CTEP Organization ID|
+       |CTRP ID|
+       |CTEP ID|
        |Name|
        |Source Status|
        |Source Context|

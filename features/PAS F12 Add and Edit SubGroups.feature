@@ -45,8 +45,8 @@ And I have selected a trial
 And I am on the Add/Edit Subgroup Information screen
 And I am entering into Label
 Then information text appears below the Label field to display the number of characters available to enter into the field.  
-|62 characters left|
-When 62 characters have been entered
+|200 characters left|
+When 200 characters have been entered
 Then no additional text can be entered
 
 Scenario: #6 Description field character count

@@ -73,7 +73,6 @@
     } //link
 
     function commentCtrl($scope, $element, $attrs) {
-      $log.info('in the comment directive!!');
       var vm = this;
       vm.commentList = [];
       vm.showCommentForm = false;

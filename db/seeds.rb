@@ -36,8 +36,6 @@ end
 ServiceRequest.find_or_create_by(code: 'CREATE').update(name: 'Create', record_status:'Active')
 ServiceRequest.find_or_create_by(code: 'UPDATE').update(name: 'Update', record_status:'Active')
 ServiceRequest.find_or_create_by(code: 'MERGE_W_CTEP').update(name: 'Merge with CTEP ID', record_status:'Active')
-ServiceRequest.find_or_create_by(code: 'NULLIFY_W_CTEP').update(name: 'Nullify with CTEP ID', record_status:'Active')
-ServiceRequest.find_or_create_by(code: 'LINK_W_CTRP').update(name: 'Link with CTRP ID', record_status:'Active')
 ServiceRequest.find_or_create_by(code: 'NULL').update(name: 'NULL', record_status:'Active')
 
 SourceContext.find_or_create_by(code: 'CTEP').update(name: 'CTEP')
@@ -1212,7 +1210,8 @@ AppSetting.find_or_create_by(code: 'USER_ROLES', description: 'Double pipe delim
                                         "id": "ROLE_RO",
                                         "name": "Read Only",
                                         "assign_access": "",
-                                        "org_source_status_search_access": "ACT"
+                                        "org_source_status_access": "ACT,PEND,INACT",
+                                        "org_source_status_search_access": "ACT,PEND,INACT,NULLIFIED,LEG"
                                      },
                                      {
                                         "id": "ROLE_ACCOUNT-APPROVER",
@@ -1322,7 +1321,7 @@ CtGovImportExport.find_or_create_by(from:'Submission Not required', to:'Not requ
 CtGovImportExport.find_or_create_by(from:'Not yet recruiting', to:'In Review',import_or_export:'import' ,model:'Trial Status')
 CtGovImportExport.find_or_create_by(from:'Withdrawn', to:'Withdrawn',import_or_export:'import' ,model:'Trial Status')
 CtGovImportExport.find_or_create_by(from:'Recruiting', to:'Active',import_or_export:'import' ,model:'Trial Status')
-CtGovImportExport.find_or_create_by(from:'Enrolling by Invitation', to:'Enrolling by Invitation',import_or_export:'import' ,model:'Trial Status')
+CtGovImportExport.find_or_create_by(from:'Enrolling by invitation', to:'Enrolling by Invitation',import_or_export:'import' ,model:'Trial Status')
 CtGovImportExport.find_or_create_by(from:'Suspended', to:'Temporarily Closed to Accrual',import_or_export:'import' ,model:'Trial Status')
 CtGovImportExport.find_or_create_by(from:'Active, not recruiting', to:'Closed to Accrual',import_or_export:'import' ,model:'Trial Status')
 CtGovImportExport.find_or_create_by(from:'Terminated', to:'Administratively Complete',import_or_export:'import' ,model:'Trial Status')
@@ -1332,7 +1331,7 @@ CtGovImportExport.find_or_create_by(from:'Completed', to:'Complete',import_or_ex
 CtGovImportExport.find_or_create_by(to:'Not yet recruiting', from:'In Review',import_or_export:'export' ,model:'Trial Status')
 CtGovImportExport.find_or_create_by(to:'Withdrawn', from:'Withdrawn',import_or_export:'export' ,model:'Trial Status')
 CtGovImportExport.find_or_create_by(to:'Recruiting', from:'Active',import_or_export:'export' ,model:'Trial Status')
-CtGovImportExport.find_or_create_by(to:'Enrolling by Invitation', from:'Enrolling by Invitation',import_or_export:'export' ,model:'Trial Status')
+CtGovImportExport.find_or_create_by(to:'Enrolling by invitation', from:'Enrolling by Invitation',import_or_export:'export' ,model:'Trial Status')
 CtGovImportExport.find_or_create_by(to:'Suspended', from:'Temporarily Closed to Accrual',import_or_export:'export' ,model:'Trial Status')
 CtGovImportExport.find_or_create_by(to:'Active, not recruiting', from:'Closed to Accrual',import_or_export:'export' ,model:'Trial Status')
 CtGovImportExport.find_or_create_by(to:'Terminated', from:'Administratively Complete',import_or_export:'export' ,model:'Trial Status')
@@ -2490,7 +2489,7 @@ ValidationRule.find_or_create_by(category: 'warning', model: 'trial', section: '
    user.user_status = UserStatus.find_by_code('ACT')
    user.receive_email_notifications = true
    user.status_date = Time.zone.now
-   user.phone = "111-111-1111"
+   user.phone = "1111111111"
    does_user_exists = User.find_by_username(user.username)
    user.save! if !does_user_exists
   end

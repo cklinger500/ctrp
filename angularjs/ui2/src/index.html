@@ -108,29 +108,25 @@
         <!-- endbower -->
         <!-- endbuild -->
 
-        <!-- dependency exception: noninjectable
-        <script src="bower_components/angular-json-tree/build/angular-json-tree.js"></script>
-        end of dependency exception -->
-
 
         <!-- build:js js/app.js-->
         <!-- inject:js -->
         <script src="/src/app/pa/ctrp.app.pa.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/scientific/directives/advancedCadsrSearchModalButton.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/scientific/directives/advancedCadsrSearchForm2.js"></script>
+        <script src="/src/app/modules/ctrp.module.routes.js"></script>
+        <script src="/src/app/pa/dashboard/abstraction/trial_validation/trial-validation.routes.js"></script>
         <script src="/src/app/pa/dashboard/ctrp.app.pa.dashboard.js"></script>
+        <script src="/src/app/pa/dashboard/abstraction/trial_validation/submissionValidCtrl.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/trial_overview/trialReportSummaryCtrl.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/trial_overview/trialIdentificationCtrl.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/trial_overview/trialHistoryCtrl.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/trial_overview/trialEmailsLogsCtrl.js"></script>
-        <script src="/src/app/modules/ctrp.module.routes.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/trial_overview/trial-abstraction.routes.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/trial_overview/paTrialOverviewCtrl.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/trial_overview/paOnholdCtrl.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/trial_overview/paMilestoneCtrl.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/trial_overview/checkoutHistoryCtrl.js"></script>
-        <script src="/src/app/pa/dashboard/abstraction/trial_validation/trial-validation.routes.js"></script>
-        <script src="/src/app/pa/dashboard/abstraction/trial_validation/submissionValidCtrl.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/search/pamTrialSearchCtrl.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/search/pamTrialListCtrl.js"></script>
         <script src="/src/app/pa/dashboard/abstraction/scientific/trial-scientific.routes.js"></script>
@@ -162,8 +158,8 @@
         <script src="/src/app/registry/registration/directives/participatingSitesDetail.js"></script>
         <script src="/src/app/pa/search/trials/search-trials.routes.js"></script>
         <script src="/src/app/pa/search/trials/paTrialCtrl.js"></script>
-        <script src="/src/app/pa/dashboard/gov_import/gov-import.routes.js"></script>
         <script src="/src/app/pa/dashboard/results_reporting/results-reporting.routes.js"></script>
+        <script src="/src/app/pa/dashboard/gov_import/gov-import.routes.js"></script>
         <script src="/src/app/po/ctrp.app.po.js"></script>
         <script src="/src/app/po/person/directives/personAdvSearchModalButtonAttributed.js"></script>
         <script src="/src/app/po/person/directives/personAdvSearchModalButton.js"></script>
@@ -171,14 +167,15 @@
         <script src="/src/app/po/organization/directives/advancedOrgSearchModalButton.js"></script>
         <script src="/src/app/po/organization/directives/advancedOrgSearchForm2.js"></script>
         <script src="/src/app/modules/widgets/ctrp.module.widgets.js"></script>
+        <script src="/src/app/modules/widgets/visibility/ctrp.widgets.toggleVisibility.directive.js"></script>
         <script src="/src/app/modules/widgets/trial/ctrp.widgets.trial-search.directive.js"></script>
         <script src="/src/app/modules/widgets/trial/ctrp.widgets.imported-ncit-interventions-search.directive.js"></script>
-        <script src="/src/app/modules/widgets/modals/ctrp.widgets.modal.directive.js"></script>
         <script src="/src/app/modules/widgets/popover/ctrp.widgets.popover-trial-peekview.directive.js"></script>
         <script src="/src/app/modules/widgets/popover/ctrp.widgets.popover-trial-peek.directive.js"></script>
         <script src="/src/app/modules/widgets/popover/ctrp.widgets.popover-hint.directive.js"></script>
         <script src="/src/app/modules/widgets/popover/ctrp.widgets.popover-ctrp-confirm.directive.js"></script>
         <script src="/src/app/modules/widgets/popover/ctrp.widgets.popover-comment.directive.js"></script>
+        <script src="/src/app/modules/widgets/modals/ctrp.widgets.modal.directive.js"></script>
         <script src="/src/app/modules/widgets/help/helpModalCtrl.js"></script>
         <script src="/src/app/modules/widgets/help/ctrp.widgets.ctrpHelp.directive.js"></script>
         <script src="/src/app/modules/widgets/help/HelpService.js"></script>
@@ -188,6 +185,7 @@
         <script src="/src/app/modules/widgets/filters/ctrp.widgets.filter.toProperCase.js"></script>
         <script src="/src/app/modules/widgets/filters/ctrp.widgets.filter.reverseList.js"></script>
         <script src="/src/app/modules/widgets/filters/ctrp.widgets.filter.props.js"></script>
+        <script src="/src/app/modules/widgets/filters/ctrp.widgets.filter.maskPhoneNumber.js"></script>
         <script src="/src/app/modules/widgets/filters/ctrp.widgets.filter.findObjByAttribute.js"></script>
         <script src="/src/app/modules/widgets/filters/ctrp.widgets.filter.dateFormat.js"></script>
         <script src="/src/app/modules/widgets/comment/ctrp.widgets.comment-push-in-panel.directive.js"></script>
@@ -204,10 +202,10 @@
         <script src="/src/app/registry/registration/psDetailCtrl.js"></script>
         <script src="/src/app/registry/registration/participatingSitesDetailModalCtrl.js"></script>
         <script src="/src/app/registry/registration/importTrialCtrl.js"></script>
-        <script src="/src/app/pa/search/PATrialService.js"></script>
         <script src="/src/app/pa/layout/paModuleMenuPanelCtrl.js"></script>
+        <script src="/src/app/pa/search/PATrialService.js"></script>
         <script src="/src/app/po/person/personSearchCtrl.js"></script>
-        <script src="/src/app/po/person/personDetailCtrl.js"></script>
+        <script src="/src/app/po/person/personDetailCtrl2.js"></script>
         <script src="/src/app/po/person/personCtrl.js"></script>
         <script src="/src/app/po/person/person.routes.js"></script>
         <script src="/src/app/po/person/ModalInstancePersonCtrl.js"></script>
@@ -226,6 +224,7 @@
         <script src="/src/app/modules/widgets/ctrp.widgets.recaptcha.directive.js"></script>
         <script src="/src/app/modules/widgets/ctrp.widgets.maskPhoneNumber.directive.js"></script>
         <script src="/src/app/modules/widgets/ctrp.widgets.in-place-edit.directive.js"></script>
+        <script src="/src/app/modules/widgets/ctrp.widgets.directive.focusMe.js"></script>
         <script src="/src/app/modules/widgets/ctrp.widgets.dateFormatter.directive.js"></script>
         <script src="/src/app/modules/widgets/ctrp.widgets.ctrptransferselect.directive.js"></script>
         <script src="/src/app/modules/validators/ctrp.module.validators.js"></script>
@@ -253,8 +252,8 @@
         <script src="/src/app/administrative/new_biomarker_requests/new-biomarker-requests.routes.js"></script>
         <script src="/src/app/administrative/manage_nclt_terms/manage-nclt-terms.routes.js"></script>
         <script src="/src/app/accrual/pending_accrual_queue/pending-accrual-queue.routes.js"></script>
-        <script src="/src/app/accrual/manage_flagged_trails/manage-flagged-trails.routes.js"></script>
         <script src="/src/app/accrual/manage_accrual_access/manage-accrual-access.routes.js"></script>
+        <script src="/src/app/accrual/manage_flagged_trails/manage-flagged-trails.routes.js"></script>
         <script src="/src/app/accrual/accruals_outofscope_trials/accruals-outofscope-trials.routes.js"></script>
         <script src="/src/app/user/ctrp.app.user.js"></script>
         <script src="/src/app/user/userSignupCtrl.js"></script>
@@ -270,8 +269,8 @@
         <script src="/src/app/layout/headerNavigationCtrl.js"></script>
         <script src="/src/app/layout/footerCtrl.js"></script>
         <script src="/src/app/layout/bodyCssClassname.js"></script>
-        <script src="/src/app/pa/search/ctrp.app.pa.search.js"></script>
         <script src="/src/app/pa/layout/ctrp.app.pa.layout.js"></script>
+        <script src="/src/app/pa/search/ctrp.app.pa.search.js"></script>
         <script src="/src/app/administrative/ctrp.app.administrative.js"></script>
         <script src="/src/app/accrual/ctrp.app.accrual.js"></script>
         <script src="/src/app/ctrp.app.main.js"></script>

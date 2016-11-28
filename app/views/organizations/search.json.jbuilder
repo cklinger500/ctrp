@@ -18,18 +18,25 @@ json.orgs do
         :country,
         :email,
         :phone_with_ext,
+        :phone,
+        :extension,
         :ctrp_id,
         :aff_families_names,
-        :updated_by,
-        :multiview_ctep_id,
-        :updated_at
-        json.org_assoc_date @read_all_access ? organization.org_assoc_date : nil
-        json.service_request_name @read_all_access ? organization.service_request_name : nil
-        json.processing_status @read_all_access ? organization.processing_status : nil
-        json.ctep_id organization.multiview_ctep_id
-        json.source_context organization.source_context_name
-        json.source_status organization.source_status_name
-        json.url organization_url(organization, format: :json)
+        :multiview_ctep_id
+      json.updated_by @read_all_access ? organization.updated_by : nil
+      json.created_by @read_all_access ? organization.created_by : nil
+      json.created_at @read_all_access ? organization.created_at : nil
+      json.updated_at @read_all_access ? organization.updated_at : nil
+      json.association_date @read_all_access ? organization.association_date : nil
+      json.service_request_name @read_all_access ? organization.service_request_name : nil
+      json.service_request_id @read_all_access ? organization.service_request_id : nil
+      json.processing_status @read_all_access ? organization.processing_status : nil
+      json.ctep_id organization.multiview_ctep_id
+      json.source_context organization.source_context_name
+      json.source_status organization.source_status_name
+      json.source_context_code @read_all_access ? organization.source_context_code : nil
+      json.source_status_code @read_all_access ? organization.source_status_code : nil
+      json.url organization_url(organization, format: :json)
     end
   end
 end

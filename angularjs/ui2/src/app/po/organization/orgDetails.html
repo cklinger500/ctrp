@@ -2,7 +2,7 @@
     You have reached this page by mistake.
 </div>
 <div class="col-xs-12 drop-shadow" ng-show="orgDetailView.defaultTab">
-    <h4>{{orgDetailView.ctrpOrg.new?'Add':(orgDetailView.tabOpen === 'CTRP' && orgDetailView.curOrgEditable?'Edit':'View')}} Organization</h4>
+    <h4>{{orgDetailView.ctrpOrg.new?'Add':((orgDetailView.tabOpen === 'CTRP' || orgDetailView.tabOpen === 'CTEP') && orgDetailView.curOrgEditable?'Edit':'View')}} Organization</h4>
     <div class="row">
         <ctrp-comment ng-if="orgDetailView.currentUserIsAdmin" instance-uuid="{{orgDetailView.ctrpOrg.uuid}}" button-type="icon" field="" model="organization"></ctrp-comment>
         <!-- tab views -->
@@ -10,21 +10,21 @@
             <md-content>
                 <md-tabs md-dynamic-height md-border-bottom md-selected="orgDetailView.tabIndex">
                     <md-tab label="CTEP" md-active="orgDetailView.defaultTab === 'CTEP'" ng-if="orgDetailView.ctepOrg" md-on-select="orgDetailView.tabOpen = 'CTEP'">
-                        <md-content class="md-padding">
+                        <md-tab-body class="md-padding">
                             <div ng-include src="'app/po/organization/_ctepOrgDetail.html'"></div>
-                        </md-content>
+                        </md-tab-body>
                     </md-tab>
                     <md-tab label="CTRP" md-active="orgDetailView.defaultTab === 'CTRP' || orgDetailView.tabOpen === 'CTRP'" ng-if="orgDetailView.ctrpOrg" md-on-select="orgDetailView.tabOpen = 'CTRP'">
-                        <md-content class="md-padding" ng-class="{'edit-off': !orgDetailView.curOrgEditable}">
-                            <div ng-show="orgDetailView.curOrgEditable || orgDetailView.ctrpOrg.new" ng-include src="'app/po/organization/_ctrpOrgDetailWR.html?_rload='+orgDetailView.ctrpUpdateTime"></div>
-                            <div ng-show="!orgDetailView.curOrgEditable && !orgDetailView.ctrpOrg.new" ng-include src="'app/po/organization/_ctrpOrgDetailRO.html?_rload='+orgDetailView.ctrpUpdateTime"></div>
+                        <md-tab-body class="md-padding" ng-class="{'edit-off': !orgDetailView.curOrgEditable}">
+                            <div ng-show="orgDetailView.currentUserIsReadAll || orgDetailView.ctrpOrg.new" ng-include src="'app/po/organization/_ctrpOrgDetailWR.html?_rload='+orgDetailView.ctrpUpdateTime"></div>
+                            <div ng-show="!orgDetailView.currentUserIsReadAll && !orgDetailView.ctrpOrg.new" ng-include src="'app/po/organization/_ctrpOrgDetailRO.html?_rload='+orgDetailView.ctrpUpdateTime"></div>
                             <div ng-include src="'app/po/organization/_associatedOrgs.html?_rload='+orgDetailView.updateTime"></div>
-                        </md-content>
+                        </md-tab-body>
                     </md-tab>
                     <md-tab label="NLM" md-active="orgDetailView.defaultTab === 'NLM'" ng-if="orgDetailView.nlmOrg" md-on-select="orgDetailView.tabOpen = 'NLM'">
-                        <md-content class="md-padding">
+                        <md-tab-body class="md-padding">
                             <div ng-include src="'app/po/organization/_nlmOrgDetailRO.html'"></div>
-                        </md-content>
+                        </md-tab-body>
                     </md-tab>
                 </md-tabs>
             </md-content>
@@ -44,21 +44,6 @@
             <button type="button" class="btn btn-warning pull-right" id="cancelChangeOverrideContext"
                     ng-click="orgDetailView.confirmOverrideAssociatePopUp = false"><i class="glyphicon glyphicon-remove"></i>
                 Cancel
-            </button>
-        </div>
-    </div>
-</modal>
-<modal visible="orgDetailView.confirmDisAssociatePopUp" title="Please confirm" id="confirmDisAssociate">
-    <div class="modal-body">You have chosen to disassociate from selected organization(s).</div>
-    <div class="modal-footer">
-        <div class="btn-toolbar">
-            <button type="button" class="btn btn-primary pull-right" id="cancelRemOwn"
-                    ng-click="orgDetailView.confirmDisAssociatePopUp = false"><i class="glyphicon glyphicon-ok"></i>
-                Cancel
-            </button>
-            <button type="button" class="btn btn-danger pull-right"  id="remOwn"
-                    ng-click="orgDetailView.disAssociateOrgs()"><i class="glyphicon glyphicon-ok"></i>
-                Remove Association
             </button>
         </div>
     </div>

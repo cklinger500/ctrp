@@ -12,16 +12,16 @@
                     <h5>List of Participating Sites:</h5>
                     <table st-table="curTrial.participating_sites" class="table table-bordered table-striped table-condensed">
                         <thead>
-                            <th>CTRP Org ID</th>
+                            <th>CTRP ID</th>
                             <th>CTRP Organization Name</th>
                             <th>Principal Investigator</th>
-                            <th>Local Trial Id</th>
+                            <th>Local Trial Identifier</th>
                             <th>Program Code</th>
                             <th>Current Site Recruitment Status</th>
                             <th>Current Site Recruitment Status Date</th>
                             <th>Primary Contact</th>
                             <th>Email</th>
-                            <th>Phone/Ext</th>
+                            <th>Phone - Phone Number Extension</th>
                             <th>Edit</th>
                         </thead>
                         <tbody>
@@ -316,10 +316,10 @@
                     </div>
 
                     <!-- Phone Number -->
-                    <div class="form-group has-feedback required" ng-class="{'has-error': (!ps_form.phone.$valid && ps_form.$submitted) || ctrpbtn.ps_form.needsAttention(ps_form.phone) && ps_form.phone.$error && ctrpbtn.ps_form.needsAttention(ps_form.email) && ps_form.email.$error}">
+                    <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.ps_form.needsAttention(ps_form.phone) && ps_form.phone.$error && ctrpbtn.ps_form.needsAttention(ps_form.email) && ps_form.email.$error}">
                         <label for="phone" class="control-label col-xs-12 col-sm-3">Contact Phone Number:</label>
                         <div class="col-xs-12 col-sm-3">
-                            <input type="text" id="phone" name="phone" maxlength="30" ng-model="curPs.contact_phone" class="form-control input-sm" ng-pattern="phoneNumberFormat" placeholder="Phone" ng-required="!curPs.contact_email.length">
+                            <input type="text" id="phone" name="phone" maxlength="30" ng-model="curPs.contact_phone" class="form-control input-sm" placeholder="Phone" ng-required="!curPs.contact_email.length" mask-phone-number>
                             <span ng-show="ps_form.phone.$viewValue.length" class="form-control-feedback" ng-class="!ps_form.phone.$valid ? 'glyphicon glyphicon-exclamation-sign glyphicon-red' : 'glyphicon glyphicon-ok glyphicon-green'"></span>
                         </div>
                         <div class="col-xs-12 col-sm-2">

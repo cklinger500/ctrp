@@ -93,16 +93,16 @@ class FamiliesController < ApplicationController
 
     params[:sort] = 'name' if params[:sort].blank?
     params[:order] = 'asc' if params[:order].blank?
-    print "ke;;;;;;;";
-    print params[:wc_search];
 
     if params[:ctrp_id].present? || params[:name].present? || params[:family_status].present? || params[:family_type].present?
-      @families = Family.all
+      @families = Family.all_families_data()
+
       @families = @families.matches('id', params[:ctrp_id]) if params[:ctrp_id].present?
-      @families = @families.matches_wc('name', params[:name],params[:wc_search]) if params[:name].present?
-      @families = @families.with_family_status(params[:family_status]) if params[:family_status].present?
+      @families = @families.matches('family_statuses.name', params[:family_status]) if params[:family_status].present?
+      @families = matches_wc(@families, 'families.name', params[:name],params[:wc_search]) if params[:name].present?
       @families = @families.with_family_type(params[:family_type]) if params[:family_type].present?
-      @families = @families.sort_by_col(params[:sort], params[:order]).group(:'families.id')
+      @families = @families.sort_by_col(params[:sort], params[:order])
+
 
       if params[:rows] != nil
         @families = @families.page(params[:start]).per(params[:rows])
@@ -120,9 +120,6 @@ class FamiliesController < ApplicationController
     if params.has_key?(:family_name)
       count = Family.where("lower(name)=?", params[:family_name].downcase).count;
     end
-
-    print "count "
-    print count
 
     if params[:family_exists] == true
       @dbFamily = Family.find(params[:family_id]);
@@ -143,9 +140,6 @@ class FamiliesController < ApplicationController
     elsif params[:family_exists] == false && count > 0
       is_unique = false
     end
-
-    p " is unique? "
-    p is_unique
 
     respond_to do |format|
       format.json {render :json => {:name_unique => is_unique}}

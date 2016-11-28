@@ -15,7 +15,6 @@
         var vm = this;
         vm.userType = UserService.getUserType();
         vm.accept = function() {
-            console.log('ACCEPT');
             LocalCacheService.cacheItem('gsaFlag', 'Accept');
             $uibModalInstance.close();
             $state.go('main.defaultContent');
@@ -23,7 +22,6 @@
         };
 
         vm.reject = function() {
-            console.log('REJECT');
             LocalCacheService.cacheItem('gsaFlag', 'Reject');
             $uibModalInstance.dismiss('cancel');
             UserService.logout();

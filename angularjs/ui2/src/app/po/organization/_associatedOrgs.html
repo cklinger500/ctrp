@@ -1,24 +1,24 @@
+<div class="col-sm-12" ng-if="orgDetailView.associatedOrgs && orgDetailView.associatedOrgs.length > 1">
+    <hr>
+    <div class="form-group">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-8">
+            <h4>Associated Organizations <toggle-visibility element-to-toggle="#associatedGrid, #removeAssociation" toggle-visibility-default="orgDetailView.associatedOrgsGridOpen"></toggle-visibility></h4>
 
-<div class="row top-offset-xs"></div>
-<div class="panel panel-default" ng-if="orgDetailView.associatedOrgs && orgDetailView.associatedOrgs.length > 1">
-    <div class="panel-heading">
-        <div class="panel-title">Associated Organizations</div>
-    </div>
-    <div class="panel-body">
-        <div class="form-group">
-            <div class="col-xs-12">
-                <div class="row">
-                    <div ui-grid="orgDetailView.associatedOrgsOptions" ui-grid-move-columns ui-grid-selection class="grid auto-height" ></div>
-                </div> <!-- row ends -->
-            </div>
+            <div id="associatedGrid" ui-grid="orgDetailView.associatedOrgsOptions" ui-grid-move-columns ui-grid-selection ui-grid-resize-columns class="grid grid-sm"></div>
         </div>
-        <div class="form-group">
-            <div class="btn-toolbar">
-                <button class="btn btn-danger btn-spacer pull-right" id="delete" restriction-field ng-click="orgDetailView.confirmDisAssociate()"
-                        ng-disabled="!orgDetailView.gridApi.selection.getSelectedRows().length">
-                    <i class="glyphicon glyphicon-trash"></i> Remove Selected Associations
-                </button>
-            </div>
+    </div>
+    <div id="removeAssociation" class="form-group">
+        <div class="col-sm-9 btn-toolbar">
+            <button type="button" class="btn btn-danger pull-right" id="delete"
+                    ctrp-confirm
+                    ctrp-click="orgDetailView.disAssociateOrgs()"
+                    placement="top"
+                    confirm-msg="Click OK to remove the selected association. Click Cancel to abort."
+                    ng-show="orgDetailView.curOrgEditable"
+                    ng-disabled="!orgDetailView.gridApi.selection.getSelectedRows().length">
+                <i class="glyphicon glyphicon-trash"></i> Remove Selected Associations
+            </button>
         </div>
     </div>
 </div>

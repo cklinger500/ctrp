@@ -28,6 +28,7 @@ var participatingSitePage = require('../support/registerAddParticipatingSite');
 var searchOrgPage = require('../support/ListOfOrganizationsPage');
 var searchPeoplePage = require('../support/ListOfPeoplePage');
 var registryMessagePage = require('../support/RegistryMessage');
+var phoneFormat = require('phoneformat.js');
 
 
 
@@ -168,7 +169,8 @@ module.exports = function () {
                         participatingSite.setAddPSContactPhone('687-657-8976');
                         participatingSite.setAddPSContactPhoneExtension('01');
                         participatingSite.clickAddPSSaveButton();
-                        viewPS = psOrgName + ' ' + 'SinghTrialImp, ' + sitePIValue + ' ' + PSLclTrId  + ' ' + PSPgmCode + ' ' + PSStatus + ' ' + PSStatusDate + ' ' + 'SinghTrialImp, ' + sitePIValue + ' ' + 'singh@contact.com' + ' ' +  '687-657-8976 ext. 01';
+                        var formattedPhone = phoneFormat.formatLocal('US', '687-657-8976');
+                        viewPS = psOrgName + ' ' + 'SinghTrialImp, ' + sitePIValue + ' ' + PSLclTrId  + ' ' + PSPgmCode + ' ' + PSStatus + ' ' + PSStatusDate + ' ' + 'SinghTrialImp, ' + sitePIValue + ' ' + 'singh@contact.com' + ' ' +  formattedPhone + ' x01';
                      //   viewPS = psOrgName + ' '  + sitePIValue + ' SinghTrialImp' + ' ' + PSLclTrId  + ' ' + PSPgmCode + ' ' + PSStatus + ' ' + PSStatusDate + ' ' + sitePIValue + ' SinghTrialImp' + ' ' + 'singh@contact.com' + ' ' +  '687-657-8976 ext. 01';
                         console.log('View PS tbl in View page');
                         console.log(viewPS);

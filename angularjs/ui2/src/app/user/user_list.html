@@ -48,40 +48,8 @@
                         <!-- Status ends -->
 
                         <!-- Organization Name-->
-                        <div class="form-group" id="user_list_organization">
-                            <label for="organization_name" class="control-label col-sm-5">Organization:</label>
-                            <div class="col-sm-7"  ng-if="!userView.searchOrganization">
-                                <input type="text" id="organization_name" class="form-control input-sm" name="organization_name"
-                                       autocomplete="off" placeholder="Organization Name"
-                                       ng-model="userView.organization_name"
-                                       typeahead-on-select="userView.setUserListTypeAheadOrg($item)"
-                                       ng-if="!userView.userChosenOrg"
-                                       uib-typeahead="org for org in userView.typeAheadNameSearch($viewValue)" ui-typeahead-loading="loadingOrganizations"
-                                       typeahead-min-length="3" typeahead-wait-ms="50" typeahead-no-results="noResults" />
-                                <div id="typeAheadResults" ng-if="userView.userChosenOrg">
-                                        <b>{{userView.userChosenOrg.name}}</b>
-                                        <span class="btn-danger crn-rounded" ng-click="userView.removeOrgChoice()"
-                                              title="Change organization">
-                                            <i class="glyphicon glyphicon-trash"></i>
-                                        </span>
-                                        <br>
-                                        <span ng-if="userView.userChosenOrg.address">{{userView.userChosenOrg.address}}<br></span>
-                                        <span ng-if="userView.userChosenOrg.address2">{{userView.userChosenOrg.address2}}<br></span>
-                                        <span ng-if="userView.userChosenOrg.city">{{userView.userChosenOrg.city}},</span>
-                                        <span ng-if="userView.userChosenOrg.state_province">{{userView.userChosenOrg.state_province}} </span>
-                                        <span ng-if="userView.userChosenOrg.postal_code">{{userView.userChosenOrg.postal_code}}<br></span>
-                                        <span ng-if="userView.userChosenOrg.country">{{userView.userChosenOrg.country}}<br></span>
-                                        <i>
-                                        <span ng-if="userView.userChosenOrg.phone"><b>Contact:</b> <u>{{userView.userChosenOrg.phone}}</u><br></span>
-                                        <span ng-if="userView.userChosenOrg.email"><b>Email:</b> <u>{{userView.userChosenOrg.email}}</u><br></span>
-                                        <span ng-if="userView.userChosenOrg.fax"><b>Fax:</b> <u>{{userView.userChosenOrg.fax}}</u></span>
-                                        </i>
-                                </div>
-                            </div>
-                            <div class="col-sm-7 control-label text-left" ng-if="userView.searchOrganization">
-                                {{userView.searchOrganization}}
-                            </div>
-                        </div>
+                        <div ng-include src="'app/po/organization/_orgSearchTypeAhead.html'"
+                             onload="[page_view =  userView, label = 'Organization:' ,label_class = 'col-sm-5', div_class= 'col-sm-7']" ></div>
                         <!-- Organization Name ends -->
                     </div>
                     <div class="col-xs-12 col-md-6">
@@ -107,9 +75,9 @@
                         <div class="form-group" ng-if="!userView.registeredUsersPage" id="user_list_admin_priv">
                             <label for="site_admin" class="control-label col-sm-5">Site Administrator Privileges:</label>
                             <div class="col-sm-7">
-                                <label class="control-label radio-line">Yes: <input type="radio" id="site_admin" ng-model="userView.searchParams.site_admin" ng-value="true"/></label>
-                                <label class="control-label radio-line">No: <input type="radio" id="site_admin" ng-model="userView.searchParams.site_admin" ng-value="false"/></label>
-                                <label class="control-label radio-line">All: <input type="radio" id="site_admin" ng-model="userView.searchParams.site_admin" ng-value="undefined"/></label>
+                                <label class="control-label radio-line">Yes <input type="radio" id="site_admin" ng-model="userView.searchParams.site_admin" ng-value="true"/></label>
+                                <label class="control-label radio-line">No <input type="radio" id="site_admin" ng-model="userView.searchParams.site_admin" ng-value="false"/></label>
+                                <label class="control-label radio-line">All <input type="radio" id="site_admin" ng-model="userView.searchParams.site_admin" ng-value="undefined"/></label>
                             </div>
                         </div>
                         <!-- Site Admin ends -->

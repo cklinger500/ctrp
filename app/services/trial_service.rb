@@ -1,3 +1,6 @@
+#
+# rubocop:disable ClassLength
+
 class TrialService
   @@is_IND_protocol = true # default to true
   @@cur_trial_status_code = nil

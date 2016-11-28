@@ -248,7 +248,7 @@
                     <div class="form-group">
                         <label for="phone" class="control-label col-xs-12 col-sm-3">Phone Number:</label>
                         <div class="col-xs-12 col-sm-4">
-                            <input type="text" id="phone" name="phone" ng-model="generalTrialDetailView.generalTrialDetailsObj.central_contacts[0].phone" ng-pattern="generalTrialDetailView.phoneNumberFormat" class="form-control input-sm" placeholder="Phone">
+                            <input type="text" id="phone" name="phone" ng-model="generalTrialDetailView.generalTrialDetailsObj.central_contacts[0].phone" class="form-control input-sm" placeholder="Phone" mask-phone-number>
                             <span ng-show="general_trial_details_form.phone.$viewValue.length > 0" class="form-control-feedback" ng-class="!general_trial_details_form.phone.$valid ? 'glyphicon glyphicon-exclamation-sign glyphicon-red' : 'glyphicon glyphicon-ok glyphicon-green'"></span>
                         </div>
                         <div class="col-xs-12 col-sm-2">

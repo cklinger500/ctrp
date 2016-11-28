@@ -14,7 +14,7 @@ class SourceStatusesController < ApplicationController
     search_type = params[:view_type] == 'search' ? 'org_source_status_search_access' : 'org_source_status_access'
     search_context = params[:view_context] && params[:view_context].length > 1 ? params[:view_context] : 'CTRP'
     org_source_status_access = (current_ctrp_user_role_details @current_user.role)[search_type]
-    administration_roles = ['ROLE_ADMIN','ROLE_ACCOUNT-APPROVER','ROLE_SUPER','ROLE_ABSTRACTOR','ROLE_CURATOR']
+    administration_roles = ['ROLE_RO','ROLE_ADMIN','ROLE_ACCOUNT-APPROVER','ROLE_SUPER','ROLE_ABSTRACTOR','ROLE_CURATOR']
 
     #search_context
     if ( (administration_roles.include? @current_user.role) &&

@@ -1,0 +1,22 @@
+<div class="form-group" ng-show="!personDetailView.curPerson.new && personDetailView.isAllowedToComment">
+    <label class="control-label col-xs-12 col-sm-3">Context ID:</label>
+    <div class="col-xs-12 col-sm-3">
+        <div class="form-text">{{personDetailView.curPerson.id}}</div>
+    </div>
+</div>
+<div class="form-group" ng-show="!personDetailView.curPerson.new && personDetailView.isAllowedToComment">
+    <label class="control-label col-xs-12 col-sm-3">Group ID:</label>
+    <div class="col-xs-12 col-sm-3">
+        <div class="form-text">{{personDetailView.curPerson.ctrp_id}}</div>
+    </div>
+</div>
+<div class="form-group has-feedback required">
+    <label for="source_context" class="control-label col-xs-12 col-sm-3">Source Context:</label>
+    <div class="col-xs-12 col-sm-6 form-text">{{personDetailView.curPerson.source_context}}</div>
+</div>
+<div class="form-group" ng-show="!personDetailView.curPerson.new">
+    <label class="control-label col-xs-12 col-sm-3">Source ID:</label>
+    <div class="col-xs-12 col-sm-6 form-text">
+        {{personDetailView.curPerson.source_id}}
+    </div>
+</div>

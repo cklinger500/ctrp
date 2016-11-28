@@ -68,7 +68,9 @@ var trialCommonBar = function(){
     };
 
     this.clickRegisterNationalTrialLink = function(){
+        helper.alertDialog('OK', '');
         browser.get('ui/#/main/new-trial/nat');
+        helper.alertDialog('OK', '');
       //  http://ctrp-ci.nci.nih.gov/ctrp/ui/#/main/new_trial/NAT
       //  element(by.linkText('Register Trial')).sendKeys(protractor.Key.RIGHT);
       ////  browser.actions().mouseMove(element(by.linkText('Search Trials')).find()).perform();
@@ -82,19 +84,25 @@ var trialCommonBar = function(){
     };
 
     this.clickRegisterExternallyPeerReviewedTrialLink = function(){
+        helper.alertDialog('OK', '');
         browser.get('ui/#/main/new-trial/epr');
+        helper.alertDialog('OK', '');
        // helper.clickLink(this.registerExternallyPeerReviewedTrial, "Register Externally Peer Reviewed Trial link");
         expect(this.pageHeaderText.getText()).to.eventually.equal(this.register_Trial_Header_Text);
     };
 
     this.clickRegisterInstitutionalTrialLink = function(){
+        helper.alertDialog('OK', '');
         browser.get('ui/#/main/new-trial/ins');
+        helper.alertDialog('OK', '');
        // helper.clickLink(this.registerInstitutional, "Register Institutional Trial link");
         expect(this.pageHeaderText.getText()).to.eventually.equal(this.register_Trial_Header_Text);
     };
 
     this.clickRegisterIndustrialOtherTrialLink = function(){
+        helper.alertDialog('OK', '');
         browser.get('ui/#/main/import-trial');
+        helper.alertDialog('OK', '');
         expect(this.pageHeaderText.getText()).to.eventually.equal(this.register_Import_Trial_Header_Text);
     };
 

@@ -10,12 +10,12 @@
     paTrialCtrl.$inject = ['TrialService', 'uiGridConstants', '$scope', '$rootScope', 'Common', '$uibModal',
         'studySourceObj', 'phaseObj', 'primaryPurposeObj', '$state', 'trialStatusObj', 'PATrialService',
         'milestoneObj', 'processingStatusObj', 'protocolIdOriginObj', 'researchCategoriesObj', 'nciDivObj',
-        'nciProgObj', 'submissionTypesObj', 'submissionMethodsObj', 'internalSourceObj', '_'];
+        'nciProgObj', 'submissionTypesObj', 'submissionMethodsObj', 'internalSourceObj', '_', 'OrgService'];
 
     function paTrialCtrl(TrialService, uiGridConstants, $scope, $rootScope, Commo, $uibModal,
                          studySourceObj, phaseObj, primaryPurposeObj, $state, trialStatusObj, PATrialService,
                          milestoneObj, processingStatusObj, protocolIdOriginObj, researchCategoriesObj, nciDivObj,
-                         nciProgObj, submissionTypesObj, submissionMethodsObj, internalSourceObj, _) {
+                         nciProgObj, submissionTypesObj, submissionMethodsObj, internalSourceObj, _, OrgService) {
 
         var vm = this;
         var fromStateName = $state.fromState.name || '';
@@ -40,6 +40,7 @@
         vm.internalSourceArr = internalSourceObj;
         vm.gridScope = vm;
         vm.searching = false;
+        OrgService.setTypeAheadOrgNameSearch(vm);
 
         //ui-grid plugin options
         vm.gridOptions = PATrialService.getGridOptions();
@@ -85,15 +86,21 @@
                                 'submission_method', 'nih_nci_prog', 'internal_sources']; // at least one field must be filled
         vm.searchTrials = function () {
             vm.isEmptySearch = true;
-            for (var i = 0; i < FIELDS_REQUIRED.length; i++) {
-                var field = FIELDS_REQUIRED[i];
-                var value = vm.searchParams[field];
-                if (field in vm.searchParams && angular.isDefined(value)) {
-                    vm.isEmptySearch = angular.isArray(value) ? value.length === 0 : false;
+            if (!vm.searchParams.organization_id) {
+                vm.searchParams.org = vm.organization_name;
+                for (var i = 0; i < FIELDS_REQUIRED.length; i++) {
+                    var field = FIELDS_REQUIRED[i];
+                    var value = vm.searchParams[field];
+                    if (field in vm.searchParams && angular.isDefined(value)) {
+                        vm.isEmptySearch = angular.isArray(value) ? value.length === 0 : false;
+                    }
+                    if (vm.isEmptySearch === false) {
+                        break;
+                    }
                 }
-                if (vm.isEmptySearch === false) {
-                    break;
-                }
+            } else {
+                vm.searchParams.org = undefined;
+                vm.isEmptySearch = false;
             }
 
             if (vm.isEmptySearch) {
@@ -102,6 +109,8 @@
                 vm.gridOptions.data = [];
                 return;
             }
+
+            vm.searchParams.org = !vm.searchParams.organization_id? vm.organization_name: undefined;
 
             vm.searching = true;
             vm.searchParams.protocol_origin_type = _.map(vm.searchParams.protocol_origin_type_codes, function(type) {

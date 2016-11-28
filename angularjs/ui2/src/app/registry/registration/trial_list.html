@@ -90,17 +90,9 @@
                                 <input type="text" id="pi" class="form-control input-sm" placeholder="Principal Investigator" ng-model="trialView.searchParams.pi" />
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="org" class="control-label col-xs-12 col-sm-4">Organization: </label>
-                            <div class="col-xs-12 col-sm-8">
-                                <input type="text" ng-if="!trialView.userChosenOrg" id="organization_name" class="input-sm form-control" name="organization_name" required
-                                       autocomplete="off" placeholder="Organization"
-                                       ng-model="trialView.searchParams.org"
-                                       typeahead-on-select="trialView.setTypeAheadOrg($item)"
-                                       uib-typeahead="org for org in trialView.typeAheadNameSearch($viewValue)" ui-typeahead-loading="loadingOrganizations"
-                                       typeahead-min-length="3" typeahead-wait-ms="50" typeahead-no-results="noResults" />
-                            </div>
-                        </div>
+
+                        <div ng-include src="'app/po/organization/_orgSearchTypeAhead.html'"
+                             onload="[page_view =  trialView, label = 'Organization:' ,label_class = 'col-xs-12 col-sm-4', div_class= 'col-xs-12 col-sm-8']" ></div>
 
                     </div>
                 </div>

@@ -15,7 +15,6 @@
 
         function linkerFn(scope, element, attrs, controller) {
             var elem = element,
-                countryElement = element.closest('form').find('#country'),
                 countryVal = null,
                 ctrl = controller;
 
@@ -30,7 +29,7 @@
                 }
             });
 
-            //ctrl.$formatters.push(applyMask);
+            ctrl.$formatters.push(applyMask);
             ctrl.$parsers.push(applyMask);
 
             function applyMask(viewValue) {
@@ -42,11 +41,12 @@
                     countryCode = countryToCountryCode(countryVal); // (ex: 'United States' to 'US')
 
                     output = formatLocal(countryCode, phoneNum);
-                    ctrl.$setViewValue(output);
+
                 } else {
-                    return viewValue; // If no country, return phone number w/o formatting
+                    output = formatInternational('US', phoneNum); // If no country, return phone number w/o formatting
                 }
 
+                ctrl.$setViewValue(output);
                 ctrl.$render(); // update input field with formatted phone number
                 return output;  // update underlying model
             }

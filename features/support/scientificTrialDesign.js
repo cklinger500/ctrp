@@ -13,6 +13,8 @@ var should = chai.should();
 var helperFunctions = require('../support/helper');
 var addTrialPage = require('../support/registerTrialPage');
 var abstractionCommonMethods = require('../support/abstractionCommonMethods');
+//Left Navigation
+var abstractionLeftNavigationMenus = require('../support/abstractionLeftNav');
 //File System
 var fs = require('fs');
 var junit = require('cucumberjs-junitxml');
@@ -21,6 +23,7 @@ var testFileUpload = process.env.TEST_RESULTS_DIR || process.cwd() + '/tests/tes
 var scientificTrialDesign = function(){
 
     var commonFunctions = new abstractionCommonMethods();
+    var leftNav = new abstractionLeftNavigationMenus();
     var dateFunctions = new addTrialPage();
     var helper = new helperFunctions();
     var self = this;
@@ -36,10 +39,11 @@ var scientificTrialDesign = function(){
     this.primaryPurposeLst = element(by.id('primary_purpose'));
     this.secondaryPurposeLst = element(by.id('secondary_purpose'));
     this.trialPhaseLst = element(by.id('trial_phase'));
+    this.trialPhaseLstModel = element.all(by.model('designView.trialDetailObj.phase_id'));
 
     this.isThisAPilotYes = element(by.id('is_this_pilot_yes'));
     this.isThisAPilotNo = element(by.id('is_this_pilot_no'));
-    this.isThisAPilot = element(by.css('.radio-inline'));
+    this.isThisAPilot = element.all(by.model('designView.trialDetailObj.pilot'));
 
     this.interventionModelLst = element(by.id('intervention_model'));
 
@@ -68,9 +72,13 @@ var scientificTrialDesign = function(){
 
     //Others
     this.descriptionOfOtherPrimaryPurposeTxt = element(by.id('description_other'));
+    this.descriptionOfOtherPrimaryPurposeLbl = element(by.id('desc_op_lbl'));
     this.descriptionOfOtherSecondaryPurposeTxt = element(by.id('description_other2'));
+    this.descriptionOfOtherSecondaryPurposeLbl = element(by.id('desc_other_sp_lbl'));
     this.descriptionOfOtherStudyModelTxt = element(by.id('study_model_other'));
+    this.descriptionOfOtherStudyModelLbl = element(by.id('desc_other_study_model_lbl'));
     this.descriptionOfOtherTimePerspectiveTxt = element(by.id('time_perspective_other'));
+    this.descriptionOfOtherTimePerspectiveLbl = element(by.id('desc_other_tp_lbl'));
 
     //Labels for Fields
     //Interventional
@@ -94,6 +102,9 @@ var scientificTrialDesign = function(){
     this.bioSpecimenRetentionLbl = element(by.id('bio_specimen_retention_lbl'));
     this.bioSpecimenDescriptionLbl = element(by.id('bio_specimen_desc_lbl'));
 
+    //Masking Roles Labels
+    this.maskingRolesLbl = element.all(by.css('.checkbox.checkbox-info>label'));
+    this.maskingRolesMsg = element.all(by.css('.help-block'));
 
     /***********************************
      * Trial Design Required Message
@@ -171,6 +182,74 @@ var scientificTrialDesign = function(){
         helper.setValue(this.bioSpecimenDescriptionTxt, txt, "Bio-specimen Retention - Text field");
     };
 
+    this.setPrimaryOtherDescription = function(txt)  {
+        self.waitForTrialDesignElement(self.descriptionOfOtherPrimaryPurposeTxt, "Waiting For: Description of Other Primary Purpose - Text field");
+        helper.setValue(self.descriptionOfOtherPrimaryPurposeTxt, txt, "Description of Other Primary Purpose - Text field");
+    };
+
+    this.setSecondaryOtherDescription = function(txt)  {
+        self.waitForTrialDesignElement(self.descriptionOfOtherSecondaryPurposeTxt, "Waiting For: Description of Other Secondary Purpose - Text field");
+        helper.setValue(self.descriptionOfOtherSecondaryPurposeTxt, txt, "Description of Other Secondary Purpose - Text field");
+    };
+
+    this.setStudyModelOtherDescription = function(txt)  {
+        self.waitForTrialDesignElement(self.descriptionOfOtherStudyModelTxt, "Waiting For: Description of Other Study Model - Text field");
+        helper.setValue(self.descriptionOfOtherStudyModelTxt, txt, "Description of Other Study Model - Text field");
+    };
+
+    this.setTimePerspectiveOtherDescription = function(txt)  {
+        self.waitForTrialDesignElement(self.descriptionOfOtherTimePerspectiveTxt, "Waiting For: Description of Other Time Perspective - Text field");
+        helper.setValue(self.descriptionOfOtherTimePerspectiveTxt, txt, "Description of Other Time Perspective - Text field");
+    };
+
+    this.verifyPrimaryPurposeOther = function(expLbltxt, expText){
+        this.waitForElement(self.descriptionOfOtherPrimaryPurposeTxt, 'Waiting For Description of Other Primary Purpose Text Field');
+        this.waitForElement(self.descriptionOfOtherPrimaryPurposeLbl, 'Waiting For Description of Other Primary Purpose Label Field');
+        self.descriptionOfOtherPrimaryPurposeLbl.getText().then(function(lblTxt){
+            console.log('Labels value identified as: ['+ lblTxt +']');
+            expect(expLbltxt.toString()).to.eql(lblTxt.toString());
+        });
+        if (expText !== ''){
+            commonFunctions.verifyTextFieldValue(self.descriptionOfOtherPrimaryPurposeTxt, expText);
+        }
+    };
+
+    this.verifySecondaryPurposeOther = function(expLbltxt, expText){
+        this.waitForElement(self.descriptionOfOtherSecondaryPurposeTxt, 'Waiting For Description of Other Secondary Purpose Text Field');
+        this.waitForElement(self.descriptionOfOtherSecondaryPurposeLbl, 'Waiting For Description of Other Secondary Purpose Label Field');
+        self.descriptionOfOtherSecondaryPurposeLbl.getText().then(function(lblTxt){
+            console.log('Labels value identified as: ['+ lblTxt +']');
+            expect(expLbltxt.toString()).to.eql(lblTxt.toString());
+        });
+        if (expText !== ''){
+            commonFunctions.verifyTextFieldValue(self.descriptionOfOtherSecondaryPurposeTxt, expText);
+        }
+    };
+
+    this.verifyStudyModelOther = function(expLbltxt, expText){
+        this.waitForElement(self.descriptionOfOtherStudyModelTxt, 'Waiting For Description of Other Study Model Text Field');
+        this.waitForElement(self.descriptionOfOtherStudyModelLbl, 'Waiting For Description of Other Study Model Label Field');
+        self.descriptionOfOtherStudyModelLbl.getText().then(function(lblTxt){
+            console.log('Labels value identified as: ['+ lblTxt +']');
+            expect(expLbltxt.toString()).to.eql(lblTxt.toString());
+        });
+        if (expText !== ''){
+            commonFunctions.verifyTextFieldValue(self.descriptionOfOtherStudyModelTxt, expText);
+        }
+    };
+
+    this.verifyTimePerspectiveOther = function(expLbltxt, expText){
+        this.waitForElement(self.descriptionOfOtherTimePerspectiveTxt, 'Waiting For Description of Other Time Perspective Text Field');
+        this.waitForElement(self.descriptionOfOtherTimePerspectiveLbl, 'Waiting For Description of Other Time Perspective Label Field');
+        self.descriptionOfOtherTimePerspectiveLbl.getText().then(function(lblTxt){
+            console.log('Labels value identified as: ['+ lblTxt +']');
+            expect(expLbltxt.toString()).to.eql(lblTxt.toString());
+        });
+        if (expText !== ''){
+            commonFunctions.verifyTextFieldValue(self.descriptionOfOtherTimePerspectiveTxt, expText);
+        }
+    };
+
     this.checkTrialDesignPageTitle = function (titleTXT){
         this.waitForElement(self.trialDesignHeader, 'Waiting For Page title');
         self.trialDesignHeader.isDisplayed().then(function(result) {
@@ -205,108 +284,6 @@ var scientificTrialDesign = function(){
         helper.getVerifyLabel(this.accrualsLbl, accrualsLbl, "Accruals:");
     };
 
-
-
-
-
-
-
-    this.findAssociatedTrialToVerifyEditCopyDelete = function(expTrialIdentifier, what, exIdentifierTypeVf, exTrialTypeVf, exOfficialTtleVf){
-        this.waitForAssociatedTrailDetailsElement(self.tableTBodyRowAColA, "List of Associated Trials Table");
-        this.tableAssociatedAll.then(function(rows){
-            console.log('List of Associated Trials Table Total Row Count:['+(rows.length)+']');
-            rowsLengthVal = ''+(rows.length)+'';
-            for (var i=1; i<(rows.length+1); i++){
-                if (i === 1){
-                    console.log('i:['+i+']');
-                    fNm('1', expTrialIdentifier, what, exIdentifierTypeVf, exTrialTypeVf, exOfficialTtleVf);
-                } else if (i === 2){
-                    console.log('i:['+i+']');
-                    fNm('2', expTrialIdentifier, what, exIdentifierTypeVf, exTrialTypeVf, exOfficialTtleVf);
-                } else if (i === 3){
-                    console.log('i:['+i+']');
-                    fNm('3', expTrialIdentifier, what, exIdentifierTypeVf, exTrialTypeVf, exOfficialTtleVf);
-                } else if (i === 4){
-                    console.log('i:['+i+']');
-                    fNm('4', expTrialIdentifier, what, exIdentifierTypeVf, exTrialTypeVf, exOfficialTtleVf);
-                } else if (i === 5){
-                    console.log('i:['+i+']');
-                    fNm('5', expTrialIdentifier, what, exIdentifierTypeVf, exTrialTypeVf, exOfficialTtleVf);
-                } else if (i === 6){
-                    console.log('i:['+i+']');
-                    fNm('6', expTrialIdentifier, what, exIdentifierTypeVf, exTrialTypeVf, exOfficialTtleVf);
-                } else if (i === 7){
-                    console.log('i:['+i+']');
-                    fNm('7', expTrialIdentifier, what, exIdentifierTypeVf, exTrialTypeVf, exOfficialTtleVf);
-                } else if (i === 8){
-                    console.log('i:['+i+']');
-                    fNm('8', expTrialIdentifier, what, exIdentifierTypeVf, exTrialTypeVf, exOfficialTtleVf);
-                }
-            }
-        });
-        function fNm(iVal, exppectedTrialIdentifier, whatToDo, identifierTypVf, trialTypVf, officialTtleVf){
-            var tableTrialIdentifier = element(by.css('.table.table-bordered.table-striped.table-hover tbody tr:nth-child('+iVal+') td:nth-child(01)'));
-            getCurrentTrialIdentifier = tableTrialIdentifier.getText('value');
-            getCurrentTrialIdentifier.then(function(typeVal){
-                console.log("Trial Identifier Type:["+typeVal+"]");
-                if(exppectedTrialIdentifier === typeVal){
-                    if (whatToDo === 'verify'){
-                        console.log("Verifying Trial Identifier Expected Value:["+exppectedTrialIdentifier+"]");
-                        console.log("Verifying Trial Identifier Actual Value:["+typeVal+"]");
-                        expect(exppectedTrialIdentifier.toString()).to.eql(typeVal.toString());
-                        if (identifierTypVf !== ''){
-                            var identifierTypeVal = element(by.css('.table.table-bordered.table-striped.table-hover tbody tr:nth-child('+iVal+') td:nth-child(02)'));
-                            identifierTypValVf = identifierTypeVal.getText('value');
-                            identifierTypValVf.then(function(idenTypValCr){
-                                expect(identifierTypVf.toString()).to.eql(idenTypValCr.toString());
-                            });
-                        }
-                        if (trialTypVf !== ''){
-                            var trialTypeVal = element(by.css('.table.table-bordered.table-striped.table-hover tbody tr:nth-child('+iVal+') td:nth-child(03)'));
-                            trialTypValVf = trialTypeVal.getText('value');
-                            trialTypValVf.then(function(trialTypeValCr){
-                                expect(trialTypVf.toString()).to.eql(trialTypeValCr.toString());
-                            });
-                        }
-                        if (officialTtleVf !== ''){
-                            var officialVal = element(by.css('.table.table-bordered.table-striped.table-hover tbody tr:nth-child('+iVal+') td:nth-child(04)'));
-                            officialValVf = officialVal.getText('value');
-                            officialValVf.then(function(officialValCr){
-                                expect(officialTtleVf.toString()).to.eql(officialValCr.toString());
-                            });
-                        }
-                    } else if(whatToDo === 'notexists'){
-                        var foundRecord = 'Value : '+exppectedTrialIdentifier+' should not be exists';
-                        var notExistsRecord = 'Value : '+exppectedTrialIdentifier+' exists';
-                        expect(foundRecord.toString()).to.eql(notExistsRecord.toString());
-                    } else if(whatToDo === 'link') {
-                        if (identifierTypVf === 'NCI'){
-                            var linkDataRwNCI = element(by.css('.table.table-bordered.table-striped.table-hover tbody tr:nth-child('+iVal+') td:nth-child(01) #associated_nci a'));
-                            helper.clickButton(linkDataRwNCI, "Click NCI - Link");
-                        } else if (identifierTypVf === 'NCT') {
-                            var linkDataRwNCT = element(by.css('.table.table-bordered.table-striped.table-hover tbody tr:nth-child('+iVal+') td:nth-child(01) #associated_ctdotgov a'));
-                            helper.clickButton(linkDataRwNCT, "Click NCT - Link");
-                        }
-                    } else if(whatToDo === 'delete'){
-                        var deleteDataRw = element(by.css('.table.table-bordered.table-striped.table-hover tbody tr:nth-child('+iVal+') td:nth-child(05) input'));
-                        helper.clickButton(deleteDataRw, "Delete - Button");
-                    }
-                }
-                if (exppectedTrialIdentifier != typeVal && iVal === '8'){
-                    if (whatToDo === 'verify'){
-                        console.log("Verifying Trial Identifier Expected value:["+exppectedTrialIdentifier+"]");
-                        console.log("Verifying Trial Identifier Actual value:["+typeVal+"]");
-                        expect(exppectedTrialIdentifier.toString()).to.eql(typeVal.toString());
-                    } else if(whatToDo === 'notexists'){
-                        var notExistsRecordA = 'Value : '+exppectedTrialIdentifier+' does not exists';
-                        var notExistsRecordB = 'Value : '+exppectedTrialIdentifier+' does not exists';
-                        expect(notExistsRecordA.toString()).to.eql(notExistsRecordB.toString());
-                    }
-                }
-            });
-        }
-    };
-
     this.reorderRowByDragAndDrop = function(){
         browser.actions()
             .mouseDown(element(by.css('.table.table-bordered.table-striped.table-hover tbody tr:nth-child(02) td:nth-child(02)')))
@@ -316,7 +293,7 @@ var scientificTrialDesign = function(){
     };
 
     //Wait For Element : Wait
-    this.waitForAssociatedTrailDetailsElement = function (element, label) {
+    this.waitForTrialDesignElement = function (element, label) {
         browser.wait(function () {
             return element.isPresent().then(function (state) {
                 if (state === true) {
@@ -331,7 +308,19 @@ var scientificTrialDesign = function(){
         browser.sleep(250);
     };
 
+    this.verifyMaskingRolesLables = function (index, expectedVal){
+        this.waitForElement(self.maskingRolesLbl.get(index), 'Waiting For Masking Roles');
+        self.maskingRolesLbl.get(index).getText().then(function(lblTxt){
+            console.log('Masking Roles Labels: ['+ index +'] identified as: ['+ lblTxt +']');
+            expect(expectedVal.toString()).to.eql(lblTxt.toString());
+        });
+    };
 
+    this.verifyScientificTrialDesign = function(){
+        return leftNav.scientificTrialDesign.isDisplayed().then(function (state2) {
+            return state2 === true;
+        });
+    };
 
     this.verifyCharLeft = function(charLeft, index){
         this.waitForElement(self.characterLeftLbl.get(index), 'Waiting For Page title');
@@ -357,83 +346,68 @@ var scientificTrialDesign = function(){
         browser.sleep(250);
     };
 
-    this.verifyAssociatedListTableTHead = function (){
-        var thd = new Array("Trial Identifier", "Identifier Type", "Trial Type", "Official Title");
-        helper.verifyTableRowText(self.tableTHeadColA, thd[0], 'Trial Identifier');
-        helper.verifyTableRowText(self.tableTHeadColB, thd[1], 'Identifier Type');
-        helper.verifyTableRowText(self.tableTHeadColC, thd[2], 'Trial Type');
-        helper.verifyTableRowText(self.tableTHeadColD, thd[3], 'Official Title');
-    };
-
-    this.verifyAssociatedListTableTHeadByVal = function (TrialIdentifier, IdentifierType, TrialType, OfficialTitle){
-        helper.verifyTableRowText(self.tableTHeadColA, TrialIdentifier, 'Trial Identifier');
-        helper.verifyTableRowText(self.tableTHeadColB, IdentifierType, 'Identifier Type');
-        helper.verifyTableRowText(self.tableTHeadColC, TrialType, 'Trial Type');
-        helper.verifyTableRowText(self.tableTHeadColD, OfficialTitle, 'Official Title');
-    };
-
-    this.verifyResearchCategoryLookup = function(expResearchCat){
-        this.waitForElement(self.researchCategoryVw, 'Waiting For Page title');
-        self.researchCategoryVw.getText().then(function(result) {
-            console.log('Current Research Category value: '+result+'');
-            if (result !== '') {
-                var expResearchCatVal = 'System Identified the research category value: '+result+'';
-                var actResearchCatVal = 'System Identified the research category value: '+result+'';
-                expect(expResearchCatVal.toString()).to.eql(actResearchCatVal.toString());
-                if (expResearchCat != ''){
-                    expect(self.researchCategoryVw.getText()).to.eventually.equal(expResearchCat);
-                }
-            } else {
-                var expResCatVal = 'Unable to display Expected Research Category: '+result+'';
-                var actResCatVal = 'Unable to display Actual Research Category: '+result+'';
-                expect(expResCatVal.toString()).to.eql(actResCatVal.toString());
-            }
-        });
-    };
-
-    this.verifyOfficialTitleLookup = function(expOfficialTitle){
-        this.waitForElement(self.officialTitleVw, 'Waiting For Page title');
-        self.officialTitleVw.getText().then(function(result) {
-            if (result != '') {
-                var expResearchCatVal = 'System Identified the Official Title value: '+result+'';
-                var actResearchCatVal = 'System Identified the Official Title value: '+result+'';
-                expect(expResearchCatVal.toString()).to.eql(actResearchCatVal.toString());
-                if (expOfficialTitle != ''){
-                    //expect(self.officialTitleVw.getText()).to.eventually.equal(expOfficialTitle).then(function (pass){console.log('Passed:'+pass);}, function(err){console.log('Error:'+err); browser.sleep(25).then(callback);});
-                    expect(self.officialTitleVw.getText()).to.eventually.equal(expOfficialTitle);
-                }
-            } else {
-                var expResCatVal = 'Unable to display Expected Official Title';
-                var actResCatVal = 'Unable to display Actual Official Title';
-                expect(expResCatVal.toString()).to.eql(actResCatVal.toString());
-            }
-        });
-    };
-
-    this.verifyViewAssociatedTrialNCI = function (expLeadOrgTrialID, expNCIID, expProtocolID1, expProtocolID2, expProtocolID3){
-        this.waitForElement(self.viewLeadOrgTrialID, 'Waiting For View Associated Trial Page');
-        expect(self.viewLeadOrgTrialID.getText()).to.eventually.equal(expLeadOrgTrialID);
-        expect(self.viewNCIID.getText()).to.eventually.equal(expNCIID);
-        if (expProtocolID1 !== ''){
-            self.viewProtocolID1.isDisplayed().then(function(result) {
-                if (result) {
-                    expect(self.viewProtocolID1.getText()).to.eventually.equal(expProtocolID1);
-                }
-            });
-        } else if (expProtocolID2 !== ''){
-            self.viewProtocolID2.isDisplayed().then(function(result) {
-                if (result) {
-                    expect(self.viewProtocolID2.getText()).to.eventually.equal(expProtocolID2);
-                }
-            });
-        } else if (expProtocolID3 !== ''){
-            self.viewProtocolID3.isDisplayed().then(function(result) {
-                if (result) {
-                    expect(self.viewProtocolID3.getText()).to.eventually.equal(expProtocolID3);
-                }
-            });
-        }
-    };
+    //this.verifyResearchCategoryLookup = function(expResearchCat){
+    //    this.waitForElement(self.researchCategoryVw, 'Waiting For Page title');
+    //    self.researchCategoryVw.getText().then(function(result) {
+    //        console.log('Current Research Category value: '+result+'');
+    //        if (result !== '') {
+    //            var expResearchCatVal = 'System Identified the research category value: '+result+'';
+    //            var actResearchCatVal = 'System Identified the research category value: '+result+'';
+    //            expect(expResearchCatVal.toString()).to.eql(actResearchCatVal.toString());
+    //            if (expResearchCat != ''){
+    //                expect(self.researchCategoryVw.getText()).to.eventually.equal(expResearchCat);
+    //            }
+    //        } else {
+    //            var expResCatVal = 'Unable to display Expected Research Category: '+result+'';
+    //            var actResCatVal = 'Unable to display Actual Research Category: '+result+'';
+    //            expect(expResCatVal.toString()).to.eql(actResCatVal.toString());
+    //        }
+    //    });
+    //};
+    //
+    //this.verifyOfficialTitleLookup = function(expOfficialTitle){
+    //    this.waitForElement(self.officialTitleVw, 'Waiting For Page title');
+    //    self.officialTitleVw.getText().then(function(result) {
+    //        if (result != '') {
+    //            var expResearchCatVal = 'System Identified the Official Title value: '+result+'';
+    //            var actResearchCatVal = 'System Identified the Official Title value: '+result+'';
+    //            expect(expResearchCatVal.toString()).to.eql(actResearchCatVal.toString());
+    //            if (expOfficialTitle != ''){
+    //                //expect(self.officialTitleVw.getText()).to.eventually.equal(expOfficialTitle).then(function (pass){console.log('Passed:'+pass);}, function(err){console.log('Error:'+err); browser.sleep(25).then(callback);});
+    //                expect(self.officialTitleVw.getText()).to.eventually.equal(expOfficialTitle);
+    //            }
+    //        } else {
+    //            var expResCatVal = 'Unable to display Expected Official Title';
+    //            var actResCatVal = 'Unable to display Actual Official Title';
+    //            expect(expResCatVal.toString()).to.eql(actResCatVal.toString());
+    //        }
+    //    });
+    //};
+    //
+    //this.verifyViewAssociatedTrialNCI = function (expLeadOrgTrialID, expNCIID, expProtocolID1, expProtocolID2, expProtocolID3){
+    //    this.waitForElement(self.viewLeadOrgTrialID, 'Waiting For View Associated Trial Page');
+    //    expect(self.viewLeadOrgTrialID.getText()).to.eventually.equal(expLeadOrgTrialID);
+    //    expect(self.viewNCIID.getText()).to.eventually.equal(expNCIID);
+    //    if (expProtocolID1 !== ''){
+    //        self.viewProtocolID1.isDisplayed().then(function(result) {
+    //            if (result) {
+    //                expect(self.viewProtocolID1.getText()).to.eventually.equal(expProtocolID1);
+    //            }
+    //        });
+    //    } else if (expProtocolID2 !== ''){
+    //        self.viewProtocolID2.isDisplayed().then(function(result) {
+    //            if (result) {
+    //                expect(self.viewProtocolID2.getText()).to.eventually.equal(expProtocolID2);
+    //            }
+    //        });
+    //    } else if (expProtocolID3 !== ''){
+    //        self.viewProtocolID3.isDisplayed().then(function(result) {
+    //            if (result) {
+    //                expect(self.viewProtocolID3.getText()).to.eventually.equal(expProtocolID3);
+    //            }
+    //        });
+    //    }
+    //};
 
     this.verifyTrialOverview = function (index, expectedVal){
         self.trialOverviewLbls.get(index).getText().then(function(overviewInfo){

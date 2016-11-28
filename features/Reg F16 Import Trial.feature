@@ -13,6 +13,10 @@ And the Search Studies feature will indicate if a trial with the NCT ID has been
 Scenario: #2 I can import an Industrial or Other trial by NCT ID from ClinicalTrials.gov
 Given I have selected the option to Import an Industrial or Other Trial
 And I am on the Import ClinicalTrials.gov Trials screen
+And the notes below will be displayed on the Import ClinicalTrials.gov Trials Screen
+"To register a trial under the Industrial/Other submission category in CTRP, please enter the ClinicalTrials.gov identifier below and click Search Studies. If you do not have the ClinicalTrials.gov identifier or if the trial does not have one yet then please contact CTRO staff at ncictro@mail.nih.gov."
+"Note: Any trials imported using this feature will be registered as Abbreviated in CTRP system. If the trial should be classified as "Other" then please contact the Clinical Trials Reporting Office staff at ncictro@mail.nih.gov after importing/registering this trial in the CTRP system."
+#Review Mock up:M:\NCICB\CTRP-Refactor\CTRP AUM\Functional\Registration: Import Trial
 When I have entered a NCT Number
 And the Search Studies feature indicates that the trial has not been registered in CTRP
 And the trial NCT ID, Status, and Study Title, Conditions, and Interventions are displayed
@@ -20,7 +24,10 @@ When the imported Clinical Trial does not have an Official Title
 Then the Clinical Trial Brief Title should be displayed in the search results
 Then I can import the trial information from ClinicalTrials.gov into CTRP
 And the trial Study Souce will be listed as Industrial
-And the XML from ClinicalTrials.gov will be attached to the trial document
+And the view trial screen will display imported trial details 
+And the "Add My Site" button will be displayed (# Reg F22 Register Participating Site)
+ And the XML from ClinicalTrials.gov will be saved internally
+ And The saved XML won't be be displayed in registration application (#But the XML document should be displayed and viewed in PA)
 And The file name will be "import_””NCT ID””_””Current Date YYYY-MM-DD””_””Current Time HHMM(24HR)””.xml" "Example: import_NCT09809876_2016-05-03-1230.xml"
 And the trial milestone "Submission Received Date" will be added with the date of the import
 |Import Mappings are in CTRP AUM\Functional\Registration\ClinicalTrials Import Data Element Mapping v6.docx|
@@ -41,7 +48,7 @@ Scenario:#2a  NLM Context will be created for an Imported trial
     When a trial has been imported with a "Sponsor Name" that exists in the NLM Context in CTRP
     And the NLM context is mapped to a CTRP Organization Context
     And the CTRP Organization is "Inactive"
-    And the information type will be NULL until the curated
+    And the CTRP Organization will be used as NULL values for the fields below until curated
     
     |Trial Sponsor: Null|
     |Trial Funding Source: Null|
@@ -54,7 +61,7 @@ Scenario:#2a  NLM Context will be created for an Imported trial
     When a trial has been imported with a "Sponsor Name" that exists in the NLM Context in CTRP
     And there are more than one NLM organization that matches the "Sponsor Name"
     Then the trial will be imported
-    And the information type will be NULL until the curated
+    And the CTRP Organization will be used as NULL values for the fields below until curated
     
     |Trial Sponsor: Null|
     |Trial Funding Source: Null|
@@ -65,7 +72,7 @@ Scenario:#2a  NLM Context will be created for an Imported trial
     Given I am logged into the CTRP
      When a trial has been imported with a "Sponsor Name" that exists in the NLM Context in CTRP
     And the NLM context is not mapped to a CTRP Organization Context
-    Then the information type will be NULL until the NLM Organization context is affiliated to a CTRP Organization Context
+    Then CTRP organization fields below will be NULL until the NLM Organization context is affiliated to a CTRP Organization Context
     
     |Trial Sponsor: Null|
     |Trial Funding Source: Null|
@@ -73,26 +80,17 @@ Scenario:#2a  NLM Context will be created for an Imported trial
     
      Scenario:#2d NLM Context will be created for an Imported trial  
     Given I am logged into the CTRP
-      When a trial has been imported with a "Sponsor Name" that does not exist in the NLM Context in the CTRP
-     And that "Sponsor Name" does not match an organization name "Agency" name in CTRP
+      When a trial has been imported with a "Sponsor Name" that does not match an organization name in the NLM Context record in CTRP
      Then an NLM Context with an NLM Context Status of "Active" will be automatically created in CTRP
      And the processing status is "Incomplete"
      And the service Request is "Create"
-     Then the information type will be NULL until the NLM Organization context is affiliated to a CTRP Organization Context
+     Then the CTRP organizaiton fields below will be NULL until the NLM Organization context is affiliated to a CTRP Organization Context
     
     |Trial Sponsor: Null|
     |Trial Funding Source: Null|
     |Lead org: Null|
   
-  Scenario:#2e Organization Source Status NLM available list
-    Given I am logged into the CTRP Application
-     When an NLM Organization is created in the CTRP 
-     Then the available organization source status will be
-     
-     |Active|
-     |Inactive|
     
-     
 Scenario: #3 I can import an Expanded Access trial by NCT ID from ClinicalTrials.gov
 Given I have selected the option to Import an Industrial or Other Trial
 And I am on the Import ClinicalTrials.gov Trials screen
@@ -135,46 +133,8 @@ And the error message will be displayed "A trial exists in the system with the s
 Scenario: #4d.1 I will be able to Import a trial for the same lead organization and lead organization ID
 Given I have selected the option to Import an Industrial or Other Trial
 And I have entered a NCT Number
-When the lead organization and lead organization ID for the trial to be imported match the lead organization and lead organization ID for a trial registered in CTRP which has been Rejected OR Submission Terminated
+When the lead organization and lead organization ID for the trial to be imported match the lead organization and lead organization ID for a trial registered in CTRP which has been Rejected 
 Then The Trial with the associated lead organization and lead organization ID should be allowed to be imported
 
 
-Scenario: #5 I can add my site as a participating site after a trial is imported from ClinicalTrials.gov
-Given I have selected the option to Import an Industrial or Other Trial
-And I am on the Import ClinicalTrials.gov Trials screen
-And I have entered a NCT Number
-And I have imported the trial successfully
-Then the trial information will be displayed including
-|Trial Identifiers (Title)| 
-|Lead Organization Trial Identifier|
-|NCI ID|
-|ClinicalTrial.gov ID|
-|Other IDs|
-|Trial Details (Title)|
-|Official Title|
-|Phase|
-|Clinical Research Category|
-|Primary Purpose|
-|Trial Status (Title)|
-|Current Trial Status|
-|Trial Dates (Title)|
-|Trial Start Date: Date Type (Actual or Anticipated)|
-|Primary Completion Date : Date Type (Actual or Anticipated)|
-|Completion Date: Date Tye (Actual or Anticipated)|
-|Lead Organization (Title)|
-|Lead Organization|
-|Data Table 4 Information (Title)|
-|Study Source|
-|Data Table 4 Funding Sponsor/Source|
 
-
-And I can select the "Add My Site" function to add my site as a participating site
-
-Scenario: #6 I can enter my site information as a participating site after a trial is imported from ClinicalTrials.gov
-Given I have selected the option to Import an Industrial or Other Trial
-And I have completed the import
-And I have selected the option to "Add My Site"
-Then I can enter my Local Trial Identifier
-And look-up and add the Site Principal Investigator
-And enter a Program Code
-And enter the Recruitment Status and and Recruitment Status Date

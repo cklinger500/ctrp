@@ -40,6 +40,8 @@ var scientificTrialDesc = function(){
     this.detailedDescriptionLbl = element(by.css('label[for="detailed_description"]'));
 
     this.characterLeftLbl = element.all(by.css('.help-block.ng-binding'));
+    this.characterLeftLblStudyModel = element.all(by.css('.col-xs-12.col-sm-5 .ng-binding'));
+    this.characterLeftLblBio = element.all(by.css('.col-xs-12.col-sm-5 .ng-binding'));
     this.requiredMsg = element.all(by.css('.help-block.ng-scope'));
 
     this.saveDesc = element(by.id('submit_processing'));

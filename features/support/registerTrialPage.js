@@ -181,6 +181,31 @@ var registerTrial = function(){
   //  this.addTrialDateClickYearMonthDate = element(by.model('date')).$('button[role="heading"]');//element(by.css('button[role="heading"]'));
 
 
+    this.addTrialPsticipatingSitesTableHeader = element(by.css('table[st-table="trialDetailView.curTrial.participating_sites"]')).all(by.css('table.table th'));
+    this.addTrialPsticipatingSitesTableExist = element(by.css('table[st-table="trialDetailView.curTrial.participating_sites"]'));
+    this.addTrialPsticipatingSitesTable = element.all(by.css('table[st-table="trialDetailView.curTrial.participating_sites"]'));
+    this.addTrialPsticipatingSitesTableCTRPID = element(by.binding('ps.organization.source_id'));
+    this.addTrialPsticipatingSitesTableCTRPIDElement = 'ps.organization.source_id';
+    this.addTrialPsticipatingSitesTableOrgName = element(by.binding('ps.organization.name'));
+    this.addTrialPsticipatingSitesTableOrgNameElement = 'ps.organization.name';
+    this.addTrialPsticipatingSitesTablePIName = element(by.binding('ps.site_pi'));
+    this.addTrialPsticipatingSitesTablePINameElement = 'ps.site_pi';
+    this.addTrialPsticipatingSitesTableLocalID = element(by.binding('ps.protocol_id'));
+    this.addTrialPsticipatingSitesTableLocalIDElement = 'ps.protocol_id';
+    this.addTrialPsticipatingSitesTablePC = element(by.binding('ps.program_code'));
+    this.addTrialPsticipatingSitesTablePCElement = 'ps.program_code';
+    this.addTrialPsticipatingSitesTableStatus = element(by.binding('ps.current_status_name'));
+    this.addTrialPsticipatingSitesTableStatusElement = 'ps.current_status_name';
+    this.addTrialPsticipatingSitesTableStatusDate = element(by.binding('ps.latest_site_recruitment_status_date | dateFormat '));
+    this.addTrialPsticipatingSitesTableStatusDateElement = 'ps.latest_site_recruitment_status_date | dateFormat ';
+    this.addTrialPsticipatingSitesTableContactName = element(by.binding('ps.contact_name'));
+    this.addTrialPsticipatingSitesTableContactNameElement = 'ps.contact_name';
+    this.addTrialPsticipatingSitesTableContactEmail = element(by.binding('ps.contact_email'));
+    this.addTrialPsticipatingSitesTableContactEmailElement = 'ps.contact_email';
+    this.addTrialPsticipatingSitesTableContactPhone = element(by.binding('ps.contact_phone'));
+    this.addTrialPsticipatingSitesTableContactPhoneElement = 'ps.contact_phone';
+
+
     /******************
      * View Trial *
      ******************/
@@ -225,7 +250,7 @@ var registerTrial = function(){
     this.viewTrialSerialNumberVerify = element(by.css('.select2-choice.ui-select-match'));
     this.viewTrialNCIDivisionProgramCode = element(by.model('trialDetailView.nci'));
     this.viewTrialviewGrantInfoButton = element(by.css('button[ng-click="trialDetailView.addGrant()"]'));
-   // this.viewTrialVerifyGrantTable = element.all(by.css('tr[ng-repeat="grant in trialDetailView.viewedGrants track by $index"]'));
+    this.viewTrialVerifyGrantTableExist = element(by.css('tr[ng-repeat="grant in viewTrialView.curTrial.grants track by $index"]'));
     this.viewTrialVerifyGrantTable = element.all(by.css('tr[ng-repeat="grant in viewTrialView.curTrial.grants track by $index"]'));
 
     /** Trial Status **/
@@ -278,7 +303,7 @@ var registerTrial = function(){
     /** Trial Related Documents **/
     this.viewTrialVerifyviewedDocsExist = element(by.binding('f.file_name'));//element(by.binding('document.file_name'));
     this.viewTrialVerifyviewedDocs = element.all(by.binding('f.file_name')); //element.all(by.binding('document.file_name'));
-    this.viewTrialVerifyviewedOtherDocsDescription = element.all(by.binding('document.document_subtype'));
+    this.viewTrialVerifyviewedOtherDocsDescription = element.all(by.binding('f.document_subtype'));
     this.viewTrialAcceptedFileExtensionMsg = element.all(by.binding('trialDetailView.acceptedFileExtensions'));
     this.viewTrialAddMoreDocsButton = element(by.css('button[ng-click="trialDetailView.addOtherDoc()"]'));
     this.viewTrialOtherDocsDescription = element.all(by.model('trialDetailView.other_document_subtypes[$index]'));
@@ -286,7 +311,9 @@ var registerTrial = function(){
     /** Trial Participating Sites **/
     this.viewParticipatingSiteNamePresent = element(by.binding('ps.organization.name'));
     this.viewParticipatingSiteName = element.all(by.binding('ps.organization.name'));
+    this.viewTrialPsticipatingSitesTblExist = element(by.css('tr[ng-repeat="ps in viewTrialView.curTrial.participating_sites track by $index"]'));
     this.viewTrialPsticipatingSites = element.all(by.css('tr[ng-repeat="ps in viewTrialView.curTrial.participating_sites track by $index"]'));
+    this.viewTrialPsticipatingSitesTableHeader = element(by.css('table[st-table="viewTrialView.curTrial.participating_sites"]')).all(by.css('table.table th'));
 
     /** Trial Expand - Collapse **/
     this.trialCollapseAll = element(by.css('button[ng-show="!trialDetailView.collapsed"]'));
@@ -820,7 +847,7 @@ var registerTrial = function(){
     };
 
     this.getViewTrialOtherIdentifier = function(trialLeadProtocolIdentifier){
-        helper.getVerifyLabel(this.viewTrialOtherIdentifierNameValue,trialLeadProtocolIdentifier,"View Trial by Other Protocol Identifier field");
+        helper.getVerifyLabelArray(this.viewTrialOtherIdentifierNameValue,trialLeadProtocolIdentifier,"View Trial by Other Protocol Identifier field");
     };
 
 
@@ -915,6 +942,10 @@ var registerTrial = function(){
         helper.getVerifyLabel(this.viewTrialStartDate,trialStartDate,"View Trial by Trial Start Date field");
     };
 
+    this.getViewTrialStartDateWithDateType= function(trialStartDate, dateType)  {
+        helper.getVerifyLabel(this.viewTrialStartDate,trialStartDate + dateType ,"View Trial by Trial Start Date field");
+    };
+
     this.getViewTrialStartDateOption = function(trialStartDateOption)  {
         helper.getVerifyLabelUP(this.viewTrialStartDateOption,trialStartDateOption,"View Trial by Start Date option field");
     };
@@ -923,12 +954,20 @@ var registerTrial = function(){
         helper.getVerifyLabel(this.viewTrialPrimaryCompletionDate ,trialPrimaryCompletionDate,"View Trial by Primary Completion Date field");
     };
 
+    this.getViewTrialPrimaryCompletionDateWithDateType= function(trialPrimaryCompletionDate,dateType)  {
+        helper.getVerifyLabel(this.viewTrialPrimaryCompletionDate ,trialPrimaryCompletionDate + dateType,"View Trial by Primary Completion Date field");
+    };
+
     this.getViewTrialPrimaryCompletionDateOption = function(trialPrimaryCompletionDateOption)  {
         helper.getVerifyLabelUP(this.viewTrialPrimaryCompletionDateOption,trialPrimaryCompletionDateOption,"View Trial by Primary Completion Date option field");
     };
 
     this.getViewTrialCompletionDate = function(trialCompletionDate)  {
         helper.getVerifyLabel(this.viewTrialCompletionDate ,trialCompletionDate,"View Trial by Completion Date field");
+    };
+
+    this.getViewTrialCompletionDateWithDateType = function(trialCompletionDate, dateType)  {
+        helper.getVerifyLabel(this.viewTrialCompletionDate ,trialCompletionDate + dateType,"View Trial by Completion Date field");
     };
 
     this.getViewTrialCompletionDateOption = function(trialCompletionDateOption)  {
@@ -977,10 +1016,10 @@ var registerTrial = function(){
 
     this.getViewTrialParticipatingSites = function(participatingSites){
         this.viewTrialPsticipatingSites.getText().then(function(value){
-            //console.log('-----------PS from App');
-            //console.log(value);
-            //console.log('------------PS from table');
-            //console.log(participatingSites);
+            console.log('-----------PS from App');
+            console.log(value);
+            console.log('------------PS from table');
+            console.log(participatingSites);
               expect(value).to.eql(participatingSites, 'Verification of Grid values for Participating Site');
         });
        // expect(this.viewTrialPsticipatingSites.getText()).to.eventually.eql(participatingSites);

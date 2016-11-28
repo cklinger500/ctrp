@@ -278,6 +278,7 @@
                     $rootScope.$broadcast('isWriteModeSupported', vm.write_access);
                 }
             }).catch(function (err) {
+                console.log('error is: ', err);
                 console.log('Get User Submitted Trials failed');
             });
         };

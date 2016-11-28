@@ -326,6 +326,7 @@
 
                 $timeout(function() {
                     $scope.init = false;
+                    $scope.ps_form.$setPristine(); // Phone number masking directive makes form dirty on load. This is needed to reset form to pristine again.
                 }, 1000);
 
 /*

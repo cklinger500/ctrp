@@ -1,0 +1,13 @@
+<div class="form-group" ng-hide="personDetailView.curPerson.new || !personDetailView.curPerson.created_by">
+    <label class="control-label col-xs-12 col-sm-3">Created By:</label>
+    <div class="col-xs-12 col-sm-6 form-text">
+        {{personDetailView.curPerson.created_by}} ({{personDetailView.curPerson.created_at | dateFormat:'DD-MMM-YYYY, H:mm:ss': 'DD-MMM-YYYY H:mm'}})
+    </div>
+</div>
+<div class="form-group" ng-hide="personDetailView.curPerson.new || !personDetailView.curPerson.updated_by">
+    <label class="control-label col-xs-12 col-sm-3">Updated By:</label>
+    <div class="col-xs-12 col-sm-6 form-text">
+        <!--<input type="text" class="form-control input-sm" id="fax"  ng-model="personDetailView.curPerson.fax" type="text" placeholder="Fax">-->
+        {{personDetailView.curPerson.updated_by}} ({{personDetailView.curPerson.updated_at | dateFormat:'DD-MMM-YYYY, H:mm:ss': 'DD-MMM-YYYY H:mm'}})
+    </div>
+</div>

@@ -30,4 +30,14 @@ class CtGovImportExport < ActiveRecord::Base
     return primary_purposes
   end
 
+  def self.import_biospecimen_retentions
+    biospecimen_retentions = self.where(import_or_export:"import", model:"BiospecimenRetention")
+    return biospecimen_retentions
+  end
+
+  def self.import_time_perspectives
+    time_perspectives = self.where(import_or_export:"import", model:"TimePerspectives")
+    return time_perspectives
+  end
+
 end

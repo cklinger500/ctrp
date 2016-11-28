@@ -29,24 +29,4 @@ class CadsrMarker < ActiveRecord::Base
 
   scope :matches, -> (column, value) { where("cadsr_markers.#{column} = ?", "#{value}") }
 
-  scope :matches_wc, -> (column, value,wc_search) {
-    str_len = value.length
-    if value[0] == '*' && value[str_len - 1] != '*'
-      where("cadsr_markers.#{column} ilike ?", "%#{value[1..str_len - 1]}")
-    elsif value[0] != '*' && value[str_len - 1] == '*'
-      where("cadsr_markers.#{column} ilike ?", "#{value[0..str_len - 2]}%")
-    elsif value[0] == '*' && value[str_len - 1] == '*'
-      where("cadsr_markers.#{column} ilike ?", "%#{value[1..str_len - 2]}%")
-    else
-      if wc_search == "No"
-        if !value.match(/\s/).nil?
-          value=value.gsub! /\s+/, '%'
-        end
-        where("cadsr_markers.#{column} ilike ?", "%#{value}%")
-      else
-        where("cadsr_markers.#{column} = ?", "#{value}")
-      end
-    end
-  }
-
 end

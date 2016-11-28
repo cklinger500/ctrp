@@ -77,8 +77,8 @@
                 {name: 'Nullify', displayName: 'Nullify',
                     enableSorting: false,
                     enableFiltering: false,
-                    minWidth: '100', width: '*',
-                    cellTemplate: '<div ng-if="row.isSelected"><input type="radio" name="nullify"' +
+                    minWidth: '70', width: '*',
+                    cellTemplate: '<div ng-if="row.isSelected" class="radio-text-center"><input type="radio" name="nullify"' +
                     ' ng-click="grid.appScope.nullifyEntity(row.entity)"></div>',
                     visible: false
                 },
@@ -132,7 +132,7 @@
                 {name: 'updated_by', displayName: 'Last Updated By',
                     enableSorting: true, minWidth: '150', width: '*'},
                 {name: 'updated_at', displayName: 'Last Updated Date',
-                    type: 'date', cellFilter: 'date: "dd-MMM-yyyy H:mm"',
+                    type: 'date', cellFilter: 'date: "dd-MMM-yyyy, H:mm"',
                     enableSorting: true, minWidth: '160', width: '*'}
 
 
@@ -160,10 +160,12 @@
             findContextId: findContextId,
             checkUniqueOrganization: checkUniqueOrganization,
             typeAheadOrgNameSearch: typeAheadOrgNameSearch,
+            setTypeAheadOrgNameSearch: setTypeAheadOrgNameSearch,
             setTypeAheadOrg: setTypeAheadOrg,
             getServiceRequests: getServiceRequests,
             getProcessingStatuses: getProcessingStatuses,
             cloneCtepOrg: cloneCtepOrg,
+            getNullifiable: getNullifiable,
             getSourceStatuses2: getSourceStatuses2
         };
 
@@ -209,6 +211,15 @@
             return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.ASSOCIATED_ORGS, orgObj);
         } //getAssociatedOrgs
 
+        /**
+         * Check to see if an org is nulliable
+         *
+         * @param getNullifiable
+         * @returns {*}
+         */
+        function getNullifiable(orgObj) {
+            return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.NULLIFIABLE, orgObj);
+        }
 
         /**
          * dis associate organizations
@@ -255,22 +266,22 @@
         function getGridOptions(usedInModal) {
             var allowedROLES= ['ROLE_ADMIN', 'ROLE_SUPER', 'ROLE_ABSTRACTOR', 'ROLE_CURATOR'];
             var user_role = UserService.getUserRole() ? UserService.getUserRole().toUpperCase() : '';
-
-            var updated_at_index = Common.indexOfObjectInJsonArray(gridOptions.columnDefs, 'name', 'updated_at');
-            var updated_by_index = Common.indexOfObjectInJsonArray(gridOptions.columnDefs, 'name', 'updated_by');
+            var modifiedGridOptions = angular.copy(gridOptions);
 
             if(!_.contains(allowedROLES, user_role)) {
-                if (updated_at_index >= 0 )
-                    gridOptions.columnDefs.splice(updated_at_index,1);
-                if (updated_by_index >= 0)
-                    gridOptions.columnDefs.splice(updated_by_index,1);
+                modifiedGridOptions.columnDefs = _.filter(
+                    modifiedGridOptions.columnDefs, function (item) {
+                        return !_.contains(['ctep_id', 'updated_at', 'updated_by', 'processing_status', 'id', 'service_request_name'], item.name);
+                    });
             }
-            if(usedInModal){
-                var nullify_index = Common.indexOfObjectInJsonArray(gridOptions.columnDefs, 'name', 'Nullify');
-                if (nullify_index >= 0)
-                   gridOptions.columnDefs.splice(nullify_index,1);
+
+            if(usedInModal || !_.contains(allowedROLES, user_role)){
+                modifiedGridOptions.columnDefs = _.filter(
+                    modifiedGridOptions.columnDefs, function (item) {
+                        return !_.contains(['Nullify'], item.name);
+                    });
             }
-            return gridOptions;
+            return modifiedGridOptions;
         }
 
         function setTypeAheadOrg (searchObj) {
@@ -281,8 +292,27 @@
                 organization_name: org_search_name,
                 organization_details: userChosenOrg
             }
-        };
+        }
+        
+        function setTypeAheadOrgNameSearch (controller) {
+            controller.typeAheadNameSearch = function () {
+                return typeAheadOrgNameSearch(controller.organization_name, controller.searchOrganizationFamily);
+            };
+            
+            controller.setUserListTypeAheadOrg = function (searchObj) {
+                var orgSearch = setTypeAheadOrg(searchObj);
+                controller.organization_name = orgSearch.organization_name;
+                controller.userChosenOrg = orgSearch.organization_details;
+                controller.searchParams.organization_id = controller.userChosenOrg.id;
+            };
 
+            controller.removeOrgChoice = function () {
+                controller.userChosenOrg = null;
+                controller.organization_name = controller.searchParams.user_org_name = controller.searchParams.organization_id = undefined;
+                controller.enterOrg = true;
+            };
+        }
+        
         function typeAheadOrgNameSearch(field, family) {
 
             var wildcardOrgName = field.indexOf('*') > -1 ? field : '*' + field + '*';
@@ -427,6 +457,7 @@
                 {id: 2, name: 'Incomplete'}
             ];
         }
+
 
         /**
          * Check if targetOrgsArr contains orgObj by checking the 'id' field

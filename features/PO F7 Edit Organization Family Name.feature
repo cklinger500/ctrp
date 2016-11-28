@@ -12,6 +12,25 @@ Feature: PO F7 Edit Organization Family Name
     And I have changed the family name < Family Name>
     And I have changed the family status <family status>
     And I have changed the family type <family Type>
+    And I can add family membership by searching organizations
+    And I can view Family membership detail type
+    
+    |CTRPID|
+    |CTEPID|
+    #Organization is a link to Organization Details
+    |Organization|
+    |Relationship|
+    |Effective Date|
+    |Expiration Date|
+    
+    And the family membership detail page will include all the non expired and expired associations
+    And I can Update Family membership details type
+    
+    |Relationship|
+    |Effective Date|
+    |Expiration Date|
+    
+    And I can deleted family membership record
     And I save the Family information
     Then the Updated family parameters will be updated in the family record
 

@@ -12,13 +12,13 @@ Scenario: #1 I am able to view existing person in CTRP as a Registry user
      
   And I am logged into the CTRP Registration application
   And the following parameters of a Person exist:
-    |CTRP Person ID|Prefix|PersonFirstName|PersonMiddleName|PersonLastName|Suffix|SourceContext|SourceID|SourceStatus |email |phone|OrgAffiliation|
-   |12345|Ms|shiFNameTrRegF02 vw|shiMNameTrial |shiLNameTrial |Suffix|CTRP|shiSID|Active |shiPercukeTrial@pr.com| 420-999-8906|ShiOrg|
+   |CTEP ID|CTRP Person ID|Prefix|PersonFirstName|PersonMiddleName|PersonLastName|Suffix|SourceContext|SourceID|SourceStatus |email |phone|OrgAffiliation|
+   |ABCD|12345|Ms|shiFNameTrRegF02 vw|shiMNameTrial |shiLNameTrial |Suffix|CTRP|shiSID|Active |shiPercukeTrial@pr.com| 420-999-8906|ShiOrg|
   And I have completed a person search 
   When I have cliked on the name of the person I want to view
   Then the View Person screen opens with the page title as "View Person"
   And I will view person details type
-      |CTRP Person ID|12345|
+      
       |Prefix  | Ms|
       |First Name  | shiFNameTrRegF02 vw|
       |Middle Name  | shiMNameTrial     |
@@ -27,6 +27,7 @@ Scenario: #1 I am able to view existing person in CTRP as a Registry user
       |Source Context  | CTRP|
       |Source ID  | shiSID|
       |Source Status  |Active|
+      |CTEP ID|ABCD|
       |Email  |shiPercukeTrial@pr.com| 
       |Phone Number:extension  |420-999-8906:9877|
       |Org Affiliation|ShiOrg|

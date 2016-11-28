@@ -9,18 +9,7 @@
     function pasTrialDesignCtrl($scope, TrialService, PATrialService, toastr,
         MESSAGES, _, $timeout, groupedTrialDesignData, Common, maskings, timePerspectivesObj) {
         var vm = this;
-        vm.trialDetailObj = {};
-        vm.trialPhases = [];
-        vm.researchCategories = [];
-        vm.primaryPurposes = [];
-        vm.secondaryPurposes = [];
-        vm.interventionModels = [];
-        vm.studyModels = [];
-        vm.maskings = maskings.maskings;
-        vm.allocations = [];
-        vm.studyClassifications = [];
-        vm.timePerspectives = timePerspectivesObj.data;
-        vm.biospecimenRetentions = [];
+        _setInitialState();
         var INTERVENTIONAL_FIELDS = ['secondary_purpose_id', 'secondary_purpose_other',
                                      'intervention_model_id', 'masking_id',
                                      'masking_role_subject', 'allocation_id',
@@ -31,15 +20,6 @@
                                     'time_perspective_id', 'time_perspective_other',
                                     'biospecimen_retention_id',	'biospecimen_desc'];  // fields/keys in vm.trialDetailObj
         var ANCILLARY_FIELDS = OBSERVATIONAL_FIELDS;
-
-        vm.isOtherPrimaryPurpose = false;
-        vm.isOtherSecondaryPurpose = false;
-        vm.isOtherStudyModel = false;
-        // vm.showMaskingRoles = false;
-        vm.isOtherTimePerspective = false;
-        // information sources:
-        vm.isInfoSourceProtocol = false;
-        vm.isInfoSourceImport = false;
 
         // actions:
         vm.updateTrialDesign = updateTrialDesign;
@@ -56,6 +36,29 @@
             _watchStudyModel();
             _watchTimePerspective();
             _watchMasking();
+        }
+
+        function _setInitialState() {
+            vm.trialDetailObj = {};
+            vm.trialPhases = [];
+            vm.researchCategories = [];
+            vm.primaryPurposes = [];
+            vm.secondaryPurposes = [];
+            vm.interventionModels = [];
+            vm.studyModels = [];
+            vm.maskings = maskings.maskings;
+            vm.allocations = [];
+            vm.studyClassifications = [];
+            vm.timePerspectives = timePerspectivesObj.data;
+            vm.biospecimenRetentions = [];
+            vm.isOtherPrimaryPurpose = false;
+            vm.isOtherSecondaryPurpose = false;
+            vm.isOtherStudyModel = false;
+            // vm.showMaskingRoles = false;
+            vm.isOtherTimePerspective = false;
+            // information sources:
+            vm.isInfoSourceProtocol = false;
+            vm.isInfoSourceImport = false;
         }
 
         // break down the grouped promised data as arrays

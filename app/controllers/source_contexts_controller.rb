@@ -6,7 +6,7 @@ class SourceContextsController < ApplicationController
   # GET /source_contexts.json
   def index
     #TODO need to use constant for ROLE_CURATOR and ROLE_SUPER
-    if User.org_write_access(@current_user)
+    if User.org_read_all_access(@current_user)
        @source_contexts = SourceContext.all
     else
       #TODO need to use constant for 'CTRP'

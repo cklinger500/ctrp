@@ -12,6 +12,8 @@ engines:
     enabled: true
   eslint:
     enabled: true
+    config:
+      "max-statements": [1,100]
   csslint:
     enabled: true
 ratings:
@@ -28,3 +30,7 @@ exclude_paths:
 - "app/models/ability.rb"
 - "log/**/*"
 - "ETL/**/*"
+- "db/seeds/seeds.rb"
+- "angularjs/ui2/gulp*.js"
+- "angularjs/ui2/karma.conf.js"
+- "db/schema.rb"

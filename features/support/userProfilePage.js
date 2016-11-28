@@ -16,6 +16,7 @@ var userProfile = function() {
     this.userProfileEmail = element(by.model('userDetailView.userDetails.email'));
     this.userProfilePhone = element(by.model('userDetailView.userDetails.phone'));
     this.userProfileEmailNotifications = element.all(by.model('userDetailView.userDetails.receive_email_notifications'));
+    this.userProfileAffiliatedOrganization = element(by.model('userDetailView.selectedOrgsArray[0].name'));
     this.userProfileSaveButton = element(by.id('save_btn'));
 
     var helper = new helperFunctions();

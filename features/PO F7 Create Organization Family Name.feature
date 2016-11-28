@@ -13,6 +13,7 @@ Feature: PO F7 Create Organization Family Name
     And I have added a family membership by searching organizations
     When the family membership is added
     Then the membership size will be populated to reflect the number of added organizations to the family
+    And the membership size will only reflect non expired organization associations in the family
     When I save the family information
     Then a new family name <family Name> with family status <family status> and  family type <family Type> will be created and return result <result>
     When the entered family Name exists in the system

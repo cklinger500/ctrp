@@ -6,12 +6,14 @@
         <a tabindex="3" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Organizations<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
             <li><a ui-sref="main.organizations" ui-sref-opts="{reload:true}">Search Organizations</a></li>
+            <li><a ng-click="headerView.requestPersonOrOrg('Organization')">Request New Organization</a></li>
         </ul>
     </li>
     <li class="dropdown" ng-class="{ active: headerView.navbarIsActive('main.people, main.addPerson') }">
         <a tabindex="4" href="" class="dropdown-toggle" data-toggle="dropdown" role="button"  aria-expanded="false">Persons<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
             <li><a ui-sref="main.people" ui-sref-opts="{reload:true}">Search Persons</a></li>
+            <li><a ng-click="headerView.requestPersonOrOrg('Person')">Request New Person</a></li>
         </ul>
     </li>
     <li class="dropdown" ng-class="{ active: headerView.navbarIsActive('main.trials, main.addTrial') }">

@@ -33,20 +33,18 @@
 
         vm.initialize = function() {
             for (var i = 0; i < vm.responsiblePartyArr.length; i++) {
-                if (vm.responsiblePartyArr[i].code == "SPONSOR") {
+                if (vm.responsiblePartyArr[i].code === 'SPONSOR') {
                     vm.sponsor_id = vm.responsiblePartyArr[i].id;
                 }
             }
-            if (vm.curTrial.responsible_party_id == vm.sponsor_id) {
+            if (vm.curTrial.responsible_party_id === vm.sponsor_id) {
                 vm.showSponsor = true;
             }
             if (vm.curTrial.sponsor){
                 vm.sponsorName = vm.curTrial.sponsor.name;
             } else {
-                vm.sponsorName = "";
+                vm.sponsorName = '';
             }
-
-            console.log('responsible_party_id is: ', vm.curTrial.responsible_party_id);
         }
 
         vm.initialize();
@@ -138,7 +136,7 @@
                    }, 1);
                 }
             }).catch(function(err) {
-                console.log("error in updating trial " + JSON.stringify(outerTrial));
+                console.log("error in updating trial " + JSON.stringify(err));
             }).finally(function() {
                 vm.disableBtn = false;
             });
@@ -148,7 +146,7 @@
 
         // Delete the associations
         vm.toggleSelection = function (index, type) {
-             if (type == 'authority') {
+             if (type === 'authority') {
                 if (index < vm.addedAuthorities.length) {
                     vm.addedAuthorities[index]._destroy = !vm.addedAuthorities[index]._destroy;
                     if (vm.addedAuthorities[index]._destroy) {
@@ -193,7 +191,7 @@
             return vm.selectedPiArray;
         }, function(newValue, oldValue) {
             var piOption = vm.responsiblePartyArr.filter(findPiOption);
-            if (piOption[0].id == vm.curTrial.responsible_party_id) {
+            if (piOption[0].id === vm.curTrial.responsible_party_id) {
                 vm.selectedInvArray = vm.selectedPiArray;
             }
         });
@@ -203,7 +201,7 @@
             return vm.selectedSponsorArray;
         }, function(newValue, oldValue) {
             var siOption = vm.responsiblePartyArr.filter(findSiOption);
-            if (siOption[0].id == vm.curTrial.responsible_party_id) {
+            if (siOption[0].id === vm.curTrial.responsible_party_id) {
                 vm.selectedIaArray = vm.selectedSponsorArray;
             }
         });
@@ -229,17 +227,17 @@
         // Then the required Regulatory Information for the trial will be associated
         // And the Section 801 Indicator will be set to "No"
         vm.checkIndicatorValue = function(value) {
-            if(value == "No" && (vm.addedAuthorities.length > 0)){
-                vm.curTrial.sec801_indicator = "No";
+            if(value === 'No' && (vm.addedAuthorities.length > 0)){
+                vm.curTrial.sec801_indicator = 'No';
             }
         }
 
         vm.watchOption = function(type) {
-            if (type == 'responsible_party') {
+            if (type === 'responsible_party') {
                 vm.showSponsor = false;
                 var piOption = vm.responsiblePartyArr.filter(findPiOption);
                 var siOption = vm.responsiblePartyArr.filter(findSiOption);
-                if (piOption[0].id == vm.curTrial.responsible_party_id) {
+                if (piOption[0].id === vm.curTrial.responsible_party_id) {
                     vm.showInvestigator = true;
                     vm.showInvSearchBtn = false;
                     vm.showSponsor = false;
@@ -247,7 +245,7 @@
                     // Copy the value from PI and Sponsor
                     vm.selectedInvArray = vm.selectedPiArray;
                     vm.selectedIaArray = vm.selectedLoArray;
-                } else if (siOption[0].id == vm.curTrial.responsible_party_id) {
+                } else if (siOption[0].id === vm.curTrial.responsible_party_id) {
                     vm.showInvestigator = true;
                     vm.showInvSearchBtn = true;
                     vm.showSponsor = false;
@@ -265,7 +263,7 @@
                     vm.selectedInvArray = [];
                     vm.selectedIaArray = [];
                 }
-            }  else if (type == 'authority_country') {
+            }  else if (type === 'authority_country') {
                 vm.authority_org = '';
                 TrialService.getAuthorityOrgArr(vm.authority_country).then(function (response) {
                     var status = response.server_response.status;
@@ -274,7 +272,7 @@
                         vm.authorityOrgArr  = response.authorities;
                     }
                 }).catch(function (err) {
-                    console.log("Error in retrieving authorities for country");
+                    console.log("Error in retrieving authorities for country: " + err);
                 });
             }
         };
@@ -308,7 +306,7 @@
 
         // Return true if the option is "Principal Investigator"
         function findPiOption(option) {
-            if (option.code == 'PI') {
+            if (option.code === 'PI') {
                 return true;
             } else {
                 return false;
@@ -317,7 +315,7 @@
 
         // Return true if the option is "Sponsor Investigator"
         function findSiOption(option) {
-            if (option.code == 'SI') {
+            if (option.code === 'SI') {
                 return true;
             } else {
                 return false;
@@ -339,10 +337,10 @@
         function rpFieldChange() {
             var piOption = vm.responsiblePartyArr.filter(findPiOption);
             var siOption = vm.responsiblePartyArr.filter(findSiOption);
-            if (piOption[0].id == vm.curTrial.responsible_party_id) {
+            if (piOption[0].id === vm.curTrial.responsible_party_id) {
                 vm.showInvestigator = true;
                 vm.showInvSearchBtn = false;
-            } else if (siOption[0].id == vm.curTrial.responsible_party_id) {
+            } else if (siOption[0].id === vm.curTrial.responsible_party_id) {
                 vm.showInvestigator = true;
             }
         }
@@ -368,8 +366,5 @@
                 $timeout( function(){ vm.selectedIaArray.push(vm.curTrial.investigator_aff); }, 1500);
             }
         }
-
-
     } //trialNciCtrl
-
-})();
+}());

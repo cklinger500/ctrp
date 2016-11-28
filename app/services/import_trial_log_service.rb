@@ -1,5 +1,5 @@
 class ImportTrialLogService
-  def request_logging(doc,action,request_or_response,user,model)
+  def request_logging(doc,action,_request_or_response,user,model)
     return add_log_file("import_log.xml", doc, "xml", "tmp", action, "","",user,model)
   end
 
@@ -13,12 +13,11 @@ class ImportTrialLogService
     logDatum.update({:status => status, :object_id => object_id, :response_body => response_body}) if logDatum
   end
 
-  def add_log_file(file_name, file_content,document_type,tmp_file_name, action,status,trial_id,user,model)
+  def add_log_file(file_name, file_content,document_type,_tmp_file_name, action,status,trial_id,user,model)
     if file_content.nil?
       return
     end
     decode_base64_content = file_content
-    file_extension = File.extname(file_name).delete('.') ##sample.pdf will give pdf
     file_format    = File.extname(file_name)             ##sample.pdf will give .pdf
 
     temp_file = Tempfile.new(['Sample2',file_format])

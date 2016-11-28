@@ -1,3 +1,6 @@
+#
+# rubocop:disable ClassLength
+
 class GeoLocationService
 
   def get_country_name_from_alpha3(alpha3)
@@ -7,6 +10,15 @@ class GeoLocationService
     else
       return nil
     end
+  end
+
+  def _get_country_name_from_alpha3(alpha3)
+      obj = Country.find_country_by_alpha3(alpha3)
+      if !obj.nil?
+          return obj.name
+      else
+          return nil
+      end
   end
 
   def get_countries

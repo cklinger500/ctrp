@@ -5,15 +5,22 @@
     </div>
     <div class="modal-body">
         <div class="row">
-            <ctrp-advanced-org-search-form2 show-grid="true" max-row-selectable="advOrgSearchForm2ModalView.maxRowSelectable" pre-search="advOrgSearchForm2ModalView.preSearch" filtered-contexts="advOrgSearchForm2ModalView.filteredContexts" curation-mode="false" used-in-modal="true"></ctrp-advanced-org-search-form2>
+            <ctrp-advanced-org-search-form2 show-grid="true" max-row-selectable="advOrgSearchForm2ModalView.maxRowSelectable" pre-search="advOrgSearchForm2ModalView.preSearch" curation-mode="false" used-in-modal="true"></ctrp-advanced-org-search-form2>
         </div>
     </div>
     <div class="modal-footer">
         <div class="col-xs-12">
             <div class="btn-toolbar">
-                <button class="btn btn-primary pull-right" ng-click="advOrgSearchForm2ModalView.confirmSelection()" ng-disabled="selectedOrgsArray.length == 0">Confirm Selection</button>
-                <button class="btn btn-danger pull-right" ng-click="advOrgSearchForm2ModalView.cancel()">
+                <button class="btn btn-primary pull-right" id="searchPopConfirmBtn" ng-click="advOrgSearchForm2ModalView.confirmSelection()" ng-disabled="selectedOrgsArray.length == 0">
+                    Confirm Selection
+                </button>
+                <button class="btn btn-danger pull-right" id="searchPopCloseBtn" ng-click="advOrgSearchForm2ModalView.cancel()">
                     <i class="glyphicon glyphicon-remove"></i> Close
+                </button>
+                <button class="btn btn-primary pull-right" id="searchPopBtn3"
+                        ng-show="advOrgSearchForm2ModalView.preSearch.button3Label"
+                        ng-click="advOrgSearchForm2ModalView.button3Clicked()">
+                    <i class="glyphicon"></i> {{advOrgSearchForm2ModalView.preSearch.button3Label}}
                 </button>
             </div>
         </div>

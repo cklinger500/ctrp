@@ -46,8 +46,8 @@ Feature: PO F10 Create a Person Record
      Then the edit person screen displays 
      And I can view CTRP person record type
     
-    |Context Person ID (Primary Key)|
-    |CTRP Person ID (Grouping ID)|
+    |Group ID|
+    |Context Person ID|
     |Prefix|
     |First Name|
     |Middle Name|
@@ -70,7 +70,7 @@ Feature: PO F10 Create a Person Record
      Then an organization search screen will be displayed
      And I can search Organizations
      When I select an organization to be added as an affiliated Organization
-     Then the added Organization will be added to the person record screen with infromaiton type displayed
+     Then the added Organization will be added to the person record screen with information type displayed
      
      |CTRP Organization ID|
      |Organization(Hyperlink to the organization details)|

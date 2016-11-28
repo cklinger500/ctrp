@@ -12,6 +12,7 @@ var addOrgPage = require('../support/AddOrganizationPage');
 var searchOrgPage = require('../support/ListOfOrganizationsPage');
 var listOfPeoplePage = require('../support/ListOfPeoplePage');
 var moment = require('moment');
+var phoneFormat = require('phoneformat.js');
 
 AddPersonPage = function () {
 
@@ -25,6 +26,7 @@ AddPersonPage = function () {
     this.addPersonSuffix = element(by.model('personDetailView.curPerson.suffix'));
     this.addPersonEmail = element(by.model('personDetailView.curPerson.email'));
     this.addPersonPhone = element(by.model('personDetailView.curPerson.phone'));
+    this.addPersonPhoneExtension = element(by.model('personDetailView.curPerson.extension'));
     this.addPersonAffiliatedOrgName = element(by.binding('org.name'));
     this.addPersonSearchAffiliatedOrg = element(by.model('personDetailView.orgsSearchParams.name'));
     this.addPersonAffiliatedOrg = element(by.css('select[ng-model="personDetailView.selectedOrgs"]'));
@@ -82,7 +84,11 @@ AddPersonPage = function () {
     };
 
     this.setAddPersonPhone = function(personPhone){
-        addPerson.setValue(this.addPersonPhone,personPhone,"Add Person by Phone field");
+        addPerson.setValue(this.addPersonPhone,phoneFormat.formatLocal('US', personPhone),"Add Person by Phone field");
+    };
+
+    this.setAddPersonPhoneExtension = function(personPhoneExtension){
+        addPerson.setValue(this.addPersonPhoneExtension,personPhoneExtension,"Add Person by Phone Extension field");
     };
 
     this.setAddPersonSearchAffiliatedOrg = function(personSearchAffiliatedOrg){
@@ -147,7 +153,7 @@ AddPersonPage = function () {
     };
 
     this.getVerifyAddPerPhone = function(phone){
-        addPerson.getVerifyValue(this.addPersonPhone,phone,"Get Person by Phone field");
+        addPerson.getVerifyValue(this.addPersonPhone,phoneFormat.formatLocal('US', phone),"Get Person by Phone field");
     };
 
     this.verifyPersonAddHeader = function(){

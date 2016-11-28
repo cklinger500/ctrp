@@ -89,15 +89,15 @@ When I enter one or more Site Recruitment Status type
      
      |CTRP Organization ID|
      |Organization Name|
-     |Principal Investigator|#(Last Name, First Name)
+     # Principal Investigator (Last Name, First Name)
+     |Principal Investigator|
      |Local Trial Identifier|
-     |Program Code|
      |Current Site Recruitment Status|
      |Current Site Recruitment Status Date|
-     |Primary Contact|# (Last Name, First Name)
+     # Primary Contact (Last Name, First Name)
+     |Primary Contact|
      |Email|
      |Phone Number, Phone Number Extension|
-     
      
 
 Scenario: #5 Add Participating Site Mandatory Fields

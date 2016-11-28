@@ -142,13 +142,25 @@
     height: 550px;
 }
 
-.ui-grid-canvas {
-    min-height: 465px;
+.grid-md {
+    height: 350px;
 }
 
-.grid-small {
-    width: 100%;
+.grid-sm {
     height: 200px;
+}
+
+/* min-height ~ grid height for cases where grid is too small for actions menu to be visible */
+.grid .ui-grid-canvas {
+    min-height: 450px;
+}
+
+.grid-md .ui-grid-canvas {
+    min-height: 310px;
+}
+
+.grid-sm .ui-grid-canvas {
+    min-height: 145px;
 }
 
 .ui-grid-header-cell .ui-grid-cell-contents {
@@ -558,13 +570,6 @@ form label {
     border-radius: 6px 0 6px 6px;
 }
 
-.dropdown-fixed {
-    position: fixed;
-    z-index: 1000;
-    top: 60px;
-    margin-right: 64px;
-}
-
 
 /* New UI Overrides */
 header .sub-title {
@@ -771,6 +776,10 @@ h5 {
     font-size: 12px;
 }
 
+.glyphicon-sm {
+    font-size: 10px;
+}
+
 .form-horizontal .form-group {
     margin-right: -5px;
     margin-left: -5px;
@@ -957,6 +966,15 @@ div.ui-grid-cell .ui-grid-datepicker input:hover {
   font-size: 0;
 }
 
+div.ui-grid-cell div.radio-text-center {
+    text-align: center;
+    padding-top: 3px;
+}
+
+div.ui-grid-cell div.radio-text-center input {
+    width: auto;
+}
+
 div.ui-grid-cell input[type="checkbox"] {
     margin-top: 0;
 }
@@ -982,6 +1000,13 @@ td > .form-text {
 .popover.popover-sm {
     font-size: 11px;
     width: 100%;
+}
+
+/* This will work for all .btn-toolbar (buttons) within .popover classes.
+   No need for more specific CSS
+*/
+.popover .btn-toolbar {
+    padding-right: 5px;
 }
 
 .comment-modal {
@@ -1068,7 +1093,7 @@ md-backdrop.md-opaque.ng-leave.md-opaque.ng-leave-active {
     transform: translate(-55px);
 }
 
-.form-group.required .control-label:after{
+.form-group.required .control-label:after, .required .control-label:after {
     color: #a94442;
     content: "*";
     position: absolute;
@@ -1430,10 +1455,6 @@ div.datepicker {
     padding-bottom: 10px;
 }
 .popover-confirm .popover-message {
-    margin-bottom:3px;
-}
-.popover-confirm .form-actions {
-    text-align: right;
 }
 
 /* For validation within Angular ui-select elements */
@@ -1630,7 +1651,7 @@ div[disabled] {
     border-color: #CCC;
 }
 
-/* Center modal vertically as much as possible */
+/* Modal vertical positioning options */
 .modal-center .modal-dialog {
     position: absolute;
     left: 0;
@@ -1640,8 +1661,12 @@ div[disabled] {
     margin: auto;
 }
 
-/* Set modal to mimic default browser look/feel */
 
+.modal-center.modal-top .modal-dialog {
+    top: 25%;
+}
+
+/* Set modal to mimic default browser look/feel */
 .modal-default .modal-header {
     padding: 10px;
     background-color: #D5D5D5;
@@ -1808,6 +1833,14 @@ body.users #typeAheadResults {
     padding-top: 5px;
 }
 
+.type-ahead-results {
+    padding: 2px 5px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    border: 1px dashed #ddd;
+}
+
 .crn-rounded {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -1846,13 +1879,9 @@ body.assign-ownership #user_list_admin_priv, body.assign-ownership #user_list_st
     background: #eee;
 }
 .edit-off .btn-danger {display: none;}
+
 .edit-off .ui-grid-selection-row-header-buttons.ui-grid-icon-ok {
     display: none;
-}
-
-.btn-spacer {
-    margin-top: 8px;
-    margin-right: 4px;
 }
 
 body.trial-abstraction-search .field_wrapper {
@@ -1928,10 +1957,11 @@ body.trial-abstraction-search .form-horizontal label.control-label.checkbox3 {
     color: #444;
 }
 
-.auto-height.ui-grid, .ui-grid-viewport {
-    height: auto !important;
+small {
+    color: #777;
 }
 
-.auto-height.ui-grid .ui-grid-canvas{
-    min-height: 0;
+.small-sm {
+    font-size: 115%;
+    line-height: 2em;
 }

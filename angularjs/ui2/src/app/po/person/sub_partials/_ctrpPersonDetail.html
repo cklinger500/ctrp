@@ -1,0 +1,195 @@
+<div class="row md-sidenav-push-in-target">
+    <!-- common fields between CTRP and CTEP -->
+    <div ng-include src="'app/po/person/sub_partials/_common_fields_ids.html'"></div>
+    <!-- common ends -->
+    <div class="form-group">
+        <label for="prefix" class="control-label col-sm-3">Prefix:</label>
+        <div class="col-sm-1">
+            <input type="text" restriction-field class="form-control input-sm" name="prefix" id="prefix" ng-model="personDetailView.curPerson.prefix" placeholder="Prefix">
+        </div>
+    </div>
+    <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.person_form.needsAttention(person_form.fname)}">
+        <label for="fname" class="control-label col-sm-3">First Name:</label>
+        <div class="col-sm-6">
+            <input type="text" restriction-field name="fname" id="fname" class="form-control input-sm" maxlength="62" placeholder="First Name" ng-model="personDetailView.curPerson.fname" required auto-focus ng-change="checkForNameUniqueness()" />
+            <span class="help-block" ng-show="person_form.fname.$dirty">{{62-person_form.fname.$viewValue.length}} characters left</span>
+            <span class="help-block" ng-show="person_form.fname.$dirty && person_form.fname.$error.required">First name is Required</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="mname" class="control-label col-sm-3">Middle Name:</label>
+        <div class="col-sm-6">
+            <input type="text" restriction-field name="mname" id="mname" class="form-control input-sm" placeholder="Middle Name" ng-model="personDetailView.curPerson.mname">
+        </div>
+    </div>
+    <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.person_form.needsAttention(person_form.lname) || personDetailView.showUniqueWarning}">
+        <label for="lname" class="control-label col-sm-3">Last Name:</label>
+        <div class="col-sm-6">
+            <input type="text" restriction-field name="lname" id="lname" class="form-control input-sm" maxlength="62" ng-model="personDetailView.curPerson.lname" placeholder="Last Name" required ng-blur="checkForNameUniqueness()">
+            <span class="help-block" ng-show="person_form.lname.$dirty">{{62-person_form.lname.$viewValue.length}} characters left</span>
+            <span class="help-block" ng-show="person_form.lname.$dirty && person_form.lname.$error.required">Last name is Required</span>
+            <div class="has-error" ng-show="personDetailView.curPerson.lname.length > 0 && person_form.lname.$dirty && personDetailView.showUniqueWarning && !personDetailView.name_unqiue">
+                <span class="help-block">
+                    Warning: Person exists in the database. Please verify and create a new Person record.
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="suffix" class="control-label col-sm-3">Suffix:</label>
+        <div class="col-sm-1">
+            <input type="text" name="suffix" id="suffix" restriction-field class="form-control input-sm" ng-model="personDetailView.curPerson.suffix" placeholder="Suffix">
+        </div>
+    </div>
+    <div class="form-group" ng-show="personDetailView.isAllowedToComment">
+        <label class="control-label col-sm-3">Processing Status: </label>
+        <div class="col-sm-3">
+            <div class="form-text" id="processing_status">{{personDetailView.curPerson.processing_status}}</div>
+            <!-- <div ng-if="!personDetailView.curPerson.new && personDetailView.curSourceContextName !== 'CTRP'">
+                <select name="processing_status" id="processing_status" class="form-control input-sm"
+                    restriction-field
+                    ng-model="personDetailView.curPerson.processing_status"
+
+                    ng-init="personDetailView.processStatusArr[0]"
+                    ng-options="status.name as status.name for status in personDetailView.processStatusArr">
+                    <option value="">
+                        Select a processing status
+                    </option>
+                </select>
+                <span class="help-block" ng-show="ctrpbtn.person_form.needsAttention(person_form.processing_status) && !personDetailView.curPerson.new">
+                    Processing Status is Required
+                </span>
+            </div> -->
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="source_status" class="control-label col-sm-3">Source Status:</label>
+        <div class="col-sm-2 form-text" ng-show="personDetailView.curPerson.source_status === 'Nullified'">{{personDetailView.curPerson.source_status}}</div>
+        <div class="col-sm-2" ng-hide="personDetailView.curPerson.source_status === 'Nullified'">
+            <div>
+                <select ng-init="personDetailView.curPerson.source_status_id"
+                    restriction-field
+                    class="form-control input-sm" id="source_status"
+                    ng-model="personDetailView.curPerson.source_status_id"
+                    ng-options="status.id as status.name for status in personDetailView.sourceStatusArrSelected">
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group has-feedback required" ng-class="{'has-error': (person_form.email.$error && ctrpbtn.person_form.needsAttention(person_form.email) && person_form.phone.$error && ctrpbtn.person_form.needsAttention(person_form.phone))}">
+        <div class="row">
+            <label for="email" class="control-label col-sm-3">Email:</label>
+            <div class="col-sm-6">
+                <input restriction-field class="form-control input-sm" name="email" id="email" maxlength="254" ng-model="personDetailView.curPerson.email" type="email" ng-required="!personDetailView.curPerson.phone" placeholder="Email">
+                <span class="form-control-feedback" ng-show="person_form.email.$viewValue.length" ng-class="!(person_form.email.$error && ctrpbtn.person_form.needsAttention(person_form.email)) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+            </div>
+            <!--
+            <label for="phone" class="control-label col-sm-1">Phone:</label>
+            <div class="col-sm-2">
+                <input type="text" restriction-field class="form-control input-sm" name="phone" id="phone" maxlength="30" ng-model="personDetailView.curPerson.phone" ng-required="!personDetailView.curPerson.email" placeholder="Phone">
+                <span ng-show="personDetailView.curPerson.phone.length" class="form-control-feedback" ng-class="!ctrpbtn.person_form.needsAttention(person_form.phone) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+            </div>
+            <div class="col-sm-1">
+                <input type="text" restriction-field class="form-control input-sm" name="extension" maxlength="30" ng-model="personDetailView.curPerson.extension" placeholder="Extension">
+            </div>
+            -->
+        </div>
+        <!--
+        <div class="row" ng-show="person_form.phone.$error && ctrpbtn.person_form.needsAttention(person_form.phone) && person_form.email.$error && ctrpbtn.person_form.needsAttention(person_form.email)" ng-class="{'has-error': (person_form.email.$error && ctrpbtn.person_form.needsAttention(person_form.email) && person_form.phone.$error && ctrpbtn.person_form.needsAttention(person_form.phone))}">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+                <span class="help-block">Either Phone or Email is Required</span>
+            </div>
+        </div>
+        -->
+    </div>
+    <div class="form-group has-feedback required" ng-class="{'has-error': (person_form.email.$error && ctrpbtn.person_form.needsAttention(person_form.email) && person_form.phone.$error && ctrpbtn.person_form.needsAttention(person_form.phone))}">
+        <label for="phone" class="control-label col-sm-3">Phone:</label>
+        <div class="col-sm-3">
+            <input type="text" restriction-field class="form-control input-sm" name="phone" id="phone" maxlength="30" ng-model="personDetailView.curPerson.phone" ng-required="!personDetailView.curPerson.email" placeholder="Phone" mask-phone-number>
+            <span ng-show="personDetailView.curPerson.phone.length" class="form-control-feedback" ng-class="!ctrpbtn.person_form.needsAttention(person_form.phone) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+            <span class="help-block" ng-show="person_form.phone.$error && ctrpbtn.person_form.needsAttention(person_form.phone) && person_form.email.$error && ctrpbtn.person_form.needsAttention(person_form.email)" >Either Phone or Email is Required</span>
+        </div>
+        <div class="col-sm-1">
+            <input type="text" restriction-field class="form-control input-sm" name="extension" maxlength="30" ng-model="personDetailView.curPerson.extension" placeholder="Ext." ng-disabled="!personDetailView.curPerson.phone.length">
+        </div>
+    </div>
+    <!-- common fields between CTRP and CTEP -->
+    <div ng-include src="'app/po/person/sub_partials/_common_fields_updated.html'"></div>
+    <!-- common ends -->
+    <div class="form-group has-feedback required"
+        ng-class="{'has-error': personDetailView.affiliatedOrgError && ctrpbtn.person_form.needsAttention(null, personDetailView.validOrgsCount === 0 && personDetailView.curPerson.source_context === 'CTRP')}"
+        restriction-field="ROLE_CURATOR,ROLE_SUPER,ROLE_ADMIN">
+        <label class="control-label col-sm-3">Add Affiliated Organization: </label>
+        <div class="col-sm-3">
+            <ctrp-org-adv-search-modal-button pre-search = '{"source_contextfilter": ["CTRP"]}' use-built-in-template="false" allow-overwrite="false" selected-orgs-array="personDetailView.orgsArrayReceiver"></ctrp-org-adv-search-modal-button>
+            <span class="help-block" ng-show="personDetailView.affiliatedOrgError && ctrpbtn.person_form.needsAttention(null, personDetailView.validOrgsCount === 0 && personDetailView.curPerson.source_context === 'CTRP')">
+                Organization Affiliation is Required
+            </span>
+            <!-- ctrpbtn.person_form.needsAttention(null, personDetailView.savedSelection.length === 0 && personDetailView.curPersonEditable) -->
+        </div>
+        <div class="col-sm-3" ng-show="personDetailView.savedSelection.length">
+            <toggle-visibility element-to-toggle="#affiliatedOrgsGrid" element-label="Affiliated Organizations" toggle-visibility-default="true" class="pull-right small-sm"></toggle-visibility>
+        </div>
+    </div>
+    <div class="form-group" ng-show="personDetailView.isAllowedToComment">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+            <div id="affiliatedOrgsGrid" class="row animated-item top-offset-tiny table-responsive search-calendar-grid" ng-show="personDetailView.savedSelection.length > 0">
+                <input type="text" ng-model="personDetailView.selectedOrgFilter" restriction-field="ROLE_CURATOR,ROLE_SUPER,ROLE_ADMIN,ROLE_ABSTRACTOR,ROLE_RO,ROLE_TRIAL-SUBMITTER,ROLE_SITE-SU" class="form-control input-sm" placeholder="Filter selected organizations"/>
+                <table class="table table-bordered table-striped table-condensed">
+                    <thead>
+                    <th width="6%" class="nowrap">CTRP ID</th>
+                    <th>Organization</th>
+                    <th width="14%" class="min-width-md">Effective Date</th>
+                    <th width="14%" class="min-width-md">Expiration Date</th>
+                    <th width="1%" class="td-icon"></th>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="org in personDetailView.savedSelection | filter: {'name': personDetailView.selectedOrgFilter} track by $index" ng-class="org._destroy == true ? 'deleted-text animated-item' : 'animated-item'">
+                        <td>{{org.id}}</td>
+                        <td><a ui-sref="main.orgDetail({orgId: org.id})">{{org.name}}</a></td>
+                        <td>
+                            <div class="input-group add-on date datepicker">
+                                <input type="text" class="form-control input-sm" restriction-field
+                                       uib-datepicker-popup="{{personDetailView.dateFormat}}" show-weeks="false"
+                                       ng-model="org.effective_date" is-open="org.opened_effective"
+                                       datepicker-options="personDetailView.dateOptions"
+                                       close-text="Close" ng-disabled="org._destroy" ng-click="personDetailView.openCalendar($event, $index, 'effective')" date-formatter readonly>
+                                <span class="input-group-btn">
+                                    <button type="button" restriction-field class="btn btn-primary" ng-click="personDetailView.openCalendar($event, $index, 'effective')" ng-disabled="org._destroy">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="input-group add-on date datepicker">
+                                <input type="text" class="form-control input-sm" restriction-field
+                                       uib-datepicker-popup="{{personDetailView.dateFormat}}" show-weeks="false"
+                                       ng-model="org.expiration_date" is-open="org.opened_expiration"
+                                       datepicker-options="personDetailView.dateOptions"
+                                       close-text="Close" ng-disabled="org._destroy" ng-click="personDetailView.openCalendar($event, $index, 'expiration')" date-formatter readonly>
+                                <span class="input-group-btn">
+                                    <button type="button" restriction-field class="btn btn-primary" ng-click="personDetailView.openCalendar($event, $index, 'expiration')" ng-disabled="org._destroy">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </td>
+                        <td class="text-center td-icon">
+                            <button type="button" restriction-field class="btn btn-warning" ng-click="personDetailView.toggleSelection($index)" title="Mark for deletion">
+                                <i ng-class="org._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div ng-include src="'app/po/person/sub_partials/_form_buttons.html'"></div>
+    <!-- grid of associated persons below -->
+    <div ng-include src="'app/po/person/sub_partials/_associatedPersonGrid.html'"></div>
+    <!-- end of grid -->
+</div>

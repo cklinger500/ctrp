@@ -12,28 +12,28 @@
         <div class="row reg-users-details">
             <div class="col-xs-12 col-sm-12">
                 <label class="col-sm-2">Username:</label>
-                <div class="col-sm-10" ng-if="(userDetailView.userRole === 'ROLE_SUPER' || userDetailView.userRole === 'ROLE_ADMIN' || userDetailView.userRole === 'ROLE_SITE-SU')">
+                <div class="col-sm-10" ng-if="(userDetailView.userRole === 'ROLE_ABSTRACTOR' || userDetailView.userRole === 'ROLE_SUPER' || userDetailView.userRole === 'ROLE_ADMIN' || userDetailView.userRole === 'ROLE_SITE-SU')">
                     <a ui-sref="main.userDetail({username : userDetailView.userDetails.username })">{{userDetailView.userDetails.username}}</a>
                 </div>
-                <div class="col-sm-10" ng-if="(userDetailView.userRole !== 'ROLE_SUPER' && userDetailView.userRole !== 'ROLE_ADMIN' && userDetailView.userRole !== 'ROLE_SITE-SU')">
+                <div class="col-sm-10" ng-if="(userDetailView.userRole !== 'ROLE_ABSTRACTOR' && userDetailView.userRole !== 'ROLE_SUPER' && userDetailView.userRole !== 'ROLE_ADMIN' && userDetailView.userRole !== 'ROLE_SITE-SU')">
                     {{userDetailView.userDetails.username}}
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12">
                 <label class="col-sm-2">Last Name:</label>
-                <div class="col-sm-10" ng-if="(userDetailView.userRole === 'ROLE_SUPER' || userDetailView.userRole === 'ROLE_ADMIN' || userDetailView.userRole === 'ROLE_SITE-SU')">
+                <div class="col-sm-10" ng-if="(userDetailView.userRole === 'ROLE_ABSTRACTOR' || userDetailView.userRole === 'ROLE_SUPER' || userDetailView.userRole === 'ROLE_ADMIN' || userDetailView.userRole === 'ROLE_SITE-SU')">
                     <a ui-sref="main.userDetail({username : userDetailView.userDetails.username })">{{userDetailView.userDetails.last_name}}</a>
                 </div>
-                <div class="col-sm-10" ng-if="(userDetailView.userRole !== 'ROLE_SUPER' && userDetailView.userRole !== 'ROLE_ADMIN' && userDetailView.userRole !== 'ROLE_SITE-SU')">
+                <div class="col-sm-10" ng-if="(userDetailView.userRole !== 'ROLE_ABSTRACTOR' && userDetailView.userRole !== 'ROLE_SUPER' && userDetailView.userRole !== 'ROLE_ADMIN' && userDetailView.userRole !== 'ROLE_SITE-SU')">
                     {{userDetailView.userDetails.last_name}}
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12">
                 <label class="col-sm-2">First Name:</label>
-                <div class="col-sm-10" ng-if="(userDetailView.userRole === 'ROLE_SUPER' || userDetailView.userRole === 'ROLE_ADMIN' || userDetailView.userRole === 'ROLE_SITE-SU')">
+                <div class="col-sm-10" ng-if="(userDetailView.userRole === 'ROLE_ABSTRACTOR' || userDetailView.userRole === 'ROLE_SUPER' || userDetailView.userRole === 'ROLE_ADMIN' || userDetailView.userRole === 'ROLE_SITE-SU')">
                     <a ui-sref="main.userDetail({username : userDetailView.userDetails.username })">{{userDetailView.userDetails.first_name}}</a>
                 </div>
-                <div class="col-sm-10" ng-if="(userDetailView.userRole !== 'ROLE_SUPER' && userDetailView.userRole !== 'ROLE_ADMIN' && userDetailView.userRole !== 'ROLE_SITE-SU')">
+                <div class="col-sm-10" ng-if="(userDetailView.userRole !== 'ROLE_ABSTRACTOR' && userDetailView.userRole !== 'ROLE_SUPER' && userDetailView.userRole !== 'ROLE_ADMIN' && userDetailView.userRole !== 'ROLE_SITE-SU')">
                     {{userDetailView.userDetails.first_name}}
                 </div>
             </div>

@@ -6,10 +6,12 @@
     'use strict';
 
     angular.module('ctrp.app.layout')
-        .controller('headerNavigationCtrl', headerNavigationCtrl);
+        .controller('headerNavigationCtrl', headerNavigationCtrl)
+        .controller('requestModalCtrl', requestModalCtrl);
 
-    headerNavigationCtrl.$inject = ['UserService', '$scope', 'Idle', 'MESSAGES',
-        '$uibModal', '$timeout', '$state', 'Common'];
+    headerNavigationCtrl.$inject = ['UserService', '$scope', 'Idle',
+                                    'MESSAGES', '$uibModal', '$timeout', '$state', 'Common'];
+    requestModalCtrl.$inject = ['$scope', '$uibModalInstance', 'reqType'];
 
     function headerNavigationCtrl(UserService, $scope, Idle, MESSAGES,
                                   $uibModal, $timeout, $state, Common) {
@@ -45,6 +47,24 @@
 
             $state.go('main.sign_in', {}, {reload: true});
         }; //logOut
+
+
+        vm.requestPersonOrOrg = function(type) {
+            var requestType = type;
+
+            vm.requestModal = $uibModal.open({
+                animation: true,
+                templateUrl: 'app/layout/request.html',
+                controller: 'requestModalCtrl as requestCtrl',
+                size: 'md',
+                windowClass: 'modal-center modal-top',
+                resolve: {
+                    reqType: function() {
+                        return requestType;
+                    }
+                }
+            });
+        }
 
         activate();
 
@@ -155,8 +175,6 @@
             });
         } //watchIdleEvents
 
-
-
         /**
          * Highlight the navbar according to the current state name
          * @param stateNames
@@ -178,9 +196,20 @@
                 }
             }, true);
         }
-
-
     }
 
+    function requestModalCtrl($scope, $uibModalInstance, reqType) {
+        var vm = this;
+        var requestMap = {
+            'Person': 'The required information is First Name, Last Name, Email, City, State/Province, Country and Organization Affiliation of the Person.',
+            'Organization': 'The required information is Organization Name, Street Address, City, State, Country, phone, and email.'
+        };
 
+        vm.requestHeader = 'Request New ' + reqType;
+        vm.message = 'To request the creation of a new ' + reqType.toLowerCase() + ' record, please contact the Clinical Trials Reporting Office (CTRO) at <a href="mailto:ncictro@mail.nih.gov"><strong>ncictro@mail.nih.gov</strong></a>.<br><br>' + requestMap[reqType];
+
+        vm.cancel = function() {
+            $uibModalInstance.dismiss('cancel');
+        };
+    }
 })();

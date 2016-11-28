@@ -801,15 +801,19 @@
                             </div>
                         </div>
 
+
                         <div class="form-group" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.ind_ide_dummy)}">
-                            <div class="col-sm-12">
+                            <div class="col-sm-12 table-responsive">
+                                <span class="help-block" ng-show="trialDetailView.curTrial.ind_ide_question === 'No' && trialDetailView.addedIndIdes.length">
+                                    Note: Any Grants added/updated below, while 'No' has been selected in the choices above, will not be saved as part of the trial.<br>If you want to save your changes to the list below, please select 'Yes' from the choices above.
+                                </span>
                                 <table class="table table-striped table-condensed" ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1 || trialDetailView.curTrial.ind_ide_question !== 'Yes'" ctrp-hint>
                                     <thead>
                                         <th>IND/IDE Types</th>
                                         <th>IND/IDE Number</th>
                                         <th>IND/IDE Grantor</th>
                                         <th>IND/IDE Holder Type</th>
-                                        <th>NIH Institution, NCI Division/Program Code (if applicable)</th>
+                                        <th>NIH Institution, NCI Division/Program (if applicable)</th>
                                         <th></th>
                                     </thead>
                                     <tbody>
@@ -882,7 +886,7 @@
                                         <th>IND/IDE Number</th>
                                         <th>IND/IDE Grantor</th>
                                         <th>IND/IDE Holder Type</th>
-                                        <th>NIH Institution, NCI Division/Program Code (if applicable)</th>
+                                        <th>NIH Institution, NCI Division/Program (if applicable)</th>
                                         <th ng-hide="['update'].indexOf(trialDetailView.curTrial.edit_type) > -1"></th>
                                     </thead>
                                     <tbody>
@@ -1306,16 +1310,16 @@
                                 <h5>List of Participating Sites:</h5>
                                 <table st-table="trialDetailView.curTrial.participating_sites" class="table table-bordered table-striped table-condensed">
                                     <thead>
-                                        <th>CTRP Org ID</th>
+                                        <th>CTRP ID</th>
                                         <th>CTRP Organization Name</th>
                                         <th>Principal Investigator</th>
-                                        <th>Local Trial Id</th>
+                                        <th>Local Trial Identifier</th>
                                         <th>Program Code</th>
                                         <th>Current Site Recruitment Status</th>
                                         <th>Current Site Recruitment Status Date</th>
                                         <th>Primary Contact</th>
                                         <th>Email</th>
-                                        <th>Phone/Ext</th>
+                                        <th>Phone - Phone Number Extension</th>
                                         <th>Edit</th>
                                     </thead>
                                     <tbody>

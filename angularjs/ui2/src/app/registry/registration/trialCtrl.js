@@ -26,14 +26,7 @@
         vm.searching = false;
         var fromStateName = $state.fromState.name || '';
 
-        vm.typeAheadNameSearch = function () {
-            return OrgService.typeAheadOrgNameSearch(vm.searchParams.org);
-        };
-
-        vm.setTypeAheadOrg = function (searchObj) {
-            var orgSearch = OrgService.setTypeAheadOrg(searchObj);
-            vm.searchParams.org = orgSearch.organization_details.name;
-        };
+        OrgService.setTypeAheadOrgNameSearch(vm);
 
         //ui-grid plugin options
         var actionTemplate = '<div ng-if="row.entity.actions.length > 0" class="btn-group" ng-class="{\'dropup\': grid.renderContainers.body.visibleRowCache.indexOf(row) > 4}">'
@@ -286,11 +279,18 @@
              */
             var isEmptySearch = true;
             var excludedKeys = ['sort', 'order', 'rows', 'start', 'wc_search', 'searchType'];
-            Object.keys(vm.searchParams).forEach(function (key) {
-                if (excludedKeys.indexOf(key) === -1 && vm.searchParams[key] !== '' && vm.searchParams[key].length !== 0) {
-                    isEmptySearch = false;
-                }
-            });
+
+            if (!vm.searchParams.organization_id) {
+                vm.searchParams.org = vm.organization_name;
+                Object.keys(vm.searchParams).forEach(function (key) {
+                    if (excludedKeys.indexOf(key) === -1 && vm.searchParams[key] && vm.searchParams[key] !== '' && vm.searchParams[key].length !== 0) {
+                        isEmptySearch = false;
+                    }
+                });
+            } else {
+                vm.searchParams.org = undefined;
+                isEmptySearch = false;
+            }
 
             if (isEmptySearch && newSearchFlag === 'fromStart') {
                 vm.gridOptions.data = [];

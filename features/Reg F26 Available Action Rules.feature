@@ -12,7 +12,7 @@ As any CTRP User, I can select available Actions
      
       |Update	  |
      
-     When the Trial Processing Status is
+     When the Trial Current Processing Status is
      
       
       |Abstraction Verified Response |

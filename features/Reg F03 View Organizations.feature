@@ -12,12 +12,12 @@ As a Trial Submitter or a Site Admin, I am able to View Organizations
      
     And I am logged into the CTRP Registration application
     And the following parameters of an Organization exist:
-    |CTRPID |Name|SourceContext|SourceID|SourceStatus|NameAlias|Address1|Address2|Country|State|City|PostalCode|Email|Phone|FamilyName|
-    |9999999|SopNameCancer RegF03vw|CTRP|999999|Active|SopAlias |SopAddress1|SopAddress2|USA|VA|SopCity|22306|SopPercukeTrial@pr.com|420-999-8906|SopFamilies|
+    |CTEP ID|CTRPID |Name|SourceContext|SourceID|SourceStatus|NameAlias|Address1|Address2|Country|State|City|PostalCode|Email|Phone|FamilyName|
+    |ABCD|9999999|SopNameCancer RegF03vw|CTRP|999999|Active|SopAlias |SopAddress1|SopAddress2|USA|VA|SopCity|22306|SopPercukeTrial@pr.com|420-999-8906|SopFamilies|
     And I have completed an organization search 
     And the Organization search screen displays field type
     
-      |CTRP ID  |
+      |CTRP ID|
       |CTEP ID  |
       |Name (Hyperlink to Org Details)  |
       |Source Status  |
@@ -33,21 +33,20 @@ As a Trial Submitter or a Site Admin, I am able to View Organizations
 
     When I click on the organization name from the results table 
     Then the View Organization screen opens with the page title as "View Organization"
-    And I will be able to view organizations in all context type
+    And I can only view the CTRP Context of an Organization
     
     |CTRP|
-    |CTEP|
-    |NLM|
+    
     
    When I am on the CTRP tab
    Then I will be able to view Organization details type 
     
     
-      |CTRPID  |999999  |
       |Name  |SopNameCancer  RegF03vw|
       |SourceContext  |CTRP  |
       |SourceID  |999999  |
       |SourceStatus  |Active  |
+      |CTEP ID| ABCD|
       |NameAlias  |SopAlias  |  
       |Address1  |SopAddress1|
       |Address2  |SopAddress2  |
@@ -59,32 +58,7 @@ As a Trial Submitter or a Site Admin, I am able to View Organizations
       |Phone: Extension  |420-999-8906: 4567  |
       |FamilyName  |SopFamilies  |
      
-    And I can view organization details type once on the CTEP tab
     
-    |Source Context: CTEP|
-    |CTRP Organization ID|
-    |Source ID|
-    |CTEP Organization Type|
-    |CTEP Organization Status|
-    |Name|
-    |Address|
-    |Address2|
-    |Address3|
-    |City|
-    |State|
-    |Postal Code|
-    |Country|
-    |Email|
-    |Phone|
-    |Funding Mechanism|
-    
-    And I can view organization details type once on the NLM tab
-    
-     |Source Context: NLM|
-    |CTRP Organization ID|
-    |Name: Sponsor Name|
-    |Source Status: Active|
-   
   And I should not be allowed to edit organization parameters
 And I should not view, edit or delete comments added by curators
 And the following button type should also be invisible to the user

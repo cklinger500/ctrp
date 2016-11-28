@@ -138,7 +138,7 @@
 
         // Delete the associations
         vm.toggleSelection = function (index, type) {
-            if (type == 'ind_ide') {
+            if (type === 'ind_ide') {
                 if (index < vm.addedIndIdes.length) {
                     vm.addedIndIdes[index]._destroy = !vm.addedIndIdes[index]._destroy;
                     if (vm.addedIndIdes[index]._destroy) {
@@ -153,16 +153,16 @@
 
 
         vm.watchOption = function(type) {
-            if (type == 'ind_ide_type') {
+            if (type === 'ind_ide_type') {
                 vm.grantor = '';
-                if (vm.ind_ide_type == 'IND') {
+                if (vm.ind_ide_type === 'IND') {
                     vm.grantorArr = ['CDER', 'CBER'];
-                } else if (vm.ind_ide_type == 'IDE') {
+                } else if (vm.ind_ide_type === 'IDE') {
                     vm.grantorArr = ['CDRH', 'CBER'];
                 } else {
                     vm.grantorArr = [];
                 }
-            } else if (type == 'holder_type') {
+            } else if (type === 'holder_type') {
                 vm.nih_nci = '';
                 var nciOption = vm.holderTypeArr.filter(findNciOption);
                 var nihOption = vm.holderTypeArr.filter(findNihOption);
@@ -174,7 +174,7 @@
                             vm.nihNciArr = response;
                         }
                     }).catch(function (err) {
-                        console.log("Error in retrieving NCI Division/Program code.");
+                        console.log("Error in retrieving NCI Division/Program code:" + err);
                     });
                 } else if (nihOption[0].id == vm.holder_type_id) {
                     TrialService.getNih().then(function (response) {
@@ -184,7 +184,7 @@
                             vm.nihNciArr = response;
                         }
                     }).catch(function (err) {
-                        console.log("Error in retrieving NIH Institution code.");
+                        console.log("Error in retrieving NIH Institution code: " + err);
                     });
                 } else {
                     vm.nihNciArr = [];
@@ -220,7 +220,7 @@
 
 
         function findNciOption(option) {
-            if (option.code == 'NCI') {
+            if (option.code === 'NCI') {
                 return true;
             } else {
                 return false;
@@ -228,7 +228,7 @@
         }
 
         function findNihOption(option) {
-            if (option.code == 'NIH') {
+            if (option.code === 'NIH') {
                 return true;
             } else {
                 return false;
@@ -278,4 +278,4 @@
 
     } //trialRegIndCtrl
 
-})();
+}());

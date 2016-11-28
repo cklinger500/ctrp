@@ -128,6 +128,8 @@ class Trial < TrialBase
   include Filterable
   include TableLoggable
   include ActiveRecord::UnionScope
+  include ActiveModel::Serializers::JSON
+
 
   # Disabled optimistic locking
   self.locking_column = :dummy_column
@@ -200,6 +202,7 @@ class Trial < TrialBase
   attr_accessor :edit_type
   attr_accessor :coming_from
   attr_accessor :current_user
+  attr_accessor :nlm_org_for_imported_trial
 
   accepts_nested_attributes_for :interventions, allow_destroy: true
   accepts_nested_attributes_for :associated_trials, allow_destroy: true
@@ -281,8 +284,10 @@ class Trial < TrialBase
 
   before_create :save_history
   before_create :save_internal_source
+  before_create :create_nlm_org_for_ct_gov_trials
   before_save :generate_status
   before_save :check_indicator
+  before_save :set_verification_date
   after_create :create_ownership
 
   # The set_defaults will only work if the object is new
@@ -290,28 +295,28 @@ class Trial < TrialBase
 
 
   # Array of actions can be taken on this Trial
-  def actions
+  scope :my_available_actions, lambda {eager_load(:users,:processing_status_wrappers,:ps_orgs)}
+
+  def actions(avr_id,vnr_id)
     actions = []
 
     if self.internal_source && self.internal_source.code == 'PRO'
-
       #When trial is Protocol
       if self.users.include? self.current_user
         if self.is_draft
           actions.append('complete')
         else
           actions.append('update')
-          processing_status_wrappers = self.processing_status_wrappers.pluck(:processing_status_id)
-          p processing_status_wrappers
-          if (processing_status_wrappers.include? ProcessingStatus.find_by_code("AVR").id) || (processing_status_wrappers.include? ProcessingStatus.find_by_code("VNR").id)
+          if self.current_processing_status.present? && (self.current_processing_status.id == avr_id || self.current_processing_status.id == vnr_id)
+            #is_avr = self.processing_status_wrappers.detect { |p| p.processing_status_id == avr_id }
+            #is_vnr = self.processing_status_wrappers.detect { |p| p.processing_status_id == vnr_id }
+            #if (!is_avr.nil? || !is_vnr.nil?)
             actions.append('amend')
             actions.append('verify-data')
             actions.append('view-tsr')
           end
         end
       end
-
-
     elsif self.internal_source && self.internal_source.code == 'IMP'
       #When Trial is Imported
       if self.current_user && self.current_user.role == 'ROLE_SITE-SU'
@@ -882,6 +887,22 @@ class Trial < TrialBase
     end
   end
 
+  def create_nlm_org_for_ct_gov_trials
+    if self.edit_type == 'import'
+      Rails.logger.info " NLM Org is #{nlm_org_for_imported_trial}"
+      if self.nlm_org_for_imported_trial.present?
+         nlm_org = self.nlm_org_for_imported_trial
+         nlm_org.save!
+      end
+    end
+  end
+
+  def set_verification_date
+    if self.edit_type == 'update' && self.edit_type != 'import' && self.nci_id.present?
+      self.verification_date = Date.today
+    end
+  end
+
   def generate_status
     if !self.is_draft && self.nci_id.nil?
       # Generate NCI ID
@@ -1011,21 +1032,6 @@ class Trial < TrialBase
   #scopes for search API
   #scope :matches_grant, -> (column, value) {Tempgrant.where}
   scope :matches, -> (column, value) { where("trials.#{column} = ?", "#{value}") }
-
-  scope :matches_wc, -> (column, value) {
-    str_len = value.length
-    if value[0] == '*' && value[str_len - 1] != '*'
-      where("trials.#{column} ilike ?", "%#{value[1..str_len - 1]}")
-    elsif value[0] != '*' && value[str_len - 1] == '*'
-      where("trials.#{column} ilike ?", "#{value[0..str_len - 2]}%")
-    elsif value[0] == '*' && value[str_len - 1] == '*'
-      where("trials.#{column} ilike ?", "%#{value[1..str_len - 2]}%")
-    else
-      where("trials.#{column} ilike ?", "#{value}")
-    end
-  }
-
-
 
   scope :in_family, -> (value, dateLimit) {
     familyOrganizations = FamilyMembership.where(
@@ -1244,6 +1250,28 @@ class Trial < TrialBase
     end
   }
 
+  scope :with_org_id, -> (value, type) {
+    join_clause = "LEFT JOIN organizations lead_orgs ON lead_orgs.id = trials.lead_org_id LEFT JOIN organizations sponsors ON sponsors.id = trials.sponsor_id LEFT JOIN participating_sites ps ON ps.trial_id = trials.id LEFT JOIN organizations sites ON sites.id = ps.organization_id"
+    where_clause = ""
+
+    if type.present?
+      type.each_with_index { |e, i|
+        where_clause += " OR " if i > 0
+        if e == 'Lead Organization'
+          where_clause += "lead_orgs.id = #{value}"
+        elsif e == 'Sponsor'
+          where_clause += "sponsors.id = #{value}"
+        elsif e == 'Participating Site'
+          where_clause += "sites.id = #{value}"
+        end
+      }
+    else
+      where_clause = "lead_orgs.id = #{value} OR sponsors.id = #{value} OR sites.id = #{value}"
+    end
+
+    joins(join_clause).where(where_clause)
+  }
+
   scope :with_org, -> (value, type) {
     str_len = value.length
     if value[0] == '*' && value[str_len - 1] != '*'
@@ -1380,7 +1408,5 @@ class Trial < TrialBase
       order("LOWER(trials.#{column}) #{order}")
     end
   }
-
-
 
 end

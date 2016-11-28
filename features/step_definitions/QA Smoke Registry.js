@@ -55,6 +55,14 @@ module.exports = function () {
                 helper.alertDialog('OK', '');
                 element(by.linkText(arg1)).click();
                 helper.alertDialog('OK', '');
+                userProfile.userProfileAffiliatedOrganization.getAttribute('value').then(function(value){
+                    console.log('Value of affiliated Org is: '+ value);
+                if(value === ''){
+                    trialMenuItem.clickTrials();
+                    trialMenuItem.clickListSearchTrialLink();
+                    element(by.linkText(arg1)).click();
+                }
+                    });
                 userProfile.userProfileEmailNotifications.get(0).isSelected().then(function (emailOption) {
                     userProfile.userProfileEmail.getAttribute('value').then(function (userCurrentEmail) {
                         console.log('Current email' + userCurrentEmail);

@@ -1,5 +1,5 @@
 @trial.current_user = @current_user
-
+p "***********"
 json.extract! @trial, :id, :nci_id, :lead_protocol_id, :official_title, :pilot, :research_category_id, :masking_id, :biospecimen_retention_id, :biospecimen_desc,
               :masking_role_caregiver, :masking_role_investigator, :masking_role_outcome_assessor, :masking_role_subject, :accept_vol, :min_age, :max_age, :min_age_unit_id, :max_age_unit_id, :gender_id,
               :research_category, :allocation_id, :study_classification_id, :target_enrollment, :final_enrollment, :study_model_id, :study_model_other, :study_pop_desc, :sampling_method,
@@ -12,10 +12,13 @@ json.extract! @trial, :id, :nci_id, :lead_protocol_id, :official_title, :pilot, 
               :investigator, :investigator_aff, :other_ids, :trial_funding_sources, :funding_sources, :grants,
               :trial_status_wrappers, :ind_ides, :oversight_authorities, :trial_documents, :associated_trials, :other_criteria, :is_draft, :lock_version,
               :brief_title, :brief_summary, :objective, :detailed_description, :intervention_model_id, :num_of_arms,
-              :actions, :is_owner, :research_category, :admin_checkout, :scientific_checkout, :process_priority, :process_comment, :nci_specific_comment,
+              :is_owner, :research_category, :admin_checkout, :scientific_checkout, :process_priority, :process_comment, :nci_specific_comment,
               :nih_nci_div, :nih_nci_prog, :alternate_titles, :acronym, :keywords, :central_contacts, :board_name, :board_affiliation_id,
               :board_approval_num, :board_approval_status_id, :available_family_orgs, :verification_date, :submission_nums, :uuid, :is_rejected
-
+p "*************** after"
+avr_id  = ProcessingStatus.find_by_code("AVR").id
+vnr_id = ProcessingStatus.find_by_code("VNR").id
+json.actions @trial.actions(avr_id,vnr_id)
 json.other_ids do
   json.array!(@trial.other_ids) do |id|
     json.extract! id, :trial_id, :id, :protocol_id_origin_id, :protocol_id_origin, :protocol_id

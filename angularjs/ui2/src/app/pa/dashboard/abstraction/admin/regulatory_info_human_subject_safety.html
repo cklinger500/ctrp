@@ -85,7 +85,7 @@
                         <div class="col-sm-4">
                             <input type="text" id="board_affiliation_address" name="board_aff_address" class="form-control input-sm"
                                 ng-model="regInfoSafetyView.trialDetailsObj.board_affiliated_org.address"
-                                disabled>
+                                readonly>
                         </div>
                     </div>
                     <!-- end of Board address -->
@@ -96,7 +96,7 @@
                         <div class="col-sm-4">
                             <input type="text" id="board_affiliation_city" class="form-control input-sm" name="board_aff_city"
                                 ng-model="regInfoSafetyView.trialDetailsObj.board_affiliated_org.city"
-                                disabled>
+                                readonly>
                         </div>
                     </div>
                     <!-- end of Board city -->
@@ -107,7 +107,7 @@
                         <div class="col-sm-4">
                             <input type="text" id="board_affiliation_state" name="board_aff_state" class="form-control input-sm"
                                 ng-model="regInfoSafetyView.trialDetailsObj.board_affiliated_org.state_province"
-                                disabled>
+                                readonly>
                         </div>
                     </div>
                     <!-- end of Board state/province -->
@@ -118,7 +118,7 @@
                         <div class="col-sm-4">
                             <input type="text" id="board_affiliation_zipcode" name="board_affiliation_zipcode" class="form-control input-sm"
                                 ng-model="regInfoSafetyView.trialDetailsObj.board_affiliated_org.postal_code"
-                                disabled>
+                                readonly>
                         </div>
                     </div>
                     <!-- end of Board zipcode -->
@@ -129,7 +129,7 @@
                         <div class="col-sm-4">
                             <input type="text" id="board_affiliation_country" name="board_affiliation_country" class="form-control input-sm"
                                 ng-model="regInfoSafetyView.trialDetailsObj.board_affiliated_org.country"
-                                disabled>
+                                readonly>
                         </div>
                     </div>
                     <!-- end of Board country -->
@@ -137,10 +137,14 @@
                     <!-- Board phone: required if board email is not set -->
                     <div class="form-group">
                         <label for="board_affiliation_phone" class="control-label col-xs-12 col-sm-4">Board Contact Phone:</label>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <input type="text" id="board_affiliation_phone" name="board_affiliation_phone" class="form-control input-sm"
-                                ng-model="regInfoSafetyView.trialDetailsObj.board_affiliated_org.phone"
-                                disabled>
+                                ng-model="regInfoSafetyView.trialDetailsObj.board_affiliated_org.phone" mask-phone-number mask-country="{{regInfoSafetyView.trialDetailsObj.board_affiliated_org.country}}"
+                                readonly>
+                        </div>
+                        <div class="col-sm-1">
+                            <input type="text" id="board_affiliation_extension" name="board_affiliation_extension" class="form-control input-sm"
+                                ng-model="regInfoSafetyView.trialDetailsObj.board_affiliated_org.extension" placeholder="Ext." readonly>
                         </div>
                     </div>
                     <!-- end of Board phone -->
@@ -151,7 +155,7 @@
                         <div class="col-sm-4">
                             <input type="email" id="board_affiliation_email" name="board_affiliation_email" class="form-control input-sm"
                                 ng-model="regInfoSafetyView.trialDetailsObj.board_affiliated_org.email"
-                                disabled>
+                                readonly>
                         </div>
                     </div>
                     <!-- end of Board email -->
