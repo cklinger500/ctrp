@@ -58,12 +58,6 @@ As any CTRP User, I can view a CTRP clinical trial record after a Clinical Trial
       |Data Table 4 Funding Source|
       |Program Code|
       #Section Header
-      |NIH Grant Information (for NIH Funded Trials)|
-      |Funding Mechanism  |
-      |NIH Institute Code  |
-      |Serial Number  |
-      |NCI Division/Program|
-      #Section Header
       |Trial Status|
       |Current Trial Status  |
       |Why the Study Stopped  |
@@ -80,6 +74,12 @@ As any CTRP User, I can view a CTRP clinical trial record after a Clinical Trial
       |IND Grantor  |
       |IND/IDE Holder Type  |
       |NIH Institution, NCI Division/Program |
+      #Section Header
+      |NIH Grant Information (for NIH Funded Trials)|
+      |Funding Mechanism  |
+      |NIH Institute Code  |
+      |Serial Number  |
+      |NCI Division/Program|
       #Section Header
       |Regulatory Information |
       #Check Responsible Party Rules in scenario#1a
@@ -313,12 +313,6 @@ As any CTRP User, I can view a CTRP clinical trial record after a Clinical Trial
       |Data Table 4 Funding Source|
       |Program Code|
       #Section Header
-      |NIH Grant Information (for NIH Funded Trials)|
-      |Funding Mechanism  |
-      |NIH Institute Code  |
-      |Serial Number  |
-      |NCI Division/Program|
-      #Section Header
       |Trial Status|
       |Current Trial Status  |
       |Why the Study Stopped  |
@@ -335,6 +329,12 @@ As any CTRP User, I can view a CTRP clinical trial record after a Clinical Trial
       |IND Grantor  |
       |IND/IDE Holder Type  |
       |NIH Institution, NCI Division/Program |
+      #Section Header
+      |NIH Grant Information (for NIH Funded Trials)|
+      |Funding Mechanism  |
+      |NIH Institute Code  |
+      |Serial Number  |
+      |NCI Division/Program|
       #Section Header
       |Regulatory Information |
       #Check Responsible Party Rules in scenario#1a
