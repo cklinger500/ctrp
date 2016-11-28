@@ -71,7 +71,6 @@ Then the following fields will be required
      |CTRP Organization Name|
      |Investigators, Role (Principal Investigator or Sub-Investigator)|
      |Local Trial Identifier|
-     |Program Code|
      |Current Site Recruitment Status|
      |Current Site Recruitment Status Date|
      |Primary Contact|
