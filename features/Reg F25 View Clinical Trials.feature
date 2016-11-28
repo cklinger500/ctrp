@@ -277,10 +277,97 @@ As any CTRP User, I can view a CTRP clinical trial record after a Clinical Trial
      And I will be able to view the Trial Details type
       
        #All fields should be displayed even when no value exists
-     
+      
+      #Section Header
       |Amendments Details  |
       |Amendment Number  |
       |Amendment Date  |
+      #Section Header
+      |Trials Identifiers |
+      |Lead Organization Trial Identifier|
+      |NCI Trial Identifier|
+      |Other Trial Indentifier|
+      #Section Header
+      |Trial Details |
+      |Official Title|
+      |Phase|
+      |Pilot|
+      |Clinical Research Category|
+      |Primary Purpose|
+      #"Description of Other Primary Purpose" only displayed when Primary Purpose is "Other"
+      |Description of Other Primary Purpose|
+      |Secondary Purpose|
+      #"Description of Other Secondary Purpose" only displayed when Secondary Purpose is "Other"
+      |Description of Other Secondary Purpose|
+      |Accrual Disease Terminology|
+      #Section Header
+      |Lead Organization/Principal Investigator  |
+      |Lead Organization|
+      |Principal Investigator|
+      #Section Header
+      |Sponsor|
+      |Sponsor|
+      #Section header
+      |Data Table 4 Information |
+      |Study Source|
+      |Data Table 4 Funding Source|
+      |Program Code|
+      #Section Header
+      |NIH Grant Information (for NIH Funded Trials)|
+      |Funding Mechanism  |
+      |NIH Institute Code  |
+      |Serial Number  |
+      |NCI Division/Program|
+      #Section Header
+      |Trial Status|
+      |Current Trial Status  |
+      |Why the Study Stopped  |
+      |Current Trial Status Date  |
+      #Section Header
+      |Trial Dates|
+      |Trial Start Date: Actual, Anticipated |
+      |Primary Completion Date: Actual, Anticipated  |
+      |Completion Date: Actual, Anticipated  |
+      #Section Header
+      |FDA IND/IDE Information for applicable trials  |
+      |IND/IDE Type  |
+      |IND/IDE Number  |
+      |IND Grantor  |
+      |IND/IDE Holder Type  |
+      |NIH Institution, NCI Division/Program |
+      #Section Header
+      |Regulatory Information |
+      #Check Responsible Party Rules in scenario#1a
+      |Responsible Party|
+      #Trial Oversight Authority Country and Organization are displayed in a table
+      |Trial Oversight Authority: Country , Organization  |
+      |FDA Regulated Intervention Indicator  |
+      |Section 801 Indicator  |
+      |Data Monitoring Committee Appointed Indicator  |
+       #Section Header
+      |Trial Related Documents  | 
+      |Protocol Document  |
+      |IRB Approval Document  |
+      |Informed Consent|
+      |List of Participating Sites|
+      |Change Memo Document  |
+      |Protocol Highlighted Document|
+      |TSR  |
+      |All Other|
+       #Section Header
+      |Participating Sites|
+      |CTRP ID|
+     # CTRP ID=Source ID when Source CTRP org
+      |CTRP Organization Name|
+      |Principal Investigator|
+     # Principal Investigator Format (Last Name, First Name)
+      |Local Trial Id|
+      |Current Site Recruitment Status|
+      |Current Site Recruitment Status Date|
+      |Primary Contact|
+     #Primary Contact Format (Last Name, First Name)
+      |Email|
+      |Phone Number-Extension|
       
      
         Scenario:#4a Participating Sites Table Columns description for all trials (Protocol and Imported)--------Program code deleted from the view details PS table
