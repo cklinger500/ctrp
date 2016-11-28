@@ -66,9 +66,7 @@ var abstractionCommonMethods = function(){
                 return output;
             } catch (e) {
                 if (e.number == -2146827859) {
-                    alert('Unable to access local files due to browser security settings. ' +
-                        'To overcome this, go to Tools->Internet Options->Security->Custom Level. ' +
-                        'Find the setting for "Initialize and script ActiveX controls not marked as safe" and change it to "Enable" or "Prompt"');
+                    alert('Unable to access local files due to browser security settings');
                 }
             }
         }
@@ -86,7 +84,7 @@ var abstractionCommonMethods = function(){
     };
 
     /*****************************************
-     * On Prepare Login Test
+     * On Prepare Login Test Accept
      *****************************************/
     this.onPrepareLoginTest = function(usrID) {
        var configurationFile;
@@ -123,7 +121,49 @@ var abstractionCommonMethods = function(){
             helper.wait_for(5000);
         }
 
+    };
+
+    /*****************************************
+     * On Prepare Login Test Reject
+     *****************************************/
+    this.onPrepareLoginReject = function(usrID) {
+        var configurationFile;
+        console.log('file path'+testConfiguration);
+        configurationFile = ''+testConfiguration+'/testSettings.json';
+        var configuration = JSON.parse(
+            fs.readFileSync(configurationFile)
+        );
+        console.log(configuration.uiUrl);
+        console.log(configuration.abstractorUID);
+        console.log(configuration.abstractorPWD);
+        console.log(configuration.curatorUID);
+        console.log(configuration.curatorPWD);
+        console.log(configuration.trialSubmitterUID);
+        console.log(configuration.trialSubmitterPWD);
+
+        browser.get(configuration.uiUrl);
+        //ctrp abstractor user
+        if (usrID === 'ctrpabstractor'){
+            login.login(configuration.abstractorUID, configuration.abstractorPWD);
+            login.reject();
+            helper.wait_for(5000);
+        }
+        //ctrp curator user
+        if (usrID === 'ctrpcurator'){
+            login.login(configuration.curatorUID, configuration.curatorPWD);
+            login.reject();
+            helper.wait_for(5000);
+        }
+        //ctrp trial submitter user
+        if (usrID === 'ctrptrialsubmitter'){
+            login.login(configuration.trialSubmitterUID, configuration.trialSubmitterPWD);
+            login.reject();
+            helper.wait_for(5000);
+        }
+
     }
+
+
 
 };
 
