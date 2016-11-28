@@ -32,7 +32,9 @@
          */
         this.getData = function (url) {
             var deferred = $q.defer();
-            url = HOST + url;
+            //temporary cachebuster until better solution in gulp
+            var cacheBuster = (url.indexOf('?')>-1?'&':'?') + '_=' + Date.now();
+            url = HOST + url + cacheBuster;
             $http.get(url).success(function (data, status, headers, config) {
                 // $log.info('status: ' + status);
                 var packagedData = packageDataWithResponse(data, status, headers, config);
@@ -54,7 +56,9 @@
          */
         this.postDataExpectObj = function (url, params) {
             var deferred = $q.defer();
-            url = HOST + url;
+            var cacheBuster = '?_=' + Date.now();
+            //temporary cachebuster until better solution in gulp
+            url = HOST + url + cacheBuster;
             $http.post(url, params).success(function (data, status, headers, config) {
                 var packagedData = packageDataWithResponse(data, status, headers, config);
                 deferred.resolve(packagedData);
@@ -101,6 +105,17 @@
             return $http.delete(url);
         }; //deleteObjFromBackend
 
+        /**
+         * Group promises call, will resolve individually
+         * @param  {Array} promiseObjArr, Array of promises
+         * @return {Grouped promises}
+         */
+        this.groupPromises = function(promiseObjArr) {
+            var deferred = $q.defer();
+            deferred.notify('grouping promises array: ', promiseObjArr);
+            return $q.all(promiseObjArr);
+        };
+
 
         /**
          * Raise error message for AJAX calls
@@ -112,7 +127,7 @@
             if (error.status === 408) {
                 errorMsg = 'Retrieving data from service timed out';
             }
-            toastr.error(errorMsg, 'Error');
+            toastr.error(errorMsg, 'Error', { timeOut: 0});
             console.log('request has timed out');
         } //raiseErrorMessage
 

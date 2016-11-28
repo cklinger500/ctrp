@@ -7,8 +7,8 @@
 #  why_stopped     :text
 #  trial_status_id :integer
 #  trial_id        :integer
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  created_at      :datetime
+#  updated_at      :datetime
 #  uuid            :string(255)
 #  lock_version    :integer          default(0)
 #  comment         :text

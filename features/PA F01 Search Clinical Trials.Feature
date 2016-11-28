@@ -16,9 +16,9 @@ As any CTRP PA User, I can search CTRP clinical trials by various criteria and t
           |Primary Purpose|
           |Trial Phase|
           |Pilot|
-          |Current Trial Status|
+          |Trial Status (Current)|
           |Processing Status|
-          |Milestone|
+          |Milestone (latest active submission)|
           |On Hold Status|
           |Trials I Have Checked Out|
           |Submission Type|
@@ -27,42 +27,97 @@ As any CTRP PA User, I can search CTRP clinical trials by various criteria and t
           |Submission Method|
           |NIH/NCI Division/Department Identifier|
           |NIH/NCI Program Identifier|
+          |Infofmation Source (Trials.internal_source_id Internal_Sources.name (Protocol, Imported))|
+      And the trial is not a Draft     
       Then CTRP will then display the results for all the Clinical Trials Search Results
           |NCI Trial Identifier|
-          |Processing Priority|
-          |Other ID Source and Other ID|
-          |Official Title - preceded with an "(*)" that can be selected to display alternate titles |
-          |Sponsor|
+          |Official Title|
+          |Trial Status (current)|
           |Lead Organization|
-          |Participating Sites|
+          |Lead Organization Trial Identifier| 
           |Principle Investigator|
+          |ClinicalTrials.gov Identifier|
+          |Other Identifiers (Other ID Source and Other ID i.e.DCP:  12345, CTEP:  12345)|  
+          |Available Action|
+          |Processing Priority|
+          |Sponsor|
+          |Participating Sites|
           |NIH/NCI Division/Department Identifier|
           |NIH/NCI Program Identifier|
-          |Current Trial Status|
-          |Milestone (current) and Milestone Date|
-          |Admin Milestone (current) and Admin Milestone Date (Milestone Type = Administrative)|
-          |Scientific Milestone (current) and Scientific Milestone Date (Milestone Type = Scientific)|
+          |Milestone (latest active milestone) and Milestone Date (latest active milestone date)|
+          |Admin Milestone (latest active milestone) and Admin Milestone Date (latest active milestone date)(Milestone Type = Administrative)|
+          |Scientific Milestone (latest active milestone) and Scientific Milestone Date (latest active milestone Date) (Milestone Type = Scientific)|
           |Processing Status|
           |Processing Status Date|
           |Record Verification Date|
           |On Hold Reasons|
           |On Hold Date - (if more than 1 on hold reason, first on hold active is displayed)|
           |Submission Type|
-          |Submission Source|
+          |Submission Method|
+          |Information Source| 
           |Checked Out for Admin Use by|
           |Checked out for Scientific Use by|
-          |Action|
           |Super User Action|
           |View TSR |
+      And will be sorted by NCI ID ordered with the most recent ID first
+      And I can sort the results table by the following fields
+          |NCI Trial Identifier|
+          |Trial Status (current)|
+          |Lead Organization|
+          |Lead Organization Identifier|
+          |Principle Investigator|
+          |ClinicalTrials.gov Identifier|
+          |Processing Priority|
+          |Sponsor|
+          |NIH/NCI Division/Department Identifier|
+          |NIH/NCI Program Identifier|
+          |Milestone (latest active milestone) and Milestone Date (latest active milestone date)|
+          |Admin Milestone (latest active milestone) and Admin Milestone Date (latest active milestone date)(Milestone Type = Administrative)|
+          |Scientific Milestone (latest active milestone) and Scientific Milestone Date (latest active milestone Date) (Milestone Type = Scientific)|
+          |Processing Status (current)|
+          |Processing Status Date (current)|
+          |Record Verification Date|
+          |On Hold Reasons|
+          |On Hold Date - (if more than 1 on hold reason, first on hold active is displayed)|
+          |Submission Type|
+          |Submission Method|
+          |Information Source| 
+          |Checked Out for Admin Use by|
+          |Checked out for Scientific Use by|
+      And I can filter the results table by the following fields
+          |NCI Trial Identifier|
+          |Trial Status (current)|
+          |Lead Organization|
+          |Lead Organization Identifier|
+          |Principle Investigator|
+          |ClinicalTrials.gov Identifier|
+          |Processing Priority|
+          |Sponsor|
+          |NIH/NCI Division/Department Identifier|
+          |NIH/NCI Program Identifier|
+          |Milestone (latest active milestone) and Milestone Date (latest active milestone date)|
+          |Admin Milestone (latest active milestone) and Admin Milestone Date (latest active milestone date)(Milestone Type = Administrative)|
+          |Scientific Milestone (latest active milestone) and Scientific Milestone Date (latest active milestone Date) (Milestone Type = Scientific)|
+          |Processing Status|
+          |Processing Status Date|
+          |Record Verification Date|
+          |On Hold Reasons|
+          |On Hold Date - (if more than 1 on hold reason, first on hold active is displayed)|
+          |Submission Type|
+          |Submission Method|
+          |Information Source| 
+          |Checked Out for Admin Use by|
+          |Checked out for Scientific Use by|
+
 
   Scenario: #2 I can search for clinical trials by Official Title
       Given I am logged into the CTRP Protocol Abstraction application
       And I am on the Search Clinical Trials Screen
       When I enter text in the official title selection
+      And the official title should not be more than 600 characters
       And select a search option
       Then the search results will display all trials that contain the official title search text
-      And the alternative title text
-
+      
   Scenario: #3 I can search for clinical trials by Organization
       Given I am logged into the CTRP Protocol Abstraction application
       And I am on the Search Clinical Trials Screen
@@ -71,7 +126,6 @@ As any CTRP PA User, I can search CTRP clinical trials by various criteria and t
       Then the search results will display trials that match the Organization selected for the trial from
           |Sponsor|
           |Lead Organization|
-          |Collaborator|
           |Participating Site|
           |IRB|
 
@@ -79,7 +133,8 @@ As any CTRP PA User, I can search CTRP clinical trials by various criteria and t
       Given I am logged into the CTRP Protocol Abstraction application
       And I am on the Search Clinical Trials Screen
       When I select one or more Identifier Types
-          |NCI |
+          |Lead Org|
+	      |CTRP (NCI)|
           |CTEP|
           |DCP|
           |CCR|
@@ -92,6 +147,7 @@ As any CTRP PA User, I can search CTRP clinical trials by various criteria and t
       Given I am logged into the CTRP Protocol Abstraction application
       And I am on the Search Clinical Trials Screen
       When I enter text in the Identifier
+      And The entered identifier text should not be more than 30 characters
       And select search
       Then the search results will display trials that contain the identifier
 
@@ -127,11 +183,13 @@ As any CTRP PA User, I can search CTRP clinical trials by various criteria and t
   Scenario: #9 I can search for pilot clinical trials
       Given I am logged into the CTRP Protocol Abstraction application
       And I am on the Search Clinical Trials Screen
-      When I select the Pilot "Yes" option
+      When I select the Pilot Option from the is to
+          |Yes|
+          |No| 
       And select search
-      Then the search results will display trials that have the Pilot criteria equal to "Yes"
+      Then the search results will display trials that have the Pilot criteria that was selected
 
-  Scenario: #10 I can search trials by current Trial Status
+  Scenario: #10 I can search trials by Trial Status
       Given I am logged into the CTRP Protocol Abstraction application
       And I am on the Search Clinical Trials Screen
       When I select one or more  current Trial Status'
@@ -156,16 +214,17 @@ As any CTRP PA User, I can search CTRP clinical trials by various criteria and t
       Given I am logged into the CTRP Protocol Abstraction application
       And I am on the Search Clinical Trials Screen
       When I select one or more Processing Status'
-          |In Review|
-          |Approved|
-          |Active|
-          |Temporarily Closed to Accrual|
-          |Temporarily Closed to Accrual and Intervention|
-          |Closed to Accrual|
-          |Closed to Accrual and Intervention|
-          |Complete|
-          |Administratively Complete|
-          |Withdrawn|
+		|Submitted|       
+		|Amendment Submitted|
+        |Accepted|
+        |Abstracted|
+        |Verification Pending|
+        |Abstraction Verified Response|
+        |Abstraction Verified Response/No Response|
+        |Submission Terminated|
+        |Submission Reactivated|
+		|Rejected|
+		|On-Hold|
       And select search
       Then the search results will display trials that have that Processing Status
 
@@ -177,7 +236,9 @@ As any CTRP PA User, I can search CTRP clinical trials by various criteria and t
           |Submission Acceptance Date|
           |Submission Rejection Date|
           |Submission Terminated Date|
-          |Submission Reactivated Date|
+          |Submission Reactivated Date| 
+          |Validation processing Start Date         |
+          |Validation Processing Completed Date     |
           |Administrative Processing Start Date|
           |Administrative Processing Completed Date|
           |Ready for Administrative QC Date|
@@ -198,16 +259,7 @@ As any CTRP PA User, I can search CTRP clinical trials by various criteria and t
       And select search
       Then the search results will display trials that have that Milestone
 
-  Scenario: #13 I can search trials by On Hold Status
-      Given I am logged into the CTRP Protocol Abstraction application
-      And I am on the Search Clinical Trials Screen
-      When I select one or more Hold Status'
-          |On-Hold |
-          |Not On-Hold|
-      And select search
-      Then the search results will display trials that have that On Hold Status
-
-  Scenario: #14 I can search trials by Trials I have checked out
+    Scenario: #14 I can search trials by Trials I have checked out
       Given I am logged into the CTRP Protocol Abstraction application
       And I am on the Search Clinical Trials Screen
       When I select Trials I have checked out
@@ -218,11 +270,12 @@ As any CTRP PA User, I can search CTRP clinical trials by various criteria and t
       Given I am logged into the CTRP Protocol Abstraction application
       And I am on the Search Clinical Trials Screen
       When I select one or more Submission Types
-          |Original|
-          |Update|
-          |Amendment|
+        |<Submission Type>|<rule>|
+		|Original         |last active submission is the original submission (may or may not have updates that needs to be acknowledged) |
+		|Amendment        |last active submission is not the original submission (may or may not have updates that needs to be acknowledged) |
+		|Update           |has at least one update that needs to be acknowledged for the last active submission|
       And select search
-      Then the search results will display trials that have that Submission Type
+      Then the search results will display trials that have that latest active Submission Type
 
   Scenario: #16 I can search trials by Submission Method
       Given I am logged into the CTRP Protocol Abstraction application
@@ -231,7 +284,6 @@ As any CTRP PA User, I can search CTRP clinical trials by various criteria and t
           |Batch|
           |Registry|
           |ClinicalTrials.gov|
-          |PDQ|
           |Grid Service|
           |REST Service Other|
       And select search
@@ -279,6 +331,7 @@ As any CTRP PA User, I can search CTRP clinical trials by various criteria and t
       When I select one or more NIH/NCI Program Identifiers
           |BIQSFP|
           |SPORE |
+          |Steering Committee Reviewed|
       And select a search option
       Then the search results will display trials with matching NIH/NCI Program Identifier
 
@@ -295,3 +348,61 @@ As any CTRP PA User, I can search CTRP clinical trials by various criteria and t
       When I enter select a Identifier Type "ClinicalTrails.gov (NCT)"
       And select search
       Then the search results will display trials that contain that Identifier type ClinicalTrails.gov (NCT) and Obsolete ClinicalTrails.gov (NCT) ID
+
+ Scenario: #23 I can search trials by Information Source
+      Given I am logged into the CTRP Protocol Abstraction application
+      And I am on the Search Clinical Trials Screen
+      When I select the information source from the list of:
+      |Protocol|
+      |Imported|
+      And select search
+      Then the search results will display trials that have the Information Source that was selected
+
+ Scenario: #24 Paging
+      Given I am logged into the CTRP Protocol Abstraction application
+      And I am on the Search Clinical Trials Screen
+      And select search
+      Then the search results will display a list of the trials 
+      And the trial list will be paganiated  
+	
+Scenario: #24 Export to Excel
+      Given I am logged into the CTRP Protocol Abstraction application
+      And I am on the Search Clinical Trials Screen
+      And select search
+      Then the search results will display a list of the trials 
+      And the trial list can be exported to Excel
+      And will include the following fields
+          |NCI Trial Identifier|
+          |Official Title|
+          |Trial Status (current)|
+          |Lead Organization|
+          |Lead Organization Trial Identifier| 
+          |Principle Investigator|
+          |ClinicalTrials.gov Identifier|
+          |Other Identifiers (Other ID Source and Other ID i.e.DCP:  12345, CTEP:  12345)|  
+          |Processing Priority|
+          |Sponsor|
+          |Participating Sites|
+          |NIH/NCI Division/Department Identifier|
+          |NIH/NCI Program Identifier|
+          |Current Trial Status|
+          |Milestone (latest active milestone) and Milestone Date (latest active milestone date)|
+          |Admin Milestone (latest active milestone) and Admin Milestone Date (latest active milestone date)(Milestone Type = Administrative)|
+          |Scientific Milestone (latest active milestone) and Scientific Milestone Date (latest active milestone Date) (Milestone Type = Scientific)|
+          |Processing Status (current)|
+          |Processing Status Date (current)|
+          |Record Verification Date (current)|
+          |On Hold Reasons|
+          |On Hold Date - (if more than 1 on hold reason, first on hold active is displayed)|
+          |Submission Type|
+          |Submission Method|
+          |Information Source| 
+          |Checked Out for Admin Use by|
+          |Checked out for Scientific Use by|
+       And will be sorted by NCI ID ordered with the most recent ID first
+
+Scenario: #25 No Search Criteria
+      Given I am logged into the CTRP Protocol Abstraction application
+      And I am on the Search Clinical Trials Screen
+      And select search
+      Then a error message will be displayed that at least 1 seach paramter must be selected

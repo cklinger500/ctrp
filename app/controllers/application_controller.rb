@@ -1,10 +1,19 @@
 class ApplicationController < ActionController::Base
   respond_to :html, :xml, :json
+  around_filter :global_request_logging
+  before_filter :set_time_zone
+
+  def set_time_zone
+    Time.zone = 'Eastern Time (US & Canada)'
+  end
+
+
   #before_filter :wrapper_authenticate_user unless Rails.env.test?
   #check_authorization :unless => :devise_controller?
   rescue_from DeviseLdapAuthenticatable::LdapException do |exception|
     render :text => exception, :status => 500
   end
+
   rescue_from CanCan::AccessDenied do |exception|
     Rails.logger.debug "Access denied onn #{exception.action} #{exception.subject.inspect}"
     Rails.logger.debug "Access denied onn #{exception.subject.inspect}"
@@ -18,6 +27,7 @@ class ApplicationController < ActionController::Base
       end
     end
   end
+
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   #@@current_user = current_user
@@ -48,11 +58,12 @@ class ApplicationController < ActionController::Base
     #Rails.logger.debug "\n, In Application controller, parse_request_header, auth_string = #{auth_string.inspect}"
     accept_flag = auth_string.split(" ")[0]
     #Rails.logger.debug "In Application controller, parse_request_header, accept_flag = #{accept_flag.inspect}"
-    if accept_flag != "Accept"
-      Rails.logger.error "The User didnot Accept the GSA"
-      Rails.logger.debug "Accept flag is not true"
-      raise CanCan::AccessDenied.new("Not authorized!")
-    end
+    #if accept_flag != "Accept"
+     # Rails.logger.error "The User didnot Accept the GSA"
+      #Rails.logger.debug "Accept flag is not true"
+      #raise CanCan::AccessDenied.new("Not authorized!")
+      #redirect_to destroy_session_url
+    #end
     token = auth_string.split(" ")[1]
     return token
   end
@@ -60,6 +71,7 @@ class ApplicationController < ActionController::Base
   def wrapper_authenticate_user
     #Rails.logger.info "In wrapper_authenticate_user session = #{session.inspect}"
     token = parse_request_header
+    @token = nil
 
     ## If the App was accessed with the Angular UI, it will have a token, else the token will be nil
     if token.blank?
@@ -80,15 +92,23 @@ class ApplicationController < ActionController::Base
       Rails.logger.info "token = " + token
       # Decode the token
       begin
-        user_id = decode_token(token)
+        Rails.logger.info "Getting it #{$redis.get(token)}"
+        user_id = $redis.get(token)
+        if user_id.nil?
+          Rails.logger.info "SERIOUS FLAG Some one trying to hijack the session with this token #{token}"
+          raise "Hijackng Session ........."
+        else
+           user_id = decode_token(token)
+        end
+
       rescue => e
         Rails.logger.debug "Unable to decode token exception #{e.backtrace}"
         raise "Unable to decode token. The Authentication of the user cannot be performed"
       end
       user = User.find_by_id(user_id)
-      authenticate_user(user)
+      authenticate_user(user) if user
     end
-    Rails.logger.info "End of wrapper_authenticate_user"
+    #Rails.logger.info "End of wrapper_authenticate_user"
   end
 
   def authenticate_user(user)
@@ -108,13 +128,13 @@ class ApplicationController < ActionController::Base
 
 
   def set_current_user(user)
-    Rails.logger.info "\n\nIN set_current_user Setting current user to #{user.inspect}"
+    Rails.logger.debug "\nApplication Controller, set_current_user, user=#{user.username}, role=#{user.role}" unless user.blank?
     @current_user = user
     set_devise_methods(user)
   end
 
   def set_devise_methods(user)
-    Rails.logger.info "\n In Application Controller, set_devise_methods, Setting current user to #{user.inspect}"
+    Rails.logger.debug "\nApplication Controller, set_devise_methods, user=#{user.username}, role=#{user.role}" unless user.blank?
     if user.is_a?(LdapUser)
       current_ldap_user = user
     elsif user.is_a?(LocalUser)
@@ -145,8 +165,8 @@ class ApplicationController < ActionController::Base
 
   ## TODO secret must be an environmental variable
   def create_token(token_data)
-    hmac_secret = "secret" # must be an environment variable
-    exp = Time.now.to_i + 4 * 3600
+    hmac_secret = Rails.application.secrets.secret_key_base
+    exp = Time.now.to_i + 120*60 # 120 Minutes
     exp_payload = { :token => token_data, :exp => exp }
     JWT.encode(exp_payload, hmac_secret, 'HS256')
     #JWT.encode(token_data, secret)
@@ -154,7 +174,7 @@ class ApplicationController < ActionController::Base
 
   ## TODO secret must be an environmental variable
   def decode_token(token)
-    hmac_secret = "secret" # must be an environment variable
+    hmac_secret = Rails.application.secrets.secret_key_base
     begin
       decoded_token = JWT.decode token, hmac_secret, true, { :algorithm => 'HS256' }
       #decoded_token = JWT.decode token, hmac_secret
@@ -180,12 +200,11 @@ class ApplicationController < ActionController::Base
           app_version: app_version,
           token: token,
           role: user.role,
+          user_id: user.id,
           privileges: user.get_write_mode,
           user_type: user.type,
           env: Rails.env
                     }
-
-      Rails.logger.info "In create_authorization_json auth_json = #{auth_json.inspect}"
       return auth_json
     rescue => e
       Rails.logger.info "In Application Controller, exception handling"
@@ -194,6 +213,63 @@ class ApplicationController < ActionController::Base
     end
   end
 
+
+
+  #############
+  ###This section will take care of catching up all general exceptions thrown by rails 4.x app.
+  ###RAILS 4 Exception Handling
+  ###
+  ## STOP STOP STOP, READ FOLLOWING -------->>>>>>>>>>>>>
+  # Before placing your code, please aware that specific/child exceptions should be followed by general/parent exceptions
+  # THUMB RULE is place Big-Basket first and then Small-Baskets. In Rails Exception class is the BIG BASKET.
+  ############
+
+
+  ### StandardError
+  ### \----------------------------/ Big Basket for Active Record
+  #rescue_from StandardError do |e|
+   # respond_with do |format|
+    #  format.json { render json: { errors: "Standard eroors may be restricting to save your form data" }, status:500 }
+    #end
+  #end
+
+
+  ### ActiveRecord ####
+  ### \----------------------------/ Big Basket for Active Record
+  rescue_from ActiveRecord::ActiveRecordError do |e|
+    respond_with do |format|
+      format.json { render json: { errors: "Currently, Object-relation mapping issues may be restricting to save your form data" }, status:500 }
+    end
+  end
+
+
+  ##ActiveRecord::NoDatabaseError
+  ##\---/ Small Basket
+
+  rescue_from  ActiveRecord::NoDatabaseError do |exception|
+    respond_to do |format|
+      format.json { render json: { errors: "Database does not exist" }, status: 500 }
+    end
+  end
+
+  ##ActiveRecord::ConnectionNotEstablished
+  ##\---/ Small Basket
+  rescue_from    ActiveRecord::ConnectionNotEstablished do |exception|
+    respond_to do |format|
+      format.json { render json: { errors: "Connection to the database could not been established" }, status: 500 }
+    end
+  end
+
+  ##ActiveRecord::StatementInvalid
+  ##\---/ Small Basket
+  rescue_from   ActiveRecord::StatementInvalid do |exception|
+    respond_to do |format|
+      format.json { render json: { errors: "The form data is not in a valid state to be saved" }, status: 422 }
+    end
+  end
+
+  ##ActiveRecord::StaleObjectError
+  ##\---/ Small Basket
   rescue_from ActiveRecord::StaleObjectError do |exception|
     respond_to do |format|
       format.html {
@@ -204,12 +280,26 @@ class ApplicationController < ActionController::Base
     end
   end
 
+ ###Active Record End ####
+
+  ### ActionView
+  ### \----------------------------/ Big Basket for ActionView
+  rescue_from  ActionView::ActionViewError do |e|
+    respond_to do |format|
+      format.json { render json: { errors: "The form data is not in a valid state to be saved" }, status: 500 }
+    end
+  end
+
+
+
+
+
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.for(:sign_up) { |u| u.permit(:username, :email, :password, :password_confirmation, :role) }
-    devise_parameter_sanitizer.for(:sign_in) { |u| u.permit(:username, :email, :password) }
-    devise_parameter_sanitizer.for(:account_update) { |u| u.permit(:username, :email, :password, :password_confirmation, :current_password, :role) }
+#    devise_parameter_sanitizer.for(:sign_up) { |u| u.permit(:domain, :organization_name, :organization_id, :username, :email, :first_name, :last_name, :password, :password_confirmation, selected_functions: []) }
+#    devise_parameter_sanitizer.for(:sign_in) { |u| u.permit(:username, :email, :password) }
+#    devise_parameter_sanitizer.for(:account_update) { |u| u.permit(:username, :email, :password, :password_confirmation, :current_password, :role) }
   end
 
 =begin
@@ -238,6 +328,49 @@ class ApplicationController < ActionController::Base
     user = get_user
     Rails.logger.debug "\nIn Application Controller, current_ctrp_user, user obtained from get_user = #{user.inspect}"
     current_local_user || current_ldap_user || user
+  end
+
+  def current_ctrp_user_role_details user_role
+    role_details = {}
+    all_roles = AppSetting.find_by_code('USER_ROLES') ?
+        (JSON.parse (AppSetting.find_by_code('USER_ROLES')["big_value"].gsub("\n",'').gsub("\\",'').split.join(" "))) : nil
+    if !all_roles.nil?
+      role_details = all_roles.select { |role| role["id"] == user_role }[0]
+    end
+    return role_details
+  end
+
+  def matches_wc results, column, value, wc_search
+    str_len = value.length
+    if value[0] == '*' && value[str_len - 1] != '*'
+      results = results.where("#{column} ilike ?", "%#{value[1..str_len - 1]}")
+    elsif value[0] != '*' && value[str_len - 1] == '*'
+      results = results.where("#{column} ilike ?", "#{value[0..str_len - 2]}%")
+    elsif value[0] == '*' && value[str_len - 1] == '*'
+      results = results.where("#{column} ilike ?", "%#{value[1..str_len - 2]}%")
+    else
+      if !wc_search
+        if !value.match(/\s/).nil?
+          value = value.gsub!(/\s+/, '%')
+        end
+        results = results.where("#{column} ilike ?", "%#{value}%")
+      else
+        results = results.where("#{column} ilike ?", "#{value}")
+      end
+    end
+    return results
+  end
+
+  def global_request_logging
+    http_request_header_keys = request.headers.env.keys.select{|header_name| header_name.match("^HTTP.*")}
+    http_request_headers = request.headers.env.select{|header_name, header_value| http_request_header_keys.index(header_name)}
+    logger.info "Received #{request.method.inspect} to #{request.url.inspect} from #{request.remote_ip.inspect}.  Processing with headers #{http_request_headers.inspect} and params #{params.inspect}"
+    begin
+      yield
+    ensure
+      #logger.info "Responding with #{response.status.inspect} => #{response.body.inspect}"
+      logger.info "Responding with #{response.status.inspect} "
+    end
   end
 
 end

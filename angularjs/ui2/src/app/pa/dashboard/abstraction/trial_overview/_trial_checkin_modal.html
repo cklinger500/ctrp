@@ -1,0 +1,51 @@
+<div id="trial-checkin-modal">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="modal-header">
+                <strong class="modal-title">Check In Trial</strong>
+                <button type="button" class="close" data-dismiss="modal" ng-click="checkinModalView.cancel()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="form form-horizontal" role="form" name="checkin_form" novalidate>
+                    <div class="row" ng-show="!checkinModalView.isTrialStatusValid || !checkinModalView.isAbstractionValid">
+                        <div class="col-xs-12">
+                            <ul>
+                                <li class="text-danger" ng-hide="checkinModalView.isValidatingStatus || checkinModalView.isTrialStatusValid">
+                                    <strong>There are Trial Status Warnings with this trial</strong> (<a ui-sref="main.pa.trialOverview.paTrialStatus" ng-click="checkinModalView.cancel()">View Trial Status History</a>)
+                                </li>
+                                <li class="text-danger" ng-hide="checkinModalView.isAbstractionValid">
+                                    <strong>There are Abstraction Warnings/Errors with this trial</strong> (<a ui-sref="main.pa.trialOverview.abstractValidation" ng-click="checkinModalView.cancel()">View Trial Abstraction Validation Results</a>)
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="form-group top-buffer" ng-class="{'has-feedback required': true, 'has-error': checkin_form.checkin_comment.$dirty && checkin_form.checkin_comment.$viewValue.length === 0}">
+                        <label for="checkin_comment" class="control-label col-xs-12 col-sm-4">Check In Comment:</label>
+                        <div class="col-xs-12 col-sm-8">
+                            <textarea class="form-control" maxlength="4000" name="checkin_comment" id="checkin_comment" rows="5" cols="50" ng-model="checkinModalView.checkinComment" required>
+                            </textarea>
+                            <span ng-show="checkin_form.checkin_comment.$dirty">
+                                {{4000 - checkin_form.checkin_comment.$viewValue.length}} characters left
+                            </span>
+                            <span ng-messages="checkin_form.checkin_comment.$dirty && checkin_form.checkin_comment.$error">
+                                <span class="help-block" ng-message="required">Check In Comment is Required</span>
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row top-buffer"></div>
+            <div class="modal-footer">
+                <div class="row top-buffer no-bottom-margin">
+                    <div class="btn-toolbar col-xs-12">
+                        <button class="btn btn-primary pull-right" id="proceed_checkin_btn" ng-click="checkinModalView.proceedCheckin()" ng-disabled="!checkinModalView.checkinComment.length || checkinModalView.isValidatingStatus">Proceed With Check In</button>
+                        <button class="btn btn-default pull-right" id="abstraction_view_btn" ng-click="checkinModalView.viewAbstractionValidation()" ng-hide="checkinModalView.isAbstractionValid">View Trial Abstraction Validation</button>
+                        <button class="btn btn-danger pull-right" id="checkin_cancel_btn" ng-click="checkinModalView.cancel()">
+                            <i class="glyphicon glyphicon-remove"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

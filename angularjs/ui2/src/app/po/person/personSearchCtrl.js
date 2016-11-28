@@ -16,9 +16,11 @@
         $scope.personSearchResults = {people: [], total: 0, start: 1, rows: 10, sort: 'name', order: 'asc'};
         $scope.selectedPersonsArray = []; // persons selected in the ui-grid, fed by the embedded directive controller scope
         vm.name = "Tony W";
+        vm.selection = null; // receiver
         vm.trySubmit = function() {
             console.log('inside the person search form, trySubmit!');
         };
+        vm.selectedPerson = [];
 
         activate();
 
@@ -36,6 +38,10 @@
                 $scope.personSearchResults = newVal;
                // console.log("received personSearchResults: " + JSON.stringify(newVal));
             }, true);
+
+            $scope.$watch(function() {return vm.selection;}, function(newVal) {
+                console.info('vm.selection is: ', newVal);
+            });
 
 
             $scope.$watch('selectedPersonsArray', function(newVal, oldVal) {

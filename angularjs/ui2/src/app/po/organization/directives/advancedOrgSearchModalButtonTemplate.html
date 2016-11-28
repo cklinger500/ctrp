@@ -1,9 +1,13 @@
-<div class="row">
-    <button type="button" tabindex="21" class="btn btn-primary" restriction-field id="org_search_modal" ng-click="searchOrgs('lg')"><i class="glyphicon glyphicon-search"></i> Search Organizations</button>
-    <button ng-if="useBuiltInTemplate" class="btn btn-danger" ng-click="batchSelect('removeAll')" ng-show="savedSelection.length > 0">
-        <i class="glyphicon glyphicon-remove"></i> Remove All Organizations
-    </button>
-</div>
+
+<button type="button" class="btn btn-primary" restriction-field
+        id="org_search_modal" ng-click="searchOrgs('lg')" ng-disabled="preSearch.disable">
+    <span ng-if="!buttonLabel"><i class="glyphicon glyphicon-search"></i> Search Organizations</span>
+    <span ng-if="buttonLabel"><i class="glyphicon glyphicon-search"></i> {{buttonLabel}}</span>
+</button>
+<button ng-if="useBuiltInTemplate" class="btn btn-danger" ng-click="batchSelect('removeAll')" ng-show="savedSelection.length > 0">
+    <i class="glyphicon glyphicon-remove"></i> Remove All Organizations
+</button>
+
 <div ng-if="useBuiltInTemplate" class="row animated-item top-offset-tiny" ng-show="savedSelection.length > 0">
     <table class="table table-bordered table-striped table-condensed">
         <thead>
@@ -29,8 +33,8 @@
             <td>{{org.state_province}}</td>
             <td>{{org.email}}</td>
             <td>{{org.phone}}</td>
-            <td>
-                <label class="btn btn-default" ng-click="toggleSelection($index)">
+            <td class="text-center td-icon">
+                <label class="btn btn-warning" ng-click="toggleSelection($index)">
                     <i class="glyphicon" ng-class="org._destroy == true ? 'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i>
                 </label>
             </td>

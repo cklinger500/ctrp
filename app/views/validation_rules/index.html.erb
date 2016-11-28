@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Validation Rules</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @validation_rules.each do |validation_rule| %>
+      <tr>
+        <td><%= link_to 'Show', validation_rule %></td>
+        <td><%= link_to 'Edit', edit_validation_rule_path(validation_rule) %></td>
+        <td><%= link_to 'Destroy', validation_rule, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Validation rule', new_validation_rule_path %>

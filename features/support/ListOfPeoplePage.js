@@ -12,7 +12,7 @@ ListOfPeoplePage = function () {
 
     this.personFirstName = element(by.model('searchParams.fname'));
     this.personLastName = element(by.model('searchParams.lname'));
-    this.personOrgAffiliation = element(by.model('searchParams.affiliated_org_name'));
+    this.personOrgAffiliation = element(by.model('page_view.organization_name')); //element(by.model('searchParams.affiliated_org_name'));
     this.personPoId = element(by.model('searchParams.ctrp_id'));
     this.personSourceContext = element(by.model('searchParams.source_context'));
     this.personSourceId = element(by.model('searchParams.source_id'));
@@ -26,6 +26,8 @@ ListOfPeoplePage = function () {
     this.personLastUpdatedEndDate = element(by.model('searchParams.endDate'));
     this.personSearchButton = element(by.css('#submission_btn'));// element(by.css('button[ng-click="searchPeople()"]'));
     this.personClearButton = element(by.css('button[ng-click="resetSearch()"]'));
+    this.trialPersonSearchSrcContext = element(by.binding('sourceContextArr[0].name'));
+    this.trialPersonSearchSrcStatus = element(by.binding('sourceStatusArr[0].name'));
 
     var listPerson = new helper();
 

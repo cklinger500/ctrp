@@ -3,7 +3,6 @@
 # Table name: central_contacts
 #
 #  id                      :integer          not null, primary key
-#  country                 :string(255)
 #  phone                   :string(255)
 #  email                   :string(255)
 #  central_contact_type_id :integer
@@ -14,6 +13,7 @@
 #  uuid                    :string(255)
 #  lock_version            :integer          default(0)
 #  extension               :string(255)
+#  fullname                :string
 #
 # Indexes
 #
@@ -27,13 +27,11 @@
 one:
   central_contact_type_id: 
   person_id: 
-  country: MyString
   phone: MyString
   email: MyString
 
 two:
   central_contact_type_id: 
   person_id: 
-  country: MyString
   phone: MyString
   email: MyString

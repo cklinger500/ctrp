@@ -4,41 +4,54 @@
   <title>CTRP Backoffice</title>
 </head>
 <body>
-<div>
-  <img src="/ctrp/static/images/NIH-red-logo.png"/> <b>National Cancer Institute | Clinical Trials Reporting Program</b>
-</div>
-<div style="margin-left:10px;">
-<h3>CTRP Backoffice</h3>
-<a href="/ctrp/ui#/main/welcome">Back to Angular</a>
 
-<h4>CTRP App Administration</h4>
-<div>
-  <ul>
-    <li><a href="/ctrp/admin">Rails Admin Plugin</a></li>
-    <li><a href="/ctrp/admin/app_setting">App Settings</a></li>
-    <li><a href="/ctrp/backoffice/static_members">Static Members</a></li>
-    <li><a href="/ctrp/users">Rails User Portal</a></li>
 
-  </ul>
-</div>
-<h4>App Debugging</h4>
-<div>
-  <ul>
-    <li><%= link_to 'Download Rails application log', backoffice_download_log_url %></li>
-    <li>Rails environment: <%= Rails.env%></li>
-    <li>Git information:
-      <ul>
-        <li>Branch: <%=CTRP::GIT_BRANCH %></li>
-        <li>Short revision: <%=CTRP::GIT_SHORT_REVISION %></li>
-        <li>Full revision: <a target="_blank" href="https://github.com/cbiit/ctrp/commit/<%=CTRP::GIT_FULL_REVISION %>"><%=CTRP::GIT_FULL_REVISION %></a></li>
-      </ul>
-    </li>
-    <li>Rails ENV dump: <br />
-      <%= debug ENV.to_h.to_yaml %></li>
-  </ul>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2">
+                <h4>CTRP Backoffice</h4>
+                <ul class="nav nav-stacked">
+                    <li><a href="/ctrp/ui#/main/welcome">Back to Angular</a></li>
+                </ul>
+                <h4>CTRP App Administration</h4>
+                <ul class="nav nav-stacked">
+                    <li><a href="/ctrp/admin">Rails Admin Plugin</a></li>
+                    <li><a href="/ctrp/admin/app_setting">App Settings</a></li>
+                    <li><a href="/ctrp/backoffice/static_members">Static Members</a></li>
+                    <li><a href="/ctrp/users">Rails User Portal</a></li>
+                </ul>
+                <h4>App Debugging</h4>
+                <ul class="nav nav-stacked">
+                    <li><%= link_to 'Download Rails application log', backoffice_download_log_url %></li>
+                </ul>
+            </div>
+            <div class="col-sm-9 col-md-10">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="panel-title">Rails Environment</div>
+                    </div>
+                    <div class="panel-body">
+                        <ul>
+                            <li class="pad-text gray-text">Rails environment: <%= Rails.env%></li>
+                            <li class="pad-text gray-text">Git information:
+                                <ul>
+                                    <li class="pad-text gray-text">Branch: <%=CTRP::GIT_BRANCH %></li>
+                                    <li class="pad-text gray-text">Short revision: <%=CTRP::GIT_SHORT_REVISION %></li>
+                                    <li class="pad-text gray-text">Full revision:
+                                        <ul>
+                                            <li><a target="_blank" href="https://github.com/cbiit/ctrp/commit/<%=CTRP::GIT_FULL_REVISION %>"><%=CTRP::GIT_FULL_REVISION %></a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
 
-</div>
-</div>
-
+                        Rails ENV dump:<br />
+                            <%= debug ENV.to_h.to_yaml %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

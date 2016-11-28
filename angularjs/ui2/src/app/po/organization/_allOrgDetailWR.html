@@ -1,0 +1,202 @@
+
+<!--CTRP content -->
+<div class="form-group" ng-if="!orgDetailView.ctrpOrg.new">
+    <label class="control-label col-sm-3">Context ID:</label>
+    <div class="col-sm-6 form-text">
+        {{orgDetailView.ctrpOrg.id}}
+    </div>
+</div>
+<div ng-if="!orgDetailView.ctrpOrg.new" class="form-group">
+    <label class="control-label col-sm-3">Group ID:</label>
+    <div class="col-sm-6 form-text">{{orgDetailView.ctrpOrg.ctrp_id}}</div>
+</div>
+<div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.organization_form.needsAttention(organization_form.name)}">
+    <label for="organization_name" class="control-label col-sm-3">Name:</label>
+    <div class="col-sm-6">
+        <input type="text" restriction-field class="form-control input-sm" placeholder="Name" name="name" id="organization_name" maxlength="160" ng-model="orgDetailView.ctrpOrg.name" auto-focus required ng-blur="orgDetailView.checkUniqueOrganization()">
+        <span class="form-control-feedback" ng-show="orgDetailView.ctrpOrg.name.length"></span>
+        <span class="help-block" ng-show="organization_form.name.$dirty">{{160 - orgDetailView.ctrpOrg.name.length}} left</span>
+        <span class="help-block" ng-show="organization_form.name.$error.required && ctrpbtn.organization_form.needsAttention(organization_form.name)">Name is Required</span>
+        <div class="has-error" ng-show="orgDetailView.showUniqueWarning===true">
+            <span class="help-block">
+                Warning: Organization exists in the database. Please verify and create a new Organization record.
+            </span>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-sm-3">Source Context:</label>
+    <div class="col-sm-6 form-text">
+        CTRP
+    </div>
+</div>
+<div class="form-group" ng-if="orgDetailView.ctrpOrg.source_id">
+    <!--  Make source ID a R/O field -->
+    <label class="control-label col-sm-3">Source ID:</label>
+    <div class="col-sm-6 form-text">
+        {{orgDetailView.ctrpOrg.source_id}}
+    </div>
+</div>
+<div class="form-group">
+    <label for="source_status" class="control-label col-sm-3">Source Status:</label>
+    <div class="col-sm-2" ng-if="orgDetailView.ctrpOrg.source_status_code !== 'NULLIFIED'">
+        <div class="animated-item">
+            <select restriction-field
+                    class="form-control input-sm" id="source_status"
+                    ng-model="orgDetailView.ctrpOrg.source_status_id"
+                    ng-options="status.id as status.name for status in orgDetailView.ctrpSourceStatusArr">
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-6 form-text" ng-if="orgDetailView.ctrpOrg.source_status_code === 'NULLIFIED'">
+        {{orgDetailView.ctrpOrg.source_status_code}}
+    </div>
+</div>
+<div class="form-group">
+    <label for="processing_status" class="control-label col-sm-3">Processing Status:</label>
+    <div class="col-sm-2">
+        <div class="animated-item">
+            <select restriction-field ng-init="orgDetailView.ctrpOrg.processing_status"
+                    class="form-control input-sm" id="processing_status"
+                    ng-model="orgDetailView.ctrpOrg.processing_status"
+                    ng-options="status.name as status.name for status in orgDetailView.processStatusArr">
+            </select>
+        </div>
+    </div>
+</div>
+<div class="form-group" ng-show="!orgDetailView.ctrpOrg.new">
+    <label class="control-label col-sm-3">CTEP ID:</label>
+    <div class="col-sm-6 form-text">{{orgDetailView.ctrpOrg.ctep_id}}</div>
+</div>
+<div class="form-group">
+    <label class="control-label col-sm-3">Name Alias:</label>
+    <div class="col-sm-6 table-responsive">
+        <table class="table table-striped table-condensed" ctrp-hint hint-append-element=".form-group">
+            <tbody>
+            <tr>
+                <td class="col-md-11">
+                    <div>
+                        <input type="text" placeholder="Alias" restriction-field class="form-control input-sm" id="alias" ng-model="orgDetailView.alias"/>
+                    </div>
+                </td>
+                <td class="col-md-1">
+                    <div>
+                        <button type="button" class="btn btn-primary btn-add" ng-disabled="orgDetailView.alias == '' || orgDetailView.disableBtn" restriction-field ng-click="orgDetailView.addNameAlias()">
+                            <i class="glyphicon glyphicon-plus"></i> Add
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered table-striped table-condensed animated-item" ng-show="orgDetailView.addedNameAliases.length > 0">
+            <tbody>
+            <thead>
+            <th>Alias</th>
+            <th class="td-icon" ng-show="orgDetailView.curOrgEditable">Delete</th>
+            </thead>
+            <tr ng-repeat="nameAlias in orgDetailView.addedNameAliases track by $index" ng-class="nameAlias._destroy == true ? 'deleted-text animated-item' : 'animated-item'">
+                <td>{{nameAlias.name}}</td>
+                <td class="text-center td-icon" ng-show="orgDetailView.curOrgEditable">
+                    <label class="btn btn-warning" restriction-field ng-click="orgDetailView.toggleSelection($index, 'other_id')">
+                        <i ng-class="nameAlias._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
+                    </label>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="form-group has-feedback required"  ng-class="{'has-error': ctrpbtn.organization_form.needsAttention(organization_form.address)}">
+    <label class="control-label col-sm-3">Address 1:</label>
+    <div class="col-sm-6">
+        <input type="text" restriction-field placeholder="Address 1" class="form-control input-sm" id="address" ng-model="orgDetailView.ctrpOrg.address" name="address" required>
+        <span class="form-control-feedback" ng-show="orgDetailView.ctrpOrg.address.length"></span>
+        <span class="help-block" ng-show="organization_form.address.$error.required && ctrpbtn.organization_form.needsAttention(organization_form.address)">Address1 is Required</span>
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-sm-3">Address 2:</label>
+    <div class="col-sm-6">
+        <input type="text" restriction-field placeholder="Address 2" class="form-control input-sm" id="address2" ng-model="orgDetailView.ctrpOrg.address2">
+    </div>
+</div>
+<div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.organization_form.needsAttention(organization_form.country)}">
+    <label class="control-label col-sm-3">Country:</label>
+    <div class="col-sm-6">
+        <select restriction-field class="form-control input-sm" id="country"
+                ng-model="orgDetailView.ctrpOrg.country"
+                ng-change="orgDetailView.watchCountrySelection(orgDetailView.ctrpOrg.country); orgDetailView.ctrpOrg.state_province = ''" name="country" required>
+            <option value="" ng-selected="orgDetailView.ctrpOrg.country == ''">Select a country</option>
+            <option ng-repeat="country in orgDetailView.countriesArr track by $index" value="{{country.name}}" ng-selected="orgDetailView.ctrpOrg.country == country.name">{{country.name}}</option>
+        </select>
+        <span class="form-control-feedback select-feedback" ng-show="orgDetailView.ctrpOrg.country.length"></span>
+        <span class="help-block" ng-show="organization_form.country.$invalid">Country is Required</span>
+    </div>
+</div>
+<div class="form-group" ng-hide="orgDetailView.states.length == 0">
+    <label class="control-label col-sm-3">State:</label>
+    <div class="col-sm-6">
+        <select restriction-field class="form-control input-sm" id="state" ng-model="orgDetailView.ctrpOrg.state_province">
+            <option value="" ng-selected="orgDetailView.ctrpOrg.state_province == ''">Select a state or province</option>
+            <option ng-repeat="state in orgDetailView.states track by $index" value="{{state.name}}" ng-selected="state.name==orgDetailView.ctrpOrg.state_province">{{state.name}}</option>
+        </select>
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-sm-6 has-feedback required no-padding" ng-class="{'has-error': organization_form.city.$error && ctrpbtn.organization_form.needsAttention(organization_form.city)}">
+        <label class="control-label col-sm-6">City:</label>
+        <div class="col-sm-6">
+            <input type="text" restriction-field class="form-control input-sm" placeholder="City" id="city" ng-model="orgDetailView.ctrpOrg.city" required name="city">
+            <span class="form-control-feedback" ng-show="orgDetailView.ctrpOrg.city.length"></span>
+            <span class="help-block" ng-show="organization_form.city.$error.required && ctrpbtn.organization_form.needsAttention(organization_form.city)">City is Required</span>
+        </div>
+    </div>
+    <div class="col-sm-6 has-feedback no-padding" ng-class="{'has-error': organization_form.postal_code.$error && ctrpbtn.organization_form.needsAttention(organization_form.postal_code), 'required': orgDetailView.ctrpOrg.country === 'United States'}">
+        <label class="control-label col-sm-3">Postal Code:</label>
+        <div class="col-sm-3">
+            <input type="text" restriction-field class="form-control input-sm" id="postal_code" ng-model="orgDetailView.ctrpOrg.postal_code" placeholder="Postal Code" name="postal_code" ng-required="orgDetailView.ctrpOrg.country==='United States'">
+            <span class="form-control-feedback" ng-show="orgDetailView.ctrpOrg.postal_code.length"></span>
+            <span class="help-block" ng-show="organization_form.postal_code.$error && ctrpbtn.organization_form.needsAttention(organization_form.postal_code)">
+                Postal Code is Required
+            </span>
+        </div>
+    </div>
+</div>
+<div class="form-group has-feedback" ng-class="{'has-error': organization_form.email.$error && ctrpbtn.organization_form.needsAttention(organization_form.email)}">
+    <label class="control-label col-sm-3">Email:</label>
+    <div class="col-sm-6">
+        <input type="email" restriction-field class="form-control input-sm" id="email" maxlength="254"
+               pattern="[a-zA-Z0-9_\.\+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-\.]+"
+               ng-model="orgDetailView.ctrpOrg.email" placeholder="Email" name="email">
+        <span class="form-control-feedback" ng-show="organization_form.email.$viewValue.length" ng-class="!(organization_form.email.$error && ctrpbtn.organization_form.needsAttention(organization_form.email)) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+        <span class="help-block" ng-show="organization_form.email.$dirty">{{30 - organization_form.email.$viewValue.length}} left</span>
+        <div class="has-error"
+             ng-if="!organization_form.email.$viewValue.length && organization_form.email.$error && ctrpbtn.organization_form.needsAttention(organization_form.email)">
+            <span class="help-block">Email is Required</span>
+        </div>
+        <div class="has-error" ng-if="organization_form.email.$viewValue.length && (organization_form.email.$error && ctrpbtn.organization_form.needsAttention(organization_form.email))">
+            <span class="help-block">Valid Email is Required</span>
+        </div>
+    </div>
+</div>
+<div class="form-group has-feedback" ng-class="{'has-error': organization_form.phone.$error && ctrpbtn.organization_form.needsAttention(organization_form.phone)}">
+    <label for="phone" class="control-label col-sm-3">Phone Number:</label>
+    <div class="col-sm-3">
+        <input type="text" restriction-field class="form-control input-sm" id="phone" name="phone" maxlength="30" ng-model="orgDetailView.ctrpOrg.phone" placeholder="Phone" ng-blur="orgDetailView.isValidPhoneNumber()" mask-phone-number mask-country="{{orgDetailView.ctrpOrg.country}}">
+        <span ng-show="orgDetailView.ctrpOrg.phone.length" class="form-control-feedback" ng-class="(orgDetailView.ctrpOrg.phone.length > 0 && orgDetailView.showPhoneWarning && !orgDetailView.IsPhoneValid) ? 'glyphicon glyphicon-exclamation-sign glyphicon-red' : 'glyphicon glyphicon-ok glyphicon-green'"></span>
+        <div class="has-error" ng-if="organization_form.phone.$error && ctrpbtn.organization_form.needsAttention(organization_form.phone)">
+            <span class="help-block">Phone is Required</span>
+        </div>
+        <span class="help-block" ng-show="organization_form.phone.$dirty">{{30 - orgDetailView.ctrpOrg.phone.length}} left</span>
+        <div class="has-error" ng-show="orgDetailView.ctrpOrg.phone.length && orgDetailView.showPhoneWarning && !orgDetailView.IsPhoneValid">
+            <span class="help-block">
+                Warning: Phone number invalid for the selected Country.
+             </span>
+        </div>
+    </div>
+    <div class="col-sm-1">
+        <input type="text" restriction-field class="form-control input-sm" id="extension" name="extension" maxlength="30" ng-model="orgDetailView.ctrpOrg.extension" placeholder="Ext." ng-disabled="!orgDetailView.ctrpOrg.phone.length">
+        <span class="help-block" ng-show="organization_form.extension.$dirty">{{30 - orgDetailView.ctrpOrg.extension.length}} left</span>
+    </div>
+</div>

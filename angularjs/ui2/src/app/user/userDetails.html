@@ -1,125 +1,255 @@
-<div class="row-fluid">
+<div class="row" ng-if="(userDetailView.userDetails && !userDetailView.userDetails.read_access) || userDetailView.pageFailure">
+    You have reached this page by mistake.
+</div>
+<div class="row-fluid user-detail" ng-if="userDetailView.userDetails && userDetailView.userDetails.read_access">
     <div class="col-xs-12 drop-shadow">
         <div class="row">
-            <p>
-                <h4>Edit User Profile</h4>
-            </p>
-        </div>
-        <div class="row">
-            <form class="form-horizontal" role="form" name="userDetail_form" novalidate>
-                <div class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">User Name:</label>
-                    <div class="col-xs-12 col-sm-6">
-                        <input type="text" class="form-control input-sm" ng-model="userDetailView.userDetails.username" placeholder="Username" ng-disabled="true">
-                    </div>
-                </div>
+            <h4>Edit User Profile</h4>
+            <div class="row">
+                <div class="col-sm-9"> 
+                    <a ng-if="!userDetailView.isCurrentUser && !(userDetailView.userRole === 'ROLE_TRIAL-SUBMITTER' || userDetailView.userRole === 'ROLE_SITE-SU')" ui-sref="main.regUserDetail({username : userDetailView.userDetails.username })">View trials owned by this user</a> 
+                    <a ng-if="userDetailView.isCurrentUser && !(userDetailView.userRole === 'ROLE_TRIAL-SUBMITTER' || userDetailView.userRole === 'ROLE_SITE-SU')" ui-sref="main.regUserDetail({username : userDetailView.userDetails.username })">View my trials</a>  
 
-                <div class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">Email:</label>
-                    <div class="col-xs-12 col-sm-6">
-                        <input type="text" class="form-control input-sm" ng-model="userDetailView.userDetails.email" placeholder="email">
-                    </div>
-                </div>
+                    <a ng-if="!userDetailView.isCurrentUser && userDetailView.userRole === 'ROLE_SITE-SU'" ui-sref="main.manageUserDetail({username : userDetailView.userDetails.username })">View trials owned by this user</a>
+                    <a ng-if="userDetailView.isCurrentUser && userDetailView.userRole === 'ROLE_SITE-SU'" ui-sref="main.manageUserDetail({username : userDetailView.userDetails.username })">View my trials</a>
 
-                <div class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">Role:</label>
-                    <div class="col-xs-12 col-sm-6">
-                        <input type="text" class="form-control input-sm" ng-model="userDetailView.userDetails.role" placeholder="email" ng-disabled="true">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">First Name</label>
-                    <div class="col-xs-12 col-sm-6">
-                        <input type="text" class="form-control input-sm" ng-model="userDetailView.userDetails.first_name" placeholder="first_name">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">Last Name</label>
-                    <div class="col-xs-12 col-sm-6">
-                        <input type="text" class="form-control input-sm" ng-model="userDetailView.userDetails.last_name" placeholder="last_name">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">Middle Name</label>
-                    <div class="col-xs-12 col-sm-6">
-                        <input type="text" class="form-control input-sm" ng-model="userDetailView.userDetails.middle_name" placeholder="middle_name">
-                    </div>
-                </div>
-
-
-                <div class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">Street Address</label>
-                    <div class="col-xs-12 col-sm-6">
-                        <input type="text" class="form-control input-sm" ng-model="userDetailView.userDetails.street_address" placeholder="street_address">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">Zip Code</label>
-                    <div class="col-xs-12 col-sm-6">
-                        <input type="text" class="form-control input-sm" ng-model="userDetailView.userDetails.zipcode" placeholder="zipcode">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">Receive Email Notifications</label>
-                    <div class="col-xs-12 col-sm-6">
-                        <input type="text" class="form-control input-sm" ng-model="userDetailView.userDetails.receive_email_notifications" placeholder="receive_email_notifications">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label col-xs-12 col-sm-3">PRS Organization Name</label>
-                    <div class="col-xs-12 col-sm-6">
-                        <input type="text" class="form-control input-sm" ng-model="userDetailView.userDetails.prs_organizations_name" placeholder="prs_organizations_name">
-                    </div>
-                </div>
-
-                <div class="row">
-                    <label class="control-label col-xs-12 col-sm-3">Add Affiliated Organization:</label>
-                    <div class="col-xs-12 col-sm-9">
-                        <!-- ctrp-org-adv-search-modal-button max-row-selectable="1" use-built-in-template="false" selected-orgs-array="userDetailView.selectedOrgsArray"></ctrp-org-adv-search-modal-button-->
-                        <ctrp-org-adv-search-modal-button max-row-selectable="1" use-built-in-template="true" allow-overwrite="false" selected-orgs-array="userDetailView.selectedOrgsArray"></ctrp-org-adv-search-modal-button>
-                        <div class="row animated-item" ng-show="userDetailView.savedSelection.length > 0">
-                            <input type="text" ng-model="userDetailView.selectedOrgFilter" class="form-control" placeholder="Filter selected organizations"/>
-                            <table class="table table-bordered table-striped table-condensed">
-                                <thead>
-                                    <th width="6%">CTRP ID</th>
-                                    <th width="93%">Organization</th>
-                                    <th width="1%">Remove</th>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="org in userDetailView.savedSelection | filter: {'name': userDetailView.selectedOrgFilter} track by $index" ng-class="org._destroy == true ? 'deleted-text animated-item' : 'animated-item'">
-                                    <td>{{org.id}}</td>
-                                    <td>{{org.name}}</td>
-                                    <td>
-                                        <label class="btn btn-default" ng-click="userDetailView.toggleSelection($index)">
-                                            <i ng-class="org._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
-                                        </label>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group no-bottom-margin">
-                    <div class="col-xs-12 col-sm-3"></div>
-                    <div class="btn-toolbar col-xs-12 col-sm-9">
-                        <button type="submit" class="btn btn-primary pull-right" id="save_btn" ng-click="userDetailView.updateUser()" ng-disabled="userDetail_form.$invalid" ctrp-click-once>
-                            Save
-                        </button>
-                        <button class="btn btn-warning pull-right" ng-click="userDetailView.reset()">
-                            <i class="glyphicon glyphicon-remove"></i> Reset
-                        </button>
-                    </div>
-                </div>
-            </form>
+                    <a ng-if="userDetailView.isCurrentUser && (userDetailView.userRole === 'ROLE_TRIAL-SUBMITTER')" ui-sref="main.submitterDetail({username : userDetailView.userDetails.username })">View my trials</a> </div>
+            </div>
         </div>
         <div class="row top-offset-xs"></div>
+        <div class="row">
+            <form class="form form-horizontal" role="form" name="userDetailView.userDetail_form" novalidate ctrp-submit="userDetailView.validateSave()" ctrp-submit-delete unsaved-changes unsaved-form-in-child-scope="true">
+                <fieldset restriction-field>
+                    <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn['userDetailView.userDetail_form'].needsAttention(userDetailView.userDetail_form.username) || userDetailView.newUserNameInvalid}">
+                        <label class="control-label col-sm-3">Username:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control input-sm" name="username"
+                                   required ng-model="userDetailView.userDetails.username" placeholder="Username"
+                                   ng-blur="userDetailView.validateUserName()"
+                                   ng-disabled="userDetailView.userRole !== 'ROLE_ADMIN' && userDetailView.userRole !== 'ROLE_ACCOUNT-APPROVER'">
+                            <span class="form-control-feedback" ng-show="userDetailView.userDetails.username.length"></span>
+                            <span class="help-block" ng-show="userDetailView.userDetail_form.username.$error.required">Username is Required</span>
+                            <div class="has-error" ng-if="userDetailView.newUserNameInvalid">
+                                <span class="help-block">
+                                    This username already exists on CTRP.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn['userDetailView.userDetail_form'].needsAttention(userDetailView.userDetail_form.userstatus)}">
+                        <label class="control-label col-sm-3">User Status:</label>
+                        <div class="col-sm-2">
+                            <select name="userstatus" id="userstatus"
+                                class="form-control input-sm"
+                                ng-model="userDetailView.userDetails.user_status_id"
+                                ng-disabled="userDetailView.userRole !== 'ROLE_ADMIN' &&
+                                             userDetailView.userRole !== 'ROLE_SITE-SU' &&
+                                             userDetailView.userRole !== 'ROLE_ACCOUNT-APPROVER' &&
+                                             userDetailView.userRole !== 'ROLE_ABSTRACTOR' &&
+                                             userDetailView.userRole !== 'ROLE_SUPER'"
+                                ng-options="status.id as status.name for status in (userDetailView.statusArrForROLEAPPROVER || userDetailView.statusArrForROLESITESU || userDetailView.statusArr)"
+                                required>
+                                <option value="">Select a status</option>
+                            </select>
+                            <span class="form-control-feedback select-feedback" ng-show="userDetailView.userDetails.user_status.id"></span>
+                            <span class="help-block" ng-show="userDetailView.userDetail_form.userstatus.$error.required">Status is Required</span>
+                            <div class="has-error" ng-if="userDetailView.inactivatingUser = (userDetailView.statusArr | findObjByAttribute:'id':userDetailView.userDetails.user_status_id)[0].code === 'INA' && (userDetailView.statusArr | findObjByAttribute:'id':userDetailView.userDetailsOrig.user_status_id)[0].code !== 'INA'">
+                                <span class="help-block">
+                                    The User will no longer be able to access CTRP.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn['userDetailView.userDetail_form'].needsAttention(userDetailView.userDetail_form.role)}">
+                        <label class="control-label col-sm-3">Role:</label>
+                        <div class="col-sm-2">
+                            <select class="form-control input-sm" id="role"
+                                    ng-model="userDetailView.userDetails.role" name="role"
+                                    ng-options="user_role.id as user_role.name for user_role in userDetailView.rolesArr"
+                                    ng-disabled="userDetailView.disableRows"
+                                    required>
+                                <option value="">Select a role</option>
+                            </select>
+                            <span class="form-control-feedback select-feedback" ng-show="userDetailView.userDetails.role.length"></span>
+                            <span class="help-block" ng-show="userDetailView.userDetail_form.role.required">Role is Required</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn['userDetailView.userDetail_form'].needsAttention(userDetailView.userDetail_form.first_name)}">
+                        <label class="control-label col-sm-3">First Name:</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control input-sm" name="first_name" required ng-model="userDetailView.userDetails.first_name" placeholder="First Name">
+                            <span class="form-control-feedback" ng-show="userDetailView.userDetails.first_name.length"></span>
+                            <span class="help-block" ng-show="userDetailView.userDetail_form.first_name.$error.required">First Name is Required</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn['userDetailView.userDetail_form'].needsAttention(userDetailView.userDetail_form.last_name)}">
+                        <label class="control-label col-sm-3">Last Name:</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control input-sm" name="last_name" required ng-model="userDetailView.userDetails.last_name" placeholder="Last Name">
+                            <span class="form-control-feedback" ng-show="userDetailView.userDetails.last_name.length"></span>
+                            <span class="help-block" ng-show="userDetailView.userDetail_form.last_name.$error.required">Last Name is Required</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Middle Name:</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control input-sm" ng-model="userDetailView.userDetails.middle_name" placeholder="Middle Name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-6 has-feedback required no-padding" ng-class="{'has-error': (!userDetailView.userDetail_form.phone.$valid && userDetailView.userDetail_form.$submitted) || ctrpbtn['userDetailView.userDetail_form'].needsAttention(userDetailView.userDetail_form.phone)}">
+                            <label class="control-label col-sm-6">Phone:</label>
+                            <div class="col-sm-6">
+                                <input name="phone" type="text" class="form-control input-sm" required ng-model="userDetailView.userDetails.phone" mask-phone-number placeholder="Phone">
+                                <span class="form-control-feedback" ng-show="userDetailView.userDetail_form.phone.$dirty || userDetailView.userDetails.phone.length" ng-class="userDetailView.userDetails.phone.length ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+                                <span ng-bind="userDetailView.userDetails.phone.$viewValue.length"></span>
+                                <span class="help-block" ng-show="userDetailView.userDetail_form.phone.$error.required">Phone is Required</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 no-padding">
+                            <label class="control-label col-sm-3" for="phone_ext">Extension:</label>
+                            <div class="col-sm-3">
+                                <input name="phone_ext" id="phone_ext" type="text" class="form-control input-sm" ng-model="userDetailView.userDetails.phone_ext" placeholder="Extension">
+                            </div>
+                        </div>
+                     </div>
+
+                    <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn['userDetailView.userDetail_form'].needsAttention(userDetailView.userDetail_form.email)}">
+                        <label class="control-label col-sm-3">Email:</label>
+                        <div class="col-sm-6">
+                            <input name="email" type="text" class="form-control input-sm" required ng-model="userDetailView.userDetails.email" placeholder="email">
+                            <span class="form-control-feedback" ng-show="userDetailView.userDetails.email.length" ng-class="!ctrpbtn['userDetailView.userDetail_form'].needsAttention(userDetailView.userDetail_form.email) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
+                            <span class="help-block" ng-show="userDetailView.userDetail_form.email.$error.required">Email is Required</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">Receive Email Notifications?:</label>
+                        <div class="col-sm-6">
+                            <label class="radio-inline control-label">
+                                <input type="radio" name="receive_email_notifications" ng-value="true" id="email_notification_1" ng-model="userDetailView.userDetails.receive_email_notifications"> Yes
+                            </label>
+                            <label class="radio-inline control-label">
+                                <input type="radio" name="receive_email_notifications" ng-value="false" id="email_notification_2" ng-model="userDetailView.userDetails.receive_email_notifications"> No
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-3">PRS Organization Name:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control input-sm" ng-model="userDetailView.userDetails.prs_organization_name" placeholder="PRS Organization name">
+                        </div>
+                    </div>
+
+                    <div class="form-group has-feedback required" ng-class="{'has-error': !userDetailView.selectedOrgsArray.length && userDetailView.userDetail_form.$submitted}">
+                        <label class="control-label col-sm-3">Affiliated Organization:</label>
+                        <div class="col-sm-3">
+                            <input class="form-control input-sm" type="text" id="lead_org" name="lead_organization" ng-model="userDetailView.selectedOrgsArray[0].name" disabled placeholder="Affiliated Organization" ng-required="true">
+                        </div>
+                        <ctrp-org-adv-search-modal-button
+                                pre-search = '{"source_contextfilter": ["CTRP"]}'
+                                ng-if="(userDetailView.userRole === 'ROLE_SUPER' || userDetailView.userRole === 'ROLE_ADMIN' || userDetailView.userRole === 'ROLE_SITE-SU' || userDetailView.userRole === 'ROLE_ACCOUNT-APPROVER' || userDetailView.userRole === 'ROLE_ABSTRACTOR') || userDetailView.isCurrentUser"
+                                class="col-sm-3"
+                                max-row-selectable="1" use-built-in-template="false" allow-overwrite="true"
+                                selected-orgs-array="userDetailView.selectedOrgsArray">
+                        </ctrp-org-adv-search-modal-button>
+                    </div>
+
+                    <div class="form-group no-bottom-margin">
+                        <div class="col-sm-3"></div>
+                        <div class="btn-toolbar col-sm-6">
+                            <a class="hand-hover pull-left"
+                               ng-if="'yes'==='INACTIVATED FOR NOW' && (userDetailView.userRole !== 'ROLE_SUPER' && userDetailView.userRole !== 'ROLE_ADMIN' && userDetailView.userRole !== 'ROLE_SITE-SU')
+                               && userDetailView.isCurrentUser"
+                               ng-click="userDetailView.userRequestAdmin({username : userDetailView.userDetails.username})">Request for Admin Access</a>
+                            <button type="submit" class="btn btn-primary pull-right" id="save_btn"
+                                    ctrp-confirm
+                                    ng-disabled="userDetailView.newUserNameInvalid || userDetailView.disableBtn"
+                                    ng-attr-confirm-off="{{userDetailView.confirmSave()}}"
+                                    confirm-msg="{{userDetailView.confirmMsg}}">
+                                <i class="glyphicon glyphicon-ok"></i> Save
+                            </button>
+
+                            <button type="button" class="btn btn-warning pull-right" ng-click="userDetailView.reset()">
+                                <i class="glyphicon glyphicon-remove"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+            <div class="row top-offset-xs"></div>
+        </div>
     </div>
 </div>
+<modal visible="userDetailView.showSelectedTrialsModal" title="Transfer Ownership Selected Trials" id="transferTrials">
+    <ctrptransferselect options="userDetailView.userOptions"> </ctrptransferselect>
+</modal>
+
+<modal visible="userDetailView.chooseTransferTrials" title="Change Transfer Ownership?" id="transferInactiveUserTrials">
+    <div id="chooseTransferTrials" class="modal-body">The trial(s) owned by this user will need to be reassigned to a new owner.</div>
+    <div class="row modal-footer">
+        <div class="btn-toolbar col-sm-12">
+            <div class="col-sm-6">
+                <button type="button" class="btn btn-primary pull-right" id="withoutTransOwn"
+                    ng-click="userDetailView.saveWithoutTransfer()"><i class="glyphicon glyphicon-ok"></i>  Save without Transferring ownership
+                </button>
+            </div>
+            <div class="col-sm-6">
+                <button type="button" class="btn btn-primary pull-right"  id="withTransOwn"
+                    ng-click="userDetailView.transferAllUserTrials()"><i class="glyphicon glyphicon-ok"></i>  Transfer ownership
+                </button>
+            </div>
+        </div>
+    </div>
+</modal>
+
+<modal visible="userDetailView.showTransferTrialsModal" title="Transfer Ownership of Trials" id="transferTrials">
+    <ctrptransferselect options="userDetailView.userOptions"> </ctrptransferselect>
+</modal>
+
+<modal visible="userDetailView.showAddTrialsModal" title="{{'Assign Ownership of Trials to ' + userDetailView.userDetails.first_name + ' ' + userDetailView.userDetails.last_name}}" id="transferTrials">
+    <ctrptransferselect options="userDetailView.trialOptions"> </ctrptransferselect>
+</modal>
+
+<modal visible="userDetailView.confirmRemoveTrialOwnershipsPopUp" title="Please confirm" id="confirmRemoveTrials">
+    <div class="modal-body">With this action you have chosen to remove some or all trial(s) from this user.</div>
+    <div class="modal-footer">
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary pull-right" id="cancelRemOwn"
+                    ng-click="userDetailView.cancelRemoveTrialsOwnerships()"><i class="glyphicon glyphicon-remove"></i>
+                    Cancel
+            </button>
+            <button type="button" class="btn btn-danger pull-right"  id="remOwn"
+                    ng-click="userDetailView.removeTrialsOwnerships()"><i class="glyphicon glyphicon-ok"></i>
+                    Remove Ownership
+            </button>
+        </div>
+    </div>
+</modal>
+
+<modal visible="userDetailView.confirmChangeFamilyPopUp" title="Please confirm" id="confirmChangeFamily">
+    <div class="modal-body">
+        If you change your organization, you will lose any existing Site Admin, Report Viewing,
+        Accrual Submission and Trial Ownership privileges and your account will be set to a Pending status requiring
+        reauthorization.
+    </div>
+    <div class="modal-footer">
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary pull-right" id="cancelRemOwnChangeFam"
+                    ng-click="userDetailView.cancelRemoveTrialsOwnerships()"><i class="glyphicon glyphicon-remove"></i>
+                Cancel
+            </button>
+            <button type="button" class="btn btn-danger pull-right"  id="remOwnChangeFam"
+                    ng-click="userDetailView.removeTrialsOwnerships()"><i class="glyphicon glyphicon-ok"></i>
+                OK
+            </button>
+        </div>
+    </div>
+</modal>

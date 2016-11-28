@@ -12,11 +12,11 @@
             <div class="form-group">
                 <label for="person_fname" class="control-label col-xs-12 col-sm-3">First Name:</label>
                 <div class=" col-xs-12 col-sm-3">
-                    <input tabindex="12" type="text" id="person_fname" class="form-control input-sm" placeholder="First Name" ng-model="searchParams.fname" auto-focus/>
+                    <input type="text" id="person_fname" class="form-control input-sm" placeholder="First Name" ng-model="searchParams.fname" auto-focus />
                 </div>
                 <label for="person_lname" class="control-label col-xs-12 col-sm-3">Last Name:</label>
                 <div class="col-xs-12 col-sm-3">
-                    <input tabindex="13" type="text" id="person_lname" class="form-control input-sm" placeholder="Last Name" ng-model="searchParams.lname"/>
+                    <input type="text" id="person_lname" class="form-control input-sm" placeholder="Last Name" ng-model="searchParams.lname"/>
                 </div>
             </div>
             <!-- person name ends -->
@@ -26,22 +26,22 @@
                 <label for="source_context" class="control-label col-xs-12 col-sm-3">Source Context:</label>
                 <div ng-if="sourceContextArr.length > 1">
                     <div class="col-xs-12 col-sm-3">
-                        <select tabindex="15" class="form-control input-sm" id="source_context" ng-model="searchParams.source_context">
+                        <select class="form-control input-sm" id="source_context" ng-model="searchParams.source_context">
                             <option value="" ng-selected="searchParams.source_context==''">All Contexts</option>
-                            <option ng-repeat="context in sourceContextArr" value="{{context.name}}">{{context.name}}</option>
+                            <option ng-repeat="context in sourceContextArr" value="{{context.name}}" ng-selected="context.name == searchParams.source_context" ng-disabled="context.name !== sourceContextOnly && usedInModal">{{context.name}}</option>
                         </select>
                     </div>
                 </div>
                 <div  ng-if="sourceContextArr.length == 1">
                     <div class="col-xs-12 col-sm-3">
-                       {{sourceContextArr[0].name}}
+                       <p class="form-control-static">{{sourceContextArr[0].name}}</p>
                     </div>
                 </div>
                 <!--source context ends-->
                 <!--source id-->
                 <label for="source_id" class="control-label col-xs-12 col-sm-3">Source ID:</label>
                 <div class="col-xs-12 col-sm-3">
-                    <input tabindex="16" type="text" id="source_id" class="form-control input-sm" placeholder="Source ID" ng-model="searchParams.source_id"/>
+                    <input type="text" id="source_id" class="form-control input-sm" placeholder="Source ID" ng-model="searchParams.source_id"/>
                 </div>
                 <!-- source id ends -->
             </div>
@@ -49,7 +49,21 @@
             <div class="form-group">
                 <label for="email" class="control-label col-xs-12 col-sm-3">Email:</label>
                 <div class="col-xs-12 col-sm-9">
-                    <input tabindex="18" type="text" id="email" class="form-control input-sm" placeholder="Email" ng-model="searchParams.email"/>
+                    <input type="text" id="email" class="form-control input-sm" placeholder="Email" ng-model="searchParams.email"/>
+                </div>
+            </div>
+
+            <div class="form-group" restriction-field="ROLE_SUPER, ROLE_CURATOR, ROLE_ADMIN" ignore-rw>
+                <label for="processing_status" class="control-label col-xs-12 col-sm-3">Processing Status:</label>
+                <div class="col-xs-12 col-sm-9">
+                    <select ng-init="searchParams.processing_status"
+                            class="form-control input-sm" id="processing_status"
+                            ng-model="searchParams.processing_status"
+                            ng-options="status.name as status.name for status in processingStatuses">
+                        <option value="">
+                            Please select --
+                        </option>
+                    </select>
                 </div>
             </div>
 
@@ -71,13 +85,13 @@
                 </label>
                 <div class="col-xs-12 col-sm-5">
                     <div class="input-group add-on col-sm-12 date datepicker">
-                        <input tabindex="25" type="text" class="form-control input-sm" id="start_date" name="startDate"
+                        <input type="text" class="form-control input-sm" id="start_date" name="startDate"
                                uib-datepicker-popup="{{dateFormat}}" show-weeks="false"
                                ng-model="searchParams.startDate" is-open="startDateOpened"
-                               datepicker-options="dateOptions" ng-click="openCalendar($event, 'start')"
-                               ng-required="false" close-text="Close" placeholder="Start Date"/>
+                               datepicker-options="dateOptions"
+                               ng-required="false" close-text="Close" placeholder="Start Date"  ng-click="openCalendar($event, 'start')" date-formatter>
                         <span class="input-group-btn">
-                            <button tabindex="26" type="button" class="btn btn-default btn-calendar" ng-click="openCalendar($event, 'start')">
+                            <button type="button" class="btn btn-primary btn-calendar" ng-click="openCalendar($event, 'start')">
                                 <i class="glyphicon glyphicon-calendar"></i>
                             </button>
                         </span>
@@ -88,13 +102,13 @@
                 <!--<label for="person_fname" class="control-label col-sm-2"></label>-->
                 <div class="col-xs-12 col-sm-4">
                     <div class="input-group add-on col-sm-12 date datepicker" ng-class="{'has-error': search_person_form.endDate.dateLaterThan && search_person_form.endDate.$dirty}">
-                        <input tabindex="27" type="text" class="form-control input-sm" id="end_date" name="endDate"
+                        <input type="text" class="form-control input-sm" id="end_date" name="endDate"
                                uib-datepicker-popup="{{dateFormat}}" show-weeks="false"
                                ng-model="searchParams.endDate" is-open="endDateOpened" ng-click="openCalendar($event, 'end')"
                                datepicker-options="dateOptions" date-later-than="{{searchParams.startDate| date: 'short'}}"
-                               ng-required="false" close-text="Close" placeholder="End Date"/>
+                               ng-required="false" close-text="Close" placeholder="End Date" date-formatter>
                         <span class="input-group-btn">
-                            <button tabindex="28" type="button" class="btn btn-default btn-calendar" ng-click="openCalendar($event, 'end')">
+                            <button type="button" class="btn btn-primary btn-calendar" ng-click="openCalendar($event, 'end')">
                                 <i class="glyphicon glyphicon-calendar"></i>
                             </button>
                         </span>
@@ -104,39 +118,41 @@
                     </span>
                 </div>
             </div>
+
+            <div class="form-group">
+                <div class="col-xs-12 col-sm-3"></div>
+                <div class="col-xs-12 col-sm-9">
+                    <div ng-class="searchParams.wc_search == true ? 'checkbox checkbox-info' : 'checkbox checkbox-circle'">
+                        <label for="wc_search">
+                            <input type="checkbox" id="wc_search"  ng-model="searchParams.wc_search"  /> Exact Search
+                        </label>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
         <div class="col-xs-12 col-sm-12 col-md-6">
             <!-- PO ID -->
-            <div class="form-group">
-                <!-- affiliated with organization name -->
-                <label for="affiliation" class="control-label col-sm-12 col-sm-3">Affiliation:</label>
 
-                <div class="col-sm-12 col-sm-9">
-                    <!-- <input type="text" id="affiliation" class="form-control input-sm" placeholder="Organization Name" ng-model="searchParams.affiliated_org_name"/> -->
-                    <input tabindex="14" type="text" id="affiliation" class="form-control input-sm"
-                            autocomplete="off" placeholder="Organization Name" ng-model="searchParams.affiliated_org_name"
-                            uib-typeahead="org for org in typeAheadNameSearch($viewValue)" typeahead-loading="loadingOrganizations"
-                            typeahead-min-length="3" typeahead-wait-ms="50" typeahead-no-results="noResults"/>
-                </div>
-                <!-- end of affiliation -->
-            </div>
+            <div ng-include src="'app/po/organization/_orgSearchTypeAhead.html'"
+                 onload="[page_view =  scope, label = 'Affiliation:', label_class = 'col-sm-12 col-sm-3', div_class= 'col-sm-12 col-sm-9']" ></div>
+
             <!-- PO ID ends -->
 
             <div class="form-group">
                 <!--source status-->
                 <label for="source_status" class="control-label col-xs-12 col-sm-3">Source Status:</label>
-                <div  ng-if="sourceStatusArr.length > 1">
+                <div  ng-if="curSourceStatuses.length > 1">
                     <div class="col-xs-12 col-sm-4">
-                        <select tabindex="17" class="form-control input-sm" id="source_status" ng-model="searchParams.source_status" ng-options="status.name for status in sourceStatusArr">
+                        <select class="form-control input-sm" id="source_status" ng-model="searchParams.source_status" ng-options="status.code as status.name disable when status.name !== 'Active' && usedInModal for status in curSourceStatuses">
                             <option value="">Select a Status</option>
                         </select>
                     </div>
                 </div>
-                <div  ng-if="sourceStatusArr.length == 1">
+                <div  ng-if="curSourceStatuses.length == 1">
                     <div class="col-xs-12 col-sm-4">
-                        {{sourceStatusArr[0].name}}
+                        <p class="form-control-static">{{curSourceStatuses[0].name}}</p>
                     </div>
                 </div>
                 <!-- source status ends -->
@@ -145,7 +161,21 @@
             <div class="form-group">
                 <label for="phone" class="control-label col-xs-12 col-sm-3">Phone:</label>
                 <div class="col-xs-12 col-sm-9">
-                    <input tabindex="19" type="text" id="phone" class="form-control input-sm" placeholder="Phone" ng-model="searchParams.phone"/>
+                    <input type="text" id="phone" class="form-control input-sm" placeholder="Phone" ng-model="searchParams.phone"/>
+                </div>
+            </div>
+
+            <div class="form-group" restriction-field="ROLE_SUPER, ROLE_CURATOR, ROLE_ADMIN" ignore-rw>
+                <label for="service_request" class="control-label col-xs-12 col-sm-3">Service Request:</label>
+                <div class="col-xs-12 col-sm-9">
+                    <select ng-init="searchParams.service_request"
+                            class="form-control input-sm" id="service_request"
+                            ng-model="searchParams.service_request"
+                            ng-options="request.id as request.name for request in serviceRequests">
+                            <option value="">
+                                Please select --
+                            </option>
+                    </select>
                 </div>
             </div>
 
@@ -153,7 +183,7 @@
                 <!-- last updated by -->
                 <label for="updated_by" class="control-label col-xs-12 col-sm-3">Updated by: </label>
                 <div class="col-xs-12 col-sm-9">
-                    <input tabindex="12" type="text" class="form-control input-sm" id="updated_by" ng-model="searchParams.updated_by" placeholder="Username" />
+                    <input type="text" class="form-control input-sm" id="updated_by" ng-model="searchParams.updated_by" placeholder="Username" />
                 </div>
                 <!-- end of last updated by -->
             </div>
@@ -162,25 +192,24 @@
     <!-- first row ends -->
 
     <div class="row">
-        <div class="col-xs-12 col-sm-9">
-            <div ng-class="searchParams.wc_search == true ? 'checkbox checkbox-info' : 'checkbox checkbox-circle'">
-                <label for="wc_search">
-                    <input tabindex="11" type="checkbox" id="wc_search"  ng-model="searchParams.wc_search"  /> Exact Search
-                </label>
-            </div>
-        </div>
         <div class="col-xs-12">
             <div class="btn-toolbar">
-                <button tabindex="30" type="submit" class="btn btn-primary pull-right" id="submission_btn" ng-click="searchPeople('fromStart')">
+                <button type="submit" class="btn btn-primary pull-right" id="submission_btn" ng-click="searchPeople('fromStart')" ng-disabled="searching">
                     <i class="glyphicon glyphicon-search"></i> Search
                 </button>
-                <button tabindex="29" class="btn btn-warning pull-right" id="reset_btn" ng-click="resetSearch()">
+                <button class="btn btn-warning pull-right" id="reset_btn" ng-click="resetSearch()" ng-disabled="searching">
                     <i class="glyphicon glyphicon-remove"></i> Clear
                 </button>
             </div>
         </div>
     </div>
 </form>
+
+<div class="row">
+    <div class="col-xs-12">
+        <span us-spinner="{radius: 10, length: 5}" spinner-on="searching"></span>
+    </div>
+</div>
 
 <!-- list of people -->
 <div class="row" ng-class="{'top-offset-xs': gridOptions.totalItems != null }" ng-if="searchWarningMessage.length === 0">
@@ -209,7 +238,7 @@
         </div>
         <div class="row animated-item" ng-if="gridOptions.data.length > 0">
             <div class="col-xs-12">
-                <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection class="grid"></div>
+                <div ui-grid="gridOptions" ui-grid-exporter ui-grid-pagination ui-grid-selection class="grid"></div>
             </div>
         </div>
     </div>

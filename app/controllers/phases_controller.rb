@@ -1,5 +1,6 @@
 class PhasesController < ApplicationController
   before_action :set_phase, only: [:show, :edit, :update, :destroy]
+  before_filter :wrapper_authenticate_user unless Rails.env.test?
 
   # GET /phases
   # GET /phases.json

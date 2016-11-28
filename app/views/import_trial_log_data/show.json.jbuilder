@@ -1,0 +1,1 @@
+json.partial! "import_trial_log_data/import_trial_log_datum", import_trial_log_datum: @import_trial_log_datum

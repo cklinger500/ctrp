@@ -13,6 +13,7 @@ var addOrganizationPage = require('../support/AddOrganizationPage');
 var mainSelectItemPage = require('../support/CommonSelectList.js');
 var projectFunctionsPage= require('../support/projectMethods');
 var moment = require('moment');
+var abstractionCommonMethods = require('../support/abstractionCommonMethods');
 
 module.exports = function() {
     var login = new loginPage();
@@ -31,6 +32,7 @@ module.exports = function() {
     var stateEdited = 'Bagmati';
     var stateEditedforUS = 'Florida';
     var postalEdited = '20008';
+    var commonFunctions = new abstractionCommonMethods();
 
 
     this.Given(/^I know which organization I want to edit$/, function (callback) {
@@ -258,12 +260,11 @@ module.exports = function() {
 
     this.Given(/^I am in the Edit Organization feature$/, function (callback) {
         browser.get('ui/#/main/sign_in');
-        login.login('ctrpcurator', 'Welcome01');
-        login.accept();
+        commonFunctions.onPrepareLoginTest('ctrpcurator');
         browser.driver.wait(function(){
             console.log('wait here');
             return true;
-        }, 4000).then(function(){
+        }, 40).then(function(){
             menuItem.clickHomeEnterOrganizations();
             login.clickWriteMode('On');
             projectFunctions.createOrganization('shiOrg4Edit','alias','add1','add2','United States','Florida','avenue','24567','s@s.com','222-444-5555','444-6666-555');
@@ -271,7 +272,7 @@ module.exports = function() {
             selectItem.selectSourceStatus('InActive');
             addOrg.setAddAlias('editAl44');
             addOrg.clickSaveAlias();
-            addOrg.setAddAlias('alias29');
+            addOrg.setAddAlias('aliasInAliasbox');
             addOrg.setAddAddress('address1');
             addOrg.setAddAddress2('address2');
             selectItem.selectCountry('Nepal');
@@ -309,6 +310,7 @@ module.exports = function() {
             addOrg.getVerifyAddCountry('United States');
             addOrg.getVerifyAddState('Florida');
             addOrg.getVerifyAddSourceStatusDefault('Active');
+            console.log('Test the alias added in field is clear after Reset');
             addOrg.getVerifyAddOrgAlias('');
         });
         browser.sleep(25).then(callback);

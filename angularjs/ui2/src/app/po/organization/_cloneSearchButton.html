@@ -1,0 +1,22 @@
+<!-- separated to control refresh of directive upon changing values of parameters -->
+
+<ctrp-org-adv-search-modal-button ng-if="orgDetailView.ctrpAssociable > 0"
+      ng-click="orgDetailView.cloningCTEP = true;"
+      pre-search = '{
+                "nosave": true,
+                "source_context": "CTRP",
+                "name": "{{orgDetailView.ctepOrg.name}}",
+                "state_province": "{{orgDetailView.ctepOrg.state_province}}",
+                "country": "{{orgDetailView.ctepOrg.country}}",
+                "preload": {{orgDetailView.nilclose}},
+                "button3Label": "Clone",
+                "hideform": {{orgDetailView.nilclose}},
+                "nilclose": true,
+                "disable": {{orgDetailView.ctepAssociationExists}}
+            }'
+      class="pull-left"
+      max-row-selectable="1" use-built-in-template="false" allow-overwrite="true"
+      button-label = "Clone"
+      filtered-contexts = "CTRP"
+      selected-orgs-array="orgDetailView.selectedOrgsArray">
+</ctrp-org-adv-search-modal-button>

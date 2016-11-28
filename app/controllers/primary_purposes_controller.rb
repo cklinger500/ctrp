@@ -1,5 +1,6 @@
 class PrimaryPurposesController < ApplicationController
   before_action :set_primary_purpose, only: [:show, :edit, :update, :destroy]
+  before_filter :wrapper_authenticate_user unless Rails.env.test?
 
   # GET /primary_purposes
   # GET /primary_purposes.json

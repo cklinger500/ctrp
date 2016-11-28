@@ -5,7 +5,10 @@
 (function() {
     'use strict';
 
-    angular.module('ctrp.module.timeout', ['ngIdle', 'ui.bootstrap'])
+    angular.module('ctrp.module.timeout', [
+        'ngIdle',
+        'ui.bootstrap'
+    ])
         .config(function(IdleProvider, KeepaliveProvider) {
             IdleProvider.idle(1800);  // 5 min of threshold for inactivity
             IdleProvider.timeout(10); //amount of time for user to react

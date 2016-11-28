@@ -13,6 +13,7 @@
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
+*.log
 /tmp
 *.rbc
 .idea/*
@@ -34,10 +35,21 @@ config/initializers/secret_token.rb
 config/secrets.yml
 config/database.yml
 config/ldap.yml
+config/environments/ci.rb
+#config/environments/qa.rb
+config/environments/demo.rb
+config/environments/stage.rb
+config/environments/production.rb
+
+
 ## Environment normalisation:
+dump.rdb
+Gemfile.lock
+
 /.bundle
+
 /vendor/bundle
-/db/add_users.rb
+./db/add_users.rb
 # these should all be checked in to normalise the environment:
 # Gemfile.lock, .ruby-version, .ruby-gemset
 # unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
@@ -55,15 +67,51 @@ config/ldap.yml
 /node_modules
 
 # Ignore cucumber tests dir
-/tests
+/tests/features/output
+
+# Ignore cucumber tests Screenshot dir
+/tests/testScreenShot
+
+# Ignore cucumber tests cred
+/tests/features/testConfig
 
 # Ignore local config document
 /config_ahmed.js
 
 # Robots.txt We want this set to disallow on EC2 server. This file is set to disallow out there.
 robots.txt
+dump.rdb
 
-# Ignore stuff in ui2
-/angularjs/ui2/.tmp
-/angularjs/ui2/src/bower_components
-/angularjs/node_modules
+# Ignore Node and Bower packages
+/bower_components
+angularjs/ui2/node_modules/
+angularjs/ui2/src/bower_components/
+angularjs/ui2/bower_components/
+angularjs/ui2/.tmp
+public/ctrp/ui2/
+bin/annotate
+bin/bundler
+bin/byebug
+bin/dbi
+bin/erubis
+bin/haml
+bin/nokogiri
+bin/oletool
+bin/rackup
+bin/rdoc
+bin/restclient
+bin/ri
+bin/safe_yaml
+bin/sass
+bin/sass-convert
+bin/scss
+bin/sdoc
+bin/sdoc-merge
+bin/sprockets
+bin/test_broken_dbi
+bin/thor
+bin/tilt
+bin/xlsopcodes
+.rbenv-gemsets
+.ruby-version
+dump-rdb

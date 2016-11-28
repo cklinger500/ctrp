@@ -1,0 +1,54 @@
+<div class="row">
+    <div class="col-xs-12 drop-shadow">
+        <div class="row">
+            <h4>Trial Data Verification</h4>
+        </div>
+        <div class="row">
+            <form class="form form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-3">NCI Trial Identifier:</label>
+                    <div class="col-xs-12 col-sm-6 form-text">
+                        {{verifyTrialDataView.curTrial.nci_id}}
+                    </div>
+                </div>
+
+                <div ng-repeat="otherId in verifyTrialDataView.curTrial.other_ids track by $index" ng-if="otherId.protocol_id_origin.code === 'NCT'" class="form-group">
+                    <label class="control-label col-xs-12 col-sm-3">ClinicalTrials.gov Identifier:</label>
+                    <div class="col-xs-12 col-sm-6 form-text">
+                        {{otherId.protocol_id}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-3">Lead Organization Trial Identifier:</label>
+                    <div class="col-xs-12 col-sm-6 form-text">
+                        {{verifyTrialDataView.curTrial.lead_protocol_id}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-3">Official Title:</label>
+                    <div class="col-xs-12 col-sm-6 form-text">
+                        {{verifyTrialDataView.curTrial.official_title}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-3">Current Verification Date:</label>
+                    <div class="col-xs-12 col-sm-6 form-text">
+                        {{verifyTrialDataView.curTrial.verification_date}}
+                    </div>
+                </div>
+
+                <div class="form-group no-bottom-margin">
+                    <div class="btn-toolbar col-sm-9">
+                        <button type="submit" restriction-field class="btn btn-primary pull-right" id="submit_btn" ng-disabled="verifyTrialDataView.disableBtn"
+                                ng-click="verifyTrialDataView.updateTrial()">
+                            <i class="glyphicon glyphicon-ok"></i> Save Verification Record
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

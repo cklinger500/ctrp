@@ -1,29 +1,29 @@
 <ul class="nav navbar-nav">
     <li ng-class="{ active: headerView.navbarIsActive('main.defaultContent') }">
-        <a tabindex="1" ui-sref="main.defaultContent">Home<span class="sr-only">(current)</span></a>
+        <a tabindex="1" ui-sref="main.defaultContent" ui-sref-opts="{reload:true}">Home<span class="sr-only">(current)</span></a>
     </li>
     <!--<li><a ui-sref="main.organizations">Organizations</a></li>-->
     <li class="dropdown" ng-class="{ active: headerView.navbarIsActive('main.organizations, main.addOrganization, main.families, main.addFamily') }">
         <a tabindex="2" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Organizations & Families <span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
-            <li><a ui-sref="main.organizations">Search Organizations</a></li>
-            <li><a ui-sref="main.addOrganization">Add Organization</a></li>
+            <li><a ui-sref="main.organizations" ui-sref-opts="{reload:true}">Search Organizations</a></li>
+            <li><a ui-sref="main.addOrganization" ui-sref-opts="{reload:true}">Add Organization</a></li>
             <li role="separator" class="divider"></li>
-            <li><a ui-sref="main.families">Search Families</a></li>
-            <li><a ui-sref="main.addFamily">Add Family</a></li>
+            <li><a ui-sref="main.families" ui-sref-opts="{reload:true}">Search Families</a></li>
+            <li><a ui-sref="main.addFamily" ui-sref-opts="{reload:true}">Add Family</a></li>
         </ul>
     </li>
     <li class="dropdown" ng-class="{ active: headerView.navbarIsActive('main.people, main.addPerson') }">
         <a tabindex="3" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Persons<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
-            <li><a ui-sref="main.people">Search Persons</a></li>
-            <li><a ui-sref="main.addPerson">Add Person</a></li>
+            <li><a ui-sref="main.people" ui-sref-opts="{reload:true}">Search Persons</a></li>
+            <li><a ui-sref="main.addPerson" ui-sref-opts="{reload:true}">Add Person</a></li>
         </ul>
     </li>
     <li class="dropdown" ng-class="{ active: headerView.navbarIsActive('main.trials, main.addTrial') }">
         <a tabindex="4" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Trials<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
-            <li><a ui-sref="main.trials">Search Trials</a></li>
+            <li><a ui-sref="main.trials" ui-sref-opts="{reload:true}">Search Trials</a></li>
         </ul>
     </li>
 </ul>

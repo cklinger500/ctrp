@@ -1,0 +1,101 @@
+<div class="row md-sidenav-push-in-target">
+    <!-- common fields between CTRP and CTEP -->
+    <div ng-include src="'app/po/person/sub_partials/_common_fields_ids.html'"></div>
+    <!-- common ends -->
+    <div class="form-group">
+        <label for="prefix" class="control-label col-xs-12 col-sm-3">Prefix:</label>
+        <div class="col-xs-12 col-sm-6 form-text">{{personDetailView.curPerson.prefix}}</div>
+    </div>
+    <div class="form-group has-feedback required">
+        <label for="fname" class="control-label col-xs-12 col-sm-3">First Name:</label>
+        <div class="col-xs-12 col-sm-6 form-text">{{personDetailView.curPerson.fname}}</div>
+    </div>
+    <div class="form-group">
+        <label for="mname" class="control-label col-xs-12 col-sm-3">Middle Name:</label>
+        <div class="col-xs-12 col-sm-6 form-text">{{personDetailView.curPerson.mname}}</div>
+    </div>
+    <div class="form-group">
+        <label for="lname" class="control-label col-xs-12 col-sm-3">Last Name:</label>
+        <div class="col-xs-12 col-sm-6 form-text">{{personDetailView.curPerson.lname}}</div>
+    </div>
+    <div class="form-group">
+        <label for="suffix" class="control-label col-xs-12 col-sm-3">Suffix:</label>
+        <div class="col-xs-12 col-sm-6 form-text">{{personDetailView.curPerson.suffix}}</div>
+    </div>
+    <div class="form-group" ng-show="personDetailView.isAllowedToComment"> <!-- restriction-field="ROLE_CURATOR,ROLE_SUPER,ROLE_ADMIN,ROLE_ABSTRACTOR-SU"  -->
+        <label class="control-label col-xs-12 col-sm-3">Service Request:</label>
+        <!-- <div class="col-xs-12 col-sm-3 form-text">{{personDetailView.curPerson.service_request}}</div> -->
+        <div class="col-xs-12 col-sm-3">
+            <div ng-if="!personDetailView.curPerson.new && personDetailView.curPerson.source_context === 'CTEP'">
+                <select name="service_request" id="service_request" class="form-control input-sm"
+                    restriction-field
+                    ng-model="personDetailView.curPerson.service_request_id"
+                    ng-init="personDetailView.curPerson.service_request_id || personDetailView.serviceRequests[0].id"
+                    ng-options="request.id as request.name for request in personDetailView.serviceRequests">
+                    <option value="">
+                        Select a service request
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group" ng-show="personDetailView.isAllowedToComment">
+        <label class="control-label col-xs-12 col-sm-3">Processing Status: </label>
+        <div class="col-xs-12 col-sm-3">
+            <div class="form-text" id="processing_status" ng-if="personDetailView.curPerson.new">{{personDetailView.curPerson.processing_status}}</div>
+            <div ng-if="!personDetailView.curPerson.new && personDetailView.curPerson.source_context === 'CTEP'">
+                <select name="processing_status" id="processing_status" class="form-control input-sm"
+                    restriction-field
+                    ng-model="personDetailView.curPerson.processing_status"
+                    ng-init="personDetailView.curPerson.processing_status || personDetailView.processStatusArr[0]"
+                    ng-options="status.name as status.name for status in personDetailView.processStatusArr">
+                    <option value="">
+                        Select a processing status
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="source_status" class="control-label col-xs-12 col-sm-3">Source Status:</label>
+        <div class="col-xs-12 col-sm-3">
+            <div class="form-text">{{personDetailView.curPerson.source_status}}</div>
+            <!-- <div ng-if="!personDetailView.curPerson.new && personDetailView.curPerson.source_context === 'CTEP'">
+                <select ng-init="personDetailView.curPerson.source_status_id"
+                    restriction-field
+                    class="form-control input-sm" id="source_status"
+                    ng-model="personDetailView.curPerson.source_status_id"
+                    ng-options="status.id as status.name for status in personDetailView.sourceStatusArrSelected">
+                </select>
+            </div> -->
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-3">Person Registration Type: </label>
+        <div class="col-xs-12 col-sm-3 form-text"> {{personDetailView.curPerson.registration_type}} </div>
+    </div>
+    <div class="form-group has-feedback required">
+        <div class="row">
+            <label for="email" class="control-label col-xs-12 col-sm-3">Email:</label>
+            <div class="col-xs-12 col-sm-3 form-text">{{personDetailView.curPerson.email}}</div>
+            <label for="phone" class="control-label col-xs-12 col-sm-1">Phone:</label>
+            <div class="col-xs-12 col-sm-2 form-text" ng-if="!personDetailView.curPersonEditable">
+                <span ng-bind="personDetailView.curPerson.phone | maskPhoneNumber"></span>
+                <span ng-show="personDetailView.curPerson.phone && personDetailView.curPerson.extension" ng-bind="' Ext: ' + personDetailView.curPerson.extension"></span>
+            </div>
+        </div>
+    </div>
+    <!-- common fields between CTRP and CTEP -->
+    <div ng-include src="'app/po/person/sub_partials/_common_fields_updated.html'"></div>
+    <!-- common ends -->
+    <!-- clone ctep person -->
+    <div class="form-group" restriction-field="ROLE_CURATOR,ROLE_SUPER,ROLE_ADMIN">
+        <div class="col-xs-12 col-sm-3"></div>
+        <div class="col-xs-12 col-sm-6 form-text pull-left">
+            <button type="button" class="btn btn-primary" id="clone_button"
+                ng-disabled="(personDetailView.curPerson.source_context === 'CTEP' && personDetailView.curPerson.ctrp_id) || !personDetailView.isWritable || personDetailView.isBtnDisabled"
+                ng-click="personDetailView.cloneCtepPerson(personDetailView.curPerson.id)">Clone</button>
+        </div>
+    </div>
+    <div ng-include src="'app/po/person/sub_partials/_form_buttons.html'"></div>
+</div>

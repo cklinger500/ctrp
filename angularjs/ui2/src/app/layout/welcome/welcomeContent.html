@@ -172,6 +172,9 @@
                     <div ng-if="headerView.userRole == 'abstractor' || headerView.userRole == 'abstractor-su'">
                         <div ng-include src="'app/layout/welcome/abstractorHome.html'"></div>
                     </div>
+                    <div ng-if="headerView.userRole == 'account-approver'">
+                        <div ng-include src="'app/layout/welcome/accountApproverHome.html'"></div>
+                    </div>
                 </div>
             </div>
         </div>

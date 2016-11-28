@@ -15,11 +15,11 @@
         .controller('advancedPersonSearchModalCtrl', advancedPersonSearchModalCtrl)
         .directive('ctrpPersonAdvSearchModalButton', ctrpPersonAdvSearchModalButton);
 
-    advancedPersonSearchModalCtrl.$inject = ['$scope', '$modalInstance', 'maxRowSelectable']; //for modal controller
-    ctrpPersonAdvSearchModalButton.$inject = ['$modal', '$compile', '_', '$timeout', 'Common']; //modal button directive
+    advancedPersonSearchModalCtrl.$inject = ['$scope', '$uibModalInstance', 'maxRowSelectable', 'sourceContextOnly']; //for modal controller
+    ctrpPersonAdvSearchModalButton.$inject = ['$uibModal', '$compile', '_', '$timeout', 'Common']; //modal button directive
 
 
-    function ctrpPersonAdvSearchModalButton($modal, $compile, _, $timeout, Common) {
+    function ctrpPersonAdvSearchModalButton($uibModal, $compile, _, $timeout, Common) {
 
         var directiveObj = {
             restrict: 'E',
@@ -27,7 +27,7 @@
                 maxRowSelectable : '=?', //int, required!
                 useBuiltInTemplate: '=?', //boolean
                 selectedPersonsArray: '=',
-                allowOverwrite: '=' //boolean, overwrite previously selected person or not (default to true)
+                allowOverwrite: '=?' //boolean, overwrite previously selected person or not (default to true)
             },
             templateUrl: 'app/po/person/directives/personAdvSearchModalButtonTemplate.html',
             link: linkerFn,
@@ -45,7 +45,6 @@
 
 
         function personAdvSearchModalButtonController($scope, $timeout) {
-
             $scope.savedSelection = [];
             $scope.showGrid = true;
             $scope.curationMode = false;
@@ -54,11 +53,10 @@
             $scope.allowOverwrite = $scope.allowOverwrite == undefined ? true : $scope.allowOverwrite;
             var modalOpened = false;
 
-            //console.log('maxRow selectable: ' + $scope.maxRowSelectable + ', builtInTemplate: ' + $scope.useBuiltInTemplate);
             $scope.searchPerson = function(size) {
                 if (modalOpened) return; //prevent modal open twice in single click
 
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     animation: true,
                     templateUrl: 'app/po/person/directives/advanced_person_search_form_modal.html',
                     controller: 'advancedPersonSearchModalCtrl as advPersonSearchModalView',
@@ -130,22 +128,22 @@
      * Adv person search modal controller
      *
      * @param $scope
-     * @param $modalInstance
+     * @param $uibModalInstance
      */
-    function advancedPersonSearchModalCtrl($scope, $modalInstance, maxRowSelectable) {
+    function advancedPersonSearchModalCtrl($scope, $uibModalInstance, maxRowSelectable, sourceContextOnly) {
         var vm = this;
         vm.maxRowSelectable = maxRowSelectable; //to be passed to the adv person search form
+        vm.sourceContextOnly = sourceContextOnly; // to be passed to the adv person search form
 
-        // console.log('in Modal, received promise maxRowSelectable: ' + maxRowSelectable + ', also received usedInModal: ' + usedInModal);
         $scope.personSearchResults = {people: [], total: 0, start: 1, rows: 10, sort: 'name', order: 'asc'};
         $scope.selectedPersonsArray = [];  // persons selected in the modal
 
         vm.cancel = function() {
-            $modalInstance.dismiss('canceled');
+            $uibModalInstance.dismiss('canceled');
         }; //cancel
 
         vm.confirmSelection = function() {
-            $modalInstance.close($scope.selectedPersonsArray);
+            $uibModalInstance.close($scope.selectedPersonsArray);
         }; //confirmSelection
 
 

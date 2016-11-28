@@ -1,0 +1,406 @@
+<div class="row" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidProtocol || paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">Trial Design</div>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal" role="form" name="trial_design_form" novalidate ctrp-submit="designView.updateTrialDesign()" unsaved-changes>
+                <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || designView.disableBtn">
+                    <legend class="sub-bordered" id="trial_design_hdr">
+                        Trial Design{{designView.researchCategoryTitle}}
+                    </legend>
+                    <!-- research categories -->
+                    <div class="form-group" ng-class="{'has-feedback required': true, 'has-error': ctrpbtn.trial_design_form.needsAttention(trial_design_form.research_category)}">
+                        <label for="research_category" class="control-label col-xs-12 col-sm-4" id="clinical_research_cat_lbl">Clinical Research Category:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select name="research_category" id="research_category"
+                                class="form-control input-sm"
+                                ng-required="true"
+                                ng-model="designView.trialDetailObj.research_category_id"
+                                ng-options="cat.id as cat.name for cat in designView.researchCategories">
+                                <option value="">- Please select a research category...</option>
+                            </select>
+                            <!-- <label ng-repeat="cat in designView.researchCategories" class="radio-inline">
+                                <input type="radio" name="research_cat" ng-model="designView.trialDetailObj.research_category_id" value="cat.id">{{cat.name}}
+                            </label> -->
+                            <!-- <md-radio-group ng-model="designView.trialDetailObj.research_category_id" layout="row">
+                                <md-radio-button ng-repeat="cat in designView.researchCategories" value="{{cat.id}}" class="md-primary">{{cat.name}}</md-radio-button>
+                            </md-radio-group> -->
+                            <span ng-messages="ctrpbtn.trial_design_form.needsAttention(trial_design_form.research_category) && trial_design_form.research_category.$error">
+                                <span class="help-block" ng-message="required">Clinical Research Category is Required</span>
+                           </span>
+                        </div>
+                    </div>
+                    <!-- end of research categories -->
+
+                    <!-- primary purposes -->
+                    <div class="form-group" ng-class="{'has-feedback required': designView.isInfoSourceImport || designView.isInfoSourceProtocol, 'has-error': ctrpbtn.trial_design_form.needsAttention(trial_design_form.primary_purpose)}">
+                        <label for="primary_purpose" class="control-label col-xs-12 col-sm-4" id="primary_purpose_lbl">Primary Purpose:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select name="primary_purpose" id="primary_purpose"
+                                class="form-control input-sm"
+                                ng-required="designView.isInfoSourceImport || designView.isInfoSourceProtocol"
+                                ng-model="designView.trialDetailObj.primary_purpose_id"
+                                ng-options="purpose.id as purpose.name for purpose in designView.primaryPurposes"
+                                >
+                                <option value="">- Please select a primary purpose...</option>
+                            </select>
+                            <span ng-messages="ctrpbtn.trial_design_form.needsAttention(trial_design_form.primary_purpose) && trial_design_form.primary_purpose.$error">
+                                <span class="help-block" ng-message="required">Primary Purpose is Required</span>
+                           </span>
+                        </div>
+                    </div>
+                    <!-- end of primary purposes -->
+
+                    <!-- description if primary purpose is Other -->
+                    <div class="form-group" ng-show="designView.isOtherPrimaryPurpose" ng-class="{'has-feedback required': designView.isOtherPrimaryPurpose, 'has-error': ctrpbtn.trial_design_form.needsAttention(trial_design_form.description_other)}">
+                        <label for="description_other" class="control-label col-xs-12 col-sm-4" id="desc_op_lbl">Description of Other Primary Purpose</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <textarea class="form-control"
+                                name="description_other" id="description_other"
+                                maxlength="200" ng-maxlength="200"
+                                ng-required="designView.isOtherPrimaryPurpose"
+                                ng-model="designView.trialDetailObj.primary_purpose_other" rows="3">
+                            </textarea>
+                            <span class="help-block" ng-show="trial_design_form.description_other.$viewValue.length > 0">
+                                {{200 - trial_design_form.description_other.$viewValue.length}} characters left
+                            </span>
+                            <span ng-messages="ctrpbtn.trial_design_form.needsAttention(trial_design_form.description_other) && trial_design_form.description_other.$error">
+                                <span class="help-block" ng-message="required">Primary Purpose Of Other text is Required</span>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- end of description -->
+
+                    <!-- secondary purpose -->
+                    <div class="form-group" ng-show="designView.isInterventional || designView.isExpandedAccess">
+                        <label for="secondary_purpose" class="control-label col-xs-12 col-sm-4" id="sp_lbl">Secondary Purpose:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select name="secondary_purpose" id="secondary_purpose"
+                                class="form-control input-sm"
+                                ng-model="designView.trialDetailObj.secondary_purpose_id"
+                                ng-options="purpose.id as purpose.name for purpose in designView.secondaryPurposes"
+                                >
+                                <option value="">- Please select a secondary purpose...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- end of secondary purpose -->
+
+                    <!-- description if primary purpose is Other -->
+                    <div class="form-group" ng-show="designView.isOtherSecondaryPurpose && (designView.isInterventional || designView.isExpandedAccess)">
+                        <label for="description_other2" class="control-label col-xs-12 col-sm-4" id="desc_other_sp_lbl">Description of Other Secondary Purpose:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <textarea class="form-control"
+                                name="description_other2" id="description_other2"
+                                ng-maxlength="1000" maxlength="1000"
+                                ng-model="designView.trialDetailObj.secondary_purpose_other" rows="3">
+                            </textarea>
+                            <span class="help-block" ng-show="trial_design_form.description_other2.$viewValue.length > 0">
+                                {{1000 - trial_design_form.description_other2.$viewValue.length}} characters left
+                            </span>
+                        </div>
+                    </div>
+                    <!-- end of description -->
+
+                    <!-- trial phase -->
+                    <div class="form-group" ng-class="{'has-feedback required': designView.isInfoSourceImport || designView.isInfoSourceProtocol, 'has-error': ctrpbtn.trial_design_form.needsAttention(trial_design_form.trial_phase)}">
+                        <label for="trial_phase" class="control-label col-xs-12 col-sm-4" id="trial_phase_lbl">Trial Phase:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select name="trial_phase" id="trial_phase"
+                                class="form-control input-sm"
+                                ng-required="designView.isInfoSourceImport || designView.isInfoSourceProtocol"
+                                ng-model="designView.trialDetailObj.phase_id"
+                                ng-options="phase.id as phase.name for phase in designView.trialPhases"
+                                >
+                                <option value="">- Please select a trial phase...</option>
+                            </select>
+                            <span ng-messages="ctrpbtn.trial_design_form.needsAttention(trial_design_form.trial_phase) && trial_design_form.trial_phase.$error">
+                                <span class="help-block" ng-message="required">Trial Phase is Required</span>
+                           </span>
+                        </div>
+                    </div>
+                    <!-- end of trial phase -->
+
+                    <!-- pilot or not -->
+                    <div class="form-group">
+                        <label class="control-label col-xs-12 col-sm-4" id="is_this_pilot_lbl">Is this a pilot?:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <label class="radio-inline">
+                              <input type="radio" name="optradio" id="is_this_pilot_yes" ng-model="designView.trialDetailObj.pilot" value="Yes">Yes
+                            </label>
+                            <label class="radio-inline">
+                              <input type="radio" name="optradio" id="is_this_pilot_no" ng-model="designView.trialDetailObj.pilot" value="No">No
+                            </label>
+                        </div>
+                    </div>
+                    <!-- end of pilot -->
+
+                    <!-- intervention models -->
+                    <div class="form-group" ng-show="designView.isInterventional || designView.isExpandedAccess"
+                        ng-class="{'has-feedback required': designView.isInfoSourceProtocol && (designView.isInterventional || designView.isExpandedAccess), 'has-error': ctrpbtn.trial_design_form.needsAttention(trial_design_form.intervention_model)}">
+                        <label for="intervention_model" class="control-label col-xs-12 col-sm-4" id="intervention_model_lbl">Intervention Model:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select name="intervention_model" id="intervention_model"
+                                class="form-control input-sm"
+                                ng-required="designView.isInfoSourceProtocol && (designView.isInterventional || designView.isExpandedAccess)"
+                                ng-model="designView.trialDetailObj.intervention_model_id"
+                                ng-options="model.id as model.name for model in designView.interventionModels"
+                                >
+                                <option value="">- Please select an intervention model...</option>
+                            </select>
+                            <span ng-messages="ctrpbtn.trial_design_form.needsAttention(trial_design_form.intervention_model) &&
+                                                trial_design_form.intervention_model.$error">
+                                <span class="help-block" ng-message="required">Intervention Model is Required</span>
+                           </span>
+                        </div>
+                    </div>
+                    <!-- end of intervention models -->
+
+                    <!-- maskings -->
+                    <div class="form-group" ng-show="designView.isInterventional || designView.isExpandedAccess"
+                        ng-class="{'has-feedback required': designView.isInfoSourceProtocol && (designView.isInterventional || designView.isExpandedAccess), 'has-error': ctrpbtn.trial_design_form.needsAttention(trial_design_form.masking)}">
+                        <label for="masking" class="control-label col-xs-12 col-sm-4" id="maskings_lbl">Masking:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select name="masking" id="masking"
+                                class="form-control input-sm"
+                                ng-required="designView.isInfoSourceProtocol && (designView.isInterventional || designView.isExpandedAccess)"
+                                ng-model="designView.trialDetailObj.masking_id"
+                                ng-options="mask.id as mask.name for mask in designView.maskings"
+                                >
+                                <option value="">- Please select a masking...</option>
+                            </select>
+                            <span ng-messages="ctrpbtn.trial_design_form.needsAttention(trial_design_form.masking) && trial_design_form.masking.$error">
+                                <span class="help-block" ng-message="required">Masking is Required</span>
+                           </span>
+                        </div>
+                    </div>
+                    <!-- end of maskings -->
+
+                    <!-- masking roles -->
+                    <div class="form-group" ng-show="designView.showMaskingRoles && (designView.isInterventional || designView.isExpandedAccess)">
+                        <label class="control-label col-xs-12 col-sm-4" id="masking_roles_lbl">Masking Role(s):</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <div class="checkbox checkbox-info">
+                                <label>
+                                    <input id="masking_role_subject" type="checkbox" ng-model="designView.trialDetailObj.masking_role_subject" ng-click="toggle(et, markersView.checked_eval_types,'ET')" restriction-field aria-label="Subject" ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable"> Subject
+                                </label>
+                            </div>
+                            <div class="checkbox checkbox-info">
+                                <label>
+                                    <input id="masking_role_investigator" type="checkbox" ng-model="designView.trialDetailObj.masking_role_investigator" ng-click="toggle(et, markersView.checked_eval_types,'ET')" restriction-field aria-label="Investigator" ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable"> Investigator
+                                </label>
+                            </div>
+                            <div class="checkbox checkbox-info">
+                                <label>
+                                    <input id="masking_role_caregiver" type="checkbox" ng-model="designView.trialDetailObj.masking_role_caregiver" ng-click="toggle(et, markersView.checked_eval_types,'ET')" restriction-field aria-label="Caregiver" ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable"> Caregiver
+                                </label>
+                            </div>
+                            <div class="checkbox checkbox-info">
+                                <label>
+                                    <input id="masking_role_outcome_assessor" type="checkbox" ng-model="designView.trialDetailObj.masking_role_outcome_assessor" ng-click="toggle(et, markersView.checked_eval_types,'ET')" restriction-field aria-label="Outcomes Assessor" ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable"> Outcomes Assessor
+                                </label>
+                            </div>
+                            <span class="help-block" ng-hide="designView.trialDetailObj.masking_role_subject || designView.trialDetailObj.masking_role_investigator
+                                || designView.trialDetailObj.masking_role_caregiver || designView.trialDetailObj.masking_role_outcome_assessor">
+                                Even though not mandatory on this screen, failure to select masking role(s) may lead to abstraction <u>validation warnings/errors</u>.
+                            </span>
+                        </div>
+                    </div>
+                    <!-- end of masking roles -->
+
+                    <!-- Study models -->
+                    <div class="form-group" ng-show="designView.isObservational || designView.isAncillary">
+                        <label for="study_model" class="control-label col-xs-12 col-sm-4" id="study_model_lbl">Study Model:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select name="study_model" id="study_model"
+                                class="form-control input-sm"
+                                ng-model="designView.trialDetailObj.study_model_id"
+                                ng-options="model.id as model.name for model in designView.studyModels"
+                                >
+                                <option value="">- Please select a study model...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- end of study models -->
+
+                    <!-- description if study model is Other -->
+                    <div class="form-group" ng-show="(designView.isObservational || designView.isAncillary) && designView.isOtherStudyModel">
+                        <label for="study_model_other" class="control-label col-xs-12 col-sm-4" id="desc_other_study_model_lbl">Description of Other Study Model:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <textarea class="form-control"
+                                name="study_model_other" id="study_model_other"
+                                maxlength="200" ng-maxlength="200"
+                                ng-model="designView.trialDetailObj.study_model_other" rows="3">
+                            </textarea>
+                            <span ng-show="trial_design_form.study_model_other.$viewValue.length > 0">
+                                {{200 - trial_design_form.study_model_other.$viewValue.length}} characters left
+                            </span>
+                        </div>
+                    </div>
+                    <!-- end of description for study model -->
+
+                    <!-- Time Perspectives -->
+                    <div class="form-group" ng-show="designView.isObservational || designView.isAncillary">
+                        <label for="time_perspective" class="control-label col-xs-12 col-sm-4" id="tp_lbl">Time Perspective:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select name="time_perspective" id="time_perspective"
+                                class="form-control input-sm"
+                                ng-model="designView.trialDetailObj.time_perspective_id"
+                                ng-options="perspective.id as perspective.name for perspective in designView.timePerspectives"
+                                >
+                                <option value="">- Please select a time perspective...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- end of Time perspectives -->
+
+                    <!-- description if study model is Other -->
+                    <div class="form-group" ng-show="(designView.isObservational || designView.isAncillary) && designView.isOtherTimePerspective">
+                        <label for="time_perspective_other" class="control-label col-xs-12 col-sm-4" id="desc_other_tp_lbl">Description of Other time perspective:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <textarea class="form-control"
+                                name="time_perspective_other" id="time_perspective_other"
+                                maxlength="200" ng-maxlength="200"
+                                ng-model="designView.trialDetailObj.time_perspective_other" rows="3">
+                            </textarea>
+                            <span ng-show="trial_design_form.time_perspective_other.$viewValue.length > 0">
+                                {{200 - trial_design_form.time_perspective_other.$viewValue.length}} characters left
+                            </span>
+                        </div>
+                    </div>
+                    <!-- end of description for study model -->
+
+                    <!-- allocations -->
+                    <div class="form-group" ng-show="designView.isInterventional || designView.isExpandedAccess"
+                        ng-class="{'has-feedback required': designView.isInfoSourceProtocol && (designView.isInterventional || designView.isExpandedAccess), 'has-error': ctrpbtn.trial_design_form.needsAttention(trial_design_form.allocation)}">
+                        <label for="allocation" class="control-label col-xs-12 col-sm-4" id="allocation_lbl">Allocation:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select name="allocation" id="allocation"
+                                class="form-control input-sm"
+                                ng-required="designView.isInfoSourceProtocol && (designView.isInterventional || designView.isExpandedAccess)"
+                                ng-model="designView.trialDetailObj.allocation_id"
+                                ng-options="allocation.id as allocation.name for allocation in designView.allocations"
+                                >
+                                <option value="">- Please select an allocation...</option>
+                            </select>
+                            <span ng-messages="ctrpbtn.trial_design_form.needsAttention(trial_design_form.allocation) && trial_design_form.allocation.$error">
+                                <span class="help-block" ng-message="required">Allocation is Required</span>
+                           </span>
+                        </div>
+                    </div>
+                    <!-- end of allocations -->
+
+                    <!-- Study classification -->
+                    <div class="form-group" ng-show="designView.isInterventional || designView.isExpandedAccess">
+                        <label for="study_classification" class="control-label col-xs-12 col-sm-4" id="study_classification_labl">Study Classification:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select name="study_classification" id="study_classification"
+                                class="form-control input-sm"
+                                ng-model="designView.trialDetailObj.study_classification_id"
+                                ng-options="class.id as class.name for class in designView.studyClassifications"
+                                >
+                                <option value="">- Please select a study classification...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- end of study classification -->
+
+                    <!-- Biospecimen Retention -->
+                    <div class="form-group" ng-show="designView.isObservational || designView.isAncillary">
+                        <label for="biospecimen_retention" class="control-label col-xs-12 col-sm-4" id="bio_specimen_retention_lbl">Bio-specimen Retention:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select name="biospecimen_retention" id="biospecimen_retention"
+                                class="form-control input-sm"
+                                ng-model="designView.trialDetailObj.biospecimen_retention_id"
+                                ng-options="retention.id as retention.name for retention in designView.biospecimenRetentions"
+                                >
+                                <option value="">- Please select a bio-specimen retention...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- end of Biospecimen Retention -->
+
+                    <!-- description biospecimenRetention -->
+                    <div class="form-group" ng-show="designView.isObservational || designView.isAncillary">
+                    <!-- <div class="form-group" ng-show="(designView.isObservational || designView.isAncillary) && designView.trialDetailObj.biospecimen_retention_id"> -->
+                        <label for="biospecimen_desc" class="control-label col-xs-12 col-sm-4" id="bio_specimen_desc_lbl">Bio-specimen Description:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <textarea class="form-control"
+                                name="biospecimen_desc" id="biospecimen_desc"
+                                maxlength="1000" ng-maxlength="1000"
+                                ng-model="designView.trialDetailObj.biospecimen_desc" rows="3">
+                            </textarea>
+                            <span ng-show="trial_design_form.biospecimen_desc.$viewValue.length > 0">
+                                {{1000 - trial_design_form.biospecimen_desc.$viewValue.length}} characters left
+                            </span>
+                        </div>
+                    </div>
+                    <!-- end of description for biospecimenRetention -->
+
+                    <!-- num of arms -->
+                    <div class="form-group" ng-class="{'has-feedback required': designView.isInfoSourceProtocol && (designView.isInterventional || designView.isExpandedAccess || designView.isObservational), 'has-error': ctrpbtn.trial_design_form.needsAttention(trial_design_form.num_arms)}">
+                        <label for="num_arms" class="control-label col-xs-12 col-sm-4" id="number_arms_groups_lbl">Number of Arms/Groups:</label>
+                        <div class="col-xs-12 col-sm-2">
+                            <input type="number" min="0" name="num_arms" id="num_arms"
+                                class="form-control input-sm def-pad-right"
+                                ng-required="designView.isInfoSourceProtocol && (designView.isInterventional || designView.isExpandedAccess || designView.isObservational)"
+                                ng-model="designView.trialDetailObj.num_of_arms" placeholder="">
+                                <span ng-messages="ctrpbtn.trial_design_form.needsAttention(trial_design_form.num_arms) && trial_design_form.num_arms.$error">
+                                    <span class="help-block" ng-message="required">Number of Arms/Groups is Required</span>
+                               </span>
+                        </div>
+                    </div>
+                    <!-- end of number of arms -->
+
+                    <!-- target enrollment -->
+                    <div class="form-group" ng-class="{'has-feedback required': designView.isInfoSourceProtocol, 'has-error': ctrpbtn.trial_design_form.needsAttention(trial_design_form.target_enrollment)}">
+                        <label for="target_enrollment" class="control-label col-xs-12 col-sm-4" id="target_enrollment_lbl">Target Enrollment:</label>
+                        <div class="col-xs-12 col-sm-2">
+                            <input type="number" min="0" name="target_enrollment" id="target_enrollment"
+                                class="form-control input-sm def-pad-right"
+                                ng-required="designView.isInfoSourceProtocol"
+                                ng-model="designView.trialDetailObj.target_enrollment" placeholder="">
+                                <span ng-messages="ctrpbtn.trial_design_form.needsAttention(trial_design_form.target_enrollment) && trial_design_form.target_enrollment.$error">
+                                    <span class="help-block" ng-message="required">Target Enrollment is Required</span>
+                               </span>
+                        </div>
+                    </div>
+                    <!-- end of target enrollment -->
+
+                    <!-- final enrollment -->
+                    <div class="form-group">
+                        <label for="final_enrollment" class="control-label col-xs-12 col-sm-4" id="final_enrollment_lbl">Final Enrollment for CT.gov:</label>
+                        <div class="col-xs-12 col-sm-2">
+                            <input type="number" min="0" name="final_enrollment" id="final_enrollment" class="form-control input-sm" ng-model="designView.trialDetailObj.final_enrollment" placeholder="">
+                        </div>
+                    </div>
+                    <!-- end of final enrollment -->
+
+                    <!-- Accruals -->
+                    <div class="form-group">
+                        <label class="control-label col-xs-12 col-sm-4" id="accruals_lbl">Accruals:</label>
+                        <div class="col-xs-12 col-sm-2 form-text" id="accruals">
+                            {{designView.trialDetailObj.accruals || 0}} <!-- if null, set it to 0 -->
+                        </div>
+                    </div>
+                    <!-- end of Accruals -->
+                </fieldset>
+                <!-- end of fieldset -->
+                <div class="form-group no-bottom-margin" ng-show="paTrialOverview.trialDetailObj.pa_sci_editable">
+                   <div class="row">
+                      <div class="btn-toolbar col-xs-12 col-sm-12">
+                        <button type="submit" class="btn btn-primary pull-right" id="save_btn" restriction-field ng-disabled="designView.disableBtn">
+                          <i class="glyphicon glyphicon-ok"></i>  Save
+                        </button>
+                        <button type="button" class="btn btn-warning pull-right" id="cancel_btn" ng-click="designView.resetForm()" restriction-field ng-disabled="designView.disableBtn">
+                         <i class="glyphicon glyphicon-remove"></i>  Reset
+                        </button>
+                      </div>
+                      <div id="warning_message"></div>
+                  </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

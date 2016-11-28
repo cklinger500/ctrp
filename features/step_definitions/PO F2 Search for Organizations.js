@@ -14,6 +14,8 @@ var addOrganizationPage = require('../support/AddOrganizationPage');
 var mainSelectItemPage = require('../support/CommonSelectList.js');
 var projectFunctionsPage= require('../support/projectMethods');
 var moment = require ('moment');
+var abstractionCommonMethods = require('../support/abstractionCommonMethods');
+//var Q = require('q');
 
 
 module.exports = function() {
@@ -23,12 +25,14 @@ module.exports = function() {
     var addOrg = new addOrganizationPage();
     var selectItem =new mainSelectItemPage();
     var projectFunctions = new projectFunctionsPage();
+    var commonFunctions = new abstractionCommonMethods();
     var CTEPID = 'ACRN';
 
     this.Given(/^I know the name of the organization I wish to search for$/, function (callback) {
         browser.get('ui/#/main/sign_in');
-        login.login('ctrpcurator', 'Welcome01');
-        login.accept();
+        commonFunctions.onPrepareLoginTest('ctrpcurator');
+      //  login.login('ctrpcurator', 'Welcome01');
+     //   login.accept();
         browser.driver.wait(function() {
             console.log('wait here');
             return true;
@@ -71,7 +75,8 @@ module.exports = function() {
 
     this.Given(/^I am logged in to CTRP$/, function (callback) {
         browser.get('ui/#/main/sign_in');
-        login.login('ctrpadmin', 'Welcome01');
+        commonFunctions.onPrepareLoginTest('ctrpcurator');
+      //  login.login('ctrpadmin', 'Welcome01');
         //login.accept();
         //menuItem.clickHomeEnterOrganizations();
         //login.clickWriteMode('On');
@@ -289,13 +294,15 @@ module.exports = function() {
 
     this.Then(/^the system should display all organizations that contain all of the entered parameters$/, function (callback) {
         orgSearch.then(function(value){
-            expect(projectFunctions.inOrgSearchResults(value)).to.become('true');
+          //  Q.all([
+                expect(projectFunctions.inOrgSearchResults(value)).to.become('true');
             expect(projectFunctions.inOrgSearchResults('Benin')).to.become('true');
             expect(projectFunctions.inOrgSearchResults('Donga')).to.become('true');
             expect(projectFunctions.inOrgSearchResults('searchCity')).to.become('true');
             expect(projectFunctions.inOrgSearchResults('46578')).to.become('true');
             expect(projectFunctions.inOrgSearchResults('searchOrg@email.com')).to.become('true');
             expect(projectFunctions.inOrgSearchResults('222-487-8956')).to.become('true');
+           // ]).should.notify(callback);
         });
         browser.sleep(25).then(callback);
     });
@@ -307,8 +314,9 @@ module.exports = function() {
 
     this.Given(/^I am logged in to CTRP PO application$/, function (callback) {
         browser.get('ui/#/main/sign_in');
-        login.login('ctrpcurator', 'Welcome01');
-        login.accept();
+        commonFunctions.onPrepareLoginTest('ctrpcurator');
+     //   login.login('ctrpcurator', 'Welcome01');
+    //    login.accept();
         menuItem.clickHomeEnterOrganizations();
         login.clickWriteMode('On');
         browser.sleep(25).then(callback);
@@ -579,8 +587,9 @@ module.exports = function() {
 
     this.Given(/^I want to see the detail information of organization$/, function (callback) {
         browser.get('ui/#/main/sign_in');
-        login.login('ctrpcurator', 'Welcome01');
-        login.accept();
+        commonFunctions.onPrepareLoginTest('ctrpcurator');
+      //  login.login('ctrpcurator', 'Welcome01');
+      //  login.accept();
         browser.driver.wait(function(){
             console.log('wait here');
             return true;
@@ -626,15 +635,33 @@ module.exports = function() {
 
 
     this.Given(/^I want to search for an Organization with wild card$/, function (callback) {
-        projectFunctions.createOrgforSearch();
-        browser.sleep(25).then(callback);
+        callback();
     });
 
     this.Given(/^I am on a Organization search screen$/, function (callback) {
+        callback();
+    });
+
+    this.Given(/^Exact Search is selected$/, function (callback) {
+        projectFunctions.createOrgforSearch();
         menuItem.clickOrganizations();
         menuItem.clickListOrganizations();
+        searchOrg.clickExactSearch('true');
         browser.sleep(25).then(callback);
     });
+
+    this.Given(/^Exact Search is not selected$/, function (callback) {
+        projectFunctions.createOrgforSearch();
+        menuItem.clickOrganizations();
+        menuItem.clickListOrganizations();
+        searchOrg.clickExactSearch('false');
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^Organization Search Results will display all found organizations$/, function (callback) {
+        callback();
+    });
+
 
     this.When(/^I enter "([^"]*)" in a search field$/, function (arg1, callback) {
         orgSearch.then(function(value){
@@ -651,7 +678,9 @@ module.exports = function() {
             }, 4000).then(function() {
                 orgSourceId.then(function(value) {
                     console.log('This is the CTRP ID of added Org' + value);
-                    searchOrg.setSourceId(value + '*');
+                    var splitOrgSrcID = value.slice(0,7);
+                    console.log('value of Split Org Source ID : ' + splitOrgSrcID);
+                    searchOrg.setSourceId(splitOrgSrcID + '*');
                     searchOrg.clickSearchButton();
                     expect(projectFunctions.inOrgSearchResults(value)).to.become('true');
                 });
@@ -733,7 +762,212 @@ module.exports = function() {
         expect(searchOrg.state.$('option:checked').getText()).to.eventually.equal('All States/Provinces');
         expect(searchOrg.alias.isSelected()).to.eventually.equal(true);
         expect(searchOrg.orgUpdatedStartDate.getAttribute('value')).to.eventually.equal('');
-        expect(searchOrg.orgUpdatedEndDate.getAttribute('value')).to.eventually.equal('').then(callback);
+        expect(searchOrg.orgUpdatedEndDate.getAttribute('value')).to.eventually.equal('').and.notify(callback);
+    });
+
+    this.When(/^I have entered the "([^"]*)" organization name$/, function (arg1, callback) {
+            orgSearch.then(function (value) {
+                if(arg1 === 'exact') {
+                    searchOrg.setOrgName(value);
+                }
+                else if(arg1 === 'partial') {
+                    var splitOrgName = value.split(" ",1);
+                    console.log('value of Split Org : ' + splitOrgName.toString());
+                    searchOrg.setOrgName(splitOrgName.toString());
+                }
+                searchOrg.clickSearchButton();
+                console.log('value of Org : ' + value);
+            });
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the exact Organization name will be displayed on the organization search results table$/, function (callback) {
+        orgSearch.then(function(value) {
+            expect(projectFunctions.inOrgSearchResults(value)).to.become('true').and.notify(callback);
+        });
+    });
+
+    this.When(/^I have entered the "([^"]*)" Source ID$/, function (arg1, callback) {
+        searchOrg.clickClearButton();
+            orgSourceId.then(function (value) {
+                console.log('This is the CTRP ID of added Org' + value);
+                if(arg1 === 'exact') {
+                    searchOrg.setSourceId(value);
+                }
+                else if(arg1 === 'partial') {
+                    var splitOrgSrcID = value.slice(0,7);
+                    console.log('value of Split Org Source ID : ' + splitOrgSrcID);
+                    searchOrg.setSourceId(splitOrgSrcID);
+                }
+                searchOrg.clickSearchButton();
+            });
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^The exact Source ID will be displayed on the Organization search results table$/, function (callback) {
+        orgSourceId.then(function(value) {
+            expect(projectFunctions.inOrgSearchResults(value)).to.become('true').and.notify(callback);
+        });
+    });
+
+    this.When(/^I have entered the "([^"]*)" City$/, function (arg1, callback) {
+        searchOrg.clickClearButton();
+        if(arg1 === 'exact') {
+            searchOrg.setCity('searchCity');
+        }
+        else if(arg1 === 'partial') {
+            searchOrg.setCity('searchCi');
+        }
+        searchOrg.clickSearchButton();
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the exact City name will be displayed on the Organization search results table$/, function (callback) {
+        expect(projectFunctions.inOrgSearchResults('searchCity')).to.become('true').and.notify(callback);
+    });
+
+    this.When(/^I have entered the "([^"]*)" username$/, function (arg1, callback) {
+        searchOrg.clickClearButton();
+        if(arg1 === 'exact') {
+            searchOrg.setOrgLastUpdatedName('ctrpcurator');
+        }
+        else if(arg1 === 'partial') {
+            searchOrg.setOrgLastUpdatedName('ctrpcurat');
+        }
+        searchOrg.clickSearchButton();
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^The exact username will be displayed on the Organization search results table$/, function (callback) {
+        expect(projectFunctions.inOrgSearchResults('ctrpcurator')).to.become('true').and.notify(callback);
+    });
+
+    this.When(/^I have entered the "([^"]*)" Family Name$/, function (arg1, callback) {
+        searchOrg.clickClearButton();
+        cukeFamily.then(function(value){
+            if(arg1 === 'exact') {
+                searchOrg.setFamilyName(value);
+            }
+            else if(arg1 === 'partial') {
+                var splitOrgFamID = value.split(" ",1);
+                console.log('value of Split Org Family ID : ' + splitOrgFamID.toString());
+                searchOrg.setFamilyName(splitOrgFamID.toString());
+            }
+            searchOrg.clickSearchButton();
+        });
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the exact Family Name will be displayed on the Organization search results table$/, function (callback) {
+        cukeFamily.then(function(value){
+            expect(projectFunctions.inOrgSearchResults(value)).to.become('true').and.notify(callback);
+        });
+    });
+
+    this.When(/^I have entered the "([^"]*)" Postal Code$/, function (arg1, callback) {
+        searchOrg.clickClearButton();
+        if(arg1 === 'exact') {
+            searchOrg.setPostalCode('46578');
+        }
+        else if(arg1 === 'partial') {
+            searchOrg.setPostalCode('4657');
+        }
+        searchOrg.clickSearchButton();
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the exact Postal Code will be displayed on the Organization search results table$/, function (callback) {
+        expect(projectFunctions.inOrgSearchResults('46578')).to.become('true').and.notify(callback);
+    });
+
+    this.When(/^I have entered the "([^"]*)" phone number$/, function (arg1, callback) {
+        searchOrg.clickClearButton();
+        if(arg1 === 'exact') {
+            searchOrg.setPhone('222-487-8956');
+        }
+        else if(arg1 === 'partial') {
+            searchOrg.setPhone('222-487-89');
+        }
+        searchOrg.clickSearchButton();
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the exact phone number will be displayed on the Organization search results table$/, function (callback) {
+        expect(projectFunctions.inOrgSearchResults('222-487-8956')).to.become('true').and.notify(callback);
+    });
+
+    this.When(/^I have entered the "([^"]*)" email$/, function (arg1, callback) {
+        searchOrg.clickClearButton();
+        if(arg1 === 'exact') {
+            searchOrg.setEmail('searchOrg@email.com');
+        }
+        else if(arg1 === 'partial') {
+            searchOrg.setEmail('searchOrg@email');
+        }
+        searchOrg.clickSearchButton();
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the exact email will be displayed on the Organization search results table$/, function (callback) {
+        expect(projectFunctions.inOrgSearchResults('searchOrg@email.com')).to.become('true').and.notify(callback);
+    });
+
+    this.Given(/^I dont provide the Exact criteria$/, function (callback) {
+        orgSearch.then(function(value){
+            var splitOrgName = value.split(" ",1);
+            console.log('value of Split Org : ' + splitOrgName);
+            searchOrg.setOrgName(splitOrgName.toString());
+            searchOrg.clickSearchButton();
+            console.log('value of Split Org : ' + value);
+            expect(projectFunctions.inOrgSearchResults(value)).to.become('false');
+            searchOrg.clickClearButton();
+            browser.driver.wait(function() {
+                console.log('wait here');
+                return true;
+            }, 40).then(function() {
+                orgSourceId.then(function(value) {
+                    console.log('This is the CTRP ID of added Org' + value);
+                    var splitOrgSrcID = value.slice(0,7);
+                    console.log('value of Split Org Source ID : ' + splitOrgSrcID);
+                    searchOrg.setSourceId(splitOrgSrcID);
+                    searchOrg.clickSearchButton();
+                    expect(projectFunctions.inOrgSearchResults(value)).to.become('false');
+                });
+            });
+        });
+        searchOrg.clickClearButton();
+        searchOrg.setCity('searchCi');
+        searchOrg.clickSearchButton();
+        expect(projectFunctions.inOrgSearchResults('searchCity')).to.become('false');
+        searchOrg.clickClearButton();
+        cukeFamily.then(function(value){
+            var splitFamName = value.split(" ",1);
+            console.log('value of Split Family : ' + splitFamName.toString());
+            searchOrg.setFamilyName(splitFamName.toString());
+            searchOrg.clickSearchButton();
+            expect(projectFunctions.inOrgSearchResults(value)).to.become('false');
+        });
+        searchOrg.clickClearButton();
+        searchOrg.setPostalCode('4657');
+        searchOrg.clickSearchButton();
+        expect(projectFunctions.inOrgSearchResults('46578')).to.become('false');
+        searchOrg.clickClearButton();
+        searchOrg.setPhone('222-487-89');
+        searchOrg.clickSearchButton();
+        expect(projectFunctions.inOrgSearchResults('222-487-8956')).to.become('false');
+        searchOrg.clickClearButton();
+        searchOrg.setEmail('searchOrg@em');
+        searchOrg.clickSearchButton();
+        expect(projectFunctions.inOrgSearchResults('searchOrg@email.com')).to.become('false');
+        searchOrg.clickClearButton();
+        searchOrg.setOrgLastUpdatedName('ctrpcu');
+        searchOrg.clickSearchButton();
+        expect(projectFunctions.inOrgSearchResults('ctrpcurator')).to.become('false');
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the search result should not be displayed$/, function (callback) {
+        callback();
     });
 
 

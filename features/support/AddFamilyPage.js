@@ -25,6 +25,8 @@ AddFamilyPage = function () {
     this.addFamilyDeleteButton = element(by.css('button[ng-hide="familyDetailView.curFamily.new"]'));
     this.familyEditPage = element(by.css('h4[ng-if="!familyDetailView.curFamily.new"]'));
     this.familyMembershipSize = element(by.binding('familyDetailView.curFamily.family_memberships.length'));
+    this.familyOrgRelationship = element(by.model('org.family_relationship_id'));
+    this.familyOrgSourceID = element(by.binding('org.id'));
     var familyEditPageText = 'Edit Family';
     var selectItem =new selectList();
     var menuItem = new menuItemList();

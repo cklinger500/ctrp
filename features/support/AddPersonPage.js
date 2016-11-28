@@ -12,6 +12,7 @@ var addOrgPage = require('../support/AddOrganizationPage');
 var searchOrgPage = require('../support/ListOfOrganizationsPage');
 var listOfPeoplePage = require('../support/ListOfPeoplePage');
 var moment = require('moment');
+var phoneFormat = require('phoneformat.js');
 
 AddPersonPage = function () {
 
@@ -20,21 +21,25 @@ AddPersonPage = function () {
     this.addPersonLastName = element(by.model('personDetailView.curPerson.lname'));
     this.addPersonSourceId = element(by.binding('personDetailView.curPerson.source_id'));
     this.addPersonSourceStatus = element(by.model('personDetailView.curPerson.source_status_id'));
+    this.addPersonSourceContext = element(by.model('personDetailView.curPerson.source_context_id'));
     this.addPersonPrefix = element(by.model('personDetailView.curPerson.prefix'));
     this.addPersonSuffix = element(by.model('personDetailView.curPerson.suffix'));
     this.addPersonEmail = element(by.model('personDetailView.curPerson.email'));
     this.addPersonPhone = element(by.model('personDetailView.curPerson.phone'));
+    this.addPersonPhoneExtension = element(by.model('personDetailView.curPerson.extension'));
     this.addPersonAffiliatedOrgName = element(by.binding('org.name'));
     this.addPersonSearchAffiliatedOrg = element(by.model('personDetailView.orgsSearchParams.name'));
     this.addPersonAffiliatedOrg = element(by.css('select[ng-model="personDetailView.selectedOrgs"]'));
     this.addPersonSelectAllAffiliatedOrg = element(by.css('button[title="Select all"]'));
     this.addPersonRemoveAllAffiliatedOrg = element(by.css('button[title="Remove all"]'));
     this.personSaveButton = element(by.id('save_btn'));//element(by.css('button[type="submit"]')); //element(by.css('input[value="Save"]'));
-    this.personResetButton = element(by.css('#reset_btn'));
+    this.personResetButton = element(by.id('clear_btn'));
+    this.personDeleteButton = element(by.id('confirm_btn'));
     this.addPersonHeader = element(by.binding('personDetailView.formTitleLabel'));//element(by.css('h4[ng-if="personDetailView.curPerson.new"]'));
     this.editPersonHeader = element(by.binding('personDetailView.formTitleLabel'));//element(by.css('h4[ng-if="!personDetailView.curPerson.new"]'));
     this.personLastUpdatedBy = element(by.binding('personDetailView.curPerson.updated_by'));
     this.personCreatedBy = element(by.binding('personDetailView.curPerson.created_by'));
+    this.addPersonComment = element.all(by.css('ng-md-icon[icon="comment"]'));
 
 
     var personVerifyAddHeader = 'Add Person';
@@ -79,7 +84,11 @@ AddPersonPage = function () {
     };
 
     this.setAddPersonPhone = function(personPhone){
-        addPerson.setValue(this.addPersonPhone,personPhone,"Add Person by Phone field");
+        addPerson.setValue(this.addPersonPhone,phoneFormat.formatLocal('US', personPhone),"Add Person by Phone field");
+    };
+
+    this.setAddPersonPhoneExtension = function(personPhoneExtension){
+        addPerson.setValue(this.addPersonPhoneExtension,personPhoneExtension,"Add Person by Phone Extension field");
     };
 
     this.setAddPersonSearchAffiliatedOrg = function(personSearchAffiliatedOrg){
@@ -127,12 +136,16 @@ AddPersonPage = function () {
         addPerson.getVerifyListValue(this.addPersonSourceStatus,sourceStatus,"Get Person by Source Status field");
     };
 
+    this.getVerifyAddPerSourceContext= function(sourceContext){
+        addPerson.getVerifyListValue(this.addPersonSourceContext,sourceContext,"Get Person by Source Context field");
+    };
+
     this.getVerifyAddPerPrefix = function(prefix){
-        addPerson.getVerifyValue(this.addPersonPrefix,prefix,"Get Person by Address field");
+        addPerson.getVerifyValue(this.addPersonPrefix,prefix,"Get Person by Prefix field");
     };
 
     this.getVerifyAddPerSuffix = function(suffix){
-        addPerson.getVerifyValue(this.addPersonSuffix,suffix,"Get Person by Address2 field");
+        addPerson.getVerifyValue(this.addPersonSuffix,suffix,"Get Person by Suffix field");
     };
 
     this.getVerifyAddPerEmail = function(email){
@@ -140,7 +153,7 @@ AddPersonPage = function () {
     };
 
     this.getVerifyAddPerPhone = function(phone){
-        addPerson.getVerifyValue(this.addPersonPhone,phone,"Get Person by Phone field");
+        addPerson.getVerifyValue(this.addPersonPhone,phoneFormat.formatLocal('US', phone),"Get Person by Phone field");
     };
 
     this.verifyPersonAddHeader = function(){

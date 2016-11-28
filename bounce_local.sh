@@ -15,9 +15,10 @@ rake db:migrate
 #Launch new Mac OS X terminal, navigate to project, start WEBrick and update dependencies
 osascript -e 'tell app "Terminal"
 
-#Do npm -i, bower install and launch WEBrick (need sudo)
-   do script "cd /local/content/ctrp/apps/ctrp/angularjs/ui2 && sudo npm i && bower install &&
-cd /local/content/ctrp/apps/ctrp/ && rails s"
+#Update npm, bower and launch WEBrick
+
+   do script "cd /local/content/ctrp/apps/ctrp/angularjs/ui2 && npm update --save && bower install -p -S && bower prune &&
+   cd /local/content/ctrp/apps/ctrp/ && rails s"
 
 #launch WEBrick only
 #   do script "cd /local/content/ctrp/apps/ctrp/ && rails s" 
@@ -29,7 +30,7 @@ sleep 15
 
 #Instantiate data via REST and ActiveRecord db seeding
 ruby db/add_users.rb
-rake db:seed
+rake db:seed RAILS_ENV=development
 
 
 #Note: as written, this script won't close terminals previously opened by this script

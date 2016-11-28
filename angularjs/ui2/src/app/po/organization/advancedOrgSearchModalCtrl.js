@@ -11,19 +11,19 @@
     angular.module('ctrp.app.po')
         .controller('advancedOrgSearchModalCtrl', advancedOrgSearchModalCtrl);
 
-    advancedOrgSearchModalCtrl.$inject = ['$scope', '$modalInstance', '$q'];
+    advancedOrgSearchModalCtrl.$inject = ['$scope', '$uibModalInstance', '$q'];
 
-    function advancedOrgSearchModalCtrl($scope, $modalInstance, $q) {
+    function advancedOrgSearchModalCtrl($scope, $uibModalInstance, $q) {
         var vm = this;
         $scope.selectedOrgsArray = [];
         $scope.orgSearchResults = {orgs: [], total: 0, start: 1, rows: 10, sort: 'name', order: 'asc'};
 
         vm.cancel = function() {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         }; //cancel
 
         vm.confirmSelection = function() {
-            $modalInstance.close($scope.selectedOrgsArray);
+            $uibModalInstance.close($scope.selectedOrgsArray);
         }; //confirmSelection
 
 

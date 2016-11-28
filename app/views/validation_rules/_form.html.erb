@@ -1,0 +1,17 @@
+<%= form_for(@validation_rule) do |f| %>
+  <% if @validation_rule.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@validation_rule.errors.count, "error") %> prohibited this validation_rule from being saved:</h2>
+
+      <ul>
+      <% @validation_rule.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"  xmlns:po="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+  <po:element name="createOrganization">
+    <po:complexType>
+      <po:sequence>
+        <po:element name="organization">
+          <po:complexType>
+            <po:sequence>
+              <po:element type="po:string" name="context"/>
+              <po:element type="po:string" name="code" minOccurs="0"/>
+              <po:element type="po:string" name="type"/>
+              <po:element type="po:string" name="status"/>
+              <po:element type="po:string" name="name"/>
+              <po:element name="address">
+                <po:complexType>
+                  <po:sequence>
+                    <po:element type="po:string" name="address1"/>
+                    <po:element type="po:string" name="address2" minOccurs="0"/>
+                    <po:element type="po:string" name="address3" minOccurs="0"/>
+                    <po:element type="po:string" name="city"/>
+                    <po:element type="po:string" name="state_province" minOccurs="0"/>
+                    <po:element type="po:float" name="postal_code" minOccurs="0"/>
+                    <po:element type="po:string" name="country"/>
+                  </po:sequence>
+                </po:complexType>
+              </po:element>
+              <po:element name="contacts">
+                <po:complexType>
+                  <po:sequence>
+                    <po:element name="contact" maxOccurs="unbounded" minOccurs="0">
+                      <po:complexType>
+                        <po:simpleContent>
+                          <po:extension base="po:string">
+                            <po:attribute type="po:string" name="type" use="optional"/>
+                          </po:extension>
+                        </po:simpleContent>
+                      </po:complexType>
+                    </po:element>
+                  </po:sequence>
+                </po:complexType>
+              </po:element>
+            </po:sequence>
+          </po:complexType>
+        </po:element>
+      </po:sequence>
+    </po:complexType>
+  </po:element>
+
+  <po:element name="updateOrganization">
+    <po:complexType>
+      <po:sequence>
+        <po:element name="organization">
+          <po:complexType>
+            <po:sequence>
+              <po:element type="po:string" name="context" minOccurs="0"/>
+              <po:element type="po:string" name="code" minOccurs="0"/>
+              <po:element type="po:string" name="type" minOccurs="0"/>
+              <po:element type="po:string" name="status" minOccurs="0"/>
+              <po:element type="po:string" name="name" minOccurs="0"/>
+              <po:element name="address" minOccurs="0">
+                <po:complexType>
+                  <po:sequence>
+                    <po:element type="po:string" name="address1" minOccurs="0"/>
+                    <po:element type="po:string" name="address2" minOccurs="0"/>
+                    <po:element type="po:string" name="address3" minOccurs="0"/>
+                    <po:element type="po:string" name="city" minOccurs="0"/>
+                    <po:element type="po:string" name="state_province" minOccurs="0"/>
+                    <po:element type="po:float" name="postal_code" minOccurs="0"/>
+                    <po:element type="po:string" name="country" minOccurs="0"/>
+                  </po:sequence>
+                </po:complexType>
+              </po:element>
+              <po:element name="contacts" minOccurs="0">
+                <po:complexType>
+                  <po:sequence>
+                    <po:element name="contact" maxOccurs="unbounded" minOccurs="0">
+                      <po:complexType>
+                        <po:simpleContent>
+                          <po:extension base="po:string">
+                            <po:attribute type="po:string" name="type" use="optional"/>
+                          </po:extension>
+                        </po:simpleContent>
+                      </po:complexType>
+                    </po:element>
+                  </po:sequence>
+                </po:complexType>
+              </po:element>
+            </po:sequence>
+          </po:complexType>
+        </po:element>
+      </po:sequence>
+    </po:complexType>
+  </po:element>
+
+  <po:element name="createPerson">
+    <po:complexType>
+      <po:sequence>
+        <po:element name="person">
+          <po:complexType>
+            <po:sequence>
+              <po:element type="po:string" name="context"/>
+              <po:element type="po:string" name="code" minOccurs="0"/>
+              <po:element type="po:string" name="registrationtype" minOccurs="0"/>
+              <po:element type="po:string" name="status"/>
+              <po:element name="name">
+                <po:complexType>
+                <po:sequence>
+                  <po:element type="po:string" name="prefix" minOccurs="0"/>
+                  <po:element type="po:string" name="fname"/>
+                  <po:element type="po:string" name="mname" minOccurs="0"/>
+                  <po:element type="po:string" name="lname"/>
+                  <po:element type="po:string" name="suffix" minOccurs="0"/>
+                </po:sequence>
+                </po:complexType>
+              </po:element>
+              <po:element name="poaffiliation">
+                <po:complexType>
+                  <po:sequence>
+                  <po:element type="po:string" name="orgid" maxOccurs="unbounded" minOccurs="0"/>
+                </po:sequence>
+                </po:complexType>
+              </po:element>
+              <po:element name="contacts">
+                <po:complexType>
+                  <po:sequence>
+                    <po:element name="contact" maxOccurs="unbounded" minOccurs="0">
+                      <po:complexType>
+                        <po:simpleContent>
+                          <po:extension base="po:string">
+                            <po:attribute type="po:string" name="type" use="optional"/>
+                          </po:extension>
+                        </po:simpleContent>
+                      </po:complexType>
+                    </po:element>
+                  </po:sequence>
+                </po:complexType>
+              </po:element>
+            </po:sequence>
+          </po:complexType>
+        </po:element>
+      </po:sequence>
+    </po:complexType>
+  </po:element>
+
+  <po:element name="updatePerson">
+    <po:complexType>
+      <po:sequence>
+        <po:element name="person">
+          <po:complexType>
+            <po:sequence>
+              <po:element type="po:string" name="context" minOccurs="0"/>
+              <po:element type="po:string" name="code" minOccurs="0"/>
+              <po:element type="po:string" name="registrationtype" minOccurs="0"/>
+              <po:element type="po:string" name="status" minOccurs="0"/>
+              <po:element name="name" minOccurs="0">
+                <po:complexType>
+                  <po:sequence>
+                    <po:element type="po:string" name="prefix" minOccurs="0"/>
+                    <po:element type="po:string" name="fname" minOccurs="0"/>
+                    <po:element type="po:string" name="mname" minOccurs="0"/>
+                    <po:element type="po:string" name="lname" minOccurs="0"/>
+                    <po:element type="po:string" name="suffix" minOccurs="0"/>
+                  </po:sequence>
+                </po:complexType>
+              </po:element>
+              <po:element name="poaffiliation" minOccurs="0">
+                <po:complexType>
+                  <po:sequence>
+                    <po:element type="po:string" name="orgid" maxOccurs="unbounded" minOccurs="0"/>
+                  </po:sequence>
+                </po:complexType>
+              </po:element>
+              <po:element name="contacts" minOccurs="0">
+                <po:complexType>
+                  <po:sequence>
+                    <po:element name="contact" maxOccurs="unbounded" minOccurs="0">
+                      <po:complexType>
+                        <po:simpleContent>
+                          <po:extension base="po:string">
+                            <po:attribute type="po:string" name="type" use="optional"/>
+                          </po:extension>
+                        </po:simpleContent>
+                      </po:complexType>
+                    </po:element>
+                  </po:sequence>
+                </po:complexType>
+              </po:element>
+            </po:sequence>
+          </po:complexType>
+        </po:element>
+      </po:sequence>
+    </po:complexType>
+  </po:element>
+
+
+</schema>
+

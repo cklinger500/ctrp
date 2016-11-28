@@ -14,6 +14,7 @@ var loginPage = require('../support/LoginPage');
 var projectFunctionsPage= require('../support/projectMethods');
 var addOrganizationPage = require('../support/AddOrganizationPage');
 var listOfOrganizationPage = require('../support/ListOfOrganizationsPage');
+var abstractionCommonMethods = require('../support/abstractionCommonMethods');
 
 
 module.exports = function() {
@@ -23,16 +24,16 @@ module.exports = function() {
     var addOrg = new addOrganizationPage();
     var projectFunctions = new projectFunctionsPage();
     var aliasToAdd = 'shiAlias';
+    var commonFunctions = new abstractionCommonMethods();
 
 
     this.Given(/^I know the name of the alias I wish to add for an organization$/, function (callback) {
         browser.get('ui/#/main/sign_in');
-        login.login('ctrpcurator', 'Welcome01');
-        login.accept();
+        commonFunctions.onPrepareLoginTest('ctrpcurator');
         browser.driver.wait(function(){
             console.log('wait here');
             return true;
-        }, 4000).then(function(){
+        }, 40).then(function(){
             menuItem.clickHomeEnterOrganizations();
             login.clickWriteMode('On');
             projectFunctions.createOrganization('shiOrg','alias','add1','add2','United States','Florida','avenue','24567','s@s.com','222-4444-555','444-6666-555');

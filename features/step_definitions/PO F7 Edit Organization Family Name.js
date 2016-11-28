@@ -97,7 +97,7 @@ module.exports = function() {
         browser.driver.wait(function(){
             console.log('wait here');
             return true;
-        }, 4000).then(function() {
+        }, 40).then(function() {
             if(familyName === 'Albert Einstein Cancer Center') {
                 console.log('response1 ' + response);
                 expect(projectFunctions.verifyWarningMessage(response)).to.become('true');

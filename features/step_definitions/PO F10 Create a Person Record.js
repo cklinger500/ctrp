@@ -175,7 +175,7 @@ module.exports = function() {
         browser.driver.wait(function(){
             console.log('wait here');
             return true;
-        }, 4000).then(function() {
+        }, 40).then(function() {
             cukePerson.then(function (value) {
                 addPerson.setAddPersonFirstName(value);
            });
@@ -195,7 +195,7 @@ module.exports = function() {
         browser.driver.wait(function(){
             console.log('wait here');
             return true;
-        }, 4000).then(function(){
+        }, 40).then(function(){
             expect(projectFunctions.verifyWarningMessage(arg1)).to.become('true').and.notify(callback);
     });
       //  browser.sleep(25).then(callback);

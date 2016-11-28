@@ -7,28 +7,47 @@
         </div>
         <div class="row">
             <form class="form form-horizontal" role="form">
+                <div class="row" ng-show="trialView.isEmptySearch && trialView.searchWarningMessage.length > 0" ng-cloak>
+                    <div class="alert alert-warning fade in">
+                        <strong>{{trialView.searchWarningMessage}}</strong>
+                    </div>
+                </div><br />
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-6">
                         <div class="form-group">
-                            <label for="protocol_id" class="control-label col-xs-12 col-sm-3">Protocol ID: </label>
-                            <div class="col-xs-12 col-sm-9">
+                            <label for="protocol_id" class="control-label col-xs-12 col-sm-5">Protocol ID: </label>
+                            <div class="col-xs-12 col-sm-7">
                                 <input type="text" id="protocol_id" class="form-control input-sm" placeholder="Protocol ID" ng-model="trialView.searchParams.protocol_id" auto-focus/>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="phase" class="control-label col-xs-12 col-sm-3">Phase: </label>
-                            <div class="col-xs-12 col-sm-9">
-                                <select class="form-control input-sm" id="phase" ng-model="trialView.searchParams.phase">
-                                    <option value="">-Select a Phase-</option>
-                                    <option ng-repeat="phase in trialView.phaseArr" value="{{phase.code}}">{{phase.name}}</option>
-                                </select>
+                            <label for="protocol_origin_type" class="control-label col-xs-12 col-sm-5">Identifier Type: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <!-- <select class="form-control input-sm" id="protocol_origin_type" ng-model="trialView.searchParams.protocol_origin_type">
+                                    <option value="">-Select an Identifier Type-</option>
+                                    <option ng-repeat="protocol_origin_type in trialView.protocolIdOriginArr" value="{{protocol_origin_type.code}}">{{protocol_origin_type.name}}</option>
+                                </select> -->
+                                <ui-select multiple id="protocol_origin_type" ng-model="trialView.searchParams.protocol_origin_type_codes">
+                                    <ui-select-match placeholder="-Select Identifier Types-">{{$item.name}}</ui-select-match>
+                                    <ui-select-choices repeat="id in trialView.protocolIdOriginArr">{{id.name}}</ui-select-choices>
+                                </ui-select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="pilot" class="control-label col-xs-12 col-sm-3">Pilot Trial? </label>
-                            <div class="col-xs-12 col-sm-9">
+                            <label for="phase" class="control-label col-xs-12 col-sm-5">Phase: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <ui-select multiple id="phase" ng-model="trialView.searchParams.phases">
+                                    <ui-select-match placeholder="-Select Phases-">{{$item.name}}</ui-select-match>
+                                    <ui-select-choices repeat="p in trialView.phaseArr">{{p.name}}</ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pilot" class="control-label col-xs-12 col-sm-5">Pilot Trial? </label>
+                            <div class="col-xs-12 col-sm-7">
                                 <select class="form-control input-sm" id="pilot" ng-model="trialView.searchParams.pilot">
                                     <option value="">-Select-</option>
                                     <option value="No">No</option>
@@ -38,93 +57,162 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="pilot" class="control-label col-xs-12 col-sm-3">Organization Type: </label>
-                            <div class="col-xs-12 col-sm-9">
-                                <select class="form-control input-sm" id="org_type" ng-model="trialView.searchParams.org_type">
-                                    <option value="">-Select an Organization Type-</option>
-                                    <option value="Lead Organization">Lead Organization</option>
-                                    <option value="Sponsor">Sponsor</option>
-                                    <!--<option value="Participating Site">Participating Site</option>-->
-                                </select>
+                            <label for="org_type" class="control-label col-xs-12 col-sm-5">Organization Type: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <ui-select multiple id="org_type" ng-model="trialView.searchParams.org_types">
+                                    <ui-select-match placeholder="-Select Organization Types-">{{$item}}</ui-select-match>
+                                    <ui-select-choices repeat="orgType in ['Lead Organization', 'Sponsor', 'Participating Site']">{{orgType}}</ui-select-choices>
+                                </ui-select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="phase" class="control-label col-xs-12 col-sm-3">Study Source: </label>
-                            <div class="col-xs-12 col-sm-9">
-                                <select class="form-control input-sm" id="study_source" ng-model="trialView.searchParams.study_source">
-                                    <option value="">-Select a Study Source-</option>
-                                    <option ng-repeat="studySource in trialView.studySourceArr" value="{{studySource.code}}">{{studySource.name}}</option>
-                                </select>
+                            <label for="study_source" class="control-label col-xs-12 col-sm-5">Study Source: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <ui-select multiple id="study_source" ng-model="trialView.searchParams.study_sources">
+                                    <ui-select-match placeholder="-Select Study Sources-">{{$item.name}}</ui-select-match>
+                                    <ui-select-choices repeat="studySource in trialView.studySourceArr">{{studySource.name}}</ui-select-choices>
+                                </ui-select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="purpose" class="control-label col-xs-12 col-sm-3">Processing Status: </label>
-                            <div class="col-xs-12 col-sm-9">
-                                <select class="form-control input-sm" id="processingStatus" ng-model="trialView.searchParams.milestone">
-                                    <option value="">-Select a Processing Status -</option>
-                                    <option ng-repeat="processingStatus in trialView.processingStatusArr" value="{{processingStatus.code}}">{{processingStatus.name}}</option>
-                                </select>
+                            <label for="processing_status" class="control-label col-xs-12 col-sm-5">Processing Status: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <ui-select multiple id="processing_status" ng-model="trialView.searchParams.processing_status">
+                                    <ui-select-match placeholder="-Select Processing Status-">{{$item.name}}</ui-select-match>
+                                    <ui-select-choices repeat="ps in trialView.processingStatusArr">{{ps.name}}</ui-select-choices>
+                                </ui-select>
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label for="submission_type" class="control-label col-xs-12 col-sm-5">Submission Type: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <ui-select multiple id="submission_type" ng-model="trialView.searchParams.submission_type">
+                                    <ui-select-match placeholder="-Select Submission Type-">{{$item.name}}</ui-select-match>
+                                    <ui-select-choices repeat="submissionType in trialView.submissionTypesArr">{{submissionType.name}}</ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nih_nci_div" class="control-label col-xs-12 col-sm-5">NIH/NCI Div/Dept Identifier: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <ui-select multiple id="nih_nci_div" ng-model="trialView.searchParams.nih_nci_div">
+                                    <ui-select-match placeholder="-Select  NIH/NCI Div/Dept -">{{$item.code}}</ui-select-match>
+                                    <ui-select-choices repeat="nd in trialView.nciDivArr">{{nd.code}}</ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-xs-12 col-sm-5"> </div>
+                            <div class="col-xs-12 col-sm-5">
+                                <div>
+                                    <label for="checkout">
+                                        <input type="checkbox" id="checkout" ng-model="trialView.searchParams.checkout"> Trials I have checked out
+                                    </label>
+                                </div>
+                                <!-- <div>
+                                    <label for="onhold">
+                                        <input type="checkbox" id="onhold" ng-model="trialView.searchParams.onhold"> Trials on Hold
+                                    </label>
+                                </div> -->
+                            </div>
+                            <div class="col-xs-12 col-sm-2">
+
+                            </div>
+                        </div>
                     </div>
-
-
 
                     <div class="col-xs-12 col-sm-12 col-md-6">
                         <div class="form-group">
-                            <label for="official_title" class="control-label col-xs-12 col-sm-3">Official Title: </label>
-                            <div class="col-xs-12 col-sm-9">
+                            <label for="official_title" class="control-label col-xs-12 col-sm-5">Official Title: </label>
+                            <div class="col-xs-12 col-sm-7">
                                 <input type="text" id="official_title" class="form-control input-sm" placeholder="Official Title" ng-model="trialView.searchParams.official_title" />
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="purpose" class="control-label col-xs-12 col-sm-3">Purpose: </label>
-                            <div class="col-xs-12 col-sm-9">
-                                <select class="form-control input-sm" id="purpose" ng-model="trialView.searchParams.purpose">
-                                    <option value="">-Select a Purpose-</option>
-                                    <option ng-repeat="purpose in trialView.primaryPurposeArr" value="{{purpose.code}}">{{purpose.name}}</option>
-                                </select>
+                            <label for="purpose" class="control-label col-xs-12 col-sm-5">Purpose: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <ui-select multiple id="purpose" ng-model="trialView.searchParams.purposes">
+                                    <ui-select-match placeholder="-Select Purposes-">{{$item.name}}</ui-select-match>
+                                    <ui-select-choices repeat="purpose in trialView.primaryPurposeArr">{{purpose.name}}</ui-select-choices>
+                                </ui-select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="official_title" class="control-label col-xs-12 col-sm-3">PI: </label>
-                            <div class="col-xs-12 col-sm-9">
+                            <label for="principal_investigator" class="control-label col-xs-12 col-sm-5">Principal Investigator: </label>
+                            <div class="col-xs-12 col-sm-7">
                                 <input type="text" id="pi" class="form-control input-sm" placeholder="Principal Investigator" ng-model="trialView.searchParams.pi" />
                             </div>
                         </div>
 
+                        <div ng-include src="'app/po/organization/_orgSearchTypeAhead.html'"
+                                 onload="[page_view =  trialView, label = 'Organization:' ,label_class = 'col-xs-12 col-sm-5', div_class= 'col-xs-12 col-sm-7']" ></div>
+
                         <div class="form-group">
-                            <label for="official_title" class="control-label col-xs-12 col-sm-3">Organization: </label>
-                            <div class="col-xs-12 col-sm-9">
-                                <input type="text" id="org" class="form-control input-sm" placeholder="Organization" ng-model="trialView.searchParams.org" />
+                            <label for="trial_status" class="control-label col-xs-12 col-sm-5">Trial Status: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <ui-select multiple id="trial_status" ng-model="trialView.searchParams.trial_status">
+                                    <ui-select-match placeholder="-Select Trial Status-">{{$item.name}}</ui-select-match>
+                                    <ui-select-choices repeat="trialStatus in trialView.trialStatusArr">{{trialStatus.name}}</ui-select-choices>
+                                </ui-select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="purpose" class="control-label col-xs-12 col-sm-3">Trial Status: </label>
-                            <div class="col-xs-12 col-sm-9">
-                                <select class="form-control input-sm" id="trial_status" ng-model="trialView.searchParams.trial_status">
-                                    <option value="">-Select a Trial Status-</option>
-                                    <option ng-repeat="trialStatus in trialView.trialStatusArr" value="{{trialStatus.code}}">{{trialStatus.name}}</option>
-                                </select>
+                            <label for="milestone" class="control-label col-xs-12 col-sm-5">Milestone: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <ui-select multiple id="milestone" ng-model="trialView.searchParams.milestone">
+                                    <ui-select-match placeholder="-Select Milestone-">{{$item.name}}</ui-select-match>
+                                    <ui-select-choices repeat="ms in trialView.milestoneArr">{{ms.name}}</ui-select-choices>
+                                </ui-select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="purpose" class="control-label col-xs-12 col-sm-3">Milestone: </label>
-                            <div class="col-xs-12 col-sm-9">
-                                <select class="form-control input-sm" id="milestone" ng-model="trialView.searchParams.milestone">
-                                    <option value="">-Select a Milestone-</option>
-                                    <option ng-repeat="milestone in trialView.milestoneArr" value="{{milestone.code}}">{{milestone.name}}</option>
-                                </select>
+                            <label for="research_category" class="control-label col-xs-12 col-sm-5">Clinical Research Category: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <ui-select multiple id="research_category" ng-model="trialView.searchParams.research_category">
+                                    <ui-select-match placeholder="-Select Clinical Research Category -">{{$item.name}}</ui-select-match>
+                                    <ui-select-choices repeat="rc in trialView.researchCategoriesArr">{{rc.name}}</ui-select-choices>
+                                </ui-select>
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label for="submission_method" class="control-label col-xs-12 col-sm-5">Submission Method: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <ui-select multiple id="submission_method" ng-model="trialView.searchParams.submission_method">
+                                    <ui-select-match placeholder="-Select Submission Method-">{{$item.name}}</ui-select-match>
+                                    <ui-select-choices repeat="submissionMethod in trialView.submissionMethodsArr">{{submissionMethod.name}}</ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nih_nci_prog" class="control-label col-xs-12 col-sm-5">NIH/NCI Program Identifier: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <ui-select multiple id="nih_nci_prog" ng-model="trialView.searchParams.nih_nci_prog">
+                                    <ui-select-match placeholder="-Select  NIH/NCI Program Identifier -">{{$item.code}}</ui-select-match>
+                                    <ui-select-choices repeat="nc in trialView.nciProgArr">{{nc.code}}</ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="internal_source" class="control-label col-xs-12 col-sm-5">Information Source: </label>
+                            <div class="col-xs-12 col-sm-7">
+                                <ui-select multiple id="internal_source" ng-model="trialView.searchParams.internal_sources">
+                                    <ui-select-match placeholder="-Select Information Sources-">{{$item.name}}</ui-select-match>
+                                    <ui-select-choices repeat="internalSource in trialView.internalSourceArr">{{internalSource.name}}</ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -143,17 +231,22 @@
             </form>
         </div>
 
-        <div class="row" ng-class="{'top-offset-xs': trialView.gridOptions.totalItems }">
+        <div class="row">
             <div class="col-xs-12">
+                <span us-spinner="{radius: 10, length: 5}" spinner-on="trialView.searching"></span>
+            </div>
+        </div>
+            <div class="row" ng-class="{'top-offset-xs': trialView.gridOptions.totalItems }">
+
                 <div class="row" ng-if="trialView.gridOptions.totalItems != null">
                     <p><h4>Trial Search Results: {{trialView.gridOptions.totalItems}} found</h4></p>
                 </div>
                 <div class="row animated-item" ng-if="trialView.gridOptions.data.length > 0">
-                    <div class="col-xs-12">
-                        <div ui-grid="trialView.gridOptions" ui-grid-pagination="" external-scopes="clickHandler" class="grid"></div>
-                    </div>
+
+                        <div ui-grid="trialView.gridOptions" ui-grid-exporter ui-grid-pagination="" external-scopes="clickHandler" class="grid"></div>
+
                 </div>
-            </div>
+
         </div>
         <div class="row top-offset-xs"></div>
     </div>

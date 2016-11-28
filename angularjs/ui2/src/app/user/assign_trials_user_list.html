@@ -1,0 +1,11 @@
+
+<div class="row" ng-hide="searchWarningMessage==''" ng-cloak>
+    <div class="alert alert-warning fade in" ng-if="searchWarningMessage.length">
+        <strong>{{searchWarningMessage}}</strong>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 drop-shadow">
+        <div ng-include src="'app/user/_trial_ownership.html'"></div>
+    </div>
+</div>

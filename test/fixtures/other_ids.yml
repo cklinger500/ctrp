@@ -20,11 +20,6 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  protocol_id: MyString
-
-two:
-  protocol_id: MyString
-
-three:
   protocol_id: ABC123
+  protocol_id_origin: one
   trial: three

@@ -1,0 +1,15 @@
+
+    <div class="modal-header">
+        <h4 class="modal-title text-center" ng-bind="helpModalView.header"></h4>
+        <button type="button" class="close" ng-click="helpModalView.cancel()">×</button>
+    </div>
+    <div class="modal-body">
+        <div class="col-xs-12" ng-bind-html="helpModalView.content"></div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-toolbar">
+            <button class="btn btn-primary pull-right" id="confirm_btn" ng-click="helpModalView.cancel()">
+                <i class="glyphicon glyphicon-ok"></i> Ok
+            </button>
+        </div>
+    </div>

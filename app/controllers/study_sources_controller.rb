@@ -1,5 +1,6 @@
 class StudySourcesController < ApplicationController
   before_action :set_study_source, only: [:show, :edit, :update, :destroy]
+  before_filter :wrapper_authenticate_user unless Rails.env.test?
 
   # GET /study_sources
   # GET /study_sources.json

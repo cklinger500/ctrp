@@ -25,7 +25,7 @@ class Family < ActiveRecord::Base
   has_many :organizations, through: :family_memberships
   belongs_to :family_status
   belongs_to :family_type
-  accepts_nested_attributes_for  :family_memberships, allow_destroy: true
+  accepts_nested_attributes_for :family_memberships, allow_destroy: true
 
   validates :name, presence: true
   validates :family_status_id, presence: true
@@ -54,36 +54,51 @@ class Family < ActiveRecord::Base
   end
 
   #scopes for search API
-  scope :matches, -> (column, value) { where("families.#{column} = ?", "#{value}") }
+  scope :matches, -> (column, value) { where("#{column} = ?", "#{value}") }
 
-  scope :with_family_status, -> (value) { joins(:family_status).where("family_statuses.name = ?", "#{value}") }
-  scope :with_family_type, -> (value) { joins(:family_type).where("family_types.name = ?", "#{value}") }
-
-  scope :matches_wc, -> (column, value,wc_search) {
-    str_len = value.length
-    if value[0] == '*' && value[str_len - 1] != '*'
-      where("families.#{column} ilike ?", "%#{value[1..str_len - 1]}")
-    elsif value[0] != '*' && value[str_len - 1] == '*'
-      where("families.#{column} ilike ?", "#{value[0..str_len - 2]}%")
-    elsif value[0] == '*' && value[str_len - 1] == '*'
-      where("families.#{column} ilike ?", "%#{value[1..str_len - 2]}%")
-    else
-      if !wc_search
-        if !value.match(/\s/).nil?
-          value=value.gsub! /\s+/, '%'
-        end
-        where("families.#{column} ilike ?", "%#{value}%")
-      else
-        where("families.#{column} ilike ?", "#{value}")
-      end
-    end
-  }
+  scope :with_family_status, -> (value) { where("family_statuses.name = ?", "#{value}") }
+  scope :with_family_type, -> (value) { where("family_types.name = ?", "#{value}") }
 
   scope :sort_by_col, -> (column, order) {
-    if column == 'id'
-      order("#{column} #{order}")
+    if column == 'family_status'
+      order("family_statuses.name #{order}")
+    elsif column == 'family_type'
+      order("family_types.name #{order}")
+    elsif column == 'aff_org_count'
+      order("families_by_org_count.org_count #{order}")
     else
       order("LOWER(families.#{column}) #{order}")
     end
+  }
+
+  scope :find_unexpired_matches_by_org, -> (value) {
+    familyFamilies = FamilyMembership.where(
+        organization_id: value
+    ).where("(family_memberships.effective_date < '#{DateTime.now}' or family_memberships.effective_date is null)
+        and (family_memberships.expiration_date > '#{DateTime.now}' or family_memberships.expiration_date is null)")
+          .pluck(:family_id)
+    where(id: familyFamilies)
+  }
+
+  scope :all_families_data, -> () {
+    join_clause = "LEFT JOIN family_statuses ON families.family_status_id = family_statuses.id "
+    join_clause += "LEFT JOIN family_types ON families.family_type_id = family_types.id "
+    join_clause += "LEFT JOIN
+                    (select family_id, count(family_id) as org_count from family_memberships
+                    group by family_id) as families_by_org_count
+                    on families_by_org_count.family_id = families.id "
+    select_clause = "
+      families.*,
+      family_statuses.name as family_status_name,
+      family_types.name as family_type_name,
+       (
+          CASE
+            WHEN families_by_org_count.org_count IS NOT null
+            THEN families_by_org_count.org_count
+            ELSE 0
+          END
+       ) as aff_org_count
+    "
+    joins(join_clause).select(select_clause)
   }
 end

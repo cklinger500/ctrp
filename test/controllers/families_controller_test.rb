@@ -38,7 +38,7 @@ class FamiliesControllerTest < ActionController::TestCase
     assert_response :no_content
   end
 
-=begin
+
   # Family search tests
   test "should search family by name" do
     test_data = [{ "result" => "Albert Einstein Cancer Center", "test_values" => ['Albert Einstein Cancer Center', 'Albert*']},
@@ -77,5 +77,5 @@ class FamiliesControllerTest < ActionController::TestCase
       assert_equal x.id, search_result['families'][0]["family_status_id"]
     end
   end
-=end
+
 end

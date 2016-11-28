@@ -1,0 +1,130 @@
+<div class="row">
+    <div ng-hide="onholdView.addMode" class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">Trial On Holds</div>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover" ng-show="onholdView.curTrial.onholds.length">
+                    <thead>
+                        <th>On Hold Reason</th>
+                        <th>On Hold Reason Description</th>
+                        <th>On Hold Date</th>
+                        <th>Off Hold Date</th>
+                        <th>Edit</th>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="onhold in onholdView.curTrial.onholds track by $index">
+                            <td>{{onhold.onhold_reason.name}}</td>
+                            <td>{{onhold.onhold_desc}}</td>
+                            <td>{{onhold.onhold_date | date: 'dd-MMM-yyyy'}}</td>
+                            <td>{{onhold.offhold_date | date: 'dd-MMM-yyyy'}}</td>
+                            <td class="text-center td-icon">
+                                <button ng-hide="onhold.offhold_date" class="btn btn-primary" restriction-field ng-click="onholdView.setEditMode($index)">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-group no-bottom-margin">
+                <div class="btn-toolbar">
+                    <button ng-if="onholdView.showAddBtn" type="button" class="btn btn-primary pull-right" id="add_btn" restriction-field ng-click="onholdView.setAddMode(true)">
+                        <i class="glyphicon glyphicon-plus"></i> Add On Hold
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="onholdView.addMode" class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">Add On Hold</div>
+        </div>
+        <div class="panel-body">
+            <div class="form-group no-bottom-margin">
+                <form class="form form-horizontal" role="form" name="onhold_form" novalidate ctrp-submit="onholdView.saveOnhold()" unsaved-changes>
+                    <fieldset class="sub-bordered" restriction-field>
+                        <legend class="sub-bordered">On Hold Details</legend>
+                        <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.onhold_form.needsAttention(onhold_form.onhold_reason)}">
+                            <label for="onhold_reason" class="control-label col-xs-12 col-sm-3">On Hold Reason:</label>
+                            <div class="col-xs-12 col-sm-6">
+                                <select restriction-field class="form-control input-sm" id="onhold_reason" name="onhold_reason" ng-model="onholdView.onhold_reason_id"
+                                        ng-options="onholdReason.id as onholdReason.name for onholdReason in onholdView.onholdReasonArr"
+                                        ng-disabled="onholdView.onhold_id" required>
+                                    <option value="">-Select a On Hold Reason-</option>
+                                </select>
+                                <span class="help-block">
+                                    "Pending" Reasons are for the CTRO, "Submission" Reasons are for the Submitter
+                                </span>
+                                <span class="help-block" ng-show="ctrpbtn.onhold_form.needsAttention(onhold_form.onhold_reason)">
+                                    The On Hold Reason must be entered to place trial on hold
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-12 col-sm-3">On Hold Reason Description:</label>
+                            <div class=" col-xs-12 col-sm-6">
+                                <textarea restriction-field class="form-control input-sm" id="onhold_desc" name="onhold_desc"
+                                          ng-model="onholdView.onhold_desc" ng-disabled="onholdView.onhold_id" maxlength="4000" ng-maxlength="4000">
+                                </textarea>
+                                <span class="help-block" ng-show="onhold_form.onhold_desc.$dirty">
+                                    {{4000 - onhold_form.onhold_desc.$viewValue.length}} characters left
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group has-feedback">
+                            <label class="control-label col-xs-12 col-sm-3">On Hold Date:</label>
+                            <div class="col-xs-12 col-sm-3 form-text">
+                                {{onholdView.onhold_date | date: 'dd-MMM-yyyy'}}
+                            </div>
+                        </div>
+
+                        <div ng-if="onholdView.onhold_id" class="form-group has-feedback" ng-class="{'has-error': ctrpbtn.onhold_form.needsAttention(onhold_form.offhold_dummy1) || ctrpbtn.onhold_form.needsAttention(onhold_form.offhold_dummy2)}">
+                            <label class="control-label col-xs-12 col-sm-3">Off Hold Date:</label>
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="input-group add-on date datepicker" date-date-format="yyyy-mm-dd">
+                                    <input type="text" class="form-control input-sm" name="offhold_date" uib-datepicker-popup="{{onholdView.dateFormat}}" ng-model="onholdView.offhold_date"
+                                           ng-click="onholdView.openCalendar($event, 'offhold_date')" is-open="onholdView.offhold_date_opened" datepicker-options="onholdView.dateOptions" close-text="Close" readonly date-formatter>
+                                    <span class="input-group-btn">
+                                        <button restriction-field type="button" class="btn btn-primary" ng-click="onholdView.openCalendar($event, 'offhold_date')">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                                <input type="hidden" name="offhold_dummy1" ng-model="trialDetailView.dummyField" ng-required="onholdView.validateOffholdDate1()">
+                                <span class="help-block" ng-show="ctrpbtn.onhold_form.needsAttention(onhold_form.offhold_dummy1)">
+                                    Off-hold dates must be only past or current dates
+                                </span>
+                                <input type="hidden" name="offhold_dummy2" ng-model="trialDetailView.dummyField" ng-required="onholdView.validateOffholdDate2()">
+                                <span class="help-block" ng-show="ctrpbtn.onhold_form.needsAttention(onhold_form.offhold_dummy2)">
+                                    Off-hold dates must be the same or after the on-hold dates
+                                </span>
+                            </div>
+                        </div>
+
+                        <input type="hidden" ng-model="onholdView.onhold_id">
+                    </fieldset>
+
+                    <div class="form-group no-bottom-margin">
+                        <div class="btn-toolbar">
+                            <button type="submit" class="btn btn-primary pull-right" id="save_btn" restriction-field ng-disabled="onholdView.disableBtn">
+                                <i class="glyphicon glyphicon-ok"></i> Save
+                            </button>
+                            <button type="button" class="btn btn-warning pull-right" id="reset_btn" restriction-field ng-click="onholdView.resetOnhold()" ng-disabled="onholdView.disableBtn">
+                                <i class="glyphicon glyphicon-remove"></i> Reset
+                            </button>
+                            <button type="button" class="btn btn-warning pull-right" id="back_btn" restriction-field ng-click="onholdView.setAddMode(false)" ng-disabled="onholdView.disableBtn">
+                                <i class="glyphicon glyphicon-arrow-left"></i> Back to On Hold List
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

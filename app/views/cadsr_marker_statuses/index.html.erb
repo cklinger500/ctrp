@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Cadsr Marker Statuses</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Name</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @cadsr_marker_statuses.each do |cadsr_marker_status| %>
+      <tr>
+        <td><%= cadsr_marker_status.code %></td>
+        <td><%= cadsr_marker_status.name %></td>
+        <td><%= link_to 'Show', cadsr_marker_status %></td>
+        <td><%= link_to 'Edit', edit_cadsr_marker_status_path(cadsr_marker_status) %></td>
+        <td><%= link_to 'Destroy', cadsr_marker_status, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Cadsr marker status', new_cadsr_marker_status_path %>

@@ -1,0 +1,2 @@
+module ValidationRuleHelper
+end

@@ -1,0 +1,334 @@
+<div class="row" id="section_top" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidProtocol || paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
+    <div class="panel panel-default" ng-show="markersView.addEditMode">
+        <div class="panel-heading">
+            <div class="panel-title">Biomarker Details</div>
+        </div>
+        <div class="panel-body">
+            <form class="form form-horizontal" role="form" name="marker_form" novalidate ctrp-submit="markersView.saveBioMarker()" unsaved-changes>
+                <!-- first row in the accordion body -->
+                <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || markersView.disableBtn">
+                    <legend class="sub-bordered">Names & Status</legend>
+                    <!-- Name -->
+                    <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.marker_form.needsAttention(marker_form.name)}">
+                        <label for="name" class="control-label col-xs-12 col-sm-2">Name:</label>
+                        <div class="col-xs-12 col-sm-6">
+                            <input type="text" name="name"
+                                   id="name"
+                                   class="form-control input-sm"
+                                   ng-model="markersView.currentBioMarker.name"
+                                   ng-maxlength="300"
+                                   maxlength="300"
+                                   ng-required="true">
+                            <span ng-messages="ctrpbtn.marker_form.needsAttention(marker_form.name) && marker_form.name.$error">
+                                <span class="help-block" ng-message="required">Name is Required</span>
+                            </span>
+                        </div>
+                        <div class="col-xs-12 col-sm-4">
+                            <ctrp-cadsr-adv-search-modal-button max-row-selectable="1" use-built-in-template="false" selected-orgs-array="markersView.selOrganization.array"></ctrp-cadsr-adv-search-modal-button>
+                        </div>
+                    </div>
+
+                    <!-- Name ends  -->
+                    <!-- status starts-->
+                    <div class="form-group">
+                        <label for="status" class="control-label col-xs-12 col-sm-2">Status:</label>
+                        <div class="col-xs-12 col-sm-6">
+                            <p class="form-control-static">{{markersView.currentBioMarker.record_status}}</p>
+                            <span class="help-block" ng-hide="markersView.currentBioMarker.status_alert">
+                                You have changed name selected from caDSR system thus the status has been changed to Pending.
+                            </span>
+                        </div>
+                    </div>
+                    <!-- status ends -->
+
+                    <!-- Protocol Marker Name -->
+                    <div class="form-group">
+                        <label for="protocol_marker_name" class="control-label col-xs-12 col-sm-2">Protocol Marker Name:</label>
+                        <div class="col-xs-12 col-sm-6">
+                            <input type="text" name="protocol_marker_name"
+                                   id="protocol_marker_name"
+                                   class="form-control input-sm"
+                                   ng-model="markersView.currentBioMarker.protocol_marker_name"
+                                   ng-maxlength="300"
+                                   maxlength="300">
+
+                        </div>
+                    </div>
+                    <!-- Protocol Marker Name Ends -->
+                </fieldset>
+
+                <!-- eval type -->
+                <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || markersView.disableBtn" ng-model="markersView.isEvalTypesChecked" required="">
+                    <legend class="sub-bordered">Evaluation Type </legend>
+                    <div class="form-group no-bottom-margin" ng-class="{'has-error': ctrpbtn.marker_form.needsAttention(markersView.checked_eval_types.length)}">
+                        <!--label for="eval_type" class="control-label col-xs-12 col-sm-2">Types:</label-->
+                        <div class="col-xs-12 col-sm-10"></div>
+                    </div>
+                    <div class="form-group" ng-class="{'has-error': ctrpbtn.marker_form.needsAttention(markersView.checked_eval_types.length)}">
+                        <div class="col-xs-12 col-sm-2"></div>
+                        <div class="col-xs-12 col-sm-10">
+                            <div layout="row" layout-wrap flex>
+                                <div class="checkbox checkbox-info" flex="40" ng-repeat="et in markersView.evalTypes">
+                                    <label>
+                                        <input id="eval_types_{{$index}}" type="checkbox" ng-checked="exists(et, markersView.checked_eval_types)" ng-click="toggle(et, markersView.checked_eval_types,'ET')" ng-required="true"> {{ et.code }}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div ng-show="markersView.isEvalTypeOtherChecked" class="top-offset-xss has-feedback required" ng-class="{'has-error': ctrpbtn.marker_form.needsAttention(marker_form.evaluation_type_other)}">
+                                <label for="protocol_marker_name" class="control-label col-xs-12 col-sm-1">Other:</label>
+                                <div class="col-xs-12 col-sm-6">
+                                    <input type="text" name="evaluation_type_other"
+                                           id="eval_type_other"
+                                           class="form-control input-sm"
+                                           ng-model="markersView.currentBioMarker.evaluation_type_other"
+                                           ng-maxlength="300"
+                                           maxlength="300"
+                                           ng-if="markersView.isEvalTypeOtherChecked"
+                                           ng-required="markersView.isEvalTypeOtherChecked" placeholder="Other Evaluation Type">
+
+                                    <span ng-messages="ctrpbtn.marker_form.needsAttention(marker_form.evaluation_type_other) && marker_form.evaluation_type_other.$error">
+                                        <span class="help-block" ng-message="required">Other Evaluation Type is Required</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!--span class="help-block top-offset-xss required" ng-show="required" ng-hide="!markersView.show_eval_type_alert">Evaluation Type is Required</span-->
+                        </div>
+                    </div>
+                </fieldset>
+                <!-- end of eval type -->
+
+
+                <!-- assay type -->
+                <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || markersView.disableBtn" ng-model="markersView.isAssayTypesChecked" required="">
+                    <legend class="sub-bordered">Assay Type </legend>
+                    <div class="form-group no-bottom-margin"  ng-class="{'has-error': ctrpbtn.marker_form.needsAttention(markersView.checked_assay_types.length)}">
+                        <!--label for="assay_type" class="control-label col-xs-12 col-sm-2">Types:</label-->
+                        <div class="col-xs-12 col-sm-10"></div>
+                    </div>
+                    <div class="form-group" ng-class="{'has-error': ctrpbtn.marker_form.needsAttention(markersView.checked_assay_types.length)}">
+                        <div class="col-xs-12 col-sm-2"></div>
+                        <div class="col-xs-12 col-sm-10">
+                            <div layout="row" layout-wrap flex>
+                                <div class="checkbox checkbox-info" flex="40" ng-repeat="at in markersView.assayTypes">
+                                    <label>
+                                        <input id="assay_types_{{$index}}" type="checkbox" ng-checked="exists(at, markersView.checked_assay_types)" ng-click="toggle(at, markersView.checked_assay_types,'AT')" ng-required="true"> {{ at.code }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div ng-show="markersView.isAssayTypeOtherChecked" class="top-offset-xss has-feedback required" ng-class="{'has-error': ctrpbtn.marker_form.needsAttention(marker_form.assay_type_other)}">
+                                <label for="protocol_marker_name" class="control-label col-xs-12 col-sm-1">Other:</label>
+                                <div class="col-xs-12 col-sm-6">
+                                    <input type="text" name="assay_type_other"
+                                           id="assay_type_other"
+                                           class="form-control input-sm"
+                                           ng-model="markersView.currentBioMarker.assay_type_other"
+                                           ng-maxlength="300"
+                                           maxlength="300"
+                                           ng-if="markersView.isAssayTypeOtherChecked"
+                                           ng-required="markersView.isAssayTypeOtherChecked" placeholder="Other Assay Type">
+
+                                    <span class="top-offset-xss" ng-messages="ctrpbtn.marker_form.needsAttention(marker_form.assay_type_other) && marker_form.assay_type_other.$error">
+                                        <span class="help-block" ng-message="required">Other Assay Type is Required</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <!--span class="help-block top-offset-xss required" ng-show="required" ng-hide="!markersView.show_assay_type_alert">Assay Type is Required</span-->
+                        </div>
+                    </div>
+                </fieldset>
+                <!-- end of assay type -->
+
+                <!-- biomarker purpose type -->
+                <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || markersView.disableBtn" ng-model="markersView.isBiomarkerPurposesChecked" required="">
+                    <legend class="sub-bordered">Biomarker Use & Purpose</legend>
+
+                    <!-- bio marker use -->
+                    <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.marker_form.needsAttention(marker_form.biomarker_use)}">
+                        <label for="biomarker_use" class="control-label col-xs-12 col-sm-2">Biomarker Use:</label>
+                        <div class="col-xs-12 col-sm-6">
+                                <label class="radio-inline" ng-repeat="use in markersView.biomarkerUses">
+                                    <input type="radio" ng-required="true" ng-model="markersView.currentBioMarker.biomarker_use_id" name="biomarker_use" value="{{use.id}}" id="{{use.id}}">{{use.name}}
+                                </label>
+                            <span ng-messages="ctrpbtn.marker_form.needsAttention(marker_form.biomarker_use) && marker_form.biomarker_use.$error">
+                                <span class="help-block" ng-message="required">Biomarker Use is Required</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- end of bio marker use -->
+
+                    <div class="form-group no-bottom-margin" ng-class="{'has-error': ctrpbtn.marker_form.needsAttention(markersView.checked_biomarker_purposes.length)}">
+                        <!--label class="control-label col-xs-12 col-sm-2">Purposes:</label-->
+                        <div class="col-xs-12 col-sm-10"></div>
+                    </div>
+                    <div class="form-group" ng-class="{'has-error': ctrpbtn.marker_form.needsAttention(markersView.checked_biomarker_purposes.length)}">
+                        <div class="col-xs-12 col-sm-2"></div>
+                        <div class="col-xs-12 col-sm-10">
+                            <div layout="row" layout-wrap flex>
+                                <div class="checkbox checkbox-info" flex="40" ng-repeat="bp in markersView.biomarkerPurposes">
+                                    <label>
+                                        <input id="biomarker_purposes_{{$index}}" type="checkbox" ng-checked="exists(bp, markersView.checked_biomarker_purposes)" ng-click="toggle(bp, markersView.checked_biomarker_purposes,'BP')" ng-required="true"> {{ bp.code }}
+                                    </label>
+                                </div>
+                            </div>
+                            <!--span class="help-block top-offset-xss required" ng-show="required" ng-hide="!markersView.show_biomarker_purpose_alert">Biomarker Purpose is Required</span-->
+                            <!--
+                                <span ng-messages="ctrpbtn.marker_form.needsAttention(marker_form.biomarker_purpose) && marker_form.biomarker_purpose.$error">
+                                    <span class="help-block" ng-message="required">Biomarker Purpose is Required</span>
+                                </span>
+                            -->
+                        </div>
+
+                    </div>
+                </fieldset>
+                <!-- end of biomarker purpose -->
+
+                <!-- specimen type -->
+                <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || markersView.disableBtn" ng-model="markersView.isSpecTypesChecked" required="">
+                    <legend class="sub-bordered">Specimen Type </legend>
+                    <div class="form-group no-bottom-margin" ng-class="{'has-error': ctrpbtn.marker_form.needsAttention(markersView.checked_spec_types.length)}">
+                        <!--label for="spec_type" class="control-label col-xs-12 col-sm-2">Types:</label-->
+                        <div class="col-xs-12 col-sm-10"></div>
+                    </div>
+                    <div class="form-group" ng-class="{'has-error': ctrpbtn.marker_form.needsAttention(markersView.checked_spec_types.length)}">
+                        <div class="col-xs-12 col-sm-2"></div>
+                        <div class="col-xs-12 col-sm-10">
+                            <div layout="row" layout-wrap flex>
+                                <div class="checkbox checkbox-info" flex="40" ng-repeat="st in markersView.specTypes">
+                                    <label>
+                                        <input id="spec_types_{{$index}}" type="checkbox" ng-checked="exists(st, markersView.checked_spec_types)" ng-click="toggle(st, markersView.checked_spec_types,'ST')" ng-required="true"> {{ st.code }}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div ng-show="markersView.isSpecTypeOtherChecked" class="top-offset-xss has-feedback required" ng-class="{'has-error': ctrpbtn.marker_form.needsAttention(marker_form.specimen_type_other)}">
+                                <label for="spec_type_other" class="control-label col-xs-12 col-sm-1">Other:</label>
+                                <div class="col-xs-12 col-sm-6">
+                                    <input type="text" name="specimen_type_other"
+                                           id="spec_type_other"
+                                           class="form-control input-sm"
+                                           ng-model="markersView.currentBioMarker.specimen_type_other"
+                                           ng-maxlength="300"
+                                           maxlength="300"
+                                           ng-if="markersView.isSpecTypeOtherChecked"
+                                           ng-required="markersView.isSpecTypeOtherChecked" placeholder="Other Specimen Type">
+
+                                    <span class="top-offset-xss" ng-messages="ctrpbtn.marker_form.needsAttention(marker_form.specimen_type_other) && marker_form.specimen_type_other.$error">
+                                        <span class="help-block" ng-message="required">Other Specimen Type is Required</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!--span class="help-block top-offset-xss required" ng-show="required" ng-hide="!markersView.show_spec_type_alert">Specimen Type is Required</span-->
+
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- end of specimen type -->
+
+                <!-- Saving the form for the Bio Marker" -->
+                <div class="form-group no-bottom-margin">
+                    <div class="btn-toolbar" ng-if="paTrialOverview.trialDetailObj.pa_sci_editable">
+                        <button type="submit" class="btn btn-primary pull-right" id="submit_processing" restriction-field ng-disabled="markersView.disableBtn">
+                            <i class="glyphicon glyphicon-ok"></i> Save
+                        </button>
+                        <button type="button" class="btn btn-primary pull-right" ng-if="markersView.currentBioMarker.id" ng-click="markersView.saveAndRetainMarker()" restriction-field ng-disabled="markersView.disableBtn">
+                            <i class="glyphicon glyphicon-ok"></i> Save & Retain Attributes
+                        </button>
+                        <button type="button" class="btn btn-warning pull-right" restriction-field ng-click="markersView.resetBioMarker()" ng-disabled="markersView.disableBtn">
+                            <i class="glyphicon glyphicon-remove"></i> Reset
+                        </button>
+                        <button type="button" class="btn btn-warning pull-right" id="participating_site_list" restriction-field ng-click="markersView.reload()" ng-disabled="markersView.disableBtn">
+                            <i class="glyphicon glyphicon-arrow-left"></i> Back to Biomarkers List
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="panel panel-default" ng-show="!markersView.addEditMode">
+        <div class="panel-heading">
+            <div class="panel-title">List of Biomarkers</div>
+        </div>
+        <div class="panel-body">
+            <fieldset>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover" ng-show="markersView.curTrial.bio_markers.length">
+                        <thead>
+                        <th>Name</th>
+                        <th>Protocol Marker Name</th>
+                        <th>Evaluation Type</th>
+                        <th>Assay Type</th>
+                        <th>Biomarker Use</th>
+                        <th>Biomarker Purpose</th>
+                        <th>Specimen Type</th>
+                        <th>Record Status</th>
+
+                        <th class="text-center td-icon">Edit</th>
+                        <th class="text-center td-icon">
+                            <input type="checkbox" restriction-field ng-model="markersView.selectedAllBM" ng-click="markersView.checkAllBM()" ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable"/>
+                        </th>
+                        </thead>
+                        <tbody>
+
+                        <tr ng-repeat="bio_marker in markersView.curTrial.bio_markers track by $index" class="animated-item">
+
+                            <td>
+                                {{bio_marker.name}}
+                            </td>
+
+                            <td>
+                                {{bio_marker.protocol_marker_name}}
+                            </td>
+
+                            <td>
+                                {{bio_marker.eval_types_array}}
+                            </td>
+
+                            <td>
+                                {{bio_marker.assay_types_array}}
+                            </td>
+
+                            <td>
+                                {{bio_marker.biomarker_use}}
+                            </td>
+                            <td>
+                                {{bio_marker.biomarker_purposes_array}}
+                            </td>
+                            <td>
+                                {{bio_marker.spec_types_array}}
+                           </td>
+                            <td>
+                                {{bio_marker.record_status}}
+                            </td>
+                            <td class="text-center td-icon">
+                                <button class="btn btn-primary" restriction-field ng-disabled="status._destroy || !paTrialOverview.trialDetailObj.pa_sci_editable" ng-click="markersView.setEditMode($index)">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </button>
+                            </td>
+
+                            <td class="text-center td-icon">
+                                <input type="checkbox" ng-model="bio_marker.selected" restriction-field ng-click="markersView.selectedAllBM = false" ng-change="markersView.deleteListHandler(markersView.curTrial.bio_markers)" ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable"/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="btn-toolbar">
+                        <button type="button" class="btn btn-primary pull-right" id="add_bio_marker" restriction-field  ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || markersView.disableBtn" ng-click="markersView.setAddMode()">
+                            <i class="glyphicon glyphicon-plus"></i> Add Biomarker
+                        </button>
+                        <button type="submit" class="btn btn-danger pull-right" id="delete" restriction-field ctrp-confirm ctrp-click="markersView.deleteSelected()" confirm-msg="Click OK to remove selected Biomarker(s) form the study. Click Cancel to abort."
+                                ng-disabled="!markersView.selectedDeleteBioMarkersList.length || !paTrialOverview.trialDetailObj.pa_sci_editable || markersView.disableBtn" ng-show="markersView.curTrial.bio_markers.length">
+                            <i class="glyphicon glyphicon-trash"></i> Delete Selected
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>

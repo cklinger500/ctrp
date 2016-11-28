@@ -16,4 +16,5 @@
 
 class AppSetting < ActiveRecord::Base
   include BasicConcerns
+  validates :code, uniqueness: true
 end

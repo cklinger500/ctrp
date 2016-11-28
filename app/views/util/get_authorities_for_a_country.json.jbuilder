@@ -1,0 +1,1 @@
+json.authorities @authorities

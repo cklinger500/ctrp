@@ -1,5 +1,6 @@
 class HolderTypesController < ApplicationController
   before_action :set_holder_type, only: [:show, :edit, :update, :destroy]
+  before_filter :wrapper_authenticate_user unless Rails.env.test?
 
   # GET /holder_types
   # GET /holder_types.json

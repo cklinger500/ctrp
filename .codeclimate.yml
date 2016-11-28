@@ -1,11 +1,36 @@
-languages:
-   Ruby: true
-   JavaScript: true
+engines:
+  duplication:
+    enabled: true
+    config:
+      languages:
+        ruby:
+        #default is 18, increased to ignore rails rest controller methods
+          mass_threshold: 50
+        javascript:
+          mass_threshold: 100
+  rubocop:
+    enabled: true
+  eslint:
+    enabled: true
+    config:
+      "max-statements": [1,100]
+  csslint:
+    enabled: true
+ratings:
+  paths:
+  - "**.rb"
+  - "**.js"
+  - "**.css"
+  - "**.html"
 exclude_paths:
-- "test/*"
-- "public/ctrp/ui/third_party_libs/*"
+- "test/**/*"
+- "tests/**/*"
 - "config.js"
-- "public/ctrp/ui/*"
-- "angularjs/*"
-- "features/*"
+- "features/"
 - "app/models/ability.rb"
+- "log/**/*"
+- "ETL/**/*"
+- "db/seeds/seeds.rb"
+- "angularjs/ui2/gulp*.js"
+- "angularjs/ui2/karma.conf.js"
+- "db/schema.rb"

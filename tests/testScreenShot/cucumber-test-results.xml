@@ -1,0 +1,20 @@
+<testsuites>
+    <testsuite name="Change-a-Person&apos;s-Affiliated-Organization;As-a-Po-Curator,-I-can-change-a-Person-Record-Organizational-Affiliation-information" tests="8" failures="0" errors="0" skipped="0" timestamp="Mon, 19 Oct 2015 15:29:29 GMT" time="84.218116625">
+        <testcase name="Given I know which person&apos;s organizational affiliation I want to change" classname="Change-a-Person&apos;s-Affiliated-Organization;As-a-Po-Curator,-I-can-change-a-Person-Record-Organizational-Affiliation-information" time="56.801083971">
+        </testcase>
+        <testcase name="And I am logged in to CTRP PO application" classname="Change-a-Person&apos;s-Affiliated-Organization;As-a-Po-Curator,-I-can-change-a-Person-Record-Organizational-Affiliation-information" time="5.736184654">
+        </testcase>
+        <testcase name="And I have searched for a Person record and found the one I wish to edit" classname="Change-a-Person&apos;s-Affiliated-Organization;As-a-Po-Curator,-I-can-change-a-Person-Record-Organizational-Affiliation-information" time="6.845740787">
+        </testcase>
+        <testcase name="And I have selected the function Edit Person" classname="Change-a-Person&apos;s-Affiliated-Organization;As-a-Po-Curator,-I-can-change-a-Person-Record-Organizational-Affiliation-information" time="0.320081653">
+        </testcase>
+        <testcase name="And I am on the edit Person information screen" classname="Change-a-Person&apos;s-Affiliated-Organization;As-a-Po-Curator,-I-can-change-a-Person-Record-Organizational-Affiliation-information" time="2.128853599">
+        </testcase>
+        <testcase name="When I change a Person&apos;s Affiliated Organization with Effective Date and Expiration Date and save it" classname="Change-a-Person&apos;s-Affiliated-Organization;As-a-Po-Curator,-I-can-change-a-Person-Record-Organizational-Affiliation-information" time="2.867581346">
+        </testcase>
+        <testcase name="Then the Person record Affiliated Organization information should be updated" classname="Change-a-Person&apos;s-Affiliated-Organization;As-a-Po-Curator,-I-can-change-a-Person-Record-Organizational-Affiliation-information" time="8.073031782">
+        </testcase>
+        <testcase name="And logout" classname="Change-a-Person&apos;s-Affiliated-Organization;As-a-Po-Curator,-I-can-change-a-Person-Record-Organizational-Affiliation-information" time="1.445558833">
+        </testcase>
+    </testsuite>
+</testsuites>

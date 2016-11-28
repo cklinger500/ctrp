@@ -51,10 +51,13 @@
       function getCommentCounts() {
         CommentService.getCommentCounts(scope.uuid, scope.field)
           .then(function(data) {
-              scope.numComments = data.count;
-              if (scope.numComments > 0) {
-                // element.text(scope.numComments);
-                element.html('<span><strong>' + scope.numComments + '</strong></span> <i class="glyphicon glyphicon-comment" style="vertical-align: middle;"></i>');
+              var status = data.server_response.status;
+
+              if (status >= 200 && status <= 210) {
+                  scope.numComments = data.count;
+                  if (scope.numComments > 0) {
+                    element.html('<span><strong>' + scope.numComments + '</strong></span> <i class="glyphicon glyphicon-comment" style="vertical-align: middle;"></i>');
+                  }
               }
         });
       } //getCommentCounts
@@ -102,8 +105,11 @@
       function fetchComments() {
         CommentService.getComments(instanceUuid, field)
         .then(function(data) {
-            //console.log('received comments data: ' + JSON.stringify(data));
-            $scope.commentList = CommentService.annotateCommentIsEditable(data.comments);
+            var status = data.server_response.status;
+
+            if (status >= 200 && status <= 210) {
+                $scope.commentList = CommentService.annotateCommentIsEditable(data.comments);
+            }
         }).catch(function(error) {
             $log.error('error in retrieving comments for instance uuid: ' + instanceUuid);
         });
@@ -112,12 +118,13 @@
       function postComment() {
         CommentService.createComment($scope.comment).then(function(response) {
           $scope.comment.content = '';
-          if (response.server_response.status == 201) {
+          var status = response.server_response.status;
+
+          if (status >= 200 && status <= 210) {
             fetchComments(); //fetch the latest comments
             $scope.toggleCommentFormShown();
             showToastr('Comment created', 'right');
           }
-          // console.log('created comment response: ' + JSON.stringify(response));
         }).catch(function(err) {
           $log.error('error in creating comments: ' + JSON.stringify($scope.comment));
         });
@@ -130,11 +137,12 @@
           var editedComment = angular.copy($scope.commentList[commentObjIndex]);
           editedComment.content = newContent;
           CommentService.updateComment(editedComment).then(function(response) {
-            console.log('response status: ' + response.server_response.status);
-            if (response.server_response.status == 200) {
-              // fetchComments();
-              showToastr('Comment updated', 'right');
-            }
+              var status = response.server_response.status;
+
+              if (status >= 200 && status <= 210) {
+                  // fetchComments();
+                  showToastr('Comment updated', 'right');
+              }
           }).catch(function(err) {
             //TODO: throw a toastr
             $log.error('error in updating comment: ' + newContent);

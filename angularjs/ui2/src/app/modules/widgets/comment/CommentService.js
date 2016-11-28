@@ -28,7 +28,6 @@
           if (optionalField) {
             url = url.replace('.json', '/' + optionalField + '.json');
           }
-          $log.info('get comment counts with url: ' + url);
           return PromiseTimeoutService.getData(url);
         }
         var deferred = $q.defer();
@@ -52,7 +51,6 @@
           if (optionalField) {
             url = url.replace('.json', '/' + optionalField + '.json');
           }
-          $log.info('get comment list with url: ' + url);
           return PromiseTimeoutService.getData(url);
         }
         var deferred = $q.defer();
@@ -94,7 +92,7 @@
             var isEditable = userRolesAllowedToEdit.indexOf(UserService.getUserRole()) > -1;
             annotatedComments = comments.map(function(comment, index) {
               comment.index = totalComments - index;
-              if (isEditable || comment.username == UserService.getLoggedInUsername()) {
+              if (isEditable || comment.username === UserService.getLoggedInUsername()) {
                 comment.isEditable = true;
               } else {
                 comment.isEditable = false;

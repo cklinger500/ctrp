@@ -98,14 +98,20 @@
                 } else if (!isShownToCurrentUser) {
                   element.hide();
                 } else if (isShownToCurrentUser && !globalWriteModeEnabled) {
+                    /*
                     if (isButton(element)) {
                         element.hide(); //hide button if globalWriteModeEnabled is false
+                        var buttonTitle = element[0].innerHTML;
                     } else {
 
                         $timeout(function() {
                             attrs.$set('disabled', 'disabled');
                         }, 0);
                     }
+                    */
+                    $timeout(function() {
+                        attrs.$set('disabled', 'disabled');
+                    }, 0);
                 }
             }
           } //watchRestrictionRules

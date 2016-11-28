@@ -1,0 +1,106 @@
+<div class="row">
+    <div ng-show="milestoneView.addMode" class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">Add Trial Milestone</div>
+        </div>
+        <div class="panel-body">
+            <form class="form form-horizontal" role="form" name="milestone_form" novalidate ctrp-submit="milestoneView.saveMilestone()" unsaved-changes>
+                <fieldset class="sub-bordered" restriction-field>
+                    <legend class="sub-bordered">Milestone Details</legend>
+                    <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.milestone_form.needsAttention(milestone_form.milestone) || milestoneView.validationErrors.length > 0 || (milestone_form.milestone.$invalid && milestoneView.showValidationMsg)}">
+                        <label for="milestone" class="control-label col-xs-12 col-sm-3">Milestone:</label>
+                        <div class="col-xs-12 col-sm-6">
+                            <select restriction-field class="form-control input-sm" id="milestone" name="milestone" ng-model="milestoneView.milestone_id"
+                                    ng-options="milestone.id as milestone.name for milestone in milestoneView.milestoneArr"
+                                    ng-change="milestoneView.watchOption()" required>
+                                <option value="">-Select a Milestone-</option>
+                            </select>
+                            <span class="help-block" ng-show="ctrpbtn.milestone_form.needsAttention(milestone_form.milestone) || (milestone_form.milestone.$invalid && milestoneView.showValidationMsg)">
+                                Milestone is Required
+                            </span>
+                            <span class="help-block" ng-repeat="error in milestoneView.validationErrors track by $index" ng-show="milestoneView.validationErrors.length > 0">
+                                {{error}}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div ng-show="milestoneView.showRejectionReason" class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.milestone_form.needsAttention(milestone_form.rejection_reason) || (milestone_form.rejection_reason.$invalid && milestoneView.showValidationMsg)}">
+                        <label for="milestone" class="control-label col-xs-12 col-sm-3">Rejection Reason:</label>
+                        <div class="col-xs-12 col-sm-6">
+                            <select restriction-field class="form-control input-sm" id="rejection_reason" name="rejection_reason" ng-model="milestoneView.rejection_reason"
+                                    ng-required="milestoneView.showRejectionReason">
+                                <option value="">-Select a Reason-</option>
+                                <option value="Out of Scope">Out of Scope</option>
+                                <option value="Duplicate">Duplicate</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <span class="help-block" ng-show="ctrpbtn.milestone_form.needsAttention(milestone_form.rejection_reason) || (milestone_form.rejection_reason.$invalid && milestoneView.showValidationMsg)">
+                                Rejection Reason is Required
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group has-feedback" ng-class="{'has-error': ctrpbtn.milestone_form.needsAttention(milestone_form.comment) || (milestone_form.comment.$invalid && milestoneView.showValidationMsg)}">
+                        <label class="control-label col-xs-12 col-sm-3">Comment:</label>
+                        <div class=" col-xs-12 col-sm-6">
+                            <textarea restriction-field class="form-control input-sm" id="comment" name="comment" ng-model="milestoneView.comment" ng-required="milestoneView.showRejectionReason"></textarea>
+                            <span class="help-block" ng-show="ctrpbtn.milestone_form.needsAttention(milestone_form.comment) || (milestone_form.comment.$invalid && milestoneView.showValidationMsg)">
+                                Comment is Required for Rejection Milestones
+                            </span>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="btn-toolbar">
+                    <button type="button" class="btn btn-primary pull-right" id="save_btn" restriction-field ng-disabled="milestoneView.disableBtn" ng-click="milestoneView.saveMilestone($event)">
+                        <i class="glyphicon glyphicon-ok"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-warning pull-right" id="reset_btn" restriction-field ng-click="milestoneView.resetMilestone()" ng-disabled="milestoneView.disableBtn">
+                        <i class="glyphicon glyphicon-remove"></i> Reset
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">Trial Milestones</div>
+        </div>
+        <div class="panel-body">
+            <label for="submission_num">Submission Number: </label>
+            <select id="submission_num" name="submission_num" ng-model="milestoneView.submission_num"
+                    ng-options="submissionNum as submissionNum for submissionNum in milestoneView.curTrial.submission_nums">
+            </select>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover" ng-show="milestoneView.curTrial.milestone_wrappers.length">
+                    <thead>
+                        <th>Submission Number</th>
+                        <th>Milestone</th>
+                        <th>Comment</th>
+                        <th>Creator</th>
+                        <th>Creation Date</th>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="milestone in milestoneView.curTrial.milestone_wrappers track by $index" ng-if="milestone.submission.submission_num === milestoneView.submission_num">
+                            <td>{{milestone.submission.submission_num}}</td>
+                            <td>{{milestone.milestone.name}}</td>
+                            <td>{{milestone.comment}}</td>
+                            <td>{{milestone.created_by}}</td>
+                            <td>{{milestone.created_at | date: 'dd-MMM-yyyy H:mm'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-group no-bottom-margin">
+                <div class="btn-toolbar">
+                    <button type="button" class="btn btn-primary pull-right" id="add_btn" restriction-field ng-click="milestoneView.setAddMode(true)" ng-disabled="milestoneView.curTrial.submission_nums.length === 0">
+                        <i class="glyphicon glyphicon-plus"></i> Add Milestone
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

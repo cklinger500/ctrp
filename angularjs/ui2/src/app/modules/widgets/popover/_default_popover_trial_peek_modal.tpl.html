@@ -1,0 +1,462 @@
+<md-dialog aria-label="List dialog" flex="60">
+    <md-dialog-content>
+        <!-- content below -->
+        <div ng-show="loadingTrial">
+            Loading trial information ....
+        </div>
+        <div ng-show="!loadingTrial">
+            <!-- amendment details -->
+            <div class="row" ng-show="curTrial.last_amendment_date">
+                <h5 class="border-bottom">Amendment Details:</h5>
+                <div ng-show="curTrial.last_amendment_num" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">Amendment Number:</label>
+                    <div class="col-xs-12 col-sm-9 form-text">
+                        {{curTrial.last_amendment_num}}
+                    </div>
+                </div>
+
+                <div ng-show="curTrial.last_amendment_date" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">Amendment Date:</label>
+                    <div class="col-xs-12 col-sm-9 form-text">
+                        {{curTrial.last_amendment_date}}
+                    </div>
+                </div>
+            </div>
+            <!-- end of amendment details -->
+            <!-- Trial identifiers -->
+            <div class="row">
+                <h5 class="border-bottom">Trial Identifiers:</h5>
+
+                <div ng-show="curTrial.lead_protocol_id" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">Lead Organization Trial Identifier:</label>
+                    <div class="col-xs-12 col-sm-9 form-text" id="view_trial_id">
+                        {{curTrial.lead_protocol_id}}
+                    </div>
+                </div>
+
+                <div ng-show="curTrial.nci_id" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">NCI ID:</label>
+                    <div class="col-xs-12 col-sm-9 form-text" id="view_nci_id">
+                        {{curTrial.nci_id}}
+                    </div>
+                </div>
+
+                <div ng-show="curTrial.other_ids.length > 0" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">Other Trial Identifier:</label>
+                    <div class=" col-xs-12 col-sm-9">
+                        <table class="table table-bordered table-striped table-condensed">
+                            <thead>
+                                <th>Protocol ID Type</th>
+                                <th>Protocol ID</th>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="otherId in curTrial.other_ids track by $index">
+                                    <td class="col-md-6 protocol-id-origin">{{otherId.protocol_id_origin.name}}</td>
+                                    <td class="col-md-6 protocol-id" id="view_protocol_id_{{$index}}">{{otherId.protocol_id}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- end of trial identifiers -->
+
+            <!-- Trial Details -->
+            <div class="row">
+                <h5 class="border-bottom">Trial Details:</h5>
+
+                <div ng-show="curTrial.official_title" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">Official Title:</label>
+                    <div class="col-xs-12 col-sm-9 form-text">
+                        {{curTrial.official_title}}
+                    </div>
+                </div>
+
+                <div ng-show="curTrial.phase" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">Phase:</label>
+                    <div class="col-xs-12 col-sm-9 form-text">
+                        {{curTrial.phase.name}}
+                    </div>
+                </div>
+
+                <div ng-show="curTrial.pilot" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">Pilot?</label>
+                    <div class="col-xs-12 col-sm-9 form-text">
+                        {{curTrial.pilot}}
+                    </div>
+                </div>
+
+                <div ng-show="curTrial.research_category" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">Clinical Research Category:</label>
+                    <div class="col-xs-12 col-sm-9 form-text">
+                        {{curTrial.research_category.name}}
+                    </div>
+                </div>
+
+                <div ng-show="curTrial.primary_purpose" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">Primary Purpose:</label>
+                    <div class="col-xs-12 col-sm-9 form-text">
+                        {{curTrial.primary_purpose.name}}
+                    </div>
+                </div>
+
+                <div ng-show="curTrial.primary_purpose_other" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">Describe "Other" Primary Purpose:</label>
+                    <div class="col-xs-12 col-sm-9 form-text">
+                        {{curTrial.primary_purpose_other}}
+                    </div>
+                </div>
+
+                <div ng-show="curTrial.secondary_purpose" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">Secondary Purpose:</label>
+                    <div class="col-xs-12 col-sm-9 form-text">
+                        {{curTrial.secondary_purpose.name}}
+                    </div>
+                </div>
+
+                <div ng-show="curTrial.primary_purpose_other" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">Describe "Other" Secondary Purpose:</label>
+                    <div class="col-xs-12 col-sm-9 form-text">
+                        {{curTrial.secondary_purpose_other}}
+                    </div>
+                </div>
+
+                <div ng-show="curTrial.accrual_disease_term" class="row">
+                    <label class="control-label col-xs-12 col-sm-3">Accrual Disease Terminology:</label>
+                    <div class="col-xs-12 col-sm-9 form-text">
+                        {{curTrial.accrual_disease_term.name}}
+                    </div>
+                </div>
+            </div>
+            <!-- end of Trial details -->
+
+          <!-- Organization / PI -->
+          <div class="row">
+              <h5 ng-show="curTrial.lead_org || curTrial.pi" class="border-bottom">Lead Organization/Principal Investigator:</h5>
+
+              <div ng-show="curTrial.lead_org" class="row">
+                  <label class="control-label col-xs-12 col-sm-3">Lead Organization:</label>
+                  <div class="col-xs-12 col-sm-9 form-text">
+                      {{curTrial.lead_org.name}}
+                  </div>
+              </div>
+
+              <div ng-show="curTrial.pi" class="row">
+                  <label class="control-label col-xs-12 col-sm-3">Principal Investigator:</label>
+                  <div class="col-xs-12 col-sm-9 form-text">
+                      {{curTrial.pi.lname + ', ' + curTrial.pi.fname}}
+                  </div>
+              </div>
+          </div>
+          <!-- end of Organization / PI -->
+
+          <!-- Sponsor -->
+          <div class="row">
+              <h5 ng-show="curTrial.sponsor" class="border-bottom">Sponsor:</h5>
+
+              <div ng-show="curTrial.sponsor" class="row">
+                  <label class="control-label col-xs-12 col-sm-3">Sponsor:</label>
+                  <div class="col-xs-12 col-sm-9 form-text">
+                      {{curTrial.sponsor.name}}
+                  </div>
+              </div>
+          </div>
+          <!-- end of Sponsor -->
+
+          <!-- funding -->
+          <div class="row">
+              <h5 ng-show="curTrial.funding_sources.length > 0 || curTrial.program_code" class="border-bottom">Data Table 4 Information:</h5>
+
+              <div ng-repeat="funding_source in curTrial.funding_sources track by $index" class="row">
+                  <label class="control-label col-xs-12 col-sm-3"><span ng-show="$index == 0">Data Table 4 Funding Source:</span></label>
+                  <div class="col-xs-12 col-sm-9 form-text">
+                      {{funding_source.name}}
+                  </div>
+              </div>
+
+              <div ng-show="curTrial.program_code" class="row">
+                  <label class="control-label col-xs-12 col-sm-3">Program Code:</label>
+                  <div class="col-xs-12 col-sm-9 form-text">
+                      {{curTrial.program_code}}
+                  </div>
+              </div>
+
+              <h5 ng-show="curTrial.grants.length > 0 && curTrial.is_owner" class="border-bottom">NIH Grant Information (for NIH funded Trials):</h5>
+
+              <div ng-show="curTrial.grants.length > 0 && curTrial.is_owner" class="row">
+                  <label class="control-label col-xs-12 col-sm-3"></label>
+                  <div class=" col-xs-12 col-sm-7">
+                      <table class="table table-bordered table-striped table-condensed">
+                          <thead>
+                              <th>Funding Mechanism</th>
+                              <th>Institute Code</th>
+                              <th>Serial Number</th>
+                              <th>NCI Division/Program Code</th>
+                          </thead>
+                          <tbody>
+                              <tr ng-repeat="grant in curTrial.grants track by $index">
+                                  <td class="col-md-3">{{grant.funding_mechanism}}</td>
+                                  <td class="col-md-2">{{grant.institute_code}}</td>
+                                  <td class="col-md-3">{{grant.serial_number}}</td>
+                                  <td class="col-md-4">{{grant.nci}}</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+          <!-- end of funding -->
+
+          <!-- Trial Status -->
+          <div class="row">
+              <h5 class="border-bottom">Trial Status:</h5>
+
+              <div ng-show="curTrial.current_trial_status" class="row">
+                  <label class="control-label col-xs-12 col-sm-3">Current Status:</label>
+                  <div class="col-xs-12 col-sm-9 form-text">
+                      {{curTrial.current_trial_status}}
+                  </div>
+              </div>
+
+              <div ng-show="curTrial.current_trial_why_stopped" class="row">
+                  <label class="control-label col-xs-12 col-sm-3">Why the Study Stopped:</label>
+                  <div class="col-xs-12 col-sm-9 form-text">
+                      {{curTrial.current_trial_why_stopped}}
+                  </div>
+              </div>
+
+              <div ng-show="curTrial.current_trial_status_date" class="row">
+                  <label class="control-label col-xs-12 col-sm-3">Current Status Date:</label>
+                  <div class="col-xs-12 col-sm-9 form-text">
+                      {{curTrial.current_trial_status_date}}
+                  </div>
+              </div>
+          </div>
+          <!-- end of Trial Status -->
+
+          <!-- Trial Dates -->
+          <h5 class="border-bottom">Trial Dates:</h5>
+
+          <div ng-show="curTrial.start_date" class="row">
+              <label class="control-label col-xs-12 col-sm-3">Trial Start Date:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  {{curTrial.start_date}}<span class="date-qualifier">{{curTrial.start_date_qual}}</span>
+              </div>
+          </div>
+
+          <div ng-show="curTrial.primary_comp_date" class="row">
+              <label class="control-label col-xs-12 col-sm-3">Primary Completion Date:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  {{curTrial.primary_comp_date}}<span class="date-qualifier">{{curTrial.primary_comp_date_qual}}</span>
+              </div>
+          </div>
+
+          <div ng-show="curTrial.comp_date" class="row">
+              <label class="control-label col-xs-12 col-sm-3">Completion Date:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  {{curTrial.comp_date}}<span class="date-qualifier">{{curTrial.comp_date_qual}}</span>
+              </div>
+          </div>
+          <!-- end of Trial Dates -->
+
+          <!-- IND/IDE information -->
+          <div class="row">
+              <h5 ng-show="curTrial.ind_ides.length > 0 && curTrial.is_owner" class="border-bottom">FDA IND/IDE Information for applicable trials:</h5>
+
+              <div ng-show="curTrial.ind_ides.length > 0 && curTrial.is_owner" class="row">
+                  <label class="control-label col-xs-12 col-sm-3"></label>
+                  <div class=" col-xs-12 col-sm-9">
+                      <table class="table table-bordered table-striped table-condensed">
+                          <thead>
+                              <th>IND/IDE Types</th>
+                              <th>IND/IDE Number</th>
+                              <th>IND/IDE Grantor</th>
+                              <th>IND/IDE Holder Type</th>
+                              <th>NIH Institution, NCI Division/Program Code (if applicable)</th>
+                          </thead>
+                          <tbody>
+                          <tr ng-repeat="indIde in curTrial.ind_ides track by $index">
+                              <td class="col-md-2">{{indIde.ind_ide_type}}</td>
+                              <td class="col-md-2">{{indIde.ind_ide_number}}</td>
+                              <td class="col-md-2">{{indIde.grantor}}</td>
+                              <td class="col-md-3">{{indIde.holder_type.name}}</td>
+                              <td class="col-md-3">{{indIde.nih_nci}}</td>
+                          </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+          <!-- end of IND IDE -->
+
+          <!-- Regulatory -->
+          <h5 ng-show="curTrial.is_owner" class="border-bottom">Regulatory Information:</h5>
+
+          <div ng-show="curTrial.responsible_party && curTrial.is_owner" class="row">
+              <label class="control-label col-xs-12 col-sm-3">Responsible Party:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  {{curTrial.responsible_party.name}}
+              </div>
+          </div>
+
+          <div ng-show="curTrial.investigator && curTrial.is_owner" class="row">
+              <label class="control-label col-xs-12 col-sm-3">Investigator:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  {{curTrial.investigator.lname + ', ' + curTrial.investigator.fname}}
+              </div>
+          </div>
+
+          <div ng-show="curTrial.investigator_title && curTrial.is_owner" class="row">
+              <label class="control-label col-xs-12 col-sm-3">Investigator Title:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  {{curTrial.investigator_title}}
+              </div>
+          </div>
+
+          <div ng-show="curTrial.investigator_aff && curTrial.is_owner" class="row">
+              <label class="control-label col-xs-12 col-sm-3">Investigator Affiliation:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  {{curTrial.investigator_aff.name}}
+              </div>
+          </div>
+
+          <div ng-show="curTrial.oversight_authorities.length > 0 && curTrial.is_owner" class="row">
+              <label class="control-label col-xs-12 col-sm-3">Trial Oversight Authority:</label>
+              <div class=" col-xs-12 col-sm-9">
+                  <table class="table table-bordered table-striped table-condensed">
+                      <thead>
+                          <th>Country</th>
+                          <th>Organization</th>
+                      </thead>
+                      <tbody>
+                      <tr ng-repeat="authority in curTrial.oversight_authorities track by $index">
+                          <td class="col-md-5">{{authority.country}}</td>
+                          <td class="col-md-7">{{authority.organization}}</td>
+                      </tr>
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+
+          <div ng-show="curTrial.intervention_indicator && curTrial.is_owner" class="row">
+              <label class="control-label col-xs-12 col-sm-3">FDA Regulated Intervention Indicator:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  {{curTrial.intervention_indicator}}
+              </div>
+          </div>
+
+          <div ng-show="curTrial.sec801_indicator && curTrial.is_owner" class="row">
+              <label class="control-label col-xs-12 col-sm-3">Section 801 Indicator:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  {{curTrial.sec801_indicator}}
+              </div>
+          </div>
+
+          <div ng-show="curTrial.data_monitor_indicator && curTrial.is_owner" class="row">
+              <label class="control-label col-xs-12 col-sm-3">Data Monitoring Committee Appointed Indicator:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  {{curTrial.data_monitor_indicator}}
+              </div>
+          </div>
+
+          <h5 ng-show="curTrial.trial_documents.length > 0 && curTrial.is_owner" class="border-bottom">Trial Related Documents:</h5>
+
+          <div ng-repeat="document in curTrial.trial_documents track by $index"
+               ng-show="document.document_type == 'Protocol Document' && document.status === 'active' && curTrial.is_owner"
+               class="row">
+              <label class="control-label col-xs-12 col-sm-3">Protocol Document:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  <a href="{{downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
+              </div>
+          </div>
+
+          <div ng-repeat="document in curTrial.trial_documents track by $index"
+               ng-show="document.document_type == 'Change Memo Document' && document.status === 'active' && curTrial.is_owner"
+               class="row">
+              <label class="control-label col-xs-12 col-sm-3">Change Memo Document:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  <a href="{{downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
+              </div>
+          </div>
+
+          <div ng-repeat="document in curTrial.trial_documents track by $index"
+               ng-show="document.document_type == 'Protocol Highlighted Document' && document.status === 'active' && curTrial.is_owner"
+               class="row">
+              <label class="control-label col-xs-12 col-sm-3">Protocol Highlighted Document:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  <a href="{{downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
+              </div>
+          </div>
+
+          <div ng-repeat="document in curTrial.trial_documents track by $index"
+               ng-show="document.document_type == 'IRB Approval' && document.status === 'active' && curTrial.is_owner"
+               class="row">
+              <label class="control-label col-xs-12 col-sm-3">IRB Approval:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  <a href="{{downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
+              </div>
+          </div>
+
+          <div ng-repeat="document in curTrial.trial_documents track by $index"
+               ng-show="document.document_type == 'List of Participating Sites' && document.status === 'active' && curTrial.is_owner"
+               class="row">
+              <label class="control-label col-xs-12 col-sm-3">List of Participating Sites:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  <a href="{{downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
+              </div>
+          </div>
+
+          <div ng-repeat="document in curTrial.trial_documents track by $index"
+               ng-show="document.document_type == 'Informed Consent' && document.status === 'active' && curTrial.is_owner"
+               class="row">
+              <label class="control-label col-xs-12 col-sm-3">Informed Consent Document:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  <a href="{{downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
+              </div>
+          </div>
+
+          <div ng-repeat="document in curTrial.trial_documents track by $index"
+               ng-show="document.document_type == 'Other Document' && document.status === 'active' && curTrial.is_owner"
+               class="row">
+              <label class="control-label col-xs-12 col-sm-3">Other:</label>
+              <div class="col-xs-12 col-sm-9 form-text">
+                  <a href="{{downloadBaseUrl}}/{{document.id}}">{{document.file_name}}</a>
+                  <br>{{document.document_subtype}}
+              </div>
+          </div>
+
+          <h5 ng-show="curTrial.participating_sites.length > 0 && curTrial.is_owner" class="border-bottom">Participating Sites:</h5>
+
+          <div ng-show="curTrial.participating_sites.length > 0 && curTrial.is_owner" class="row">
+              <div class=" col-xs-12 col-sm-12">
+                  <table class="table table-bordered table-striped table-condensed">
+                      <thead>
+                          <th>Organization Name</th>
+                          <th>Local Trial Identifier</th>
+                          <th>Site Principal Investigator</th>
+                          <th>Site Specific Program Code</th>
+                          <th>Current Status</th>
+                      </thead>
+                      <tbody>
+                      <tr ng-repeat="ps in curTrial.participating_sites track by $index">
+                          <td class="col-md-4">{{ps.organization.name}}</td>
+                          <td class="col-md-2">{{ps.protocol_id}}</td>
+                          <td class="col-md-2">{{ps.site_pi.lname + (ps.site_pi.lname ? ', ' : ' ') + ps.site_pi.fname}}</td>
+                          <td class="col-md-2">{{ps.program_code}}</td>
+                          <td class="col-md-2">{{ps.current_status_name}}</td>
+                      </tr>
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+          <!-- end of regulatory -->
+
+        </div>
+        <!-- content above -->
+    </md-dialog-content>
+    <md-dialog-actions>
+       <md-button ng-click="close()" class="md-primary">
+         <ng-md-icon icon="close" size="18"></ng-md-icon>Close
+       </md-button>
+    </md-dialog-actions>
+</md-dialog>

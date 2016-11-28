@@ -1,0 +1,27 @@
+<div class="popover" tabindex="-1" ng-show="content">
+    <div class="arrow"></div>
+    <h3 class="popover-title" ng-bind-html="title" ng-show="title"></h3>
+    <div class="popover-content" style="max-width:500px">
+        <form name="popoverForm">
+          <!-- <p ng-bind-html="content" style="min-width:300px;"></p> -->
+          <div class="form-group">
+            <div class="input-group">
+              <!-- <div class="input-group-addon">Comment</div> -->
+              <textarea class="form-control" name="comment_for_deletion" rows="1" ng-model="model.why_deleted"
+                  placeholder="Why deleted?" maxlength="255" auto-focus>
+              </textarea>
+              <span ng-show="popoverForm.comment_for_deletion.$dirty">
+                  {{255 - popoverForm.comment_for_deletion.$viewValue.length}} characters left
+              </span>
+              <span ng-show="errorMsg">
+                  <strong>{{errorMsg}}</strong>
+              </span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-danger" id="cancel_comment" ng-click="cancelComment()">Cancel</button>
+            <button type="button" class="btn btn-primary" id="commit_deletion_comment" ng-click="saveComment(model.why_deleted)">Commit</button>
+          </div>
+        </form>
+    </div>
+</div>

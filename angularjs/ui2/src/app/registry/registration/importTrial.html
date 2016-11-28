@@ -1,0 +1,64 @@
+<div class="row">
+    <div class="col-xs-12 drop-shadow">
+        <div class="row">
+            <h4>Import ClinicalTrials.gov Trials</h4>
+        </div>
+        <div class="row">
+            <form class="form form-horizontal" role="form">
+
+                <div class="form-group">
+                    <label for="nci_id" class="control-label col-xs-12 col-sm-3">ClinicalTrials.gov Identifier: </label>
+                    <div class="col-xs-12 col-sm-3">
+                        <input type="text" id="nci_id" class="form-control input-sm" ng-model="importTrialView.searchParams.nct_id" auto-focus/>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                        <button type="submit" class="btn btn-primary" id="submission_btn" ng-click="importTrialView.searchTrials()" ng-disabled="importTrialView.disableBtn">
+                            <i class="glyphicon glyphicon-search"></i> Search Studies
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="importTrialView.nct_id">
+                    <label class="control-label col-xs-12 col-sm-3">Studies on ClinicalTrials.gov:</label>
+                    <div class=" col-xs-12 col-sm-9">
+                        <table class="table table-bordered table-striped table-condensed">
+                            <thead>
+                                <th>ClinicalTrials.gov Identifier</th>
+                                <th>Status</th>
+                                <th>Study</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="col-md-3">{{importTrialView.nct_id}}</td>
+                                    <td class="col-md-2">{{importTrialView.status}}</td>
+                                    <td class="col-md-8">{{importTrialView.official_title}}<br><br>
+                                        <b>Condition(s):</b> {{importTrialView.condition}}<br>
+                                        <b>Intervention(s):</b> {{importTrialView.intervention}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="importTrialView.nct_id">
+                    <label class="control-label col-xs-12 col-sm-3"></label>
+                    <div class=" col-xs-12 col-sm-9">
+                        <button restriction-field type="button" class="btn btn-primary pull-right" id="import_btn" ng-click="importTrialView.importTrial()" ng-disabled="importTrialView.disableBtn">
+                            <i class="glyphicon glyphicon-import"></i> Import Trial from ClincialTrials.gov
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group has-error" ng-if="importTrialView.error_msg">
+                    <label class="control-label col-xs-12 col-sm-3"></label>
+                    <div class=" col-xs-12 col-sm-9">
+                        <span class="help-block">
+                            {{importTrialView.error_msg}}
+                        </span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

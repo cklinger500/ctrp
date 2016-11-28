@@ -13,4 +13,5 @@
 
 class AnatomicSite < ActiveRecord::Base
   include BasicConcerns
+  validates :code, uniqueness: true
 end

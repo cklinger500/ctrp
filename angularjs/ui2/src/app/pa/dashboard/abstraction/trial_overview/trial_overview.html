@@ -1,0 +1,217 @@
+<script type="text/ng-template" id="submitterPopOverTemplate.html">
+    <p>
+        <strong>First Name: </strong>
+        <span>{{paTrialOverview.submitterPopOver.submitter.first_name}}</span>
+    </p>
+    <p ng-show="paTrialOverview.submitterPopOver.submitter.middle_name">
+        <strong>Middle Name: </strong>
+        <span>{{paTrialOverview.submitterPopOver.submitter.middle_name}}</span>
+    </p>
+    <p>
+        <strong>Last Name: </strong>
+        <span>{{paTrialOverview.submitterPopOver.submitter.last_name}}</span>
+    </p>
+    <p>
+        <strong>Email: </strong>
+        <span>{{paTrialOverview.submitterPopOver.submitter.email}}</span>
+    </p>
+</script>
+<div class="row-fluid c">
+    <!-- ng-controller="paTrialOverviewCtrl as paTrialOverview" -->
+    <section class="md-whiteframe-z1">
+        <md-content>
+            <md-toolbar class="md-toolbar-tools ctrp-md-panel-header">
+                <md-button class="md-icon-button" aria-label="showsubmenus">
+                    <ng-md-icon icon="menu" ng-click="paTrialOverview.showSubMenus()"></ng-md-icon>
+                </md-button>
+                <h3><span>Trial Overview (NCI Trial ID: {{paTrialOverview.trialDetailObj.nci_id}})</span></h3>
+                <span flex></span>
+                <md-button class="md-icon-button" aria-label="showcontent">
+                        <ng-md-icon ng-if="paTrialOverview.isPanelOpen" icon="unfold_less" size="28" ng-click="paTrialOverview.togglePanelOpen()"></ng-md-icon>
+                        <ng-md-icon ng-if="!paTrialOverview.isPanelOpen" icon="unfold_more" size="28" ng-click="paTrialOverview.togglePanelOpen()"></ng-md-icon>
+                </md-button>
+            </md-toolbar>
+        </md-content>
+    </section>
+
+    <div class="col-xs-12 drop-shadow">
+        <!-- loading is active -->
+        <!-- <div class="row" ng-show="paTrialOverview.loadingTrialDetail">
+            <img src="./images/ajax_loader.svg">
+        </div> -->
+        <!-- <div class="row" ng-show="!paTrialOverview.loadingTrialDetail && paTrialOverview.isPanelOpen"> -->
+        <div class="row" ng-show="paTrialOverview.isPanelOpen">
+            <!-- first row -->
+            <div class="row">
+                <p>
+                    <h5><strong>{{paTrialOverview.trialDetailObj.official_title}}</strong></h5>
+                </p>
+            </div>
+            <!-- end of first row -->
+
+            <!-- second row -->
+            <div class="row">
+                <!-- column 1 -->
+                <div class="col-sm-4 col-xs-12">
+                    <p>
+                        <strong>NCI ID: </strong>
+                        <span>{{paTrialOverview.trialDetailObj.nci_id}}</span>
+                    </p>
+                    <p>
+                        <!--same as ClinicalTrials.gov Id -->
+                        <strong>NCT ID:</strong>
+                        <span ng-show="paTrialOverview.trialDetailObj.nct_trial_id"><a href="https://clinicaltrials.gov/ct2/show/{{paTrialOverview.trialDetailObj.nct_trial_id}}" target="_blank">{{paTrialOverview.trialDetailObj.nct_trial_id}}<i class="glyphicon glyphicon-new-window" style="padding-left: 5px"></i></a></span>
+                    </p>
+                    <p>
+                        <strong>Lead Organization Trial ID:</strong>
+                        <span>{{paTrialOverview.trialDetailObj.lead_protocol_id}}</span>
+                    </p>
+                    <p>
+                        <strong>Lead Organization:</strong>
+                        <span><a ui-sref="main.orgDetail({orgId: paTrialOverview.trialDetailObj.lead_org.id})">
+                                {{paTrialOverview.trialDetailObj.lead_org.name}}
+                            </a>
+                        </span>
+                    </p>
+
+                    <p>
+                        <strong>Submission Method:</strong>
+                        <span>{{paTrialOverview.trialDetailObj.submission_method}}</span>
+                    </p>
+
+                    <p>
+                        <strong>Amendment Number:</strong>
+                        <span>{{paTrialOverview.trialDetailObj.last_amendment_num}}</span>
+                    </p>
+
+                    <p>
+                        <strong>Amendment Date:</strong>
+                        <span>{{paTrialOverview.trialDetailObj.last_amendment_date | dateFormat }}</span>
+                    </p>
+                </div>
+                <!-- end of column 1-->
+
+                <!-- column 2 -->
+                <div class="col-sm-4 col-xs-12">
+                    <p>
+                        <strong>Principal Investigator:</strong>
+                        <span><a ui-sref="main.personDetail({personId: paTrialOverview.trialDetailObj.pi.id})">
+                            {{paTrialOverview.trialDetailObj.pi.fullName}}
+                        </a></span>
+                    </p>
+
+                    <p>
+                        <strong>Clinical Research Category:</strong>
+                        <span>{{paTrialOverview.trialDetailObj.research_category.name}}</span>
+                    </p>
+
+                    <p>
+                        <strong>Last Submitter:</strong>
+                        <span><a href="" uib-popover-template="paTrialOverview.submitterPopOver.templateUrl" popover-placement="right" popover-title="{{paTrialOverview.submitterPopOver.templateUrl.title}}">{{paTrialOverview.trialDetailObj.submitter.username}}</a></span>
+                    </p>
+
+                    <p>
+                        <strong>Last Submitter Organization:</strong>
+                        <span>{{paTrialOverview.trialDetailObj.submitters_organization}}</span>
+                    </p>
+
+                    <!-- <p>
+                        <strong>Trial Category:</strong>
+                        <span>{{paTrialOverview.trialDetailObj.research_category.name}}</span>
+                    </p> -->
+
+                    <p>
+                        <strong>Last Updated By:</strong>
+                        <span>{{paTrialOverview.trialDetailObj.updated_by}}</span>
+                    </p>
+
+                    <p>
+                        <strong>Last Updated Date:</strong>
+                        <span ng-hide="!paTrialOverview.trialDetailObj.updated_by">{{paTrialOverview.trialDetailObj.updated_at | date: "dd-MMM-yyyy H:mm"}}</span>
+                    </p>
+                </div>
+                <!-- end of column 2-->
+
+                <!-- column 3 -->
+                <div class="col-sm-4 col-xs-12">
+                    <p>
+                        <strong>Information Source: </strong>
+                        <span>{{paTrialOverview.trialDetailObj.internal_source.name}}</span>
+                    </p>
+                    <p>
+                        <strong>Data Table 4 Funding Source: </strong>
+                        <span ng-hide="paTrialOverview.trialDetailObj.trial_funding_sources.length === 0">{{paTrialOverview.trialDetailObj.trial_funding_sources[0].source_name}}</span>
+                    </p>
+                    <p>
+                        <strong>Current Trial Status:</strong>
+                        <span>{{paTrialOverview.trialDetailObj.current_trial_status}}</span>
+                    </p>
+
+                    <p>
+                        <strong>Current Trial Status Date:</strong>
+                        <span>{{paTrialOverview.trialDetailObj.current_trial_status_date | dateFormat }}</span>
+                    </p>
+
+                    <p>
+                        <strong>Processing Status:</strong>
+                        <span>{{paTrialOverview.trialDetailObj.processing_status}}</span>
+                    </p>
+
+                    <p>
+                        <strong>Checked Out for Admin. Use by: </strong>
+                        <span>{{paTrialOverview.adminCheckoutObj.by}}</span>
+                    </p>
+
+                    <p>
+                        <strong>Checked Out for Scientific. Use by: </strong>
+                        <span>{{paTrialOverview.scientificCheckoutObj.by}}</span>
+                    </p>
+                </div>
+                <!-- end of column 3-->
+            </div>
+            <!-- end of second row -->
+
+            <!-- third row -->
+            <!--  ng-if="paTrialOverview.trialDetailObj.pa_editable" -->
+            <div class="row text-center">
+                <div class="btn-toolbar">
+                    <!-- scientific/admin checkout/in buttons -->
+                    <button type="button" class="btn btn-primary pull-right" id="admin_sci_checkout" restriction-field="ROLE_ABSTRACTOR, ROLE_ABSTRACTOR-SU, ROLE_SUPER, ROLE_ADMIN"
+                        ng-disabled="paTrialOverview.scientificCheckoutBtnDisabled || paTrialOverview.adminCheckoutBtnDisabled || paTrialOverview.disableBtn"
+                        ng-click="paTrialOverview.checkoutTrial('scientificadmin')" ng-show="paTrialOverview.adminCheckoutAllowed && paTrialOverview.scientificCheckoutAllowed">Admin/Scientific Check Out</button>
+                    <button type="button" class="btn btn-primary pull-right" id="admin_sci_checkin" restriction-field="ROLE_ABSTRACTOR, ROLE_ABSTRACTOR-SU, ROLE_SUPER, ROLE_ADMIN"
+                        ng-disabled="paTrialOverview.scientificCheckoutBtnDisabled || paTrialOverview.adminCheckoutBtnDisabled || paTrialOverview.disableBtn"
+                        ng-click="paTrialOverview.checkinTrial('scientificadmin')" ng-show="paTrialOverview.adminCheckinAllowed && paTrialOverview.scientificCheckinAllowed">Admin/Scientific Check In</button>
+
+                    <!-- scientific checkout/in buttons -->
+                    <button type="button" class="btn btn-primary pull-right" id="scientific_checkout" restriction-field="ROLE_ABSTRACTOR, ROLE_ABSTRACTOR-SU, ROLE_SUPER, ROLE_ADMIN"
+                        ng-disabled="paTrialOverview.scientificCheckoutBtnDisabled || paTrialOverview.disableBtn"
+                        ng-click="paTrialOverview.checkoutTrial('scientific')" ng-show="paTrialOverview.scientificCheckoutAllowed">Scientific Check Out</button>
+                    <button type="button" class="btn btn-primary pull-right" id="scientific_checkin" restriction-field="ROLE_ABSTRACTOR, ROLE_ABSTRACTOR-SU, ROLE_SUPER, ROLE_ADMIN"
+                        ng-disabled="paTrialOverview.scientificCheckoutBtnDisabled || paTrialOverview.disableBtn"
+                        ng-click="paTrialOverview.checkinTrial('scientific')" ng-show="paTrialOverview.scientificCheckinAllowed">Scientific Check In</button>
+
+                    <!-- admin checkout/in buttons -->
+                    <button type="button" class="btn btn-primary pull-right" id="admin_checkout" restriction-field="ROLE_ABSTRACTOR, ROLE_ABSTRACTOR-SU, ROLE_SUPER, ROLE_ADMIN"
+                        ng-disabled="paTrialOverview.adminCheckoutBtnDisabled || paTrialOverview.disableBtn"
+                        ng-click="paTrialOverview.checkoutTrial('admin')" ng-show="paTrialOverview.adminCheckoutAllowed">Admin Check Out</button>
+                    <button type="button" class="btn btn-primary pull-right" id="admin_checkin" restriction-field="ROLE_ABSTRACTOR, ROLE_ABSTRACTOR-SU, ROLE_SUPER, ROLE_ADMIN"
+                        ng-disabled="paTrialOverview.adminCheckoutBtnDisabled || paTrialOverview.disableBtn"
+                        ng-click="paTrialOverview.checkinTrial('admin')" ng-show="paTrialOverview.adminCheckinAllowed">Admin Check In</button>
+
+                    <button type="button" class="btn btn-warning pull-right" id="back_to_search" ng-click="paTrialOverview.backToPATrialSearch()">
+                        <i class="glyphicon glyphicon-arrow-left"></i> Back to Search Results
+                    </button>
+                </div>
+                <!-- toastr message container here -->
+                <div id="checkoutORin_message"></div>
+                <hr />
+            </div>
+            <!-- end of third row -->
+        </div>
+
+        <!-- dynamic loading of sub-partial views here -->
+        <br />
+        <div ui-view></div>
+        <!-- end of dynamic loading of partial views -->
+    </div>

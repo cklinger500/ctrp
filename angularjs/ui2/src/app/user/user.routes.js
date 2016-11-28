@@ -20,11 +20,7 @@
                     controller: 'userCtrl as userView',
 
                     resolve: {
-                        UserService: 'UserService',
-                        loginBulletin: function(UserService, $q) {
-
-                            return UserService.getLoginBulletin();
-                        }
+                        UserService: 'UserService'
                     },
                     onEnter: function($state, UserService, toastr) {
                         if (UserService.isLoggedIn()) {
@@ -45,16 +41,20 @@
                     resolve: {
                         UserService: 'UserService'
                     },
-                ncyBreadcrumb: {
-                    parent: '',
-                    label: 'CTRP Sign Up'
-                    // skip: true,
-                }
+                    ncyBreadcrumb: {
+                        parent: 'main.sign_in',
+                        label: 'CTRP Sign Up'
+                        // skip: true,
+                    }
                 })
-
                 .state('main.welcome_signup', {
                     url: '/welcome_signup',
-                    templateUrl: 'app/user/welcome_signup.html'
+                    templateUrl: 'app/user/welcome_signup.html',
+                    ncyBreadcrumb: {
+                        parent: 'main.sign_in',
+                        label: 'CTRP Welcome'
+                        // skip: true,
+                    }
                 })
 
                 .state('main.gsa', {
@@ -74,9 +74,50 @@
                     templateUrl: 'app/user/user_list.html',
                     controller: 'userListCtrl as userView',
                     resolve: {
-                        UserService: 'UserService'
+                        UserService: 'UserService',
+                        userDetailObj: function(UserService) {
+                            return UserService.getCurrentUserDetails();
+                        }
+                    },
+                    ncyBreadcrumb: {
+                        parent: 'main.defaultContent',
+                        label: 'User Management'
                     }
                 })
+
+                .state('main.assignTrials', {
+                    url: '/assign-trial-ownership',
+                    templateUrl: 'app/user/assign_trials_user_list.html',
+                    controller: 'userAssignTrialCtrl as trialOwnershipView',
+                    resolve: {
+                        UserService: 'UserService',
+                        TrialService: 'TrialService',
+                        userDetailObj: function(UserService) {
+                            return UserService.getCurrentUserDetails();
+                        }
+                    },
+                    ncyBreadcrumb: {
+                        parent: 'main.users',
+                        label: 'Assign Trial Ownership'
+                    }
+                })
+
+                .state('main.registeredUsers', {
+                    url: '/registered-users',
+                    templateUrl: 'app/user/user_list.html',
+                    controller: 'userListCtrl as userView',
+                    resolve: {
+                        UserService: 'UserService',
+                        userDetailObj: function(UserService) {
+                            return UserService.getCurrentUserDetails();
+                        }
+                    },
+                    ncyBreadcrumb: {
+                        parent: 'main.defaultContent',
+                        label: 'Registered CTRP Users'
+                    }
+                })
+
                 .state('main.changePassword', {
                     url: '/change_password',
                     templateUrl: 'app/user/changePassword.html',
@@ -89,25 +130,89 @@
                     }
                 })
 
-                .state('main.userDetail', {
-                    url: '/userDetail/username',
-                    templateUrl: 'app/user/userDetails.html',
+                .state('main.manageUserDetail', {
+                    url: '/manage-user-detail/:username',
+                    templateUrl: 'app/user/regUserDetails.html',
                     controller: 'userDetailCtrl as userDetailView',
                     section: 'user',
                     resolve: {
                         UserService: 'UserService',
-                        GeoLocationService : 'GeoLocationService',
-                        countryList : function(GeoLocationService) {
-                            return GeoLocationService.getCountryList();
-                        },
-                        userDetailObj : function(UserService) {
-                            return UserService.getUserDetailsByUsername();
+                        userDetailObj : function(UserService, $stateParams) {
+                            return UserService.getUserDetailsByUsername($stateParams.username);
+                        }
+                    }, //resolve the promise and pass it to controller
+                    ncyBreadcrumb: {
+                        parent: 'main.users',
+                        label: 'User Profile'
+                    }
+                })
+
+                .state('main.regUserDetail', {
+                    url: '/reg-user-detail/:username',
+                    templateUrl: 'app/user/regUserDetails.html',
+                    controller: 'userDetailCtrl as userDetailView',
+                    section: 'user',
+                    resolve: {
+                        UserService: 'UserService',
+                        userDetailObj : function(UserService, $stateParams) {
+                            return UserService.getUserDetailsByUsername($stateParams.username);
+                        }
+                    }, //resolve the promise and pass it to controller
+                    ncyBreadcrumb: {
+                        parent: 'main.users',
+                        label: 'User Profile'
+                    }
+                })
+
+                .state('main.submitterDetail', {
+                    url: '/user-trial-details/:username',
+                    templateUrl: 'app/user/regUserDetails.html',
+                    controller: 'userDetailCtrl as userDetailView',
+                    section: 'user',
+                    resolve: {
+                        UserService: 'UserService',
+                        userDetailObj : function(UserService, $stateParams) {
+                            return UserService.getUserDetailsByUsername($stateParams.username);
                         }
                     }, //resolve the promise and pass it to controller
                     ncyBreadcrumb: {
                         label: 'User Profile'
                     }
+                })
+
+                .state('main.myprofile', {
+                    url: '/settings/profile',
+                    templateUrl: 'app/user/userDetails.html',
+                    controller: 'userDetailCtrl as userDetailView',
+                    section: 'user',
+                    resolve: {
+                        UserService: 'UserService',
+                        userDetailObj : function(UserService) {
+                            return UserService.getUserDetailsByUsername(UserService.currentUser());
+                        }
+                    }, //resolve the promise and pass it to controller
+                    ncyBreadcrumb: {
+                        parent: 'main.defaultContent',
+                        label: 'User Profile'
+                    }
+                })
+
+                .state('main.userDetail', {
+                    url: '/user-detail/:username',
+                    templateUrl: 'app/user/userDetails.html',
+                    controller: 'userDetailCtrl as userDetailView',
+                    section: 'user',
+                    resolve: {
+                        UserService: 'UserService',
+                        userDetailObj : function(UserService, $stateParams) {
+                            return UserService.getUserDetailsByUsername($stateParams.username);
+                        }
+                    }, //resolve the promise and pass it to controller
+                    ncyBreadcrumb: {
+                        parent: 'main.users',
+                        label: 'User Profile'
+                    }
                 });
     } //userRoutes
 
-})();
+}());

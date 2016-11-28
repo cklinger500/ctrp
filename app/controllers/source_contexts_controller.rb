@@ -6,11 +6,11 @@ class SourceContextsController < ApplicationController
   # GET /source_contexts.json
   def index
     #TODO need to use constant for ROLE_CURATOR and ROLE_SUPER
-    if @current_user.role == "ROLE_CURATOR" || @current_user.role == "ROLE_SUPER"
+    if User.org_read_all_access(@current_user)
        @source_contexts = SourceContext.all
     else
       #TODO need to use constant for 'CTRP'
-      @source_contexts = [SourceContext.find_by_name("CTRP")]
+      @source_contexts = [SourceContext.find_by_code("CTRP")]
     end
   end
 

@@ -14,9 +14,11 @@ ListOfFamiliesPage = function () {
     this.familyStatus = element(by.model('familyView.searchParams.family_status'));
     this.familyType = element(by.model('familyView.searchParams.family_type'));
     this.familySearchButton = element(by.css('.glyphicon.glyphicon-search'));
-    this.familyClearButton = element(by.css('button[type="reset"]'));
+    this.familyClearButton = element(by.css('#reset_btn'));
+    this.familyExactSearch = element(by.model('familyView.searchParams.wc_search'));
 
     var searchFamily = new helper();
+    var self = this;
 
     this.setFamilyName = function(familyName){
        searchFamily.setValue(this.familyName,familyName,"Search Family by Name field");
@@ -40,6 +42,23 @@ ListOfFamiliesPage = function () {
 
     this.clearSearchButton = function(){
         searchFamily.clickButton(this.familyClearButton, "Clear button on Family Search");
+    };
+
+    this.clickFamilyExactSearch = function(exactSearchTrueFalseValue){
+        this.familyExactSearch.isSelected().then (function(value) {
+            console.log('value of exact search : ' + value);
+            console.log('value of passed exact Search' + exactSearchTrueFalseValue);
+            if (value === false && exactSearchTrueFalseValue === 'true') {
+                console.log('value of exact Search1' + value);
+                console.log('value of passed exact Search1' + exactSearchTrueFalseValue);
+                searchFamily.clickButton(self.familyExactSearch,"Exact Search button");
+            }
+            else if (value  === true && exactSearchTrueFalseValue === 'false') {
+                console.log('value of exact Search2' + value);
+                console.log('value of passed exact Search2' + exactSearchTrueFalseValue);
+                searchFamily.clickButton(self.familyExactSearch,"Exact Search button");
+            }
+        });
     };
 };
 

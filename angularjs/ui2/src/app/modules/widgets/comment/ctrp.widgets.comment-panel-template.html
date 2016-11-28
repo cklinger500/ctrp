@@ -8,6 +8,7 @@
   </span>
   <span ng-if="commentView.commentList.length == 0">Comment</span>
 </button>
+</div>
 <div class="sideNavBar">
   <div layout="column" class="relative" layout-fill role="main">
     <md-button tabindex="22" class="md-fab md-fab-top-right" style="background-color: #007299" aria-label="Comment"
@@ -81,11 +82,11 @@
       <br />
     </section>
 
-    <div ng-show="commentView.commentList.length == 0">
+    <div ng-show="commentView.commentList.length == 0" restriction-field="ROLE_CURATOR,ROLE_SUPER,ROLE_ADMIN">
       <strong>No comments yet</strong>
     </div>
 
-    <div flex="33" class="md-3-line">
+    <div flex="33" class="md-3-line" restriction-field="ROLE_CURATOR,ROLE_SUPER,ROLE_ADMIN">
       <div dir-paginate="comment in commentView.commentList | itemsPerPage: commentView.pagingOptions.pageSize" current-page="commentView.pagingOptions.currentPage" pagination-id="comment">
       <md-divider></md-divider>
       <div class="md-list-item-text">

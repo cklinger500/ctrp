@@ -1,284 +1,50 @@
-<div class="row-fluid">
-    <script type="text/ng-template" id="delete_confirm_template.html">
-        <div class="modal-header">
-            <h3 class="modal-title">{{vm.modalTitle}}</h3>
-        </div>
-        <div class="modal-body">
-            <div ng-show="vm.deletionStatus == ''">
-                <strong>This will be a permanent deletion</strong>
-            </div>
-            <div ng-show="vm.deletionStatus != ''">
-                <strong>{{vm.deletionStatus}}</strong>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-danger" id="delete_btn" ng-click="vm.ok()">Delete Now</button>
-            <button class="btn btn-primary" id="cancel_btn" ng-click="vm.cancel()">Cancel</button>
-        </div>
-    </script>
-    <script type="text/ng-template" id="ctrp">CTRP Context</script>
-    <script type="text/ng-template" id="nlm">NLM Context</script>
-    <script type="text/ng-template" id="ctep">CTEP Context</script>
-    <div class="col-xs-12 drop-shadow">
-        <div class="row">
-            <p>
-                <h4>{{orgDetailView.formTitleLabel}}</h4>
-            </p>
-        </div>
-        <div class="row">
-            <ctrp-comment instance-uuid="{{orgDetailView.curOrg.uuid}}" button-type="icon" field="" model="organization"></ctrp-comment>
-            <!-- tab views -->
-            <form class="form form-horizontal" role="form" name="organization_form" novalidate ctrp-submit="orgDetailView.updateOrg()">
-            <md-tabs md-dynamic-height md-border-bottom md-selected="orgDetailView.tabIndex">
-                <md-tab ng-repeat="clusterOrg in orgDetailView.curOrg.cluster track by $index">
-                    <md-tab-label>{{clusterOrg.context}}</md-tab-label>
-                    <md-tab-body>
-                        <!-- <button class="btn btn-primary pull-right" ctrp-comment-button ctrp-comment-panel uuid="{{orgDetailView.curOrg.uuid}}" field="mock_field">New Comment</button> -->
-                        <!--CTRP content -->
-                        <div class="row md-sidenav-push-in-target">
-                            <div ng-if="!orgDetailView.curOrg.new" class="form-group">
-                                <label class="control-label col-xs-12 col-sm-3">CTRP ID:</label>
-                                <div class="col-xs-12 col-sm-6 form-text">{{orgDetailView.curOrg.ctrp_id}}</div>
-                            </div>
-                            <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.organization_form.needsAttention(organization_form.name) || orgDetailView.showUniqueWarning}">
-                                <label class="control-label col-xs-12 col-sm-3">Name:</label>
-                                <div class="col-xs-12 col-sm-6" ng-if="orgDetailView.curOrgEditable">
-                                    <input tabindex="11" type="text" restriction-field class="form-control input-sm" name="name" id="organization_name" ng-model="orgDetailView.curOrg.name" auto-focus required ng-blur="orgDetailView.checkUniqueOrganization()">
-                                    <span class="form-control-feedback" ng-show="orgDetailView.curOrg.name.length" ng-class="!(orgDetailView.showUniqueWarning || ctrpbtn.organization_form.needsAttention(organization_form.name)) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
-                                    <span class="help-block" ng-show="organization_form.name.$error.required">Name is Required</span>
-                                    <div class="has-error" ng-show="orgDetailView.showUniqueWarning && orgDetailView.curOrg.name.length > 0 && organization_form.name.$dirty">
-                                        <span class="help-block">
-                                            Warning: Organization exists in the database. Please verify and create a new Organization record.
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-6 form-text" ng-if="!orgDetailView.curOrgEditable">
-                                    {{orgDetailView.curOrg.name}}
-                                </div>
-                            </div>
-
-                                <div class="form-group">
-                                    <label class="control-label col-xs-12 col-sm-3">Source Context:</label>
-                                        <div class="col-xs-12 col-sm-6" ng-if="orgDetailView.curOrgEditable">
-                                            <select tabindex="13" restriction-field ng-init="orgDetailView.curOrg.source_context_id"
-                                                    class="form-control input-sm" id="source_context"
-                                                    ng-model="orgDetailView.curOrg.source_context_id"
-                                                    ng-options="context.id as context.name for context in orgDetailView.sourceContextArr">
-                                            </select>
-                                        </div>
-
-                                        <div class="col-xs-12 col-sm-6 form-text" ng-if="!orgDetailView.curOrgEditable">{{clusterOrg.context}}</div>
-                                </div>
-                                <div class="form-group">
-                                    <!--  Make source ID a R/O field -->
-                                    <label class="control-label col-xs-12 col-sm-3">Source ID:</label>
-                                    <div class="col-xs-12 col-sm-6 form-text">
-                                        {{orgDetailView.curOrg.source_id}}
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-12 col-sm-3">Source Status:</label>
-                                    <div class="col-xs-12 col-sm-6">
-                                        <div ng-if="!orgDetailView.curOrgEditable" class="form-text">{{orgDetailView.curSourceStatusName}}</div>
-                                        <div ng-if="orgDetailView.curOrgEditable" class="animated-item">
-                                            <select tabindex="14" restriction-field ng-init="orgDetailView.curOrg.source_status_id"
-                                                    class="form-control input-sm" id="source_status"
-                                                    ng-model="orgDetailView.curOrg.source_status_id"
-                                                    ng-options="status.id as status.name for status in orgDetailView.sourceStatusArr">
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="control-label col-xs-12 col-sm-3">Name Alias:</label>
-                                    <div class="col-xs-12 col-sm-6">
-                                        <table class="table table-striped table-condensed" ng-if="orgDetailView.curOrgEditable">
-                                            <tbody>
-                                            <tr>
-                                                <td class="col-md-7">
-                                                    <div>
-                                                        <input tabindex="12" type="text" restriction-field class="form-control input-sm" id="alias" ng-model="orgDetailView.alias"/>
-                                                    </div>
-                                                </td>
-                                                <td class="col-md-1">
-                                                    <div>
-                                                        <button tabindex="15" type="button" class="btn btn-primary" ng-disabled="orgDetailView.alias == ''" restriction-field ng-click="orgDetailView.addNameAlias()">
-                                                            <i class="glyphicon glyphicon-plus"></i> Add
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                        <table class="table table-bordered table-striped table-condensed animated-item" ng-show="orgDetailView.addedNameAliases.length > 0">
-                                            <tbody>
-                                            <thead>
-                                            <th>Alias</th>
-                                            <th ng-show="orgDetailView.curOrgEditable">Delete</th>
-                                            </thead>
-                                            <tr ng-repeat="nameAlias in orgDetailView.addedNameAliases track by $index" ng-class="nameAlias._destroy == true ? 'deleted-text animated-item' : 'animated-item'">
-                                                <td class="col-md-7">{{nameAlias.name}}</td>
-                                                <td class="col-md-1" style="vertical-align: middle" ng-show="orgDetailView.curOrgEditable">
-                                                    <label class="btn btn-default" restriction-field ng-click="orgDetailView.toggleSelection($index, 'other_id')">
-                                                        <i ng-class="nameAlias._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
-                                                    </label>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="form-group has-feedback required"  ng-class="{'has-error': ctrpbtn.organization_form.needsAttention(organization_form.address)}">
-                                    <label class="control-label col-xs-12 col-xs-12 col-sm-3">Address 1:</label>
-                                    <div class="col-xs12 col-sm-6" ng-if="orgDetailView.curOrgEditable">
-                                        <input tabindex="16" type="text" restriction-field class="form-control input-sm" id="address" ng-model="orgDetailView.curOrg.address" name="address" required>
-                                        <span class="form-control-feedback" ng-show="orgDetailView.curOrg.address.length" ng-class="!ctrpbtn.organization_form.needsAttention(organization_form.address) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
-                                        <span class="help-block" ng-show="organization_form.address.$error.required">Address is Required</span>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 form-text" ng-if="!orgDetailView.curOrgEditable">
-                                        {{orgDetailView.curOrg.address}}
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-12 col-sm-3">Address 2:</label>
-                                    <div class="col-xs-12 col-sm-6" ng-if="orgDetailView.curOrgEditable">
-                                        <input tabindex="17" type="text" restriction-field class="form-control input-sm" id="address2" ng-model="orgDetailView.curOrg.address2">
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 form-text" ng-if="!orgDetailView.curOrgEditable">
-                                        {{orgDetailView.curOrg.address2}}
-                                    </div>
-                                </div>
-                                <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.organization_form.needsAttention(organization_form.country)}">
-                                    <label class="control-label col-xs-12 col-sm-3">Country:</label>
-                                    <div class="col-xs-12 col-sm-6" ng-if="orgDetailView.curOrgEditable">
-                                        <select tabindex="18" restriction-field class="form-control input-sm" id="country"
-                                                ng-model="orgDetailView.curOrg.country"
-                                                ng-change="orgDetailView.watchCountrySelection(orgDetailView.curOrg.country)" name="country" required>
-                                            <option value="" ng-selected="orgDetailView.curOrg.country == ''">Select a country</option>
-                                            <option ng-repeat="country in orgDetailView.countriesArr track by $index" value="{{country.name}}" ng-selected="orgDetailView.curOrg.country == country.name">{{country.name}}</option>
-                                        </select>
-                                        <span class="form-control-feedback select-feedback" ng-show="orgDetailView.curOrg.country.length" ng-class="!ctrpbtn.organization_form.needsAttention(organization_form.country) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
-                                        <span class="help-block" ng-show="organization_form.country.$invalid">Country is Required</span>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 form-text" ng-if="!orgDetailView.curOrgEditable">
-                                        {{orgDetailView.curOrg.country}}
-                                    </div>
-                                </div>
-                                <div class="form-group" ng-hide="orgDetailView.states.length == 0">
-                                    <label class="control-label col-xs-12 col-sm-3">State:</label>
-                                    <div class="col-xs-12 col-sm-6" ng-if="orgDetailView.curOrgEditable">
-                                        <select tabindex="25" restriction-field class="form-control input-sm" id="state" ng-model="orgDetailView.curOrg.state_province">
-                                            <option value="" ng-selected="orgDetailView.curOrg.state_province == ''">Select a state or province</option>
-                                            <option ng-repeat="state in orgDetailView.states track by $index" value="{{state.name}}" ng-selected="state.name==orgDetailView.curOrg.state_province">{{state.name}}</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 form-text" ng-if="!orgDetailView.curOrgEditable">{{orgDetailView.curOrg.state_province}}</div>
-                                </div>
-                               <div class="form-group has-feedback required"  ng-class="{'has-error': (ctrpbtn.organization_form.needsAttention(organization_form.city) || ctrpbtn.organization_form.needsAttention(organization_form.postal_code))}">
-                                    <label class="control-label col-xs-12 col-sm-3">City:</label>
-                                    <div class="col-xs-12 col-sm-2" ng-if="orgDetailView.curOrgEditable">
-                                        <input tabindex="19" type="text" restriction-field class="form-control input-sm" id="city" ng-model="orgDetailView.curOrg.city" required name="city">
-                                        <span class="form-control-feedback" ng-show="orgDetailView.curOrg.city.length" ng-class="!ctrpbtn.organization_form.needsAttention(organization_form.city) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
-                                        <span class="help-block" ng-show="organization_form.city.$error.required">City is Required</span>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-2 form-text" ng-if="!orgDetailView.curOrgEditable">{{orgDetailView.curOrg.city}}</div>
-                                    <label class="control-label has-feedback col-xs-12 col-sm-2">Postal Code:</label>
-                                    <div class="col-xs-12 col-sm-2" ng-if="orgDetailView.curOrgEditable">
-                                        <input tabindex="26" type="text" restriction-field class="form-control input-sm" id="postal_code" ng-model="orgDetailView.curOrg.postal_code" placeholder="Postal Code" name="postal_code" ng-required="orgDetailView.curOrg.country==='United States'">
-                                        <span class="form-control-feedback" ng-show="orgDetailView.curOrg.postal_code.length" ng-class="!ctrpbtn.organization_form.needsAttention(organization_form.postal_code) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
-                                        <span class="help-block" ng-show="organization_form.postal_code.$error && ctrpbtn.organization_form.needsAttention(organization_form.postal_code)">US Local Postal Code is Required</span>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-2 form-text" ng-if="!orgDetailView.curOrgEditable">{{orgDetailView.curOrg.postal_code}}</div>
-                                </div>
-                                <div class="form-group has-feedback required" ng-class="{'has-error': (organization_form.email.$error && ctrpbtn.organization_form.needsAttention(organization_form.email) && organization_form.phone.$error && ctrpbtn.organization_form.needsAttention(organization_form.phone))}">
-                                    <div class="row">
-                                        <label class="control-label col-xs-12 col-sm-3">Email:</label>
-                                        <div class="col-xs-12 col-sm-3" ng-if="orgDetailView.curOrgEditable">
-                                            <input tabindex="27" type="email" restriction-field class="form-control input-sm" id="email" ng-model="orgDetailView.curOrg.email" placeholder="Email" name="email" ng-required="!orgDetailView.curOrg.phone">
-                                            <span class="form-control-feedback" ng-show="organization_form.email.$viewValue.length" ng-class="!(organization_form.email.$error && ctrpbtn.organization_form.needsAttention(organization_form.email)) ? 'glyphicon glyphicon-ok glyphicon-green' : 'glyphicon glyphicon-exclamation-sign glyphicon-red'"></span>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-3 form-text" ng-if="!orgDetailView.curOrgEditable">{{orgDetailView.curOrg.email}}</div>
-                                        <label class="control-label col-xs-12 col-sm-1">Phone:</label>
-                                        <div class="col-xs-12 col-sm-2" ng-if="orgDetailView.curOrgEditable">
-                                            <input tabindex="28" type="text" restriction-field class="form-control input-sm" id="phone" name="phone" ng-model="orgDetailView.curOrg.phone" placeholder="Phone" ng-required="!orgDetailView.curOrg.email" ng-blur="orgDetailView.isValidPhoneNumber()">
-                                            <span ng-show="orgDetailView.curOrg.phone.length" class="form-control-feedback" ng-class="(orgDetailView.curOrg.phone.length > 0 && orgDetailView.showPhoneWarning && !orgDetailView.IsPhoneValid) ? 'glyphicon glyphicon-exclamation-sign glyphicon-red' : 'glyphicon glyphicon-ok glyphicon-green'"></span>
-                                            <div class="has-error" ng-show="orgDetailView.curOrg.phone.length && orgDetailView.showPhoneWarning && !orgDetailView.IsPhoneValid">
-                                                <span class="help-block">
-                                                    Warning: Phone number invalid for the selected Country.
-                                                 </span>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-2 form-text" ng-if="!orgDetailView.curOrgEditable">{{orgDetailView.curOrg.phone}}</div>
-                                    </div>
-                                    <div class="row" ng-show="organization_form.phone.$error && ctrpbtn.organization_form.needsAttention(organization_form.phone) &&
-                                    organization_form.email.$error && ctrpbtn.organization_form.needsAttention(organization_form.email) &&
-                                    organization_form.phone.$error && ctrpbtn.organization_form.needsAttention(organization_form.phone) && orgDetailView.curOrgEditable"
-                                    ng-class="{'has-error': (organization_form.email.$error && ctrpbtn.organization_form.needsAttention(organization_form.email) &&
-                                    organization_form.phone.$error && ctrpbtn.organization_form.needsAttention(organization_form.phone))}">
-                                        <div class="col-xs-12 col-sm-3"></div>
-                                        <div class="col-xs-12 col-sm-6">
-                                            <span class="help-block">Either Phone or Email is Required</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-12 col-sm-3">Fax:</label>
-                                    <div class="col-xs-12 col-sm-6" ng-if="orgDetailView.curOrgEditable">
-                                        <input tabindex="29" type="text" restriction-field class="form-control input-sm" id="fax" ng-model="orgDetailView.curOrg.fax" placeholder="Fax">
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 form-text" ng-if="!orgDetailView.curOrgEditable">{{orgDetailView.curOrg.fax}}</div>
-                                </div>
-                                <div class="form-group" ng-hide="orgDetailView.curOrg.new || !orgDetailView.curOrg.created_by">
-                                    <label class="control-label col-xs-12 col-sm-3">Created By:</label>
-                                    <div class="col-xs-12 col-sm-6 form-text">
-                                        <!--<input type="text" class="form-control input-xs" id="fax"  ng-model="orgDetailView.curOrg.fax" type="text" placeholder="Fax">-->
-                                        {{orgDetailView.curOrg.created_by}} ({{orgDetailView.curOrg.created_at | date:
-                                        'dd-MMM-yyyy H:mm'}})
-                                    </div>
-                                </div>
-                                <div class="form-group" ng-hide="orgDetailView.curOrg.new || !orgDetailView.curOrg.updated_by">
-                                    <label class="control-label col-xs-12 col-sm-3">Updated By:</label>
-                                    <div class="col-xs-12 col-sm-6 form-text">
-                                        <!--<input type="text" class="form-control input-xs" id="fax"  ng-model="orgDetailView.curOrg.fax" type="text" placeholder="Fax">-->
-                                        {{orgDetailView.curOrg.updated_by}} ({{orgDetailView.curOrg.updated_at | date:
-                                        'dd-MMM-yyyy H:mm'}})
-                                    </div>
-                                </div>
-                                <div ng-show="orgDetailView.curOrg.families.length > 0" class="form-group">
-                                    <label class="control-label col-xs-12 col-sm-3">Families:</label>
-                                    <div class="col-xs-12 col-sm-6 form-text">
-                                        <p ng-repeat="family in orgDetailView.curOrg.families">
-                                          <a ui-sref="main.familyDetail({familyId : family.id })">{{family.name}}</a>
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div class="form-group no-bottom-margin" ng-show="orgDetailView.curOrgEditable">
-                                    <div class="col-xs-12 col-sm-3"></div>
-                                    <div class="btn-toolbar col-xs-12 col-sm-9">
-                                        <button tabindex="31" type="submit" restriction-field class="btn btn-primary pull-right" id="save_btn">
-                                            Save
-                                        </button>
-                                        <button tabindex="30" type="button" ng-hide="!orgDetailView.curOrg.new" restriction-field class="btn btn-warning pull-right" id="clear_btn" ng-click="orgDetailView.clearForm()">
-                                            <i class="glyphicon glyphicon-remove"></i>  Reset
-                                        </button>
-                                        <button tabindex="30" type="button" ng-hide="orgDetailView.curOrg.new" restriction-field class="btn btn-warning pull-right" id="clear_btn" ng-click="orgDetailView.resetForm()">
-                                            <i class="glyphicon glyphicon-remove"></i>  Reset
-                                        </button>
-                                        <button tabindex="32" type="button" ng-hide="orgDetailView.curOrg.new" restriction-field class="btn btn-danger btn-no-left-margin pull-left" id="confirm_btn" ng-click="orgDetailView.confirmDelete('sm')">
-                                            <i class="glyphicon glyphicon-remove"></i> Delete This Organization
-                                        </button>
-                                    </div>
-                                </div>
-                        </div>
-                        <!-- end of CTRP content -->
-                    </md-tab-body>
-                </md-tab>
-            </md-tabs>
-            <!-- end of tab views -->
-            </form>
-        </div>
-        <div class="row top-offset-xs"></div>
+<div class="row" ng-if="orgDetailView.associatedOrgs && !orgDetailView.defaultTab">
+    You have reached this page by mistake.
+</div>
+<div class="col-xs-12 drop-shadow" ng-show="orgDetailView.defaultTab">
+    <h4>{{orgDetailView.ctrpOrg.new?'Add':((orgDetailView.tabOpen === 'CTRP' || orgDetailView.tabOpen === 'CTEP') && orgDetailView.curOrgEditable?'Edit':'View')}} Organization</h4>
+    <div class="row">
+        <ctrp-comment ng-if="orgDetailView.currentUserIsAdmin" instance-uuid="{{orgDetailView.ctrpOrg.uuid}}" button-type="icon" field="" model="organization"></ctrp-comment>
+        <!-- tab views -->
+        <form class="form form-horizontal" role="form" name="organization_form" novalidate ctrp-submit="orgDetailView.updateOrg()" unsaved-changes>
+            <md-content>
+                <md-tabs md-dynamic-height md-border-bottom md-selected="orgDetailView.tabIndex">
+                    <md-tab label="CTEP" md-active="orgDetailView.defaultTab === 'CTEP'" ng-if="orgDetailView.ctepOrg" md-on-select="orgDetailView.tabOpen = 'CTEP'">
+                        <md-tab-body class="md-padding">
+                            <div ng-include src="'app/po/organization/_ctepOrgDetail.html'"></div>
+                        </md-tab-body>
+                    </md-tab>
+                    <md-tab label="CTRP" md-active="orgDetailView.defaultTab === 'CTRP' || orgDetailView.tabOpen === 'CTRP'" ng-if="orgDetailView.ctrpOrg" md-on-select="orgDetailView.tabOpen = 'CTRP'">
+                        <md-tab-body class="md-padding" ng-class="{'edit-off': !orgDetailView.curOrgEditable}">
+                            <div ng-show="orgDetailView.currentUserIsReadAll || orgDetailView.ctrpOrg.new" ng-include src="'app/po/organization/_ctrpOrgDetailWR.html?_rload='+orgDetailView.ctrpUpdateTime"></div>
+                            <div ng-show="!orgDetailView.currentUserIsReadAll && !orgDetailView.ctrpOrg.new" ng-include src="'app/po/organization/_ctrpOrgDetailRO.html?_rload='+orgDetailView.ctrpUpdateTime"></div>
+                            <div ng-include src="'app/po/organization/_associatedOrgs.html?_rload='+orgDetailView.updateTime"></div>
+                        </md-tab-body>
+                    </md-tab>
+                    <md-tab label="NLM" md-active="orgDetailView.defaultTab === 'NLM'" ng-if="orgDetailView.nlmOrg" md-on-select="orgDetailView.tabOpen = 'NLM'">
+                        <md-tab-body class="md-padding">
+                            <div ng-include src="'app/po/organization/_nlmOrgDetailRO.html'"></div>
+                        </md-tab-body>
+                    </md-tab>
+                </md-tabs>
+            </md-content>
+        </form>
     </div>
 </div>
+<modal visible="orgDetailView.confirmOverrideAssociatePopUp" title="Please confirm" id="confirmChangeOverrideAssociatePopup">
+    <div class="modal-body">
+        This organization is already associated.
+    </div>
+    <div class="modal-footer">
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary pull-right"  id="confirmChangeOverrideContext"
+                    ng-click="orgDetailView.associateOrgs()"><i class="glyphicon glyphicon-ok"></i>
+                Associate
+            </button>
+            <button type="button" class="btn btn-warning pull-right" id="cancelChangeOverrideContext"
+                    ng-click="orgDetailView.confirmOverrideAssociatePopUp = false"><i class="glyphicon glyphicon-remove"></i>
+                Cancel
+            </button>
+        </div>
+    </div>
+</modal>

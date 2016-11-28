@@ -1,0 +1,1 @@
+json.array! @import_trial_log_data, partial: 'import_trial_log_data/import_trial_log_datum', as: :import_trial_log_datum

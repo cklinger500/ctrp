@@ -1,0 +1,17 @@
+<%= form_for(@associated_trial) do |f| %>
+  <% if @associated_trial.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@associated_trial.errors.count, "error") %> prohibited this associated_trial from being saved:</h2>
+
+      <ul>
+      <% @associated_trial.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

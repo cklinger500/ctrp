@@ -15,6 +15,7 @@ var selectList = require('../support/CommonSelectList');
 var moment = require('moment');
 var loginPage = require('../support/LoginPage');
 var projectFunctionsPage= require('../support/projectMethods');
+var abstractionCommonMethods = require('../support/abstractionCommonMethods');
 
 
 module.exports = function() {
@@ -25,15 +26,15 @@ module.exports = function() {
     var searchOrg = new orgPage();
     var selectItem =new selectList();
     var projectFunctions = new projectFunctionsPage();
+    var commonFunctions = new abstractionCommonMethods();
 
     this.Given(/^I know multiple parameters of the person I wish to search for$/, function (table, callback) {
         browser.get('ui/#/main/sign_in');
-        login.login('ctrpcurator', 'Welcome01');
-        login.accept();
+        commonFunctions.onPrepareLoginTest('ctrpcurator');
         browser.driver.wait(function() {
             console.log('wait here');
             return true;
-        }, 4000).then(function() {
+        }, 40).then(function() {
             menuItem.clickHomeEnterOrganizations();
             login.clickWriteMode('On');
             menuItem.clickPeople();
@@ -55,7 +56,7 @@ module.exports = function() {
                     browser.driver.wait(function() {
                         console.log('wait here');
                         return true;
-                    }, 4000).then(function() {
+                    }, 40).then(function() {
                         menuItem.clickPeople();
                         menuItem.clickAddPerson();
                         addPerson.setAddPersonPrefix('prefix');
@@ -232,5 +233,203 @@ module.exports = function() {
        });
        });
        //
+
+    this.Given(/^I have selected the option to search persons$/, function (callback) {
+        callback();
+    });
+
+    this.Given(/^Exact Search is checked on search person$/, function (callback) {
+        projectFunctions.createPersonforSearch();
+        menuItem.clickPeople();
+        menuItem.clickListPeople();
+        searchOrg.clickExactSearch('true');
+        browser.sleep(25).then(callback);
+    });
+
+    this.Given(/^Exact Search is not checked on search person$/, function (callback) {
+        projectFunctions.createPersonforSearch();
+        menuItem.clickPeople();
+        menuItem.clickListPeople();
+        searchOrg.clickExactSearch('false');
+        browser.sleep(25).then(callback);
+    });
+
+    this.When(/^I have entered the "([^"]*)" person First Name$/, function (arg1, callback) {
+        per4.then(function (value) {
+            if(arg1 === 'exact') {
+                searchPerson.setPersonFirstName(value);
+            }
+            else if(arg1 === 'partial') {
+                var splitPerName = value.split(" ",1);
+                console.log('value of Split Person : ' + splitPerName.toString());
+                searchPerson.setPersonFirstName(splitPerName.toString());
+            }
+            searchPerson.clickSearch();
+            console.log('value of Person : ' + value);
+        });
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the person First Name will be displayed on the People Search Results table$/, function (callback) {
+        per4.then(function(value) {
+            expect(projectFunctions.inSearchResults(value)).to.become('true').and.notify(callback);
+        });
+    });
+
+    this.When(/^I have entered the "([^"]*)" person Last Name$/, function (arg1, callback) {
+        searchPerson.clickClear();
+        if(arg1 === 'exact') {
+            searchPerson.setPersonLastName('shiLName');
+        }
+        else if(arg1 === 'partial') {
+            searchPerson.setPersonLastName('shiL');
+        }
+        searchPerson.clickSearch();
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the person Last Name will be displayed on the People Search Results table$/, function (callback) {
+        expect(projectFunctions.inSearchResults('shiLName')).to.become('true').and.notify(callback);
+    });
+
+    this.When(/^I have entered the "([^"]*)" Source ID for Person$/, function (arg1, callback) {
+        searchPerson.clickClear();
+        perSourceId.then(function (value) {
+            console.log('This is the CTRP ID of added Person' + value);
+            if(arg1 === 'exact') {
+                searchPerson.setPersonSourceId(value);
+            }
+            else if(arg1 === 'partial') {
+                var splitPerSrcID = value.slice(0,7);
+                console.log('value of Split Org Source ID : ' + splitPerSrcID);
+                searchPerson.setPersonSourceId(splitPerSrcID);
+            }
+            searchPerson.clickSearch();
+        });
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^The Source ID will be displayed on the People Search Results table$/, function (callback) {
+        perSourceId.then(function (value) {
+            expect(projectFunctions.inSearchResults(value)).to.become('true').and.notify(callback);
+        });
+    });
+
+    this.When(/^I have entered the "([^"]*)" Email for Person$/, function (arg1, callback) {
+        searchPerson.clickClear();
+        if(arg1 === 'exact') {
+            searchPerson.setPersonEmail('shiPercuke@pr.com');
+        }
+        else if(arg1 === 'partial') {
+            searchPerson.setPersonEmail('shiPercuke');
+        }
+        searchPerson.clickSearch();
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the Email will be displayed on the People Search Results table$/, function (callback) {
+        expect(projectFunctions.inSearchResults('shiPercuke@pr.com')).to.become('true').and.notify(callback);
+    });
+
+    this.When(/^I have entered the "([^"]*)" Affiliation$/, function (arg1, callback) {
+        searchPerson.clickClear();
+        cukeOrganization.then(function (value) {
+            console.log('This is the aff org of added Person' + value);
+            if(arg1 === 'exact') {
+                searchPerson.setPersonOrgAffiliation(value);
+            }
+            else if(arg1 === 'partial') {
+                var splitOrgName = value.split(" ",1);
+                console.log('value of Split Org : ' + splitOrgName.toString());
+                searchPerson.setPersonOrgAffiliation(splitOrgName.toString());
+            }
+            searchPerson.clickSearch();
+        });
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the Affiliation will be displayed on the People Search Results table$/, function (callback) {
+      //  cukeOrganization.then(function(value) {
+            expect(projectFunctions.inSearchResults('CTRP')).to.become('true').and.notify(callback);
+        //});
+    });
+
+    this.When(/^I have entered the "([^"]*)" Phone Number for Person$/, function (arg1, callback) {
+        searchPerson.clickClear();
+        if(arg1 === 'exact') {
+            searchPerson.setPersonPhone('420-567-8906');
+        }
+        else if(arg1 === 'partial') {
+            searchPerson.setPersonPhone('420-567');
+        }
+        searchPerson.clickSearch();
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the Phone Number will be displayed on the People Search Results table$/, function (callback) {
+        expect(projectFunctions.inSearchResults('420-567-8906')).to.become('true').and.notify(callback);
+    });
+
+    this.When(/^I have entered the "([^"]*)" Username for Person$/, function (arg1, callback) {
+        searchPerson.clickClear();
+        if(arg1 === 'exact') {
+            searchPerson.setPersonUpdatedBy('ctrpcurator');
+        }
+        else if(arg1 === 'partial') {
+            searchPerson.setPersonUpdatedBy('ctrpcurat');
+        }
+        searchPerson.clickSearch();
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the Username will be displayed on the People Search Results table$/, function (callback) {
+        expect(projectFunctions.inSearchResults('ctrpcurator')).to.become('true').and.notify(callback);
+    });
+
+    this.Given(/^I dont provide the Exact criteria for Person$/, function (callback) {
+            per4.then(function (value) {
+                    var splitPerName = value.split(" ",1);
+                    console.log('value of Split Person : ' + splitPerName.toString());
+                    searchPerson.setPersonFirstName(splitPerName.toString());
+                searchPerson.clickSearch();
+                console.log('value of Person : ' + value);
+                expect(projectFunctions.inSearchResults(value)).to.become('false');
+            });
+            searchPerson.clickClear();
+                searchPerson.setPersonLastName('shiLNa');
+            searchPerson.clickSearch();
+            expect(projectFunctions.inSearchResults('shiLName')).to.become('false');
+            searchPerson.clickClear();
+            perSourceId.then(function (value) {
+                    var splitPerSrcID = value.slice(0,7);
+                    console.log('value of Split Org Source ID : ' + splitPerSrcID);
+                    searchPerson.setPersonSourceId(splitPerSrcID);
+                searchPerson.clickSearch();
+                expect(projectFunctions.inSearchResults(value)).to.become('false');
+            });
+            searchPerson.clickClear();
+                searchPerson.setPersonEmail('shiPercuke');
+            searchPerson.clickSearch();
+        expect(projectFunctions.inSearchResults('shiPercuke@pr.com')).to.become('false');
+            searchPerson.clickClear();
+            cukeOrganization.then(function (value) {
+                console.log('This is the aff org of added Person' + value);
+                    var splitOrgName = value.split(" ",1);
+                    console.log('value of Split Org : ' + splitOrgName.toString());
+                    searchPerson.setPersonOrgAffiliation(splitOrgName.toString());
+                searchPerson.clickSearch();
+            expect(projectFunctions.inSearchResults('CTRP')).to.become('false');
+        });
+            searchPerson.clickClear();
+                searchPerson.setPersonPhone('420-567');
+            searchPerson.clickSearch();
+        expect(projectFunctions.inSearchResults('420-567-8906')).to.become('false');
+            searchPerson.clickClear();
+                searchPerson.setPersonUpdatedBy('ctrpcurat');
+            searchPerson.clickSearch();
+        expect(projectFunctions.inSearchResults('ctrpcurator')).to.become('false');
+        browser.sleep(25).then(callback);
+        });
+
 
 };

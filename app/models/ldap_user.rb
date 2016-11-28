@@ -33,17 +33,20 @@
 #  prs_organization_name       :string
 #  receive_email_notifications :boolean
 #  role_requested              :string
-#  approved                    :boolean          default(FALSE), not null
 #  organization_id             :integer
 #  source                      :string
+#  user_status_id              :integer
+#  phone                       :string
+#  city                        :string
+#  domain                      :string
+#  status_date                 :datetime
 #
 # Indexes
 #
-#  index_users_on_approved              (approved)
-#  index_users_on_email                 (email) UNIQUE
 #  index_users_on_organization_id       (organization_id)
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #  index_users_on_unlock_token          (unlock_token) UNIQUE
+#  index_users_on_user_status_id        (user_status_id)
 #  index_users_on_username              (username) UNIQUE
 #
 

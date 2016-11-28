@@ -1,0 +1,27 @@
+
+<div class="form form-horizontal">
+    <div class="row md-sidenav-push-in-target">
+        <div ng-include src="'app/po/organization/_allOrgDetailRO.html?_rload='+orgDetailView.updateTime" onload="[curOrg = orgDetailView.ctepOrg]" ng-model="ctepOrg"></div>
+        <div class="form-group" ng-if="orgDetailView.curOrgEditable">
+            <div class="control-label col-sm-3"></div>
+            <div class="col-sm-6 form-text btn-toolbar">
+                <div ng-include src="'app/po/organization/_cloneSearchButton.html?_rload='+orgDetailView.updateTime"></div>
+                <button type="button" restriction-field class="btn btn-primary pull-left"
+                        ng-if="orgDetailView.ctrpAssociable === 0"
+                        ng-click="orgDetailView.cloneCtepOrg()"
+                        id="clone_now_btn" ng-click=""
+                        ng-disabled="orgDetailView.ctepAssociationExists">
+                        Clone
+                </button>
+                <button type="button" restriction-field class="btn btn-primary pull-right" id="save_btn" ng-click="orgDetailView.updateCTEPOrg()" ng-disabled="orgDetailView.disableBtn">
+                    <i class="glyphicon glyphicon-ok"></i> Save
+                </button>
+                <button type="button" restriction-field class="btn btn-warning pull-right" id="clear_btn" ng-click="orgDetailView.resetCTEPForm()" ng-disabled="orgDetailView.disableBtn">
+                    <i class="glyphicon glyphicon-remove"></i> Reset
+                </button>
+            </div>
+        </div>
+        <!-- end of reset and save buttons for CTEP -->
+    </div>
+</div>
+

@@ -107,4 +107,48 @@ module.exports = function() {
     this.Given(/^the result should be sorted by family name$/, function (callback) {
         browser.sleep(25).then(callback);
     });
+
+    this.Given(/^I have selected the option to Search Families$/, function (callback) {
+        menuItem.clickOrganizations();
+        menuItem.clickListFamily();
+        browser.sleep(25).then(callback);
+    });
+
+    this.Given(/^Exact Search box is selected in Family Search$/, function (callback) {
+        searchFamily.clickFamilyExactSearch('true');
+        browser.sleep(25).then(callback);
+    });
+
+    this.When(/^I have entered the "([^"]*)" Family name$/, function (arg1, callback) {
+       // searchFamily.clearSearchButton();
+        if(arg1 === 'exact') {
+            searchFamily.setFamilyName('Albert Einstein Cancer Center');
+        }
+        else if(arg1 === 'partial') {
+            searchFamily.setFamilyName('Albert Einstein');
+        }
+        searchFamily.clickSearchButton();
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the Family Name will be displayed on the Family search results table$/, function (callback) {
+        expect(projectFunctions.inSearchResults('Albert Einstein Cancer Center')).to.become('true').and.notify(callback);
+    });
+
+    this.Given(/^Exact Search box is Not selected in Family Search$/, function (callback) {
+        searchFamily.clickFamilyExactSearch('false');
+        browser.sleep(25).then(callback);
+    });
+
+    this.When(/^I have not entered the exact Family name$/, function (callback) {
+        searchFamily.setFamilyName('Albert Einstein');
+        browser.sleep(25).then(callback);
+    });
+
+    this.Then(/^the Family Name will not be displayed on the Family search results table$/, function (callback) {
+        expect(projectFunctions.inSearchResults('Albert Einstein Cancer Center')).to.become('false').and.notify(callback);
+    });
+
+
+
 };

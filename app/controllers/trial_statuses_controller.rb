@@ -1,5 +1,6 @@
 class TrialStatusesController < ApplicationController
   before_action :set_trial_status, only: [:show, :edit, :update, :destroy]
+  before_filter :wrapper_authenticate_user unless Rails.env.test?
 
   # GET /trial_statuses
   # GET /trial_statuses.json
@@ -69,6 +70,6 @@ class TrialStatusesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def trial_status_params
-      params.require(:trial_status).permit(:code, :name)
+      params.require(:trial_status).permit(:code, :name, :explanation)
     end
 end

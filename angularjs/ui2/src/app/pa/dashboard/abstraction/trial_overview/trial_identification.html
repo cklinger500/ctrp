@@ -1,0 +1,110 @@
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">Trial Identification</div>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <label class="control-label col-xs-12 col-sm-3">NCI ID:</label>
+                    <div class="col-xs-12 col-sm-9">
+                        {{paTrialOverview.trialDetailObj.nci_id}}
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                    <label class="control-label col-xs-12 col-sm-3">Lead Organization Trial ID:</label>
+                    <div class="col-xs-12 col-sm-9">
+                        {{paTrialOverview.trialDetailObj.lead_protocol_id}}
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                    <label class="control-label col-xs-12 col-sm-3">Trial Identifiers:</label>
+                    <div class="col-xs-12 col-sm-9">
+                        <ul>
+                            <li ng-repeat="id in paTrialOverview.trialDetailObj.other_ids_hash track by $index">
+                                {{id.name}}: {{id.other_id_obj.protocol_id}}
+                                <!-- <span ng-show="!$last">;</span> -->
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="col-xs-12">
+                    <label class="control-label col-xs-12 col-sm-3">Last Verification Date:</label>
+                    <div class="col-xs-12 col-sm-9">
+                        {{paTrialOverview.trialDetailObj.verification_date | date: "dd-MMM-yyyy H:mm"}}
+                    </div>
+                </div>
+
+                <div class="col-xs-12">
+                    <label class="control-label col-xs-12 col-sm-3">Official Title:</label>
+                    <div class="col-xs-12 col-sm-9">
+                        {{paTrialOverview.trialDetailObj.official_title}}
+                    </div>
+                </div>
+
+                <div class="col-xs-12">
+                    <label class="control-label col-xs-12 col-sm-3">Submission Source:</label>
+                    <div class="col-xs-12 col-sm-9">
+                        {{paTrialOverview.trialDetailObj.last_submission_source.code}}
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+                <form name="abstraction_form" class="form form-horizontal" role="form" novalidate ctrp-submit="trialIdView.saveProcessingInfo()" unsaved-changes>
+                    <div class="col-xs-12">
+                        <!-- first form-group -->
+                        <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.abstraction_form.needsAttention(abstraction_form.priority_selection)}">
+                            <label for="priority_selection" class="control-label col-xs-12 col-sm-3">Processing Priority:</label>
+                            <div class="col-xs-12 col-sm-4">
+                                <select name="priority_selection" id="processing_priority"
+                                    class="form-control input-sm"
+                                    ng-disabled="!trialIdView.isFieldEditable"
+                                    ng-model="trialIdView.trialProcessingObj.priority" restriction-field
+                                    ng-options="priority.name as priority.name for priority in trialIdView.priorities" required>
+                                    <option value="">
+                                        Select a priority
+                                    </option>
+                                </select>
+                                <span class="help-block" ng-show="abstraction_form.priority_selection.$error.required">Priority is Required</span>
+                            </div>
+                            <div class="col-xs-12 col-sm-5"></div>
+                        </div>
+                        <!-- end of first form-group -->
+
+                        <!-- second form-group -->
+                        <div class="form-group">
+                            <label for="trial_processing_comment" class="control-label col-xs-12 col-sm-3">Trial Processing Comments:<br> <small>(maximum: 4,000 characters)</small></label>
+
+                            <div class="col-xs-9">
+                                <textarea class="form-control" ng-disabled="!trialIdView.isFieldEditable" restriction-field
+                                    name="processing_comment" id="trial_processing_comment" rows="6" ng-maxlength="4000"
+                                    ng-model="trialIdView.trialProcessingObj.comment">
+                                </textarea>
+                                <span class="help-block" ng-show="abstraction_form.processing_comment.$dirty">
+                                    {{4000 - abstraction_form.processing_comment.$viewValue.length}} characters left
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group no-bottom-margin">
+                            <div class="btn-toolbar">
+                                <button type="submit" class="btn btn-primary pull-right" id="submit_processing" ng-disabled="!abstraction_form.$valid || trialIdView.disableBtn" restriction-field>
+                                    <i class="glyphicon glyphicon-ok"></i> Save
+                                </button>
+                                <button type="button" class="btn btn-warning pull-right" id="cancel_processing" ng-click="trialIdView.resetView()" restriction-field>
+                                    <i class="glyphicon glyphicon-remove"></i> Reset
+                                </button>
+                            </div>
+                        </div>
+                        <!-- end of second row -->
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

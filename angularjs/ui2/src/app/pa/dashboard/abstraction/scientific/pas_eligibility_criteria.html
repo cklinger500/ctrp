@@ -1,0 +1,283 @@
+<div class="row" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidProtocol || paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">Eligibility Criteria</div>
+        </div>
+        <div class="panel-body">
+            <form name="criteria_form" role="form" class="form form-horizontal" novalidate ctrp-submit="criteriaView.updateCriteria(true)" ctrp-submit-delete unsaved-changes>
+                <!-- fieldset for eligibility criteria -->
+                    <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || criteriaView.disableBtn">
+                        <legend class="sub-bordered">Eligibility Criteria</legend>
+                        <!-- <div class="form-group">
+                            <div layout="row">
+                                <div flex>Accepts Healthy Volunteer?</div>
+                                <div flex>
+                                    <md-radio-group ng-model="criteriaView.trialDetailObj.accept_vol" class="md-primary" layout="row">
+                                        <md-radio-button value="Yes"> Yes </md-radio-button>
+                                        <md-radio-button value="No"> No </md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="form-group" ng-class="{'has-feedback required': true, 'has-error': ctrpbtn.criteria_form.needsAttention(criteria_form.accept_vol)}">
+                            <label for="volunteer" class="control-label col-xs-12 col-sm-3">Accepts Healthy Volunteers?:</label>
+                            <div class="col-xs-12 col-sm-9">
+                                <!-- <md-radio-group ng-model="criteriaView.trialDetailObj.accept_vol" class="md-primary" layout="row">
+                                    <md-radio-button value="Yes"> Yes </md-radio-button>
+                                    <md-radio-button value="No"> No </md-radio-button>
+                                </md-radio-group> -->
+                                <label class="radio-inline">
+                                    <input type="radio" id="accept_vol" name="accept_vol"
+                                        ng-model="criteriaView.trialDetailObj.accept_vol"
+                                        value="Yes"
+                                        ng-required="criteriaView.trialDetailObj.accept_vol === ''"> Yes
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" id="accept_vol" name="accept_vol"
+                                    ng-model="criteriaView.trialDetailObj.accept_vol"
+                                    value="No"
+                                    ng-required="!criteriaView.trialDetailObj.accept_vol"> No
+                                </label>
+                                <span ng-messages="ctrpbtn.criteria_form.needsAttention(criteria_form.accept_vol) && criteria_form.accept_vol.$error">
+                                    <span class="help-block" ng-message="required">
+                                        Accepts Healthy Volunteers is Required
+                                    </span>
+                               </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-feedback required': true, 'has-error': ctrpbtn.criteria_form.needsAttention(criteria_form.gender)}">
+                            <label class="control-label col-xs-12 col-sm-3">Gender:</label>
+                            <div class="col-xs-12 col-sm-9">
+                                <label ng-repeat="g in criteriaView.genderList" class="radio-inline">
+                                    <input type="radio" id="gender" name="gender"
+                                        ng-model="criteriaView.trialDetailObj.gender_id"
+                                        ng-value="g.id"
+                                        ng-required="!criteriaView.trialDetailObj.gender_id"> {{g.name}}
+                                </label>
+                                <span ng-messages="ctrpbtn.criteria_form.needsAttention(criteria_form.gender) &&
+                                                    criteria_form.gender.$error">
+                                    <span class="help-block" ng-message="required">Gender is required</span>
+                               </span>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-class="{'has-feedback required': true, 'has-error': ctrpbtn.criteria_form.needsAttention(criteria_form.min_age) ||
+                                ctrpbtn.criteria_form.needsAttention(criteria_form.min_age_unit)}">
+                            <label for="min_age" class="control-label col-xs-12 col-sm-3">Minimum Age:</label>
+                            <div class="col-xs-12 col-sm-2">
+                                <input type="number" min="0" name="min_age" id="min_age" ng-model="criteriaView.trialDetailObj.min_age" class="form-control input-sm" placeholder="" required>
+                                <span ng-messages="ctrpbtn.criteria_form.needsAttention(criteria_form.min_age) && criteria_form.min_age.$error">
+                                    <span class="help-block" ng-message="required">Enter 0 if no min age is indicated and select 'Years' as Unit</span>
+                               </span>
+                            </div>
+                            <label for="min_age_unit" class="control-label col-xs-12 col-sm-1">Unit:</label>
+                            <div class="col-xs-12 col-sm-2">
+                                <select name="min_age_unit" id="min_age_unit"
+                                    class="form-control input-sm min-width-lg"
+                                    ng-model="criteriaView.trialDetailObj.min_age_unit_id"
+                                    ng-options="unit.id as unit.name for unit in criteriaView.ageUnits"
+                                    required>
+                                    <option value="">- Please select a unit...</option>
+                                </select>
+                                <span ng-messages="ctrpbtn.criteria_form.needsAttention(criteria_form.min_age_unit) &&
+                                                    criteria_form.min_age_unit.$error">
+                                    <span class="help-block" ng-message="required">Minimum Age Unit is Required</span>
+                               </span>
+                            </div>
+                            <div class="col-sm-4"></div>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-feedback required': true, 'has-error': ctrpbtn.criteria_form.needsAttention(criteria_form.max_age) ||
+                            ctrpbtn.criteria_form.needsAttention(criteria_form.max_age_unit)}">
+                            <label for="max_age" class="control-label col-xs-12 col-sm-3">Maximum Age:</label>
+                            <div class="col-xs-12 col-sm-2">
+                                <input type="number" min="0" name="max_age" id="max_age" ng-model="criteriaView.trialDetailObj.max_age" class="form-control input-sm" placeholder="" required>
+                                <span ng-messages="ctrpbtn.criteria_form.needsAttention(criteria_form.max_age) &&
+                                                    criteria_form.max_age.$error">
+                                    <span class="help-block" ng-message="required">Enter 999 if no max age is indicated and select 'Years' as Unit</span>
+                               </span>
+                            </div>
+                            <label for="max_age_unit" class="control-label col-xs-12 col-sm-1">Unit:</label>
+                            <div class="col-xs-12 col-sm-2">
+                                <select name="max_age_unit" id="max_age_unit"
+                                    class="form-control input-sm min-width-lg"
+                                    ng-model="criteriaView.trialDetailObj.max_age_unit_id"
+                                    ng-options="unit.id as unit.name for unit in criteriaView.ageUnits"
+                                    required>
+                                    <option value="">- Please select a unit...</option>
+                                </select>
+                                <span ng-messages="ctrpbtn.criteria_form.needsAttention(criteria_form.max_age_unit) && criteria_form.max_age_unit.$error">
+                                    <span class="help-block" ng-message="required">Maximum Age Unit is Required</span>
+                               </span>
+                            </div>
+                            <div class="col-sm-4"></div>
+                        </div>
+
+                        <div class="form-group" ng-show="criteriaView.trialDetailObj.isObservational || criteriaView.trialDetailObj.isAncillary"
+                            ng-class="{'has-feedback required': criteriaView.trialDetailObj.isObservational || criteriaView.trialDetailObj.isAncillary, 'has-error': ctrpbtn.criteria_form.needsAttention(criteria_form.sampling_method)}">
+                                <label for="sampling_method" class="control-label col-xs-12 col-sm-3">Sampling Method:</label>
+                                <div class="col-xs-12 col-sm-4">
+                                    <select name="sampling_method" id="sampling_method"
+                                        class="form-control input-sm"
+                                        ng-model="criteriaView.trialDetailObj.sampling_method"
+                                        ng-options="v for (k, v) in criteriaView.samplingMethods"
+                                        ng-required="criteriaView.trialDetailObj.isObservational || criteriaView.trialDetailObj.isAncillary">
+                                        <option value="">- Please select a method...</option>
+                                    </select>
+                                    <span ng-messages="ctrpbtn.criteria_form.needsAttention(criteria_form.sampling_method) &&
+                                                        criteria_form.sampling_method.$error">
+                                        <span class="help-block" ng-message="required">Sampling Method is Required</span>
+                                   </span>
+                                </div>
+                        </div>
+
+                        <div class="form-group" ng-show="criteriaView.trialDetailObj.isObservational || criteriaView.trialDetailObj.isAncillary"
+                            ng-class="{'has-feedback required': criteriaView.trialDetailObj.isObservational || criteriaView.trialDetailObj.isAncillary, 'has-error': ctrpbtn.criteria_form.needsAttention(criteria_form.study_pop_desc)}">
+                            <label for="study_pop_desc" class="control-label col-xs-12 col-sm-3">Study Population Description:</label>
+                            <div class="col-xs-12 col-sm-5">
+                                <textarea class="form-control input-sm" rows="5"
+                                    name="study_pop_desc" id="study_pop_desc"
+                                    maxlength="1000" ng-maxlength="1000"
+                                    ng-required="criteriaView.trialDetailObj.isObservational || criteriaView.trialDetailObj.isAncillary"
+                                    ng-model="criteriaView.trialDetailObj.study_pop_desc" rows="3">
+                                </textarea>
+                                <span class="help-block" ng-show="criteria_form.study_pop_desc.$viewValue.length > 0">
+                                    {{1000 - criteria_form.study_pop_desc.$viewValue.length}} characters left
+                                </span>
+                                <span ng-messages="ctrpbtn.criteria_form.needsAttention(criteria_form.study_pop_desc) && criteria_form.study_pop_desc.$error">
+                                    <span class="help-block" ng-message="required">Study Population Description is Required</span>
+                                </span>
+                            </div>
+
+                        </div>
+                    </fieldset>
+                <!-- end of fieldset for eligibility criteria -->
+
+                <!-- fieldset for other criteria -->
+                    <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || criteriaView.disableBtn">
+                        <legend class="sub-bordered">Other Criteria</legend>
+                        <div class="form-group table-responsive" ng-show="criteriaView.addOtherCriterionFormShown">
+                            <table class="table table-striped table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th width="10%">Type</th>
+                                        <th>Description</th>
+                                        <th width="15%" ng-if="!criteriaView.otherCriterion.edit"></th>
+                                        <th width="15%" ng-if="criteriaView.otherCriterion.edit">Cancel/Confirm</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <span ng-if="!criteriaView.otherCriterion.edit">
+                                                {{criteriaView.otherCriterion.criteria_type}}
+                                            </span>
+                                            <select class="form-control input-sm min-width-sm" name="criterion_type" id="criterion_type" ng-model="criteriaView.otherCriterion.criteria_type" ng-if="criteriaView.otherCriterion.edit">
+                                                <option value="Inclusion" selected="selected">Inclusion</option>
+                                                <option value="Exclusion" ng-selected="criteriaView.otherCriterion.criteria_type === 'Exclusion'">Exclusion</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <textarea class="form-control input-sm" rows="2"
+                                                name="other_criteria_desc" id="other_criteria_desc"
+                                                maxlength="criteriaView.descCharsRemaining" ng-maxlength="criteriaView.descCharsRemaining"
+                                                ng-model="criteriaView.otherCriterion.criteria_desc" placeholder="Criteria Description">
+                                            </textarea>
+                                            <span class="help-block" ng-show="criteria_form.other_criteria_desc.$viewValue.length > 0">
+                                                {{criteriaView.descCharsRemaining - criteria_form.other_criteria_desc.$viewValue.length}} characters left.<br>
+                                                Total characters for all Other Criteria Description is {{criteriaView.numCharsUsedInOC}}.
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div ng-hide="!criteriaView.otherCriterion.edit">
+                                                <button type="button" class="btn btn-warning" ng-click="criteriaView.cancelEditOtherCriterion()">
+                                                    <i class="glyphicon glyphicon-remove"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-primary" ng-click="criteriaView.updateOtherCriteria(criteriaView.otherCriterion)"
+                                                    ng-disabled="criteriaView.otherCriterion.criteria_desc==''">
+                                                        <i class="glyphicon glyphicon-ok"></i>
+                                                </button>
+                                            </div>
+                                            <div ng-hide="criteriaView.otherCriterion.edit">
+                                                <button type="button" class="btn btn-primary" ng-click="criteriaView.upsertOtherCriterion(criteriaView.otherCriterion)"
+                                                    ng-disabled="criteriaView.otherCriterion.criteria_desc==''">
+                                                        <i class="glyphicon glyphicon-ok" ng-show="criteriaView.otherCriterion.edit"></i>
+                                                        <span ng-show="!criteriaView.otherCriterion.edit"><i class="glyphicon glyphicon-plus"></i> Add</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="form-group" ng-hide="!criteriaView.trialDetailObj.other_criteria.length">
+                            <table st-table="criteriaView.trialDetailObj.other_criteria" class="table table-bordered table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th class="col-sm-4">Eligibility Criterion Type</th>
+                                    <th class="col-sm-5">Eligibility Criterion Description</th>
+                                    <th class="text-center td-icon">Edit</th>
+                                    <th class="text-center td-icon"><input type="checkbox" name="delete_allOC" id="delete_allOC" ng-model="criteriaView.deleteAllOCCheckbox" ng-change="criteriaView.deleteAllOC(criteriaView.deleteAllOCCheckbox)"></th>
+                                </tr>
+                                </thead>
+                                <tbody ui-sortable="criteriaView.sortableListener" ng-model="criteriaView.trialDetailObj.other_criteria">
+                                <tr class="cursor-move" ng-repeat="row in criteriaView.trialDetailObj.other_criteria track by $index" ng-class="{'locked': !(paTrialOverview.trialDetailObj.pa_sci_editable && criteriaView.isCurationEnabled) }"   ng-class="{'deleted-text': row._destroy, 'edit-selected': row.edit}">
+                                    <td>
+                                        {{row.criteria_type}}
+                                    </td>
+                                    <td>
+                                        {{row.criteria_desc}}
+                                    </td>
+                                    <td class="text-center td-icon">
+                                        <button type="button" class="btn btn-primary" restriction-field ng-disabled="row._destroy || criteriaView.otherCriterion.edit" ng-click="criteriaView.editOtherCriterion($index)">
+                                            <i class="glyphicon glyphicon-edit"></i>
+                                        </button>
+                                    </td>
+                                    <td  class="text-center td-icon">
+                                        <button type="button" class="btn btn-warning" restriction-field ng-click="criteriaView.deleteOtherCriterion($index)" ng-disabled="criteriaView.otherCriterion.edit">
+                                            <i class="glyphicon" ng-class="row._destroy == true ? 'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <!-- pagination -->
+                                <!-- <tfoot>
+                                    <tr>
+                                        <td colspan="5" class="text-center">
+                                            <div st-pagination="" st-items-by-page="criteriaView.otherCriteriaPerPage" st-displayed-pages="7"></div>
+                                        </td>
+                                    </tr>
+                                </tfoot> -->
+                            </table>
+                        </div>
+                        <div class="form-group no-bottom-margin">
+                            <div class="btn-toolbar">
+                                <button type="button" class="btn btn-primary pull-right" ng-click="criteriaView.prepareOtherCriterion('Inclusion')">
+                                    <i class="glyphicon glyphicon-plus"></i> Add Inclusion Criterion
+                                </button>
+                                <button type="button" class="btn btn-primary pull-right" ng-click="criteriaView.prepareOtherCriterion('Exclusion')">
+                                    <i class="glyphicon glyphicon-plus"></i> Add Exclusion Criterion
+                                </button>
+                            </div>
+                        </div>
+                    </fieldset>
+                <!-- end of fieldset for other criteria -->
+                <div class="form-group no-bottom-margin" ng-show="paTrialOverview.trialDetailObj.pa_sci_editable">
+                   <div class="row">
+                      <div class="col-sm-3"></div>
+                      <div class="btn-toolbar col-xs-12 col-sm-9">
+                        <button class="btn btn-primary pull-right" id="save_btn" restriction-field
+                                ctrp-confirm ng-attr-confirm-off="{{(criteriaView.trialDetailObj.other_criteria | findObjByAttribute:'_destroy':true).length === 0 || undefined}}"
+                                confirm-msg="Click OK to remove selected Eligibility Criteria(s) from the study. Click Cancel to abort." ng-disabled="criteriaView.addOtherCriterionFormShown || criteriaView.disableBtn">
+                          <i class="glyphicon glyphicon-ok"></i>  Save
+                        </button>
+                        <button type="button" class="btn btn-warning pull-right" id="cancel_btn" ng-click="criteriaView.resetForm()" restriction-field ng-disabled="criteriaView.disableBtn">
+                         <i class="glyphicon glyphicon-remove"></i>  Reset
+                        </button>
+                      </div>
+                  </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

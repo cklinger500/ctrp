@@ -1,0 +1,59 @@
+<div class="row">
+    <form class="form form-horizontal" role="form" name="interventions_lookup_form" novalidate>
+        <div class="row">
+            <div class="col-xs-7">
+                <div class="form-group" ng-class="{'has-error': submitted && interventions_lookup_form.intervention_name.$error.required}">
+                    <label for="intervention_name" class="control-label col-xs-12 col-sm-3">Intervention Name: </label>
+                    <div class="col-xs-12 col-sm-6">
+                        <input type="text" id="intervention_name" name="intervention_name" class="form-control input-sm" placeholder="Intervention Name" ng-model="interventionsLookupView.searchParams.intervention_name" auto-focus required/>
+                        <span class="help-block" ng-show="submitted && interventions_lookup_form.intervention_name.$error.required">Intervention Name is Required</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-12 col-sm-9 col-sm-offset-3">
+                        <div class="col-xs-12 col-sm-4">
+                            <label for="onhold">
+                                <input type="checkbox" id="onhold" ng-model="interventionsLookupView.searchParams.include_synonyms"> Include Synonym
+                            </label>
+                        </div>
+                        <div class="col-xs-12 col-sm-4">
+                            <label for="checkout">
+                                <input type="checkbox" id="checkout" ng-model="interventionsLookupView.searchParams.exact"> Exact Match Only
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="btn-toolbar">
+                    <button type="submit" class="btn btn-primary pull-right" id="submission_btn" ng-click="interventionsLookupView.lookupInterventions(interventionsLookupView.searchParams)">
+                        <i class="glyphicon glyphicon-search"></i> Search
+                    </button>
+                    <button type="button" class="btn btn-warning pull-right" id="reset_btn" ng-click="interventionsLookupView.resetSearch()">
+                        <i class="glyphicon glyphicon-remove"></i> Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row" ng-hide="interventionsLookupView.searchResults.total == -1" ng-cloak>
+            <p>
+                <strong>Intervention Lookup Results: {{interventionsLookupView.searchResults.total | number}} found</strong>
+            </p>
+            <div ui-grid="interventionsLookupView.gridOptions" ui-grid-pagination ui-grid-selection class="grid"></div>
+        </div>
+        <div class="row top-buffer" ng-hide="interventionsLookupView.searchResults.total == -1" ng-cloak>
+            <div class="col-xs-12 col-sm-10" ng-hide="interventionsLookupView.curSelectedRow == ''">
+                <p><strong>Preferred Name:</strong> {{interventionsLookupView.curSelectedRow.preferred_name}}</p>
+                <p><strong>C-Code:</strong> {{interventionsLookupView.curSelectedRow.c_code}}</p>
+                <p><strong>Synonyms:</strong> {{interventionsLookupView.curSelectedRow.synonyms}}</p>
+                <p>
+                    <strong>Definition:</strong> {{interventionsLookupView.curSelectedRow.definition}}
+                </p>
+
+            </div>
+        </div>
+    </form>
+</div>

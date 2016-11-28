@@ -14,6 +14,7 @@ var helper = require('../support/helper');
 var moment = require('moment');
 var loginPage = require('../support/LoginPage');
 var projectFunctionsPage= require('../support/projectMethods');
+var abstractionCommonMethods = require('../support/abstractionCommonMethods');
 
 
 module.exports = function() {
@@ -24,15 +25,15 @@ module.exports = function() {
     var projectFunctions = new projectFunctionsPage();
     var orgEffectiveDate = '19-Oct-2015';
     var orgExpirationDate = '19-Oct-2020';
+    var commonFunctions = new abstractionCommonMethods();
 
     this.Given(/^I know which person's organizational affiliation I want to change$/, function (callback) {
         browser.get('ui/#/main/sign_in');
-        login.login('ctrpcurator', 'Welcome01');
-        login.accept();
+        commonFunctions.onPrepareLoginTest('ctrpcurator');
         browser.driver.wait(function(){
             console.log('wait here');
             return true;
-        }, 4000)
+        }, 40)
             .then(function(){
                 menuItem.clickHomeEnterOrganizations();
                 login.clickWriteMode('On');

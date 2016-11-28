@@ -1,0 +1,39 @@
+
+<div class="row md-sidenav-push-in-target">
+    <div ng-include src="'app/po/organization/_allOrgDetailWR.html'"></div>
+    <div class="form-group" ng-hide="orgDetailView.ctrpOrg.new">
+        <label class="control-label col-sm-3">Created By:</label>
+        <div class="col-sm-6 form-text">
+            {{orgDetailView.ctrpOrg.created_by}} ({{orgDetailView.ctrpOrg.created_at | dateFormat:'DD-MMM-YYYY, H:mm:ss': 'DD-MMM-YYYY, H:mm'}})
+        </div>
+    </div>
+    <div class="form-group" ng-hide="orgDetailView.ctrpOrg.new">
+        <label class="control-label col-sm-3">Updated By:</label>
+        <div class="col-sm-6 form-text">
+            {{orgDetailView.ctrpOrg.updated_by}} ({{orgDetailView.ctrpOrg.updated_at | dateFormat:'DD-MMM-YYYY, H:mm:ss': 'DD-MMM-YYYY, H:mm'}})
+        </div>
+    </div>
+    <div ng-show="orgDetailView.ctrpOrg.families.length > 0" class="form-group">
+        <label class="control-label col-sm-3">Families:</label>
+        <div class="col-sm-6 form-text">
+            <p ng-repeat="family in orgDetailView.ctrpOrg.families">
+                <a ui-sref="main.familyDetail({familyId : family.id })">{{family.name}}</a>
+            </p>
+        </div>
+    </div>
+    <div class="form-group" ng-class="{'no-bottom-margin': orgDetailView.associatedOrgs.length > 1}" ng-show="orgDetailView.curOrgEditable">
+        <div class="col-sm-3"></div>
+        <div class="btn-toolbar col-sm-6">
+            <div ng-hide="orgDetailView.ctrpOrg.new" ng-include src="'app/po/organization/_associateSearchButton.html?_rload='+orgDetailView.updateTime"></div>
+            <button type="submit" restriction-field class="btn btn-primary pull-right" id="save_btn" ng-disabled="orgDetailView.disableBtn">
+                <i class="glyphicon glyphicon-ok"></i> Save
+            </button>
+            <button type="button" ng-hide="!orgDetailView.ctrpOrg.new" restriction-field class="btn btn-warning pull-right" id="clear_btn" ng-click="orgDetailView.clearForm()" ng-disabled="orgDetailView.disableBtn">
+                <i class="glyphicon glyphicon-remove"></i> Reset
+            </button>
+            <button type="button" ng-hide="orgDetailView.ctrpOrg.new" restriction-field class="btn btn-warning pull-right" id="clear_btn" ng-click="orgDetailView.resetForm()" ng-disabled="orgDetailView.disableBtn">
+                <i class="glyphicon glyphicon-remove"></i> Reset
+            </button>
+        </div>
+    </div>
+</div>

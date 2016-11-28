@@ -28,6 +28,9 @@ var reporterHooks = function() {
     // save feature output
     this.registerHandler('BeforeFeature', function(event, callback) {
         var feature = event.getPayloadItem('feature');
+        featureNameToRun = feature.getName();
+        console.log('******** Name of feature ******');
+        console.log(featureNameToRun);
         var currentFeatureId = feature.getName().replace(/ /g, '-');
         var featureOutput = {
             id: currentFeatureId,
@@ -154,6 +157,14 @@ var reporterHooks = function() {
         //return obj;   */
         callback();
     });
+
+    //// On Error output testResult
+    //this.registerHandler('onError', function(event, callback) {
+    //    var xml = junit(JSON.stringify(testResult), { indent: '    ' });
+    //    var file = fs.openSync(reportFilePath, 'w+');
+    //    fs.writeSync(file, JSON.stringify(testResult));
+    //    callback();
+    //});
 };
 
 module.exports = reporterHooks;

@@ -1,16 +1,33 @@
 json.people do
   json.array!(@people) do |person|
-    json.extract! person, :id, :source_id, :fname, :mname, :lname, :prefix, :suffix, :email, :phone, :updated_at, :ctrp_id, :nullifiable, :updated_by
-    json.source_context person.source_context.present? ? person.source_context.name : nil
-    json.source_status person.source_status.present? ? person.source_status.name : nil
+    json.extract! person,
+                  :id,
+                  :source_id,
+                  :fname,
+                  :mname,
+                  :lname,
+                  :prefix,
+                  :suffix,
+                  :email,
+                  :phone,
+                  :extension,
+                  :updated_at,
+                  :ctrp_id,
+                  :updated_by,
+                  :processing_status,
+                  :source_status_id,
+                  :source_context_id,
+                  :service_request_id,
+                  :multiview_ctep_id,
+                  :service_request_name
+    json.source_context person.source_context_name
+    json.source_status person.source_status_name
+    json.service_request person.service_request_name
     json.url person_url(person, format: :json)
     #eager loading po_affiliations
     json.affiliated_orgs_count person.po_affiliations.length
-    json.affiliated_orgs_first5 person.po_affiliations.first(5) do |po_affiliation|
-      json.po_affiliation_id po_affiliation.id
-      json.name po_affiliation.organization.name
-      json.id po_affiliation.organization.id
-    end
+    json.affiliated_orgs person.po_affiliations.map{ |po_affiliation| po_affiliation.organization.name}.join("; ")
+
   end
 end
 json.start params[:start]

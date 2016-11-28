@@ -1,5 +1,6 @@
 class SecondaryPurposesController < ApplicationController
   before_action :set_secondary_purpose, only: [:show, :edit, :update, :destroy]
+  before_filter :wrapper_authenticate_user unless Rails.env.test?
 
   # GET /secondary_purposes
   # GET /secondary_purposes.json

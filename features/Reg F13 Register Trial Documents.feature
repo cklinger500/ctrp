@@ -6,6 +6,12 @@ As a CTRP User, I can attach various documents to a trial registration
 Scenario Outline: #1 I can attach Trial Related Documents to a trial registration
 Given I have selected the option to register a trial <TrialType>
 And I am on the Register Trial Related Documents screen
+And I have noted the message 
+     """
+     To ensure successful registration, upload a Protocol document and an IRB Approval document. If the Protocol document does not include the Informed Consent and/or participating sites, upload the Informed Consent document and a list of participating sites separately. You can use the Participating Sites template to submit your list of participating sites.
+     CTRP accepts most standard document types. For additional information about what document types are accepted, please refer to the Help section.
+     """
+     
 When I have selected a file to attach as the Protocol Document
 And I have selected a file to attach as the IRB Approval
 And I have selected a file to attach as the list of Participating Sites 
@@ -28,8 +34,8 @@ Examples:
     And I click on the Review Trial button
     Then Trial Related Documents section will indicate an error 
     
-      |Protocol Document is required  |
-      |IRB Approval is required       |
+      |Protocol Document is Required  |
+      |IRB Approval is Required       |
 
     
   Examples: 
@@ -38,35 +44,37 @@ Examples:
       |Externally Peer-Reviewed |
       |Institutional            |
  
- Scenario Outline:#3 Informed consent rules
-    Given I have selected the option to register a trial <TrialType>
-    And I am on the Register Trial Related Documents screen
-    When And I have indicated if the Informed Consent is included with the Protocol Document as Yes or No
-    And I must have selected a file to attach as the Informed Consent Document if Interventional and Informed Consent not included in Protocol Document)
-   	Then the Trial Related Documents section will not indicate any errors during Trial Review
+ 
+      
+     
+Scenario Outline: #4 I can only attach documents with permitted document types
+Given I have selected the option to register a trial <TrialType>
+And I am on the Register Trial Related Documents screen
+When I have selected a file to attach from the list below as a trial document
+      
+      |Pdf|
+      |Doc|
+      |docx|
+      |docm|
+      |Xls|
+      |xlsx|
+      |xlsm|
+      |xlsb|
+      |Rtf|
+      |Txt|
+      
+Then The Trial Related Documents section will not indicate any errors during Trial Review
+When the file selected is not from the file list 
+Then an error will be displayed "Valid file is Required. Allowed file types: pdf,doc,docx,docm,xls,xlsx,xlsm,xlsb,rtf,txt" 
+      
+     
+      
 
-  Examples: 
+Examples: 
       |TrialType                |
       |National                 |
       |Externally Peer-Reviewed |
       |Institutional            |
-
-
-Scenario: #4 I can only attach documents with permitted document types
-Given I am on the Register Trial Related Documents screen
-When I have selected a file to attach <FileType> as a trial document
-Then The Trial Related Documents section will not indicate any errors during Trial Review
-      
-      
-      |FileType |
-      |pdf      |
-      |zip      |
-      |xls      |
-      |xlsx     |
-      |csv      |
-      |doc      |
-      |docx     |
-
 
 
 

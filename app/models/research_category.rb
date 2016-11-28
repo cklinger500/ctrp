@@ -13,4 +13,6 @@
 
 class ResearchCategory < ActiveRecord::Base
   include BasicConcerns
+  validates :code, uniqueness: true
+
 end

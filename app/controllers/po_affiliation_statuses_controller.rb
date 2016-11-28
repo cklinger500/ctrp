@@ -1,5 +1,6 @@
 class PoAffiliationStatusesController < ApplicationController
   before_action :set_po_affiliation_status, only: [:show, :edit, :update, :destroy]
+  before_filter :wrapper_authenticate_user unless Rails.env.test?
 
   # GET /po_affiliation_statuses
   # GET /po_affiliation_statuses.json

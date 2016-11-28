@@ -27,10 +27,17 @@ class SessionsController < Devise::SessionsController
       end
 
       user = User.custom_find_by_username(request.params['user']["username"])
-      if user.blank?
+
+      if user.blank? || user.user_status_id != UserStatus.find_by_code('ACT').id
         error_text = "The User does not exist in the database as an LdapUser or a LocalUser"
         self.raise_login_failed(error_text)
       end
+
+      if user.role == "ROLE_SERVICE-REST"
+        error_text = "This User role does not have access to UI"
+        self.raise_login_failed(error_text)
+      end
+
 
       ## Print informational login messages
       user.log_debug
@@ -72,6 +79,14 @@ class SessionsController < Devise::SessionsController
 
       ## Generate JWT token
       token = create_token({:user_id => self.resource.id})
+
+      ############################### ****REDIS CODE**** #######################
+      Rails.logger.info("In the process of setting token to REDIS-SERVER")
+      $redis.set(token,self.resource.id)
+      Rails.logger.info "yes it is #{$redis.get(token)} "
+
+      ############################# //End of REDIS CODE // #####################
+
       #user = User.find_by_id(self.resource.id)
       #user.token = token
       #user.save!
@@ -110,10 +125,22 @@ class SessionsController < Devise::SessionsController
     Rails.logger.info "params = #{request.params} "
 
 
-    user = User.custom_find_by_username(request.params["username"]) || User.custom_find_by_username(request.params['user']["username"])
+    user = User.find_by_id(request.params["user_id"]) || User.custom_find_by_username(request.params["username"]) || User.custom_find_by_username(request.params['user']["username"])
     Rails.logger.info "user = #{user.inspect} "
     source = request.params["source"] || ""
     sign_out(user)
+
+    ############################### ****REDIS CODE**** #######################
+    Rails.logger.info("In the process of deleting token from REDIS-SERVER")
+
+    current_token = parse_request_header
+
+    Rails.logger.info "yes it is #{$redis.get(current_token)} "
+
+    Rails.logger.info("Token #{current_token}")
+    $redis.del(current_token)
+    ############################# //End of REDIS CODE // #####################
+
     user.current_sign_in_at = nil
     user.save!
     reset_current_user

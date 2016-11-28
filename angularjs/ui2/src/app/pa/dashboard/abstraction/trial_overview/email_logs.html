@@ -1,0 +1,74 @@
+<!-- <div class="row">
+    <div ng-repeat="email in emailsView.emailLogs">
+        <p>
+            <strong>{{email.subject}}</strong>
+        </p>
+        <p ng-bind-html="email.body"></p>
+
+    </div>
+</div> -->
+
+<div class="row">
+    <div class="col-xs-12 col-sm-6" id="email_list">
+        <p ng-show="emailsView.emailLogs.length == 0">
+            <strong>No emails found for this trial</strong>
+        </p>
+        <table class="table table-condensed table-hover" st-table="emailsView.emailLogs" ng-show="emailsView.emailLogs.length > 0">
+            <thead>
+                <tr>
+                    <th st-sort="email_template_name">
+                        Type
+                    </th>
+                    <th st-sort="subject">
+                        Subject
+                    </th>
+                    <th st-sort="result">
+                        Result
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="email in emailsView.emailLogs track by $index" ng-class="{'edit-selected': emailsView.curEmail.index == $index}" ng-click="emailsView.showEmailDetail($index)">
+                    <td style="vertical-align: middle;">
+                        {{email.email_template_name}}
+                    </td>
+                    <td>
+                        {{email.subject}}
+                        <p class="grey-text">Sent: {{email.created_at | date: "dd-MMM-yyyy H:mm"}}</p>
+                    </td>
+                    <td>
+                        {{email.result}}
+                    </td>
+                    <td style="vertical-align: middle;">
+                        <i class="glyphicon glyphicon-menu-right"></i>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot ng-show="emailsView.emailLogs.length > 10">
+                <tr>
+                  <td class="text-center" st-pagination="" st-item-by-page="10" colspan="4"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="col-xs-12 col-sm-6" id="email_content">
+        <div ng-hide="emailsView.curEmail == ''">
+            <p>
+                <strong>From:</strong> {{emailsView.curEmail.from}}
+            </p>
+            <p>
+                <strong>To:</strong> <span ng-hide="emailsView.curEmail.to.indexOf('@') === -1">{{emailsView.curEmail.to}}</span>
+            </p>
+            <p ng-if="emailsView.curEmail.cc">
+                <strong>cc:</strong> <span ng-hide="emailsView.curEmail.cc.indexOf('@') === -1">{{emailsView.curEmail.cc}}</span>
+            </p>
+            <p ng-if="emailsView.curEmail.bcc">
+                <strong>bcc:</strong> <span ng-hide="emailsView.curEmail.bcc.indexOf('@') === -1">{{emailsView.curEmail.bcc}}</span>
+            </p>
+            <p>
+                <strong>Time:</strong> {{emailsView.curEmail.created_at | date: "dd-MMM-yyyy H:mm"}}
+            </p>
+            <span ng-bind-html="emailsView.curEmail.body" ng-model="emailsView.curEmail.body"></span>
+        </div>
+    </div>
+</div>

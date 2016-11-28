@@ -9,10 +9,10 @@
         .factory('PersonService', PersonService);
 
     PersonService.$inject = ['PromiseService', 'URL_CONFIGS','$log',
-            '$rootScope', 'PromiseTimeoutService','UserService','Common'];
+            '$rootScope', 'PromiseTimeoutService','UserService','Common', 'uiGridExporterConstants', 'uiGridExporterService'];
 
     function PersonService(PromiseService, URL_CONFIGS, $log,
-                $rootScope, PromiseTimeoutService,UserService,Common) {
+                $rootScope, PromiseTimeoutService,UserService,Common, uiGridExporterConstants, uiGridExporterService) {
 
         var initPersonSearchParams = {
             fname: '',
@@ -58,9 +58,20 @@
             useExternalPagination: true,
             useExternalSorting: true,
             enableGridMenu: true,
-            enableFiltering: true,
+            enableFiltering: false,
             enableHorizontalScrollbar: 2,
             enableVerticalScrollbar: 2,
+            exporterCsvFilename: 'persons.csv',
+            exporterMenuAllData: true,
+            exporterMenuPdf: false,
+            exporterMenuCsv: false,
+            gridMenuCustomItems: [{
+                title: 'Export All Data As CSV',
+                order: 100,
+                action: function ($event){
+                    this.grid.api.exporter.csvExport(uiGridExporterConstants.ALL, uiGridExporterConstants.ALL);
+                }
+            }],
             columnDefs: [
                 {name: 'Nullify', displayName: 'Nullify',
                     enableSorting: false, enableFiltering: false,
@@ -69,8 +80,8 @@
                     ' ng-click="grid.appScope.nullifyEntity(row.entity)"></div>',
                     visible: false
                 },
-                {name: 'ctrp_id', enableSorting: true, displayName: 'CTRP ID', minWidth: '80', width: '*'},
-                {name: 'ctep_id', enableSorting: true, displayName: 'CTEP ID', minWidth: '80', width: '*'},
+                {name: 'ctrp_id', enableSorting: true, displayName: 'CTRP ID', minWidth: '100', width: '*'},
+                {name: 'multiview_ctep_id', enableSorting: true, displayName: 'CTEP ID', minWidth: '100', width: '*'},
                 {name: 'fname', displayName: 'First', enableSorting: true,  minWidth: '100', width: '*',
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' +
                     '<a ui-sref="main.personDetail({personId : row.entity.id })">{{COL_FIELD CUSTOM_FILTERS}}</a></div>'
@@ -79,16 +90,16 @@
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' +
                     '<a ui-sref="main.personDetail({personId : row.entity.id })">{{COL_FIELD CUSTOM_FILTERS}}</a></div>'
                 },
-                {name: 'lname', displayName: 'Last', enableSorting: true, minWidth: '100', width: '*',
+                {name: 'lname', displayName: 'Last', enableSorting: true, minWidth: '100', width: '*', sort: { direction: 'asc', priority: 1},
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' +
                     '<a ui-sref="main.personDetail({personId : row.entity.id })">{{COL_FIELD CUSTOM_FILTERS}}</a></div>'
                 },
 
                 {name: 'source_context', displayName: 'Source Context',
-                    enableSorting: true, minWidth: '75', width: '*'},
-                {name: 'source_status', displayName: 'Source Status', enableSorting: true, minWidth: '65', width: '*'},
-                {name: 'source_id', displayName: 'Source ID', enableSorting: true, minWidth: '65', width: '*'},
-                {name: 'email', enableSorting: true, minWidth: '150', width: '*',
+                    enableSorting: true, minWidth: '160', width: '*'},
+                {name: 'source_status', displayName: 'Source Status', enableSorting: true, minWidth: '135', width: '*'},
+                {name: 'source_id', displayName: 'Source ID', enableSorting: true, minWidth: '105', width: '*'},
+                {name: 'email', enableSorting: true, minWidth: '105', width: '*',
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' +
                     '{{COL_FIELD CUSTOM_FILTERS}}</div>'
                 },
@@ -96,19 +107,22 @@
                     cellTemplate: '<div class="ui-grid-cell-contents tooltip-uigrid" title="{{COL_FIELD}}">' +
                     '{{COL_FIELD CUSTOM_FILTERS}}</div>'
                 },
-                {name: 'affiliated_orgs_first5', displayName:'Affiliated Orgs',
-                    minWidth: '150', width: '*',
-                    cellTemplate:'<div ng-if="row.entity.affiliated_orgs_first5.length > 0">' +
-                    ' <master-directive button-label="Click to see" mod="row.entity.affiliated_orgs_first5">' +
-                    '</master-directive></div>' +
-                    '<div class="text-center" ng-show="row.entity.affiliated_orgs_first5.length == 0">--</div>'},
+                {name: 'affiliated_orgs', displayName:'Affiliated Orgs',
+                    minWidth: '150', width: '*', enableSorting: false, enableFiltering: false,
+                    cellTemplate:'<div class="ui-grid-cell-contents tooltip-uigrid" ng-if="row.entity.affiliated_orgs.length > 0" title="{{COL_FIELD}}">{{COL_FIELD}}</div>' +
+                    //' <master-directive button-label="Click to see" mod="row.entity.affiliated_orgs">' +
+                    //'</master-directive></div>' +
+                    '<div class="text-center" ng-show="row.entity.affiliated_orgs.length == 0">--</div>'},
                 {name: 'updated_at', displayName: 'Last Updated Date',
                     type: 'date', cellFilter: 'date: "dd-MMM-yyyy H:mm"',
                     enableSorting: true, minWidth: '150', width: '*'},
                 {name: 'updated_by', displayName: 'Last Updated By',
                     enableSorting: true, minWidth: '150', width: '*'},
                 {name: 'prefix', enableSorting: true, minWidth: '75', width: '*'},
-                {name: 'suffix', enableSorting: true, minWidth: '75', width: '*'}
+                {name: 'suffix', enableSorting: true, minWidth: '75', width: '*'},
+                {name: 'id', displayName: 'Context ID', enableSorting: true, minWidth: '75', width: '*'},
+                {name: 'processing_status', displayName: 'Processing Status', enableSorting: true, minWidth: '100', width: '*'},
+                {name: 'service_request_name', displayName: 'Service Request', enableSorting: true, minWidth: '75', width: '*'},
             ]
         };
 
@@ -124,7 +138,12 @@
             deletePerson : deletePerson,
             getPoAffStatuses : getPoAffStatuses,
             curatePerson : curatePerson,
-            checkUniquePerson : checkUniquePerson
+            checkUniquePerson : checkUniquePerson,
+            extractFullName: extractFullName,
+            associatePersonContext: associatePersonContext,
+            removePersonAssociation: removePersonAssociation,
+            cloneCtepPerson: cloneCtepPerson,
+            isPersonNullifiable: isPersonNullifiable,
         };
 
         return services;
@@ -185,38 +204,43 @@
          */
         function getInitialPersonSearchParams() {
             var user_role= !!UserService.getUserRole() ? UserService.getUserRole().split('_')[1].toLowerCase() : '';
-            var curator_role = 'curator';
-            if(user_role.toUpperCase() !== curator_role.toUpperCase()) {
+            // var curator_role = 'curator';
+            if (user_role !== 'curator') {
                 initPersonSearchParams.wc_search = false;
             }
             return initPersonSearchParams;
         } //getInitialPersonSearchParams
 
-
-
         function getGridOptions(usedInModal) {
             //var user_role= !!UserService.getUserRole() ? UserService.getUserRole().split('_')[1].toLowerCase() : '';
             var user_role = !!UserService.getUserRole() ? UserService.getUserRole() : '';
+            var options = angular.copy(gridOptions); // make a copy
 
-            var updated_at_index = Common.indexOfObjectInJsonArray(gridOptions.columnDefs, 'name', 'updated_at');
-            console.log('updated_at_index is ' + updated_at_index);
+            if (user_role === 'ROLE_CURATOR') {
+                // var updated_at_index = Common.indexOfObjectInJsonArray(options.columnDefs, 'name', 'updated_at');
+                var updatedAtIndex = _.findIndex(options.columnDefs, {name: 'updated_at'});
+                if (updatedAtIndex >= 0)
+                    options.columnDefs.splice(updatedAtIndex, 1);
 
-            var curator_role = 'curator';
-            if(user_role.toUpperCase().indexOf(curator_role.toUpperCase()) === -1) {
-
-                if (updated_at_index >= 0)
-                    gridOptions.columnDefs.splice(updated_at_index,1);
-                //Recompute the updated_by_index, given that the columnDefs have changed
-                var updated_by_index = Common.indexOfObjectInJsonArray(gridOptions.columnDefs, 'name', 'updated_by');
-                if (updated_by_index >= 0)
-                    gridOptions.columnDefs.splice(updated_by_index,1);
+                var updatedByIndex = _.findIndex(options.columnDefs, {name: 'updated_by'});
+                if (updatedByIndex >= 0)
+                    options.columnDefs.splice(updatedByIndex,1);
+            } else if (user_role === 'ROLE_TRIAL-SUBMITTER' || user_role === 'ROLE_SITE-SU') {
+                // splice out columns: context id, Processing Status, and Service Request from trial submitter role
+                var filtered = ['id', 'processing_status', 'service_request', 'updated_at', 'updated_by'];
+                options.columnDefs = _.filter(options.columnDefs, function(col) {
+                    return !_.contains(filtered, col.name);
+                });
             }
-            if(usedInModal){
-                var nullify_index = Common.indexOfObjectInJsonArray(gridOptions.columnDefs, 'name', 'Nullify');
-                if (nullify_index >= 0)
-                    gridOptions.columnDefs.splice(nullify_index,1);
+            if (usedInModal === true) {
+                // var nullify_index = Common.indexOfObjectInJsonArray(options.columnDefs, 'name', 'Nullify');
+                var nullifyIndex = _.findIndex(options.columnDefs, {name: 'Nullify'});
+                if (nullifyIndex > -1) {
+                    options.columnDefs.splice(nullifyIndex, 1);
+                }
             }
-            return gridOptions;
+
+            return options;
         }
 
 
@@ -266,6 +290,29 @@
             return PromiseTimeoutService.getData(URL_CONFIGS.PO_AFF_STATUSES);
         }
 
+        function associatePersonContext(ctepPersonId, ctrpId) {
+            // plug in the url params
+            var url = URL_CONFIGS.ASSOCIATE_PERSON;
+            url = url.replace('{:ctep_person_id}', ctepPersonId);
+            url = url.replace('{:ctrp_id}', ctrpId);
+            return PromiseTimeoutService.getData(url);
+        }
+        /**
+         * Remove person context association
+         * @param  {[type]} ctepPersonId [description]
+         * @return {[type]}              [description]
+         */
+        function removePersonAssociation(ctepPersonId) {
+            var url = URL_CONFIGS.REMOVE_PERSON_ASSOCIATION;
+            url = url.replace('{:ctep_person_id}', ctepPersonId);
+            return PromiseTimeoutService.getData(url);
+        }
+
+        function isPersonNullifiable(personId) {
+            var url = URL_CONFIGS.PERSON_NULLIFIABLE;
+            url = url.replace('{:person_id}', personId);
+            return PromiseTimeoutService.getData(url);
+        }
 
         /**
          * Nullify a person and merge his/her association to the retained person
@@ -274,6 +321,14 @@
          */
         function curatePerson(curationObject) {
             return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.CURATE_PERSON, curationObject);
+        }
+
+        function cloneCtepPerson(ctepPersonId, forceClone) {
+            var data = {
+                ctep_person_id: ctepPersonId,
+                force_clone: forceClone || false,
+            };
+            return PromiseTimeoutService.postDataExpectObj(URL_CONFIGS.CLONE_CTEP_PERSON, data);
         }
 
 
@@ -287,8 +342,39 @@
         }
 
 
+        /**
+         * Extract the person's full name from the personObj
+         * @param  {JSON} personObj [required fields: fname (String); mname (String); lname (String)]
+         * @param  {String} format  'fl': 'first name last name', 'lf': 'last name, first name', 'lfm': 'last name, first name middle name'
+         * @return {String}           [full name, e.g. 'John Middle Doe']
+         */
+        function extractFullName(personObj, format) {
+            if (!personObj) {
+                return '';
+            }
+            var fullName = '';
+            var firstName = personObj.fname || '';
+            var middleName = personObj.mname || '';
+            var lastName = personObj.lname || '';
 
+            if (format) {
+                switch (format) {
+                    case 'lf':
+                        fullName = lastName + ', ' + firstName;
+                        break;
+                    case 'lfm':
+                        fullName = lastName + ', ' + firstName + ' ' + middleName;
+                        break;
+                    default:
+                        fullName = firstName + lastName;
+                }
+            } else {
+                fullName += firstName;
+                fullName += !!middleName ? (' ' + middleName) : '';
+                fullName += !!lastName ? (' ' + lastName) : '';
+            }
+
+            return fullName;
+        }
     }
-
-
 })();

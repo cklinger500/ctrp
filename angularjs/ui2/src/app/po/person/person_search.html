@@ -1,27 +1,19 @@
 <div class="container">
+    <!-- <div class="row">
+        <strong>Examples of Ag-Grid Trial Search</strong>
+        <ctrp-pa-trial-search show-grid="true" max-row-selectable="2" curation-mode="true"></ctrp-pa-trial-search>
+    </div> -->
     <div class="row">
-        <strong>Examples of the ctrpPersonAdvSearchModalButton:</strong>
-        <ul>
-            <li>
-                use-built-in-template: false (turn off the build in template for displaying selected persons)
-            </li>
-            <li>
-                max-row-selectable: maximum number of people that could be selected in the pop-up modal
-            </li>
-        </ul>
+        <strong>NCIt Interventions Search</strong>
+        <ctrp-ncit-interventions-search max-row-selectable="1" ng-model="personSearchView.selection"></ctrp-ncit-interventions-search>
     </div>
-
     <div class="row">
-        <form name="test_person" ctrp-submit="personSearchView.trySubmit()" novalidate>
-            <div class="form-group"  ng-class="{'has-error': ctrpbtn.test_person.needsAttention(test_person.name)}">
-                <!-- test the combo of ngDisabled and restrictionField directives -->
-                <input type="text" restriction-field class="form-control" ng-disabled="personSearchView.name.length > 3" name="name" placeholder="Name" ng-model="personSearchView.name" ng-minlength="3" required>
-
-            </div>
-            <div class="form-group">
-                <button class="btn btn-primary" type="submit">Submit</button>
-            </div>
-        </form>
+        <button class="btn btn-primary" id="person_search_modal" person-search-modal-button2 ng-model="personSearchView.selectedPersons" restriction-field>Search Person</button>
+    </div>
+    <div class="row" ng-hide="personSearchView.selectedPersons.length == 0">
+        <p ng-repeat="p in personSearchView.selectedPersons">
+            name: {{p.fname}} {{p.lname}}
+        </p>
     </div>
 
     <!--
@@ -34,54 +26,6 @@
         <ctrp-advanced-org-search-form2 show-grid="true" max-row-selectable="2" curation-mode="true"></ctrp-advanced-org-search-form2>
     </div>
     -->
-
-    <div class="row">
-        <ctrp-person-adv-search-modal-button max-row-selectable="1" use-built-in-template="true" allow-overwrite="false"></ctrp-person-adv-search-modal-button>
-    </div>
-
-    <div class="row animated-item" ng-show="selectedPersonsArray.length > 0">
-
-        <table class="table table-bordered table-striped table-condensed">
-            <thead>
-            <th>Remove</th>
-            <th>PO ID</th>
-            <th>Prefix</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Suffix</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Source Context</th>
-            <th>Source Status</th>
-            </thead>
-            <tbody>
-            <tr ng-repeat="person in selectedPersonsArray | filter: {'name': selectedPersonFilter} track by $index"
-                class="animated-item" ng-class="person._destroy == true ? 'deleted-text' : ''">
-                <td style="vertical-align: middle">
-                    <label class="btn btn-default"
-                           ng-click="toggleSelection($index)">
-                        <i class="glyphicon"
-                           ng-class="person._destroy == true ? 'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i>
-                    </label>
-                </td>
-                <td>{{person.id}}</td>
-                <td>{{person.prefix}}</td>
-                <td>{{person.fname}}</td>
-                <td>{{person.lname}}</td>
-                <td>{{person.suffix}}</td>
-                <td>{{person.email}}</td>
-                <td>{{person.phone}}</td>
-                <td>{{person.source_context}}</td>
-                <td>{{person.source_status}}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="row">
-        <ctrp-org-adv-search-modal-button max-row-selectable="1" use-built-in-template="true"
-                                          allow-overwrite="false"></ctrp-org-adv-search-modal-button>
-    </div>
 
 
 </div>

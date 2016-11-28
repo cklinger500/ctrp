@@ -1,0 +1,131 @@
+<div class="row" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.rejection">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">Trial NCI Specific Information</div>
+        </div>
+        <div class="panel-body">
+            <form class="form form-horizontal" role="form" name="trial_form" novalidate ctrp-submit="trialNciView.updateTrial" unsaved-changes>
+                <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_editable || trialNciView.disableBtn">
+                    <legend class="sub-bordered">Study Source</legend>
+                    <div class="form-group required" ng-class="{'has-error': !trialNciView.study_source_id && ctrpbtn.trial_form.needsAttention(trial_form.study_source_id)}">
+                        <label for="study_source" class="control-label col-xs-12 col-sm-4">Study Source: </label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select  restriction-field class="form-control input-sm" id="study_source" ng-model="trialNciView.curTrial.study_source_id" ng-options="studySource.id as studySource.name for studySource in trialNciView.studySourceArr" required>
+                                <option value="">-Select a Study Source-</option>
+                                <option ng-repeat="studySource in trialNciView.studySourceArr" value="{{studySource.code}}">{{studySource.name}}</option>
+                            </select>
+                            <span class="help-block" ng-show="!trialNciView.study_source_id && ctrpbtn.trial_form.needsAttention(trial_form.study_source_id)">
+                                Study Source is Required
+                            </span>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_editable || trialNciView.disableBtn">
+                    <legend class="sub-bordered">Funding Source</legend>
+                    <div class="form-group required" ng-class="{'has-error': ctrpbtn.trial_form.needsAttention(trial_form.fs_dummy)}">
+                        <label class="control-label col-xs-12 col-sm-4">Data Table 4 Funding Source:</label>
+                        <div class="col-xs-12 col-sm-8" ng-hide="['update'].indexOf(trialNciView.curTrial.edit_type) > -1">
+                            <ctrp-org-adv-search-modal-button max-row-selectable="1" use-built-in-template="false" selected-orgs-array="trialNciView.selectedFsArray" allow-overwrite="false"></ctrp-org-adv-search-modal-button>
+                            <input type="hidden" name="fs_dummy" ng-model="trialNciView.dummyField" ng-required="trialNciView.fsNum === 0">
+                            <span class="help-block" ng-show="ctrpbtn.trial_form.needsAttention(trial_form.fs_dummy)">
+                                Funding Source is Required
+                            </span>
+                        </div>
+                    </div>
+
+                    <div ng-repeat="fs in trialNciView.addedFses track by $index" class="form-group">
+                        <div class="col-xs-12 col-sm-4"></div>
+                        <div class="col-xs-12 col-sm-5">
+                            <span ng-class="fs._destroy == true ? 'deleted-text animated-item' : 'animated-item'">{{fs.organization_name}}</span>
+                        </div>
+                        <div class="col-xs-12 col-sm-1 td-icon">
+                            <label restriction-field class="btn btn-warning" ng-click="trialNciView.toggleSelection($index, 'funding_source')" ng-hide="['update'].indexOf(trialNciView.curTrial.edit_type) > -1">
+                                <i ng-class="fs._destroy == true ? 'glyphicon glyphicon-ok-circle' : 'glyphicon glyphicon-remove-circle'"></i>
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_editable || trialNciView.disableBtn">
+                    <legend class="sub-bordered">Program Code</legend>
+                    <div class="form-group">
+                        <label for="program_code" class="control-label col-xs-12 col-sm-4">Program Code:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <input type="text" id="program_code" name="trial_program_code" class="form-control" ng-model="trialNciView.curTrial.program_code" placeholder="Program Code">
+                        </div>
+                    </div>
+                 </fieldset>
+                <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_editable || trialNciView.disableBtn">
+                    <legend class="sub-bordered">NIH/NCI Identifiers</legend>
+                    <div class="form-group">
+                        <label for="nih_nci_div" class="control-label col-xs-12 col-sm-4">NIH/NCI Division/Department Identifier:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select class="form-control input-sm" id="nih_nci_div" ng-model="trialNciView.curTrial.nih_nci_div">
+                                <option value="">-Select a NIH/NCI Division/Department Identifier-</option>
+                                <option ng-repeat="nci in trialNciView.nciDivArr" value="{{nci.code}}">
+                                    {{nci.code}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nih_nci_div" class="control-label col-xs-12 col-sm-4">NIH/NCI Program Id: </label>
+                        <div class="col-xs-12 col-sm-5">
+                            <!--select class="form-control input-sm" id="nih_nci_prog" ng-model="trialNciView.curTrial.nih_nci_prog">
+                                <option value="">-Select a NIH/NCI Program ID-</option>
+                                <option ng-repeat="ncip in trialNciView.nciProgArr" value="{{ncip.code}}">
+                                    {{ncip.code}}
+                                </option>
+                            </select-->
+                            <select class="form-control input-sm" id="nih_nci_prog" ng-model="trialNciView.curTrial.nih_nci_prog">
+                                <option value="">-Select a NIH/NCI Program ID-</option>
+                                <option value="BIQSFP">BIQSFP</option>
+                                <option value="SPORE">SPORE</option>
+                                <option value="Steering Commitee Reviewed">Steering Commitee Reviewed</option>
+                            </select>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="sub-bordered" restriction-field  ng-if="trialNciView.isSponsorNci" ng-disabled="trialNciView.disableBtn">
+                    <legend class="sub-bordered">Send Trial Information to ClinicalTrials.gov</legend>
+                        <div class="form-group">
+                                <label for="send_trial_flag" class="control-label col-xs-12 col-sm-6">Send Trial Information to ClinicalTrials.gov?</label>
+                                <div class="col-xs-12 col-sm-3">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="send_trial_flag" ng-model="trialNciView.curTrial.send_trial_flag" value="No" ng_disabled="trialNciView.disable_send_trial"> No
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="send_trial_flag" ng-model="trialNciView.curTrial.send_trial_flag" value="Yes" ng_disabled="trialNciView.disable_send_trial"> Yes
+                                    </label>
+                                </div>
+                        </div>
+                 </fieldset>
+
+                <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_editable || trialNciView.disableBtn">
+                    <legend class="sub-bordered">Comments</legend>
+                    <div class="form-group">
+                        <label for="trial_processing_comment" class="control-label col-xs-12  col-sm-4">Comments:</label>
+                        <div class="col-xs-12 col-sm-7">
+                            <textarea class="form-control" name="nci_specific_comment" id="trial_nci_specific_comment" rows="7" ng-model="trialNciView.curTrial.nci_specific_comment" maxlength="4000"></textarea>
+                            <span class="help-block" ng-show="trial_form.nci_specific_comment.$dirty">
+                                {{4000 - trial_form.nci_specific_comment.$viewValue.length}} characters left
+                            </span>
+                        </div>
+                    </div>
+                </fieldset>
+                <!--div class="form-group no-bottom-margin" ng-if="trialNciView.curTrial.admin_checkout != nil"-->
+                <div class="form-group no-bottom-margin" ng-if="paTrialOverview.trialDetailObj.pa_editable">
+                    <div class="btn-toolbar">
+                        <button type="submit" class="btn btn-primary pull-right" id="submit_processing" restriction-field ng-click="trialNciView.updateTrial()" ng-disabled="trialNciView.disableBtn">Save</button>
+                        <button type="button" class="btn btn-warning pull-right" ng-click="trialNciView.reset()"  restriction-field ng-disabled="trialNciView.disableBtn">
+                            <i class="glyphicon glyphicon-remove"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,157 @@
+<div class="row" id="section_top" ng-disabled="paTrialOverview.trialDetailObj.menuTypes.trialValidProtocol || paTrialOverview.trialDetailObj.menuTypes.trialValidImport || paTrialOverview.trialDetailObj.menuTypes.rejection">
+    <div class="panel panel-default" ng-show="interventionView.showInterventionForm">
+        <div class="panel-heading">
+            <div class="panel-title">
+                <span ng-hide="interventionView.curInterventionObj.edit">Add Intervention</span>
+                <span ng-show="interventionView.curInterventionObj.edit">Edit Intervention</span>
+            </div>
+        </div>
+        <div class="panel-body">
+            <form name="intervention_form" role="form" class="form form-horizontal" novalidate ctrp-submit="interventionView.upsertIntervention(interventionView.curInterventionObj)" unsaved-changes>
+                <!-- fieldset for list of interventions -->
+                <fieldset class="sub-bordered" restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || interventionView.disableBtn" ng-show="interventionView.showInterventionForm">
+                    <legend class="sub-bordered">
+                        Details
+                    </legend>
+                    <div class="form-group" ng-class="{'has-feedback required': true, 'has-error': ctrpbtn.intervention_form.needsAttention(intervention_form.intervention_name)}">
+                        <label for="intervention_name" class="control-label col-xs-12 col-sm-3">Intervention Name:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <input type="text" name="intervention_name" id="intervention_name" class="form-control input-sm" ng-model="interventionView.curInterventionObj.name" required readonly>
+                            <span ng-messages="ctrpbtn.intervention_form.needsAttention(intervention_form.intervention_name) && intervention_form.intervention_name.$error">
+                              <span class="help-block" ng-message="required">Intervention Name is Required</span>
+                            </span>
+                        </div>
+                        <div class="col-xs-12 col-sm-2">
+                            <button type="button" class="btn btn-primary" ng-click="interventionView.openLookupModal('lg')">
+                                <i class="glyphicon glyphicon-search"></i> Look Up Interventions
+                            </button>
+                        </div>
+                    </div>
+                    <!-- intervention type -->
+                    <div class="form-group">
+                        <label for="intervention_type_ct" class="control-label col-xs-12 col-sm-3">Intervention Type:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <select name="intervention_type_ct" id="intervention_type_ct"
+                                    class="form-control input-sm"
+                                    ng-model="interventionView.curInterventionObj.intervention_type_id"
+                                    ng-disabled="!interventionView.isInterventionTypeListEnabled"
+                                    ng-options="type.id as type.name for type in interventionView.interventionTypes">
+                                <option value="">
+                                    -- Please select an intervention type...
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- end of intervention type -->
+
+                    <div class="form-group">
+                        <label for="intervention_desc" class="control-label col-xs-12 col-sm-3">Intervention Description:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <textarea name="intervention_desc" id="intervention_desc" rows="10" class="form-control"
+                                maxlength="1000"
+                                ng-model="interventionView.curInterventionObj.description">
+                                placeholder="Intervention Description"
+                            </textarea>
+                            <span class="help-block" ng-show="intervention_form.intervention_desc.$viewValue.length > 0">
+                                {{1000 - intervention_form.intervention_desc.$viewValue.length}} characters left
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="other_names" class="control-label col-xs-12 col-sm-3">Synonyms:</label>
+                        <div class="col-xs-12 col-sm-5">
+                            <textarea type="text" name="other_names" id="other_names" rows="3" class="form-control" ng-model="interventionView.curInterventionObj.other_name" readonly></textarea>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="form-group no-bottom-margin">
+                    <div class="col-sm-12 btn-toolbar">
+                        <button type="submit" class="btn btn-primary pull-right" ng-disabled="interventionView.upsertBtnDisabled">
+                            <i class="glyphicon glyphicon-ok"></i> Save
+                        </button>
+                        <button type="button" class="btn btn-warning pull-right" ng-click="interventionView.resetLookupForm(intervention_form)" ng-disabled="interventionView.upsertBtnDisabled">
+                            <i class="glyphicon glyphicon-remove"></i> Reset
+                        </button>
+                        <button type="button" class="btn btn-warning pull-right" ng-click="interventionView.reload()" ng-disabled="interventionView.upsertBtnDisabled">
+                            <i class="glyphicon glyphicon-arrow-left"></i> Back to Interventions List
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="panel panel-default" ng-show="!interventionView.showInterventionForm">
+        <div class="panel-heading">
+            <div class="panel-title">List of Interventions</div>
+        </div>
+        <div class="panel-body">
+            <!-- associated trials -->
+            <fieldset restriction-field ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || interventionView.disableBtn" ng-show="interventionView.trialDetailObj.interventions.length > 0">
+                <div class="row">
+                    <table st-table="interventionView.trialDetailObj.associated_trials" class="table table-striped table-hover table-bordered" ng-hide="">
+                        <thead>
+                        <tr>
+                            <th class="col-sm-2">Preferred Name</th>
+                            <th>Description</th>
+                            <th class="col-sm-2">Synonyms</th>
+                            <th class="col-sm-2">Intervention Type</th>
+                            <th class="text-center td-icon">Edit</th>
+                            <th class="text-center td-icon">
+                                <input type="checkbox" name="delete_all_inter" id="delete_all_inter" ng-model="interventionView.deleteAll" ng-change="interventionView.flagAllInterventionsForDeletion(interventionView.deleteAll)">
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody ui-sortable="interventionView.sortableListener" ng-model="interventionView.trialDetailObj.interventions">
+                            <tr class="cursor-move" ng-repeat="t in interventionView.trialDetailObj.interventions track by $index" ng-class="{'locked': !(paTrialOverview.trialDetailObj.pa_sci_editable && interventionView.isCurationEnabled), 'edit-selected': interventionView.curInterventionObj.index === t.index}">
+                                <td>
+                                    {{t.name}}
+                                </td>
+                                <td>
+                                    {{t.description}}
+                                </td>
+                                <td>
+                                    {{t.other_name}}
+                                </td>
+                                <td>
+                                    {{t.intervention_type_name}}
+                                </td>
+                                <td class="text-center td-icon">
+                                    <button type="button" class="btn btn-primary" restriction-field ng-disabled="t._destroy" ng-click="interventionView.editIntervention($index)">
+                                        <i class="glyphicon glyphicon-edit"></i>
+                                    </button>
+                                </td>
+                                <td class="text-center td-icon">
+                                    <input type="checkbox" ng-model="t._destroy" ng-change="!t._destroy" ng-click="interventionView.deleteAll = false"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+
+            <div class="form-group">
+                <div class="col-sm-3"></div>
+                <div class="btn-toolbar col-xs-12 col-sm-9">
+                    <!-- <button type="button" class="btn btn-primary pull-right" id="save_btn" restriction-field ng-click="interventionView.updateTrialAssociations()">
+                    <i class="glyphicon glyphicon-ok"></i>  Save
+                    </button> -->
+                    <button type="button" restriction-field  ng-disabled="!paTrialOverview.trialDetailObj.pa_sci_editable || interventionView.disableBtn" class="btn btn-primary pull-right" ng-click="interventionView.addIntervention()">
+                      <i class="glyphicon glyphicon-plus"></i> Add Intervention
+                    </button>
+                    <button type="button" class="btn btn-danger pull-right" id="cancel_btn"
+                          restriction-field
+                          ctrp-confirm
+                          confirm-msg="Click OK to remove the selected Intervention(s) from the trial. Click Cancel to abort."
+                          ctrp-click="interventionView.deleteInterventions()"
+                          ng-show="interventionView.trialDetailObj.interventions.length > 0"
+                          ng-disabled="interventionView.deleteBtnDisabled || !paTrialOverview.trialDetailObj.pa_sci_editable || interventionView.disableBtn">
+                    <i class="glyphicon glyphicon-trash"></i>  Delete Selected
+                    </button>
+                </div>
+            </div>
+            <!-- end of associated trials -->
+        </div>
+    </div>
+</div>

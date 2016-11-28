@@ -13,6 +13,7 @@ var addOrganizationPage = require('../support/AddOrganizationPage');
 var mainSelectItemPage = require('../support/CommonSelectList');
 var projectFunctionsPage= require('../support/projectMethods');
 var moment = require ('moment');
+var abstractionCommonMethods = require('../support/abstractionCommonMethods');
 
 module.exports = function() {
     var projectFunctions = new projectFunctionsPage();
@@ -36,15 +37,15 @@ module.exports = function() {
     var duplicate_org_name = 'Ochsner Baptist Medical Center';
     var sourceContext = '1'; // '1' selects CTRP
     var sourceID = 'CT 007';
+    var commonFunctions = new abstractionCommonMethods();
 
     this.Given(/^I am a Curator and on the Add Organization screen$/, function (callback) {
         browser.get('ui/#/main/sign_in');
-        login.login('ctrpcurator', 'Welcome01');
-        login.accept();
+        commonFunctions.onPrepareLoginTest('ctrpcurator');
         browser.driver.wait(function(){
             console.log('wait here');
             return true;
-        }, 4000).then(function(){
+        }, 40).then(function(){
             menuItem.clickHomeEnterOrganizations();
             login.clickWriteMode('On');
             menuItem.clickOrganizations();
@@ -288,7 +289,7 @@ module.exports = function() {
         browser.driver.wait(function(){
             console.log('wait here');
             return true;
-        }, 4000).then(function(){
+        }, 40).then(function(){
             expect(projectFunctions.verifyWarningMessage('Warning: Organization exists in the database. Please verify and create a new Organization record.')).to.become('true').and.notify(callback);
         });
         // browser.sleep(25).then(callback);
@@ -330,7 +331,7 @@ module.exports = function() {
         addOrg.getVerifyAddPhone('');
         addOrg.getVerifyAddPostalCode('');
         addOrg.getVerifyAddState('Select a state or province');
-        addOrg.getVerifyAddCountry('United 1States');
+        addOrg.getVerifyAddCountry('United States');
         addOrg.getVerifyAddSourceStatusDefault('Active');
         browser.sleep(25).then(callback);
     });

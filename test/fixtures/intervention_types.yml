@@ -9,6 +9,7 @@
 #  updated_at   :datetime         not null
 #  uuid         :string(255)
 #  lock_version :integer          default(0)
+#  category     :string
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html

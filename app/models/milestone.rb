@@ -11,6 +11,6 @@
 #  lock_version :integer          default(0)
 #
 
-class Milestone < ActiveRecord::Base
+class Milestone < TrialBase
   include BasicConcerns
 end

@@ -16,7 +16,7 @@
 #  index_trial_funding_sources_on_trial_id         (trial_id)
 #
 
-class TrialFundingSource < ActiveRecord::Base
+class TrialFundingSource < TrialBase
   include BasicConcerns
 
   belongs_to :trial

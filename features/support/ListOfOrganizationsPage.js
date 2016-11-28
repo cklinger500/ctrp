@@ -29,25 +29,35 @@ ListOfOrganizationsPage = function () {
     this.orgUpdatedStartDate = element(by.model('searchParams.startDate'));
     this.orgUpdatedEndDate = element(by.model('searchParams.endDate'));
     this.orgUpdatedByName = element(by.model('searchParams.updated_by'));
+    this.exactSearch = element(by.model('searchParams.wc_search'));
      this.searchButton = element(by.css('#submission_btn'));//element(by.css('button[type="submit"]'));
      this.clearButton = element(by.buttonText('Clear'));
     this.orgModelSearch = element(by.id('org_search_modal'));
     this.orgModelSelectItem = element(by.css('div[ng-click="selectButtonClick(row, $event)"]'));
     this.orgModelConfirm = element(by.buttonText('Confirm Selection'));
-    this.orgModelCloseButton = element(by.css('.btn.btn-danger.pull-right')); //element(by.css('button[ng-click="advOrgSearchForm2ModalView.cancel()"]'));
-      this.orgPersonAffiliatedTable = element.all(by.repeater('org in personDetailView.savedSelection'));
+    this.orgModelCloseButton = element(by.css('button[ng-click="advOrgSearchForm2ModalView.cancel()"]')); //element(by.css('.btn.btn-danger.pull-right'));
+    this.orgModelCloseButtonAll = element.all(by.css('button[ng-click="advOrgSearchForm2ModalView.cancel()"]'));
+    this.orgPersonModelCloseButton = element(by.css('button[ng-click="advPersonSearchModalView.cancel()"]'));
+    this.orgPersonAffiliatedTable = element.all(by.repeater('org in personDetailView.savedSelection'));
+    this.orgFamilyAffiliatedTable = element.all(by.css('div[ng-show="familyDetailView.savedSelection.length > 0"]'));
     //  this.orgAffiliatedEffectiveDate = element(by.model('org.effective_date'));
     this.orgAffiliatedEffectiveDate = element(by.model('org.effective_date'));
     this.orgAffiliatedExpirationDate = element(by.model('org.expiration_date'));
     this.orgFamilyRelationship = element(by.model('org.family_relationship_id'));
     this.orgAffiliatedRemoveButton = element(by.css('.glyphicon.glyphicon-remove-circle'));
     this.orgSearchResultsPage = element.all(by.css('div.ui-grid-viewport'));
+    this.searchResultHeader = element.all(by.css('div[ui-grid-header-cell=""]'));
+    this.searchResultMenu = element(by.css('.ui-grid-icon-menu'));
+    this.searchResultClearFilter = element(by.buttonText('Clear all filters'));
+    this.trialOrgSearchSrcContext = element(by.binding('sourceContexts[0].name'));
+    this.trialOrgSearchSrcStatus = element(by.binding('sourceStatuses[0].name'));
 
    // this.searchResult = element.all(by.css('div[ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid"]'));//element.all(by.css('.ui-grid-row'));//element.all(by.binding('grid.getCellValue(row, col) '));
     this.pageResult = element.all(by.css('div.row'));
 
 
     var search = new helper();
+    var self = this;
 
     this.setOrgName = function(orgName){
         search.setValue(this.orgName,orgName,"Organization Search by Name field");
@@ -80,14 +90,14 @@ ListOfOrganizationsPage = function () {
         if (useSslInput.isSelected() != aliass && aliass) {
             useSslInput.isSelected().then(function (selected) {
                 if (selected) {
-                    console.log('if true then check it')
+                    console.log('if true then check it');
                     useSslInput.click();
                 }
             });
         } else {
             useSslInput.isSelected().then(function (selected) {
                 if (!selected) {
-                    console.log('if false then uncheck it')
+                    console.log('if false then uncheck it');
                     useSslInput.click();
                 }
             });
@@ -220,15 +230,63 @@ ListOfOrganizationsPage = function () {
     };
 
     this.clickOrgModelClose = function(){
+        browser.takeScreenshot().then(function (png) {
+            search.writeScreenShot(png, process.env.TEST_RESULTS_DIR || process.cwd() + '/tests/testScreenShot/OrgModelClick' + moment().format('MMMDoYY hmmss') + '.png');
+        });
         search.clickButton(this.orgModelCloseButton,"Organization Model Close button");
+        browser.takeScreenshot().then(function (png) {
+            search.writeScreenShot(png, process.env.TEST_RESULTS_DIR || process.cwd() + '/tests/testScreenShot/OrgModelAfterClickClose' + moment().format('MMMDoYY hmmss') + '.png');
+        });
+        search.alertDialog('DISMISS','');
+        browser.takeScreenshot().then(function (png) {
+            search.writeScreenShot(png, process.env.TEST_RESULTS_DIR || process.cwd() + '/tests/testScreenShot/OrgModelAfterDismiss' + moment().format('MMMDoYY hmmss') + '.png');
+        });
+        //browser.driver.wait(function () {
+        //    console.log('wait here');
+        //    return true;
+        //}, 5000).then(function () {
+        //    self.orgModelCloseButtonAll.get(0).isPresent().then(function(retVal){
+        //        console.log('value of ret val : ' + retVal);
+        //        if (retVal === true) {
+        //            self.orgModelCloseButtonAll.get(0).isDisplayed().then(function(state){
+        //                if(state) {
+        //                    browser.takeScreenshot().then(function (png) {
+        //                        search.writeScreenShot(png, process.env.TEST_RESULTS_DIR || process.cwd() + '/tests/testScreenShot/OrgModelBeforeget0Click' + moment().format('MMMDoYY hmmss') + '.png');
+        //                    });
+        //                    self.orgModelCloseButtonAll.get(0).click();
+        //                }
+        //                else {
+        //                    console.log('Close button not Displayed on Search Model');
+        //                }
+        //            });
+        //        }
+        //    });
+        //});
+    };
+
+    this.clickOrgPersonModelClose = function(){
+        search.clickButton(this.orgPersonModelCloseButton,"Organization Person Model Close button on Person Model Search");
+        browser.takeScreenshot().then(function (png) {
+            search.writeScreenShot(png, process.env.TEST_RESULTS_DIR || process.cwd() + '/tests/testScreenShot/PersonModelAfterClickClose' + moment().format('MMMDoYY hmmss') + '.png');
+        });
+        search.alertDialog('DISMISS','');
+        browser.takeScreenshot().then(function (png) {
+            search.writeScreenShot(png, process.env.TEST_RESULTS_DIR || process.cwd() + '/tests/testScreenShot/PersonModelAfterDismiss' + moment().format('MMMDoYY hmmss') + '.png');
+        });
     };
 
     this.setAffiliatedOrgEffectiveDate = function(orgEffectiveDate){
         search.setValue(this.orgAffiliatedEffectiveDate,orgEffectiveDate,"Add Organization Effective Date field");
+        //following will select only the default date
+        //this.orgAffiliatedEffectiveDate.click();
+        //element(by.css('.btn.btn-default.btn-sm.active')).click();
     };
 
     this.setAffiliatedOrgExpirationDate = function(orgExpirationDate){
         search.setValue(this.orgAffiliatedExpirationDate,orgExpirationDate,"Add Organization Expiration Date field");
+        //following will select only the default date
+        //this.orgAffiliatedExpirationDate.click();
+        //element(by.css('.btn.btn-default.btn-sm.active')).click();
     };
 
     this.verifyAffiliatedOrgEffectiveDate = function(orgEffectiveDate){
@@ -255,6 +313,23 @@ ListOfOrganizationsPage = function () {
 
     this.clickOrgAffiliatedRemove = function(){
         search.clickButton(this.orgAffiliatedRemoveButton,"Organization Model Remove Affiliated Organization button");
+    };
+
+    this.clickExactSearch = function(exactSearchTrueFalseValue){
+        this.exactSearch.isSelected().then (function(value) {
+            console.log('value of exact search : ' + value);
+            console.log('value of passed exact Search' + exactSearchTrueFalseValue);
+            if (value === false && exactSearchTrueFalseValue === 'true') {
+                console.log('value of exact Search1' + value);
+                console.log('value of passed exact Search1' + exactSearchTrueFalseValue);
+                search.clickButton(self.exactSearch,"Exact Search button");
+            }
+            else if (value  === true && exactSearchTrueFalseValue === 'false') {
+                console.log('value of exact Search2' + value);
+                console.log('value of passed exact Search2' + exactSearchTrueFalseValue);
+                search.clickButton(self.exactSearch,"Exact Search button");
+            }
+        });
     };
 
 };

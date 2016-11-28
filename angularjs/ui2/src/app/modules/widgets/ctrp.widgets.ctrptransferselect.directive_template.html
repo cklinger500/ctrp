@@ -1,0 +1,70 @@
+<div class="ctrptransferselect">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <h4>{{options.title}}<small>&nbsp;{{options.helpMessage}}</small> </h4>
+            <input class="form-control search-term" placeholder="{{options.filterPlaceHolder}}" ng-model="options.searchTerm">
+        </div>
+    </div>
+    <div class="row select-content">
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <label>{{options.labelAll}}</label>
+            <button ng-disabled="!options.items.length"
+                    class="btn btn-primary btn-xs" ng-click="transfer(options.items, options.selectedItems, -1)"> Select All </button>
+            <div class="pool">
+                <ul>
+                    <li class="clearfix" ng-repeat="item in options.items | filter: options.searchTerm | orderBy: options.orderProperty">
+                        <a href="" title="Select {{item.col1}}" ng-click="transfer(options.items, options.selectedItems, options.items.indexOf(item))">
+                            <span class="ms-col0">&nbsp;&rArr;</span>
+                            <span class="clearfix"><span ng-if="item.col1" class="ms-col1">{{item.col1}}</span><span ng-if="item.col2" class="ms-col2">{{item.col2}}</span></span>
+                            <span class="clearfix"><span ng-if="item.col3" class="ms-col3">{{item.col3}}</span></span>
+                            <span class="clearfix"><span ng-if="item.col4" class="ms-col4">{{item.col4}}</span></span>
+                            <span class="clearfix"><span ng-if="item.col5" class="ms-col5">{{item.col5}}</span><span ng-if="item.col6" class="ms-col6">{{item.col6}}</span></span>
+                            <span class="clearfix"><span ng-if="item.col7" class="ms-col7">{{item.col7}}</span></span>
+                            <span class="clearfix"><span ng-if="item.col8" class="ms-col8">{{item.col8}}</span></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <label>Total Unselected: {{options.items.length}}</label>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <label>{{options.labelSelected}}</label>
+            <button ng-disabled="!options.selectedItems.length"
+                    class="btn btn-warning btn-xs" ng-click="transfer(options.selectedItems, options.items, -1)"> Deselect All </button>
+            <div class="pool">
+                <ul>
+                    <li class="clearfix" ng-repeat="item in options.selectedItems | orderBy: options.orderProperty">
+                        <a href="" title="Unselect {{item.col1}}" ng-click="transfer(options.selectedItems, options.items, options.selectedItems.indexOf(item))">
+                            <span class="ms-col0">&lArr;&nbsp;</span>
+                            <span class="clearfix"><span ng-if="item.col1" class="ms-col1">{{item.col1}}</span><span ng-if="item.col2" class="ms-col2">{{item.col2}}</span></span>
+                            <span class="clearfix"><span ng-if="item.col3" class="ms-col3">{{item.col3}}</span></span>
+                            <span class="clearfix"><span ng-if="item.col4" class="ms-col4">{{item.col4}}</span></span>
+                            <span class="clearfix"><span ng-if="item.col5" class="ms-col5">{{item.col5}}</span><span ng-if="item.col6" class="ms-col6">{{item.col6}}</span></span>
+                            <span class="clearfix"><span ng-if="item.col7" class="ms-col7">{{item.col7}}</span></span>
+                            <span class="clearfix"><span ng-if="item.col8" class="ms-col8">{{item.col8}}</span></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <label>Total Selected: {{options.selectedItems.length}}</label>
+    </div>
+    <div class="row modal-footer">
+        <button ng-disabled="!options.selectedItems.length"  ng-if="options.showSave"
+                type="button" class="btn btn-primary pull-right ng-isolate-scope"
+                id="save_btn"
+                ctrp-confirm ctrp-click="options.save(); options.close()"
+                ng-attr-confirm-off="false"
+                ng-if="options.type === 'users'"
+                confirm-msg="{{options.confirmMessage}}"> <i class="glyphicon glyphicon-ok"></i>  Save
+        </button>
+
+        <button type="button" class="btn btn-warning pull-right" ng-click="options.reset()">
+            <i class="glyphicon glyphicon-remove"></i> Reset
+        </button>
+
+        <button type="button" class="btn btn-danger pull-right" ng-click="options.close()" ng-if="options.openModal">
+            <i class="glyphicon glyphicon-remove"></i> close
+        </button>
+    </div>
+</div>

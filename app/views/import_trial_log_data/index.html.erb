@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Import Trial Log Data</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @import_trial_log_data.each do |import_trial_log_datum| %>
+      <tr>
+        <td><%= link_to 'Show', import_trial_log_datum %></td>
+        <td><%= link_to 'Edit', edit_import_trial_log_datum_path(import_trial_log_datum) %></td>
+        <td><%= link_to 'Destroy', import_trial_log_datum, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Import trial log datum', new_import_trial_log_datum_path %>

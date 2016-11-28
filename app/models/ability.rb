@@ -30,59 +30,68 @@ class Ability
     # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
 
     user ||= User.new
-    Rails.logger.info "In Cancancan's ability.rb's initialize method user = #{user.inspect}"
-    #Rails.logger.info "In Cancancan's ability.rb's initialize method user = #{current_user.inspect}"
-    if user.role == 'ROLE_SUPER'  && user.approved?
+    Rails.logger.debug "\nIn Cancancan's ability.rb's initialize method user = #{user.username}; role = #{user.role.inspect}\n" unless user.blank?
+    Rails.logger.debug "\nIn Cancancan's ability.rb's initialize method user = nil" if user.blank?
+    if user.role == 'ROLE_SUPER'  && user.user_status.code == 'ACT'
       can :manage, :all
       can :access, :rails_admin   # grant access to rails_admin
       can :dashboard              # grant access to the dashboard
-    elsif user.role == 'ROLE_ADMIN'  && user.approved?
+    elsif user.role == 'ROLE_ADMIN'  && user.user_status.code == 'ACT'
         can :manage, :all
         can :access, :rails_admin   # grant access to rails_admin
         can :dashboard              # grant access to the dashboard
-    elsif user.role == 'ROLE_CURATOR' && user.approved?
-      can :manage, [Organization, Person, Family, Comment]
+    elsif user.role == 'ROLE_CURATOR' && user.user_status.code == 'ACT'
+      can :manage, [Organization, Person, Family, Comment, AssociatedTrial]
       can :read, :all
       can :search, :all
       can :search_pa, Trial
       cannot :access_backoffice, :manage_backoffice
       cannot :access, :rails_admin   # grant access to rails_admin
       cannot :dashboard              # grant access to the dashboard
-    elsif user.role == "ROLE_RO"  && user.approved?
+    elsif user.role == "ROLE_RO"  && user.user_status.code == 'ACT'
       can :read, :all
       can :search, :all
       can [:create, :update], User
       cannot :access, :rails_admin   # grant access to rails_admin
       cannot :dashboard              # grant access to the dashboard
-    elsif user.role == 'ROLE_TRIAL-SUBMITTER' && user.approved?
-      can :manage, [Trial]
+    elsif user.role == 'ROLE_TRIAL-SUBMITTER' && user.user_status.code == 'ACT'
+      can :manage, [Trial, AssociatedTrial]
+      can :unique, Organization
       can :read, :all
       can :search, :all
       cannot :access_backoffice, :manage_backoffice
       cannot :access, :rails_admin   # grant access to rails_admin
       cannot :dashboard              # grant access to the dashboard
-    elsif user.role == 'ROLE_ACCRUAL-SUBMITTER' && user.approved?
+    elsif user.role == 'ROLE_ACCRUAL-SUBMITTER' && user.user_status.code == 'ACT'
       can :read, :all
       can :search, :all
       cannot :access_backoffice, :manage_backoffice
       cannot :access, :rails_admin   # grant access to rails_admin
       cannot :dashboard
-    elsif user.role == 'ROLE_SITE-SU' && user.approved?
-      can :manage, [Trial]
+    elsif user.role == 'ROLE_SITE-SU' && user.user_status.code == 'ACT'
+      can :manage, [Trial, Comment, AssociatedTrial, Family]
       can :read, :all
       can :search, :all
       cannot :access_backoffice, :manage_backoffice
       cannot :access, :rails_admin   # grant access to rails_admin
       cannot :dashboard
-    elsif user.role == 'ROLE_ABSTRACTOR' && user.approved?
-      can :manage, [Trial]
+    elsif user.role == 'ROLE_ABSTRACTOR' && user.user_status.code == 'ACT'
+      can :manage, [Trial, Comment, AssociatedTrial, Family]
+      can :unique, Organization
       can :read, :all
       can :search, :all
       cannot :access_backoffice, :manage_backoffice
       cannot :access, :rails_admin   # grant access to rails_admin
       cannot :dashboard              # grant access to the dashboard
-    elsif user.role == 'ROLE_ABSTRACTOR-SU' && user.approved?
-      can :manage, [Trial]
+    elsif user.role == 'ROLE_ABSTRACTOR-SU' && user.user_status.code == 'ACT'
+      can :manage, [Trial, Comment, AssociatedTrial, Family]
+      can :read, :all
+      can :search, :all
+      cannot :access_backoffice, :manage_backoffice
+      cannot :access, :rails_admin   # grant access to rails_admin
+      cannot :dashboard              # grant access to the dashboard
+    elsif user.role == 'ROLE_ACCOUNT-APPROVER' && user.user_status.code == 'ACT'
+      can :manage, [User]
       can :read, :all
       can :search, :all
       cannot :access_backoffice, :manage_backoffice

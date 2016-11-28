@@ -20,6 +20,9 @@ var addFamilyPage = require('../support/AddFamilyPage');
 var selectValuePage = require('../support/CommonSelectList');
 var loginPage = require('../support/LoginPage');
 var moment = require('moment');
+var abstractionCommonMethods = require('../support/abstractionCommonMethods');
+var trialMenuItemList = require('../support/trialCommonBar');
+var addTrialPage = require('../support/registerTrialPage');
 
 
 var projectMethods = function() {
@@ -33,6 +36,10 @@ var projectMethods = function() {
     var searchFamily = new searchFamilyPage();
     var addFamily = new addFamilyPage();
     var helper = new helperFunctions();
+    var commonFunctions = new abstractionCommonMethods();
+    var trialMenuItem = new trialMenuItemList();
+    var addTrial = new addTrialPage();
+    var self = this;
 
     /**********************************
      * Method: Create Organization
@@ -62,7 +69,8 @@ var projectMethods = function() {
         addOrg.setAddPostalCode(postalCode);
         addOrg.setAddEmail(email);
         addOrg.setAddPhone(phone);
-        addOrg.setAddFax(fax);
+    //    addOrg.setAddFax(fax);
+        addOrg.setAddExtension('01');
         addOrg.clickSave();
     };
     /***********************************************
@@ -173,32 +181,13 @@ var projectMethods = function() {
         searchOrg.setAffiliatedOrgEffectiveDate(orgEffectiveDate);
         searchOrg.setAffiliatedOrgExpirationDate(orgExpirationDate);
         addFamily.clickSave();
-    }
-
-    /**********************************
-     * Method: Verify the item in Search Results
-     * @param searchString
-     ***********************************/
-
-    this.inSearchResults = function(searchString) {
-        return menuItem.searchResult.filter(function(name) {
-            return name.getText().then(function(text) {
-                return text === searchString ;
-            });
-        }).then(function(filteredElements) {
-            // Only the elements that passed the filter will be here. This is an array.
-            if (filteredElements.length > 0) {
-                return 'false';
-            }
-            else {
-                return 'true';
-            }
-        });
     };
+    
 
     this.inOrgSearchResults = function(searchString) {
         return element(by.css('div.ui-grid-cell-contents')).isPresent().then(function(state) {
             if (state === true) {
+                browser.executeScript('window.scrollTo(0,600)');
                 return menuItem.orgSearchResult.filter(function(name) {
                     return name.getText().then(function(text) {
                        // console.log('value of text : ' + text + 'and value of searched string' + searchString);
@@ -210,12 +199,16 @@ var projectMethods = function() {
                     if (filteredElements.length > 0) {
                         return 'true';
                     } else {
-                        element(by.xpath('/html/body/div[2]/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ctrp-advanced-org-search-form2/div[1]/div/div[3]/div/div/div[1]/div[1]/div[1]/i')).click();
-                        element(by.xpath('//*[@id="menuitem-4"]/button')).click();
-                        element(by.xpath('//*[@id="menuitem-8"]/button')).click();
+                     //   element(by.xpath('/html/body/div[2]/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ctrp-advanced-org-search-form2/div[1]/div/div[3]/div/div/div[1]/div[1]/div[1]/i')).click();
+                        searchOrg.searchResultMenu.click();
                         element(by.xpath('//*[@id="menuitem-10"]/button')).click();
-                        element(by.xpath('//*[@id="menuitem-14"]/button')).click();
-                        element(by.xpath('/html/body/div[2]/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ctrp-advanced-org-search-form2/div[1]/div/div[3]/div/div/div[1]/div[1]/div[1]/i')).click();
+                        element(by.xpath('//*[@id="menuitem-12"]/button')).click();
+                        element(by.xpath('//*[@id="menuitem-16"]/button')).click();
+                        element(by.xpath('//*[@id="menuitem-18"]/button')).click();
+                        element(by.xpath('//*[@id="menuitem-20"]/button')).click();
+                        element(by.xpath('//*[@id="menuitem-24"]/button')).click();
+                        searchOrg.searchResultMenu.click();
+                     //   element(by.xpath('/html/body/div[2]/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ctrp-advanced-org-search-form2/div[1]/div/div[3]/div/div/div[1]/div[1]/div[1]/i')).click();
                          return menuItem.orgSearchResult.filter(function(name) {
                             return name.getText().then(function(text) {
                             //    console.log('value of text : ' + text + 'and value of searched string' + searchString);
@@ -223,12 +216,16 @@ var projectMethods = function() {
                             });
                         }).then(function(filteredElements) {
                          //   console.log('value of filteredElements' + filteredElements);
-                             element(by.xpath('/html/body/div[2]/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ctrp-advanced-org-search-form2/div[1]/div/div[3]/div/div/div[1]/div[1]/div[1]/i')).click();
-                            element(by.xpath('//*[@id="menuitem-5"]/button')).click();
-                            element(by.xpath('//*[@id="menuitem-9"]/button')).click();
+                         //    element(by.xpath('/html/body/div[2]/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ctrp-advanced-org-search-form2/div[1]/div/div[3]/div/div/div[1]/div[1]/div[1]/i')).click();
+                             searchOrg.searchResultMenu.click();
                             element(by.xpath('//*[@id="menuitem-11"]/button')).click();
-                            element(by.xpath('//*[@id="menuitem-15"]/button')).click();
-                             element(by.xpath('/html/body/div[2]/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ctrp-advanced-org-search-form2/div[1]/div/div[3]/div/div/div[1]/div[1]/div[1]/i')).click();
+                            element(by.xpath('//*[@id="menuitem-13"]/button')).click();
+                            element(by.xpath('//*[@id="menuitem-17"]/button')).click();
+                            element(by.xpath('//*[@id="menuitem-19"]/button')).click();
+                             element(by.xpath('//*[@id="menuitem-21"]/button')).click();
+                             element(by.xpath('//*[@id="menuitem-25"]/button')).click();
+                          //   element(by.xpath('/html/body/div[2]/div/div/div[2]/div[1]/div/div/div/div/div/div[2]/ctrp-advanced-org-search-form2/div[1]/div/div[3]/div/div/div[1]/div[1]/div[1]/i')).click();
+                             searchOrg.searchResultMenu.click();
                             // Only the elements that passed the filter will be here. This is an array.
                             if (filteredElements.length > 0) {
                                 return 'true';
@@ -533,7 +530,67 @@ var projectMethods = function() {
         });
     };
 
+    /*****************************************************************
+     * Method: Verify the affiliated Organization Effective Date Family
+     * @param affiliatedOrg
+     * @param effectiveDate
+     *****************************************************************/
+    this.verifyOrgAffiliatedEffectiveDateFamily = function(affiliatedOrg, effectiveDate) {
+        return searchOrg.orgFamilyAffiliatedTable.getText().filter(function(row) {
+            // Get the second column's text.
+            return row.$$('td').get(2).getText().then(function(rowName) {
+                // Filter rows matching the name you are looking for.
+                console.log('print row name' + rowName);
+                return rowName === affiliatedOrg;
+            });
+        }).then(function(rows) {
+            // This is an array. Find the button in the row and click on it.
+            console.log('value of row' + rows);
+            // rows[0].element(by.model('org.effective_date')).getAttribute('value');
+            expect(rows[0].element(by.model('org.effective_date')).getAttribute('value')).to.eventually.equal(effectiveDate);
+        });
+    };
 
+
+    /*****************************************************************
+     * Method: Verify the affiliated Organization Expiration Date Family
+     * @param affiliatedOrg
+     * @param expirationDate
+     *****************************************************************/
+    this.verifyOrgAffiliatedExpirationDateFamily = function(affiliatedOrg, expirationDate) {
+        return searchOrg.orgFamilyAffiliatedTable.getText().filter(function(row) {
+            // Get the second column's text.
+            return row.$$('td').get(2).getText().then(function(rowName) {
+                // Filter rows matching the name you are looking for.
+                console.log('print row name' + rowName);
+                return rowName === affiliatedOrg;
+            });
+        }).then(function(rows) {
+            // This is an array. Find the button in the row and click on it.
+            console.log('value of row' + rows);
+            expect(rows[0].element(by.model('org.expiration_date')).getAttribute('value')).to.eventually.equal(expirationDate);
+        });
+    };
+
+    /*****************************************************************
+     * Method: Verify the affiliated Organization Relationship
+     * @param affiliatedOrg
+     * @param OrgRelationship
+     *****************************************************************/
+    this.verifyOrgAffiliatedRelationshipFamily = function(affiliatedOrg, OrgRelationship) {
+        return searchOrg.orgFamilyAffiliatedTable.getText().filter(function(row) {
+            // Get the second column's text.
+            return row.$$('td').get(2).getText().then(function(rowName) {
+                // Filter rows matching the name you are looking for.
+                console.log('print row name' + rowName);
+                return rowName === affiliatedOrg;
+            });
+        }).then(function(rows) {
+            // This is an array. Find the button in the row and click on it.
+            console.log('value of row' + rows);
+            expect(rows[0].element(by.model('org.family_relationship_id')).$('option:checked').getText()).to.eventually.equal(OrgRelationship);
+        });
+    };
 
     /********************************
      * Method: Convert Object value to a String
@@ -567,9 +624,9 @@ var projectMethods = function() {
      * @param max
      * @returns {*}
      ********************************/
-    function getRandomArbitrary(min, max) {
+    this.getRandomArbitrary = function(min, max) {
         return Math.random() * (max - min) + min;
-    }
+    };
 
     /********************************
      * Method: Returns random integer
@@ -577,9 +634,9 @@ var projectMethods = function() {
      * @param max
      * @returns {*}
      ********************************/
-    function getRandomInt(min, max) {
+    this.getRandomInt = function(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    };
 
     /********************************
      * Method: Random alpha numeric string based on
@@ -621,12 +678,12 @@ var projectMethods = function() {
      ******************************** ******************************** ******************************** ******************************** ********************************/
     this.createOrgforSearch = function(){
         browser.get('ui/#/main/sign_in');
-        login.login('ctrpcurator', 'Welcome01');
-        login.accept();
+        commonFunctions.onPrepareLoginTest('ctrpcurator');
+       // login.accept();
         browser.driver.wait(function() {
             console.log('wait here');
             return true;
-        }, 4000).then(function() {
+        }, 40).then(function() {
             menuItem.clickHomeEnterOrganizations();
             login.clickWriteMode('On');
             menuItem.clickOrganizations();
@@ -647,7 +704,7 @@ var projectMethods = function() {
                     browser.driver.wait(function() {
                         console.log('wait here');
                         return true;
-                    }, 4000).then(function() {
+                    }, 40).then(function() {
                         menuItem.clickOrganizations();
                         menuItem.clickAddOrganizations();
                         orgSearch.then(function(value){
@@ -664,7 +721,8 @@ var projectMethods = function() {
                         addOrg.setAddPostalCode('46578');
                         addOrg.setAddEmail('searchOrg@email.com');
                         addOrg.setAddPhone('222-487-8956');
-                        addOrg.setAddFax('222-487-4242');
+                      //  addOrg.setAddFax('222-487-4242');
+                        addOrg.setAddExtension('01');
                         addOrg.clickSave();
                         orgSourceId = addOrg.addOrgCTRPID.getText();
                         menuItem.clickOrganizations();
@@ -688,17 +746,111 @@ var projectMethods = function() {
         });
     };
 
+
+    /** ******************************** ******************************** ******************************** ******************************** ********************************
+     * Method: This will create Organization with Parameters for Search, it creates a new org then checks if it exist then use the same one
+     ******************************** ******************************** ******************************** ******************************** ********************************/
+    this.createOrgForSearchWithParameters = function(user, orgName, orgAlias, orgAdd1, orgAdd2, orgCountry, orgState, orgCity, orgPostal, orgEmail, orgPhone, orgFax, orgFamilyName, familyStatus, familyType, orgFamilyRel, orgEffDay, orgEffMonth, orgEffYear, orgExpDay, orgExpMonth, orgExpYear ){
+        if(user === 'ctrpcurator') {
+            menuItem.clickHomeEnterOrganizations();
+            login.clickWriteMode('On');
+        }
+        //browser.driver.wait(function() {
+        //    console.log('wait here');
+        //    return true;
+        //}, 40).then(function() {
+            self.searchOrganizationLink();
+
+
+            //menuItem.clickOrganizations();
+            //menuItem.clickListOrganizations();
+            searchOrg.setOrgName(orgName + moment().format('MMMDoYY h'));
+            orgSearch = searchOrg.orgName.getAttribute('value');
+            searchOrg.clickSearchButton();
+            return element(by.css('div.ui-grid-cell-contents')).isPresent().then(function (state) {
+                if (state === true) {
+                    console.log('Organization exists');
+                    orgSearch.then(function (value) {
+                        element(by.linkText(value)).click();
+                        orgSourceId = addOrg.addOrgCTRPID.getText();
+                        cukeFamily = addOrg.addVerifyOrgFamilyName.getText();
+                    });
+                }
+                else {
+                    commonFunctions.onPrepareLoginTest('ctrpcurator');
+                    menuItem.clickHomeEnterOrganizations();
+                    login.clickWriteMode('On');
+                    browser.driver.wait(function () {
+                        console.log('wait here');
+                        return true;
+                    }, 40).then(function () {
+                        menuItem.clickOrganizations();
+                        menuItem.clickAddOrganizations();
+                        orgSearch.then(function (value) {
+                            console.log('Add org Name' + value);
+                            addOrg.setAddOrgName(value);
+                        });
+                        addOrg.setAddAlias(orgAlias);
+                        addOrg.clickSaveAlias();
+                        addOrg.setAddAddress(orgAdd1);
+                        addOrg.setAddAddress2(orgAdd2);
+                        selectValue.selectCountry(orgCountry);
+                        selectValue.selectState(orgState);
+                        addOrg.setAddCity(orgCity);
+                        addOrg.setAddPostalCode(orgPostal);
+                        addOrg.setAddEmail(orgEmail);
+                        addOrg.setAddPhone(orgPhone);
+                     //   addOrg.setAddFax(orgFax);
+                        addOrg.setAddExtension('01');
+                        addOrg.clickSave();
+                        orgSourceId = addOrg.addOrgCTRPID.getText();
+                        menuItem.clickOrganizations();
+                        menuItem.clickAddFamily();
+                        addFamily.setAddFamilyName(orgFamilyName + moment().format('MMMDoYY hmmss'));
+                        cukeFamily = addFamily.addFamilyName.getAttribute('value');
+                        selectValue.selectFamilyStatus(familyStatus);
+                        selectValue.selectFamilyType(familyType);
+                        searchOrg.clickOrgSearchModel();
+                        searchOrg.setOrgName(orgSearch);
+                        searchOrg.clickSearchButton();
+                        searchOrg.selectOrgModelItem();
+                        searchOrg.clickOrgModelConfirm();
+                        selectValue.selectOrgFamilyRelationship(orgFamilyRel);
+                        addTrial.clickAddTrialDateField('0');
+                        addTrial.clickAddTrialDateFieldDifferentYear(orgEffYear, orgEffMonth, orgEffDay);
+                        addTrial.clickAddTrialDateField('1');
+                        addTrial.clickAddTrialDateFieldDifferentYear(orgExpYear, orgExpMonth, orgExpDay);
+                        addFamily.clickSave();
+                        browser.driver.wait(function () {
+                            console.log('wait here');
+                            return true;
+                        }, 40).then(function () {
+                            element(by.binding('headerView.username')).getText().then(function (value) {
+                                if (user !== value) {
+                                    commonFunctions.onPrepareLoginTest(user);
+                                    if (user === 'ctrptrialsubmitter') {
+                                        trialMenuItem.clickHomeSearchTrial();
+                                        login.clickWriteMode('On');
+                                    }
+                                }
+                            });
+                        });
+                    });
+                }
+            });
+       // });
+    };
     /** ******************************** ******************************** ******************************** ******************************** ********************************
      * Method: This will create Organization for Edit, it creates a new org then checks if it exist then use the same one
      ******************************** ******************************** ******************************** ******************************** ********************************/
     this.createOrgforEdit = function(){
         browser.get('ui/#/main/sign_in');
-        login.login('ctrpcurator', 'Welcome01');
-        login.accept();
+        commonFunctions.onPrepareLoginTest('ctrpcurator');
+       // login.accept();
         browser.driver.wait(function() {
             console.log('wait here');
             return true;
-        }, 4000).then(function() {
+        }, 40).then(function() {
             menuItem.clickHomeEnterOrganizations();
             login.clickWriteMode('On');
             menuItem.clickOrganizations();
@@ -718,7 +870,7 @@ var projectMethods = function() {
                     browser.driver.wait(function() {
                         console.log('wait here');
                         return true;
-                    }, 4000).then(function() {
+                    }, 40).then(function() {
                         menuItem.clickOrganizations();
                         menuItem.clickAddOrganizations();
                         cukeOrganization.then(function(value){
@@ -735,13 +887,153 @@ var projectMethods = function() {
                         addOrg.setAddPostalCode('42589');
                         addOrg.setAddEmail('editOrg@email.com');
                         addOrg.setAddPhone('589-687-8956');
-                        addOrg.setAddFax('898-420-4242');
+                     //   addOrg.setAddFax('898-420-4242');
+                        addOrg.setAddExtension('01');
                         addOrg.clickSave();
                         orgSourceId = addOrg.addOrgCTRPID.getText();
                     });
                 }
             });
         });
+    };
+
+    /** ******************************** ******************************** ******************************** ******************************** ********************************
+     * Method: This will create Person for Search, it creates a new person then checks if it exist then use the same one
+     ******************************** ******************************** ******************************** ******************************** ********************************/
+    this.createPersonforSearch = function(){
+        browser.get('ui/#/main/sign_in');
+        commonFunctions.onPrepareLoginTest('ctrpcurator');
+       // login.accept();
+        browser.driver.wait(function() {
+            console.log('wait here');
+            return true;
+        }, 40).then(function() {
+            menuItem.clickHomeEnterOrganizations();
+            login.clickWriteMode('On');
+            menuItem.clickPeople();
+            menuItem.clickListPeople();
+            searchPeople.setPersonFirstName('shiFName' + moment().format('MMMDoYY h'));
+            per4 = searchPeople.personFirstName.getAttribute('value');
+            searchPeople.clickSearch();
+            return element(by.css('div.ui-grid-cell-contents')).isPresent().then(function(state) {
+                if(state === true) {
+                    console.log('Person exists');
+                    per4.then(function(value){
+                        element(by.linkText(value)).click();
+                        perSourceId = addPeople.addPersonSourceId.getText();
+                        cukeOrganization = addPeople.addPersonAffiliatedOrgName.getText();
+                    });
+                }
+                else {
+                    self.createOrganization('shiPerOrgAff','als1','add1','add2','United States','Texas','city56','20980','shiPerson@mail.com','240-7809-855','490332');
+                    browser.driver.wait(function() {
+                        console.log('wait here');
+                        return true;
+                    }, 40).then(function() {
+                        menuItem.clickPeople();
+                        menuItem.clickAddPerson();
+                        addPeople.setAddPersonPrefix('prefix');
+                        per4.then(function (value1) {
+                            console.log('Add first Name' + value1);
+                            addPeople.setAddPersonFirstName(value1);
+                        });
+                        addPeople.setAddPersonSecondName('Rauniyar');
+                        addPeople.setAddPersonLastName('shiLName');
+                        addPeople.setAddPersonSuffix('suffix');
+                        addPeople.setAddPersonEmail('shiPercuke@pr.com');
+                        addPeople.setAddPersonPhone('420-567-8906');
+                        searchOrg.clickOrgSearchModel();
+                        cukeOrganization.then(function (value) {
+                            searchOrg.setOrgName(value);
+                            searchOrg.clickSearchButton();
+                            searchOrg.selectOrgModelItem();
+                            searchOrg.clickOrgModelConfirm();
+                        });
+                        addPeople.clickSave();
+                        perSourceId = addPeople.addPersonSourceId.getText();
+                    });
+                }
+            });
+        });
+    };
+
+    /** ******************************** ******************************** ******************************** ******************************** ********************************
+     * Method: This will create Person for Search with parameters, it creates a new person then checks if it exist then use the same one
+     ******************************** ******************************** ******************************** ******************************** ********************************/
+    this.createPersonForSearchWithParameters = function(user, prefix, fName, mName, lName, suffix, email, phone, affOrgName, affOrgAlias, affOrgAddress1, affOrgAddress2, affOrgCountry, affOrgState, affOrgCity, affOrgPostalCode, affOrgEmail, affOrgPhone, affOrgFax  ){
+            if(user === 'ctrpcurator') {
+                menuItem.clickHomeEnterOrganizations();
+                login.clickWriteMode('On');
+            }
+            //else if(user === 'ctrptrialsubmitter'){
+            //
+            //}
+            menuItem.clickPeople();
+            menuItem.clickListPeople();
+            searchPeople.setPersonFirstName(fName + moment().format('MMMDoYY h'));
+            per4 = searchPeople.personFirstName.getAttribute('value');
+            searchPeople.clickSearch();
+            return element(by.css('div.ui-grid-cell-contents')).isPresent().then(function(state) {
+                if(state === true) {
+                    console.log('Person exists');
+                    per4.then(function(value){
+                        element(by.linkText(value)).click();
+                        perSourceId = addPeople.addPersonSourceId.getText();
+                        cukeOrganization = addPeople.addPersonAffiliatedOrgName.getText();
+                    });
+                }
+                else {
+                    commonFunctions.onPrepareLoginTest('ctrpcurator');
+                    menuItem.clickHomeEnterOrganizations();
+                    login.clickWriteMode('On');
+                    browser.driver.wait(function () {
+                        console.log('wait here');
+                        return true;
+                    }, 40).then(function () {
+                        self.createOrganization(affOrgName, affOrgAlias, affOrgAddress1, affOrgAddress2, affOrgCountry, affOrgState, affOrgCity, affOrgPostalCode, affOrgEmail, affOrgPhone, affOrgFax);
+                        browser.driver.wait(function () {
+                            console.log('wait here');
+                            return true;
+                        }, 40).then(function () {
+                            menuItem.clickPeople();
+                            menuItem.clickAddPerson();
+                            addPeople.setAddPersonPrefix(prefix);
+                            per4.then(function (value1) {
+                                console.log('Add first Name' + value1);
+                                addPeople.setAddPersonFirstName(value1);
+                            });
+                            addPeople.setAddPersonSecondName(mName);
+                            addPeople.setAddPersonLastName(lName);
+                            addPeople.setAddPersonSuffix(suffix);
+                            addPeople.setAddPersonEmail(email);
+                            addPeople.setAddPersonPhone(phone);
+                            searchOrg.clickOrgSearchModel();
+                            cukeOrganization.then(function (value) {
+                                searchOrg.setOrgName(value);
+                                searchOrg.clickSearchButton();
+                                searchOrg.selectOrgModelItem();
+                                searchOrg.clickOrgModelConfirm();
+                            });
+                            addPeople.clickSave();
+                            perSourceId = addPeople.addPersonSourceId.getText();
+                            browser.driver.wait(function () {
+                                console.log('wait here');
+                                return true;
+                            }, 40).then(function () {
+                                login.loginUser.getText().then(function (value) {
+                                    if (user !== value) {
+                                        commonFunctions.onPrepareLoginTest(user);
+                                        if (user === 'ctrptrialsubmitter') {
+                                            trialMenuItem.clickHomeSearchTrial();
+                                            login.clickWriteMode('On');
+                                        }
+                                    }
+                                });
+                            });
+                        });
+                    });
+                }
+            });
     };
 
     /********************************************
@@ -842,7 +1134,96 @@ var projectMethods = function() {
         row.element(by.repeater('(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name').row(element(by.cssContainingText('.ui-grid-cell-contents', '')).then(function(cell){cell.click();})));
     };
 
+    /********************************************
+     * Method: searchOrganization based on logged in User
+     ********************************************/
+    this.searchOrganizationLink = function(){
+        //browser.driver.wait(function () {
+        //    console.log('wait here');
+        //    return true;
+        //}, 40).then(function () {
+            element(by.binding('headerView.username')).getText().then(function (value) {
+                console.log('value of login user');
+                console.log(value);
+                if(value === 'ctrptrialsubmitter'){
+                    menuItem.clickJustOrganizations();
+                    menuItem.clickListOrganizations();
+                }
+                if (value === 'ctrpcurator') {
+                    menuItem.clickOrganizations();
+                    menuItem.clickListOrganizations();
+                }
+            });
+      //  });
 
+    };
+
+    /**
+     * Verify Created Organization
+     * @param orgName
+     * @param alias
+     * @param address1
+     * @param address2
+     * @param country
+     * @param state
+     * @param city
+     * @param postalCode
+     * @param email
+     * @param phone
+     * @param fax
+     */
+    this.verifyCreatedOrganization = function(orgName, alias ,address1, address2, country, state, city, postalCode, email, phone, fax){
+       addOrg.getVerifyAddOrgName(orgName);
+        if(alias !== '') {
+            expect(self.verifyOrgAlias(alias)).to.become('true');
+        }
+        addOrg.getVerifyAddAddress(address1);
+        addOrg.getVerifyAddAddress2(address2);
+        addOrg.getVerifyAddCountry(country);
+        addOrg.getVerifyAddState(state);
+        addOrg.getVerifyAddCity(city);
+        addOrg.getVerifyAddPostalCode(postalCode);
+        addOrg.getVerifyAddEmail(email);
+        addOrg.getVerifyAddPhone(phone);
+    //    addOrg.getVerifyAddFax(fax);
+    };
+
+    /**********************************
+     * Method: Verify Created Family
+     ***********************************/
+    this.verifyCreatedFamily = function(familyName, familyStatus, familyType, familyOrg, familyOrgRel, familyOrgEffectiveDate, familyOrgExpiryDate){
+        addFamily.familyVerifyAddName(familyName);
+        addFamily.familyVerifyAddStatus(familyStatus);
+        addFamily.familyVerifyAddType(familyType);
+        if(familyOrg !== ''){
+            self.verifyOrgAffiliated(familyOrg);//).to.become('true');
+            if(familyOrgRel !== ''){
+                self.verifyOrgAffiliatedRelationshipFamily(familyOrg,familyOrgRel);
+                self.verifyOrgAffiliatedEffectiveDateFamily(familyOrg,familyOrgEffectiveDate);
+                self.verifyOrgAffiliatedExpirationDateFamily(familyOrg,familyOrgExpiryDate);
+            }
+        }
+
+    };
+
+    /**
+     * Verify Created Person
+     */
+    this.verifyCreatedPerson = function(prefix, fName, mName, lName, suffix, email, phone, personOrg, personOrgEffectiveDate, personOrgExpiryDate){
+        addPeople.getVerifyAddPerPrefix(prefix);
+        addPeople.getVerifyAddPerFName(fName);
+        addPeople.getVerifyAddPerMName(mName);
+        addPeople.getVerifyAddPerLName(lName);
+        addPeople.getVerifyAddPerSuffix(suffix);
+        addPeople.getVerifyAddPerEmail(email);
+        addPeople.getVerifyAddPerPhone(phone);
+        if(personOrg!== ''){
+            self.verifyOrgAffiliated(personOrg);
+            self.verifyOrgPersonAffiliatedEffectiveDate(personOrg,personOrgEffectiveDate);
+            self.verifyOrgPersonAffiliatedExpirationDate(personOrg,personOrgExpiryDate);
+        }
+
+    };
 
 };
 module.exports = projectMethods;

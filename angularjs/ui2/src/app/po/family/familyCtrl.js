@@ -9,10 +9,10 @@
         .controller('familyCtrl', familyCtrl);
 
     familyCtrl.$inject = ['FamilyService', 'uiGridConstants', '$scope', '$rootScope',
-        'Common','familyStatusObj','familyTypeObj','$modal'];
+        'Common','familyStatusObj','familyTypeObj','$uibModal'];
 
     function familyCtrl(FamilyService, uiGridConstants, $scope, $rootScope,
-                        Common,familyStatusObj,familyTypeObj, $modal) {
+                        Common,familyStatusObj,familyTypeObj, $uibModal) {
 
         var vm = this;
 
@@ -23,6 +23,7 @@
         vm.familyTypeArr.sort(Common.a2zComparator());
         vm.gridScope=vm;
         vm.searchWarningMessage = '';
+        vm.searching = false;
 
         //ui-grid plugin options
         vm.gridOptions = FamilyService.getGridOptions();
@@ -59,26 +60,27 @@
             });
 
             if (isEmptySearch  && newSearchFlag === 'fromStart') {
+                vm.gridOptions.data = [];
                 vm.searchWarningMessage = 'At least one selection value must be entered prior to running the search';
             } else {
                 vm.searchWarningMessage = '';
             }
 
-            console.log('search params are  ' + JSON.stringify(vm.searchParams));
-            console.log('isEmptySearch is ' + isEmptySearch);
-
-            // vm.searchParams.name = vm.searchParams.name || '*';
-            //console.log('searching params: ' + JSON.stringify(vm.searchParams));
             if (!isEmptySearch) { //skip searching if no search parameters supplied by user
-                FamilyService.searchFamilies(vm.searchParams).then(function (data) {
-                    console.log('received search results: ' + JSON.stringify(data.data));
-                    vm.gridOptions.data = data.data.families; //prepareGridData(data.data.orgs); //data.data.orgs;
+                vm.searching = true;
 
-                    //console.log('vm grid: ' + JSON.stringify(vm.gridOptions.data));
-                    //console.log('received search results: ' + JSON.stringify(data.data));
-                    vm.gridOptions.totalItems = data.data.total;
+                FamilyService.searchFamilies(vm.searchParams).then(function (data) {
+                    var status = data.status;
+
+                    if (status >= 200 && status <= 210) {
+                        vm.gridOptions.data = data.data.families; //prepareGridData(data.data.orgs); //data.data.orgs;
+                        vm.gridOptions.totalItems = data.data.total;
+                    }
                 }).catch(function (err) {
                     console.log('search people failed');
+                }).finally(function() {
+                    console.log('search finished');
+                    vm.searching = false;
                 });
             }
         }; //searchPeople
@@ -86,7 +88,6 @@
 
         vm.resetSearch = function() {
             vm.searchParams = FamilyService.getInitialFamilySearchParams();
-            var temp = vm.searchParams.wc_search;
             var excludedKeys = ['wc_search'];
             Object.keys(vm.searchParams).forEach(function(key, index) {
                 if (excludedKeys.indexOf(key) === -1) {
@@ -94,7 +95,7 @@
                     vm.searchParams[key] = angular.isArray(vm.searchParams[key]) ? [] : '';
                 }
             });
-            vm.searchParams['wc_search'] = temp;
+            vm.searchParams['wc_search'] = true;
             vm.gridOptions.data.length = 0;
             vm.gridOptions.totalItems = null;
             vm.searchWarningMessage = '';

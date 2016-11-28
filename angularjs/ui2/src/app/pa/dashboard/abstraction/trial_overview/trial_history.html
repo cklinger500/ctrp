@@ -1,0 +1,342 @@
+<script type="text/ng-template" id="expandable_row_header_column.html">
+    <div class="ui-grid-row-header-cell ui-grid-expandable-buttons-cell"
+         ng-disabled="row.entity.subGridOptions.data.length == 0">
+        <div class="ui-grid-cell-contents">
+            <i
+                    ng-class="{ 'ui-grid-icon-plus-squared' : !row.isExpanded, 'ui-grid-icon-minus-squared' : row.isExpanded }"
+                    ng-click="grid.api.expandable.toggleRowExpansion(row.entity)">
+            </i>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="innerTable.html">
+    <div class="col-sm-12 top-offset-xss table-responsive">
+    <table class="table table-bordered" ng-show="row.entity.subGridOptions.data.length">
+    <thead>
+    <th>Updated Field</th>
+    <th>Old Value</th>
+    <th>New Value</th>
+    </thead>
+    <tbody>
+    <tr ng-repeat="row in row.entity.subGridOptions.data">
+        <td>
+            {{row.field_name}}
+        </td>
+        <td>
+          {{row.old_value}}
+        </td>
+        <td>
+          {{row.new_value}}
+        </td>
+
+    </tr>
+    </tbody>
+</table>
+    </div>
+</script>
+
+<script type="text/ng-template" id="showTrialDocsOnModal.html">
+    <div>
+        <div class="modal-header">
+            <h3 class="modal-title">Trial Related Documents for Submission</h3>
+        </div>
+        <div class="modal-body">
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-4">Submission Number:</label>
+                    <div class="col-xs-12 col-sm-6 form-text">
+                        {{vm.entity.submission_num}}
+                    </div>
+                </div>
+               <div>
+                    <table class="table">
+                        <thead>
+                        <th>Document</th>
+                        <th>Source</th>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="doc in vm.docs">
+                            <td><a href="{{vm.downloadBaseUrl}}/{{doc.id}}">{{doc.file_name}}</a></td>
+                            <td>{{doc.source_document}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+        </div>
+        <div class="modal-footer">
+            <div class="col-sm-12">
+                <div class="btn-toolbar">
+                    <button type="button" class="btn btn-danger pull-right" ng-click="$close()"><i class="glyphicon glyphicon-remove"></i> Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/ng-template" id="acknowledgeModal.html">
+    <div>
+        <div class="modal-header">
+            <h3 class="modal-title">Acknowledge Update</h3>
+        </div>
+        <div class="modal-body">
+            <form class="form form-horizontal" name="acknowledge_update_form">
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-4">Submission Number:</label>
+                    <div class="col-xs-12 col-sm-6 form-text">
+                        {{vm.entity.submission_num}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-4">Submission Date:</label>
+                    <div class="col-xs-12 col-sm-6 form-text">
+                        {{vm.entity.submission_date | dateFormat}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="acknowledge_comment" class="control-label col-sm-4">Comment:</label>
+                    <div class="col-sm-8"><input class="form-control input-sm" type="text" name="acknowledge_comment" ng-model="vm.entity.acknowledge_comment"></div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <div class="col-sm-12">
+                <div class="btn-toolbar">
+                    <button class="btn btn-primary pull-right" ng-click="vm.acknowledgeUpdate()" ng-disabled="trialHistoryView.disableBtn"><i class="glyphicon glyphicon-ok"></i> Acknowledge</button>
+                    <button type="button" class="btn btn-danger pull-right" ng-click="$close()"><i class="glyphicon glyphicon-remove"></i> Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="submissionsModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Update Submission</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form form-horizontal" role="form" name="sub_form" novalidate ctrp-submit="vm.updateSubmission()">
+    <div class="modal-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="control-label col-xs-12 col-sm-4">Submission Number:</label>
+                        <div class="col-xs-12 col-sm-6 form-text">
+                            {{vm.entity.submission_num}}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-xs-12 col-sm-4">Submission Date:</label>
+                        <div class="col-xs-12 col-sm-6 form-text">
+                            {{vm.entity.submission_date | dateFormat}}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                                <label class="control-label col-xs-12 col-sm-4">Amendment Number:</label>
+                                <div class=" col-xs-12 col-sm-6">
+                                    <input type="text" restriction-field class="form-control input-sm" id="amendment_num" ng-model="vm.entity.amendment_num">
+                                </div>
+                    </div>
+
+                    <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.sub_form.needsAttention(sub_form.amendment_date)}">
+                        <label class="control-label col-xs-12 col-sm-4">Amendment Date:</label>
+                        <div class="col-xs-12 col-sm-4">
+                            <div class="input-group add-on date datepicker" date-date-format="yyyy-mm-dd">
+                                <input type="text" class="form-control input-sm" id="amendment_date" name="amendment_date" uib-datepicker-popup="dd-MMM-yyyy"
+                                       ng-model="vm.entity.amendment_date"
+                                       ng-required="true"
+                                       ng-click="vm.openCalendar($event, 'amendment_date')"
+                                       is-open="vm.amendmentDateOpened"
+                                       datepicker-options="vm.dateOptions"
+                                       close-text="Close" date-formatter readonly>
+                                <span class="input-group-btn">
+                                    <button restriction-field type="button" class="btn btn-primary" ng-click="vm.openCalendar($event, 'amendment_date')">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                             <span ng-messages="ctrpbtn.sub_form.needsAttention(sub_form.amendment_date) && sub_form.amendment_date.$error">
+                                    <span class="help-block" ng-message="required">Amendment Date is Required</span>
+                                 </span>
+                        </div>
+                        <div class="col-xs-12 col-sm-4"></div>
+                    </div>
+
+                        <div class="form-group has-feedback required" ng-class="{'has-error': ctrpbtn.sub_form.needsAttention(sub_form.amendment_reason)}">
+                        <label class="control-label col-xs-12 col-sm-4">Amendment Reason:</label>
+                        <div class="col-xs-12 col-sm-6">
+                            <select restriction-field
+                                    ng-init="vm.entity.amendment_reason_id"
+                                    class="form-control input-sm"
+                                    id="amendment_reason"
+                                    name="amendment_reason"
+                                    ng-model="vm.entity.amendment_reason_id"
+                                    ng-required="true"
+                                    ng-options="amendment_reason.id as amendment_reason.name for amendment_reason in vm.reasonArr" name="amendment_reason">
+                                <option value="">Select a reason</option>
+                            </select>
+                            <span ng-messages="ctrpbtn.sub_form.needsAttention(sub_form.amendment_reason) && sub_form.amendment_reason.$error">
+                                <span class="help-block" ng-message="required">Amendment Reason is Required</span>
+                            </span>
+                        </div>
+                </div>
+            </div>
+    </div>
+    <div class="modal-footer">
+        <div class="col-sm-12">
+            <div class="btn-toolbar">
+                <button type="submit" class="btn btn-primary pull-right" id="submit_processing" ng-disabled="trialHistoryView.disableBtn">
+                    <i class="glyphicon glyphicon-ok"></i> Update
+                </button>
+
+                <button type="button" class="btn btn-danger pull-right" ng-click="$close()"><i class="glyphicon glyphicon-remove"></i> Close</button>
+            </div>
+        </div>
+    </div>
+    </div>
+        </form>
+
+        </div>
+
+    </div>
+</script>
+
+
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">Trial History</div>
+        </div>
+
+        <div class="panel-body">
+            <md-tabs md-dynamic-height md-border-bottom md-selected="trialHistoryView.tabIndex">
+                <md-tab ng-click="trialHistoryView.showSubmissions()">
+                    <md-tab-label>Submissions</md-tab-label>
+                    <md-tab-body>
+                        <!-- list of trial submissions  -->
+                        <div class="row" ng-class="{'top-offset-xs': trialHistoryView.submissionsGridOptions.data.length > 0 }">
+                            <div class="col-xs-12">
+                                <div class="row" ng-if="trialHistoryView.submissionsGridOptions.totalItems != null">
+                                    <p><h4>Audit Trail Submissions: {{trialHistoryView.submissionsGridOptions.totalItems}} found</h4></p>
+                                </div>
+                                <div class="row animated-item" ng-if="trialHistoryView.submissionsGridOptions.data.length > 0">
+                                    <div class="col-xs-12">
+                                        <div ui-grid="trialHistoryView.submissionsGridOptions" ui-grid-exporter ui-grid-pagination="" external-scopes="clickHandler" class="grid grid-large-cell"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12" ng-class="{'top-offset-xs': trialHistoryView.deleteDocsGridOptions.data.length > 0 }">
+                                <div>
+                                    <h4>Total deleted docs found: {{trialHistoryView.deleteDocsGridOptions.totalItems}} <span class="small-header-text">(<a class="cursor-pointer" ng-if="trialHistoryView.deleteDocsGridOptions.totalItems != null" ng-click="trialHistoryView.toggleDeletedDocs()">{{trialHistoryView.toggleText}}</a>)</span></h4>
+
+                                </div>
+                                <div class="row animated-item" ng-if="trialHistoryView.showDeletedDocuments && trialHistoryView.deleteDocsGridOptions.data.length > 0">
+                                    <div class="col-xs-12">
+                                        <div ui-grid="trialHistoryView.deleteDocsGridOptions" ui-grid-exporter ui-grid-pagination="" external-scopes="clickHandler" class="grid grid-sm"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab ng-click="trialHistoryView.showUpdates()">
+                    <md-tab-label>Updates</md-tab-label>
+                    <md-tab-body>
+                        <!-- list of trial updates  -->
+                        <div class="row" ng-class="{'top-offset-xs': trialHistoryView.updatesGridOptions.data.length > 0 }">
+                            <div class="col-xs-12">
+                                <div class="row" ng-if="trialHistoryView.updatesGridOptions.totalItems != null">
+                                    <p><h4>Audit Trail Updates: {{trialHistoryView.updatesGridOptions.totalItems}} found</h4></p>
+                                </div>
+                                <div class="row animated-item" ng-if="trialHistoryView.updatesGridOptions.data.length > 0">
+                                    <div class="col-xs-12">
+                                        <div ui-grid="trialHistoryView.updatesGridOptions" ui-grid-exporter ui-grid-expandable ui-grid-pagination="" external-scopes="clickHandler" class="grid grid-medium-cell"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+
+                <md-tab ng-click="trialHistoryView.showAuditTrials()">
+                    <md-tab-label>Audit Trail</md-tab-label>
+                    <md-tab-body>
+                        <form class="form form-horizontal" role="form" name="trial_status_form" novalidate ctrp-submit="trialHistoryView.updateTrialStatuses()">
+                            <div class="form-group" date-date-format="yyyy-mm-dd">
+                                <label for="start_date" class="control-label col-xs-12 col-sm-3">Start Date:</label>
+                                <div class="col-xs-12 col-sm-2">
+                                    <div class="input-group add-on date datepicker" date-date-format="yyyy-mm-dd">
+                                        <input type="text" id="start_date" name="status_date" class="form-control input-sm"
+                                               uib-datepicker-popup="dd-MMM-yyyy" ng-model="trialHistoryView.start_date"
+                                               ng-click="trialHistoryView.openCalendar($event, 'start_date')"
+                                               is-open="trialHistoryView.startDateOpened"
+                                               datepicker-options="trialHistoryView.dateOptions"
+                                               close-text="Close" placeholder="Start Date" readonly date-formatter>
+                                                <span class="input-group-btn">
+                                                    <button type="button"  class="btn btn-primary" ng-click="trialHistoryView.openCalendar($event, 'start_date')">
+                                                        <i class="glyphicon glyphicon-calendar"></i>
+                                                    </button>
+                                                </span>
+                                    </div>
+                                </div>
+                                <label for="end_date" class="control-label col-xs-12 col-sm-1">End Date:</label>
+                                <div class="col-xs-12 col-sm-2">
+                                    <div class="input-group add-on date datepicker">
+                                        <input type="text" id="end_date" name="end_date" class="form-control input-sm"
+                                               uib-datepicker-popup="dd-MMM-yyyy" ng-model="trialHistoryView.end_date"
+                                               ng-click="trialHistoryView.openCalendar($event, 'end_date')"
+                                               is-open="trialHistoryView.endDateOpened"
+                                               datepicker-options="trialHistoryView.dateOptions"
+                                               date-later-than="{{trialHistoryView.statusObj.start_date| date: 'short'}}"
+                                               close-text="Close" placeholder="End Date" readonly date-formatter>
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-primary" ng-click="trialHistoryView.openCalendar($event, 'end_date')">
+                                                        <i class="glyphicon glyphicon-calendar"></i>
+                                                    </button>
+                                                </span>
+                                    </div>
+                                </div>
+                                <!--div class="col-xs-12 col-sm-4"></div-->
+
+                            <!--div class="form-group no-bottom-margin" -->
+                                <!--div class="col-sm-3"></div-->
+                                <div class="btn-toolbar col-xs-12 col-sm-2">
+                                    <button type="button" class="btn btn-primary pull-right" id="search_btn" ng-click="trialHistoryView.loadAuditTrials()" ng-disabled="trialHistoryView.disableBtn">
+                                        <i class="glyphicon glyphicon-filter"></i> Filter
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+
+                        <!-- list of audit trials -->
+                        <div class="row" ng-class="{'top-offset-xs': trialHistoryView.auditGridOptions.data.length > 0 }">
+                            <div class="col-xs-12">
+                                <div class="row" ng-if="trialHistoryView.auditGridOptions.totalItems != null">
+                                    <p><h4>Audit Trail Results: {{trialHistoryView.auditGridOptions.totalItems}} found</h4></p>
+                                </div>
+                                <div class="row animated-item" ng-if="trialHistoryView.auditGridOptions.totalItems > 0">
+                                    <div class="col-xs-12">
+                                        <div style="width: 100%; height:300px"
+                                             ag-grid="trialHistoryView.auditGridOptions"
+                                             class="ag-fresh ag-basic">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </md-tab-body>
+                </md-tab>
+            </md-tabs>
+        </div>
+    </div>
+</div>

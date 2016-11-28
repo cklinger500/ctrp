@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<tns:CompleteTrialRegistration xmlns:tns="gov.nih.nci.pa.webservices.types" xmlns:tns1="gov.nih.nci.po.webservices.types.trimmed" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="gov.nih.nci.pa.webservices.types ../../src/resources/ws.xsd ">    
+
+    <tns:clinicalTrialsDotGovXmlRequired>true</tns:clinicalTrialsDotGovXmlRequired>
+
+    <tns:leadOrgTrialID>CThi5_111182110</tns:leadOrgTrialID>
+    <tns:clinicalTrialsDotGovTrialID>NCT01994851</tns:clinicalTrialsDotGovTrialID>
+
+    <tns:otherTrialID>CTRP_2015122303</tns:otherTrialID>
+
+    <tns:title>RRRRRRRRRRRRR A Phase I/II Study Of Brentuximab Vedotin In Combination With Multi-Agent Chemotherapy</tns:title>
+
+    <tns:phase>NA</tns:phase>
+
+    <tns:pilot>false</tns:pilot>
+
+    <tns:accrualDiseaseTerminology>ICD10</tns:accrualDiseaseTerminology>
+
+    <tns:primaryPurpose>Other</tns:primaryPurpose>
+
+    <tns:primaryPurposeOtherDescription>Determine maximum tolerated dose (MTD) of brentuximab vedotin</tns:primaryPurposeOtherDescription>
+
+    <tns:interventionalDesign>
+
+        <tns:secondaryPurpose>Other</tns:secondaryPurpose>
+
+        <tns:secondaryPurposeOtherDescription>Secondary Other Description</tns:secondaryPurposeOtherDescription>
+
+    </tns:interventionalDesign>
+
+    <tns:leadOrganization>
+
+        <tns:existingOrganization>
+
+            <tns:poID>8352734</tns:poID>
+
+        </tns:existingOrganization>
+
+    </tns:leadOrganization>
+
+    <tns:pi>
+
+        <tns:existingPerson>
+
+            <tns:poID>28417522</tns:poID>
+
+        </tns:existingPerson>
+
+    </tns:pi>
+
+
+  
+    <tns:summary4FundingSponsor>
+
+        <tns:existingOrganization>
+
+            <tns:poID>8352734</tns:poID>
+
+        </tns:existingOrganization>
+
+    </tns:summary4FundingSponsor>
+
+<tns:summary4FundingSponsor>
+
+        <tns:existingOrganization>
+
+            <tns:poID>2118412</tns:poID>
+
+        </tns:existingOrganization>
+
+    </tns:summary4FundingSponsor>
+
+
+    <tns:programCode>PG00001</tns:programCode>
+
+    <tns:fundedByNciGrant>false</tns:fundedByNciGrant>
+
+
+    <tns:trialStatus>In Review</tns:trialStatus>
+
+    <tns:whyStopped/>
+
+    <tns:trialStatusDate>2016-12-23</tns:trialStatusDate>
+
+    <tns:trialStartDate type="Anticipated">2016-12-27</tns:trialStartDate>
+
+    <tns:primaryCompletionDate type="Anticipated">2016-12-27</tns:primaryCompletionDate>
+
+    <tns:completionDate type="Anticipated">2016-07-15</tns:completionDate>
+
+    <tns:ind>
+
+        <tns:number>111111</tns:number>
+
+        <tns:grantor>CDER</tns:grantor>
+
+        <tns:holderType>NIH</tns:holderType>
+
+        <tns:nihInstitution>NEI</tns:nihInstitution>
+
+        <tns:expandedAccess>true</tns:expandedAccess>
+
+        <tns:expandedAccessType>Available</tns:expandedAccessType>
+
+        <tns:exempt>true</tns:exempt>
+
+    </tns:ind>
+
+    <tns:ide>
+
+        <tns:number>222222</tns:number>
+
+        <tns:grantor>CDRH</tns:grantor>
+
+        <tns:holderType>NCI</tns:holderType>
+
+        <tns:nciDivisionProgramCode>CCR</tns:nciDivisionProgramCode>
+
+        <tns:expandedAccess>true</tns:expandedAccess>
+
+        <tns:expandedAccessType>Available</tns:expandedAccessType>
+
+        <tns:exempt>true</tns:exempt>
+
+    </tns:ide>
+ <tns:regulatoryInformation>
+        <tns:country>USA</tns:country>
+        <tns:authorityName>Food and Drug Administration</tns:authorityName>
+        <tns:fdaRegulated>true</tns:fdaRegulated>
+        <tns:section801>true</tns:section801>
+        <tns:delayedPosting>true</tns:delayedPosting>
+        <tns:dataMonitoringCommitteeAppointed>false</tns:dataMonitoringCommitteeAppointed>
+    </tns:regulatoryInformation>
+   
+  
+  
+
+    <tns:protocolDocument filename="protocol.pdf">cHJvdG9jb2xEb2N1bWVudA==</tns:protocolDocument>
+
+    <tns:irbApprovalDocument filename="irb.pdf">aXJiQXBwcm92YWxEb2N1bWVudA==</tns:irbApprovalDocument>
+
+    <tns:participatingSitesDocument filename="sites.pdf">cGFydGljaXBhdGluZ1NpdGVzRG9jdW1lbnQ=</tns:participatingSitesDocument>
+
+    <tns:informedConsentDocument filename="consent.pdf">dGVzdA==</tns:informedConsentDocument>
+
+    <tns:otherDocument filename="other.pdf">dGVzdA==</tns:otherDocument>
+
+    <tns:category>Externally Peer-Reviewed</tns:category>
+
+
+</tns:CompleteTrialRegistration>

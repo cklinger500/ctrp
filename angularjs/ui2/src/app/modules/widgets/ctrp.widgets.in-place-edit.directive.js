@@ -12,9 +12,9 @@
     angular.module('ctrpApp.widgets')
     .directive('inPlaceEdit', inPlaceEdit);
 
-    inPlaceEdit.$inject = ['$timeout', '$compile', 'MESSAGES', 'UserService'];
+    inPlaceEdit.$inject = ['$timeout', '$compile', 'MESSAGES', 'UserService', '$document'];
 
-    function inPlaceEdit($timeout, $compile, MESSAGES, UserService) {
+    function inPlaceEdit($timeout, $compile, MESSAGES, UserService, $document) {
       var defaultTemplateUrl = 'app/modules/widgets/ctrp.widgets.in-place-edit.default_template.html';
       var directiveObj = {
         restrict: 'A',
@@ -26,6 +26,17 @@
         link: linkerFn,
         templateUrl: function(element, attrs) {
           return attrs.template || defaultTemplateUrl;
+        },
+        controller: function($scope) {
+            $scope.errorMsg = '';
+            $scope.$watch('model', function(newVal, oldVal) {
+                // console.info('newVal model: ', newVal, oldVal);
+                if (!newVal) {
+                    $scope.errorMsg = 'Enter a value';
+                } else {
+                    $scope.errorMsg = '';
+                }
+            });
         }
       };
       return directiveObj;
@@ -39,9 +50,10 @@
         scope.saveEdit = saveEdit;
         scope.cancelEdit = cancelEdit;
         var prevValue;
+        var inputElem = element.find('input');
 
         //cancel edit on blur
-        element.bind('blur', cancelEdit);
+        //element.on('blur', cancelEdit);
 
         //Esc for canceling edit
         element.bind('keydown', function(event) {
@@ -57,7 +69,18 @@
           prevValue = scope.model;
 
           $timeout(function() {
-            element.find('textarea')[0].focus();
+            // element.find('textarea')[0].focus();
+            var field = element.find('textarea')[0];
+            if (field) {
+                field.focus();
+            }
+            // if 'id' attribute is specified, use it to focus on the field
+            // e.g. id="#edit_field"
+            var curField = !!attrs.id ? $document[0].querySelector(attrs.id) : null;
+            if (!!curField) {
+                curField.focus();
+            }
+            // element.find('input')[0].focus();
           }, 0, false);
         }
 
@@ -66,7 +89,7 @@
           scope.saveHandler({value: scope.model});
         }
 
-        function cancelEdit() {
+        function cancelEdit(e) {
           scope.editMode = false;
           scope.model = prevValue;
         }

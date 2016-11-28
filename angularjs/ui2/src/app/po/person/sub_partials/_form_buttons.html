@@ -1,0 +1,21 @@
+<div class="form-group" ng-class="{'no-bottom-margin': personDetailView.curPerson.associated_persons.length && personDetailView.curPerson.is_ctrp_context && personDetailView.isAllowedToComment}" restriction-field="ROLE_CURATOR,ROLE_SUPER,ROLE_ADMIN">
+    <div class="col-sm-3"></div>
+    <div class="btn-toolbar col-sm-6">
+        <button type="button" class="btn btn-primary pull-left btn-no-left-margin" id="person_search_modal" person-search-modal-button2 source-context-only="'CTEP'"
+            ng-model="personDetailView.associatedPersonContexts"
+            restriction-field="ROLE_CURATOR,ROLE_SUPER,ROLE_ADMIN"
+            ng-hide="personDetailView.curPerson.source_context !== 'CTRP' || personDetailView.curPerson.new"
+            ng-disabled="personDetailView.curPerson.associated_persons.length > 0">
+            <i class="glyphicon glyphicon-search"></i> Associate Person Context
+        </button>
+        <button type="submit" restriction-field class="btn btn-primary pull-right" id="save_btn" ng-disabled="personDetailView.isBtnDisabled">
+            <i class="glyphicon glyphicon-ok"></i> Save
+        </button>
+        <button type="button" restriction-field  ng-hide="!personDetailView.curPerson.new" class="btn btn-warning pull-right" id="reset_btn" ng-click="personDetailView.clearForm()" ng-disabled="personDetailView.isBtnDisabled">
+            <i class="glyphicon glyphicon-remove"></i> Reset
+        </button>
+        <button type="button" ng-hide="personDetailView.curPerson.new" restriction-field class="btn btn-warning pull-right" id="clear_btn" ng-click="personDetailView.resetForm()" ng-disabled="personDetailView.isBtnDisabled">
+            <i class="glyphicon glyphicon-remove"></i> Reset
+        </button>
+    </div>
+</div>

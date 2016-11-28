@@ -1,40 +1,34 @@
 <ul class="nav navbar-nav">
     <li ng-class="{ active: headerView.navbarIsActive('main.defaultContent') }">
-        <a tabindex="1" ui-sref="main.defaultContent">Home<span class="sr-only">(current)</span></a>
-    </li>
-    <!--<li><a ui-sref="main.organizations">Organizations</a></li>-->
-    <li class="dropdown" ng-class="{ active: headerView.navbarIsActive('main.dashboards, main.paTrialSearch, main.pa.trialOverview, main.pa.resultsReporting, main.pa.govImport') }">
-        <a tabindex="2" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dashboards <span class="caret"></span></a>
-        <ul class="dropdown-menu" role="menu">
-            <li><a ui-sref="main.paTrialSearch">Abstraction</a></li>
-            <li><a ui-sref="main.resultsReporting">Results Reporting</a></li>
-            <li><a ui-sref="main.govImport">CT.Gov Import</a></li>
-        </ul>
+        <a tabindex="1" ui-sref="main.defaultContent" ui-sref-opts="{reload:true}">Home<span class="sr-only">(current)</span></a>
     </li>
     <li class="dropdown" ng-class="{ active: headerView.navbarIsActive('main.organizations, main.addOrganization, main.families, main.addFamily') }">
         <a tabindex="3" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Organizations & Families <span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
-            <li><a ui-sref="main.organizations">Search Organizations</a></li>
+            <li><a ui-sref="main.organizations" ui-sref-opts="{reload:true}">Search Organizations</a></li>
+            <li><a ng-click="headerView.requestPersonOrOrg('Organization')">Request New Organization</a></li>
             <li role="separator" class="divider"></li>
-            <li><a ui-sref="main.families">Search Families</a></li>
+            <li><a ui-sref="main.families" ui-sref-opts="{reload:true}">Search Families</a></li>
         </ul>
     </li>
     <li class="dropdown" ng-class="{ active: headerView.navbarIsActive('main.people, main.addPerson') }">
         <a tabindex="4" href="" class="dropdown-toggle" data-toggle="dropdown" role="button"  aria-expanded="false">Persons<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
-            <li><a ui-sref="main.people">Search Persons</a></li>
+            <li><a ui-sref="main.people" ui-sref-opts="{reload:true}">Search Persons</a></li>
+            <li><a ng-click="headerView.requestPersonOrOrg('Person')">Request New Person</a></li>
         </ul>
     </li>
     <li class="dropdown" ng-class="{ active: headerView.navbarIsActive('main.trials, main.addTrial') }">
         <a tabindex="5" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Trials<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
-            <li><a ui-sref="main.trials">Search Trials</a></li>
+            <li><a id="dash_search_trial" ui-sref="main.trials">Search Trials</a></li>
             <li class="dropdown-submenu">
                 <a ui-sref="#">Register Trial</a>
                 <ul class="dropdown-menu">
-                    <li><a ui-sref="main.addTrial({studySourceCode: 'NAT'})">National</a></li>
-                    <li><a ui-sref="main.addTrial({studySourceCode: 'EPR'})">Externally Peer-Reviewed</a></li>
-                    <li><a ui-sref="main.addTrial({studySourceCode: 'INS'})">Institutional</a></li>
+                    <li><a ui-sref="main.addTrial({studySourceCode: 'nat'})" ui-sref-opts="{reload:true}">National</a></li>
+                    <li><a ui-sref="main.addTrial({studySourceCode: 'epr'})" ui-sref-opts="{reload:true}">Externally Peer-Reviewed</a></li>
+                    <li><a ui-sref="main.addTrial({studySourceCode: 'ins'})" ui-sref-opts="{reload:true}">Institutional</a></li>
+                    <li><a ui-sref="main.importTrial" ui-sref-opts="{reload:true}">Industrial/Other</a></li>
                 </ul>
             </li>
         </ul>
@@ -44,15 +38,15 @@
         <ul class="dropdown-menu" role="menu">
             <li><a ui-sref="main.pendingAccrualQueue">Pending Accrual Queue</a></li>
             <li><a ui-sref="main.accrualsOutOfScopeTrials">Accruals Out-Of-Scope Trials</a></li>
-            <li><a ui-sref="main.manageFlaggedTrails">Manage Flagged Trails</a></li>
+            <li><a ui-sref="main.manageFlaggedTrails">Manage Flagged Trials</a></li>
             <li><a ui-sref="main.manageAccrualAccess">Manage Accrual Access</a></li>
         </ul>
     </li>
-    <li class="dropdown" ng-class="{ active: headerView.navbarIsActive('main.administrative, main.registeredUserDetails, main.manageSiteAdmins, main.newBiomarkerRequests, main.manageNcltTerms') }">
+    <li class="dropdown" ng-class="{ active: headerView.navbarIsActive('main.registeredUsers, main.users, main.assignTrials, main.administrative, main.manageSiteAdmins, main.newBiomarkerRequests, main.manageNcltTerms') }">
         <a tabindex="7" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Administrative <span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
-            <li><a ui-sref="main.registeredUserDetails">Registered User Details</a></li>
-            <li><a ui-sref="main.manageSiteAdmins">Manage Site Admins</a></li>
+            <li><a ui-sref="main.users">User Management</a></li>
+            <li><a ui-sref="main.assignTrials">Assign Trial Ownership</a></li>
             <li><a ui-sref="main.newBiomarkerRequests">New Biomarker Requests</a></li>
             <li><a ui-sref="main.manageNcltTerms">Manage NClt Terms</a></li>
         </ul>

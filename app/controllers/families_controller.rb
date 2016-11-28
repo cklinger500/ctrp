@@ -2,6 +2,7 @@ class FamiliesController < ApplicationController
   before_action :set_family, only: [:show, :edit, :update, :destroy]
   before_filter :wrapper_authenticate_user unless Rails.env.test?
   load_and_authorize_resource unless Rails.env.test?
+  before_action :set_paper_trail_whodunnit, only: [:create,:update, :destroy]
 
   # GET /families
   # GET /families.json
@@ -83,19 +84,29 @@ class FamiliesController < ApplicationController
   def search
     # Pagination/sorting params initialization
     params[:start] = 1 if params[:start].blank?
-    params[:rows] = 20 if params[:rows].blank?
+
+    if params[:allrows] != true
+      params[:rows] = 20 if params[:rows].blank?
+    else
+      params[:rows] = nil
+    end
+
     params[:sort] = 'name' if params[:sort].blank?
     params[:order] = 'asc' if params[:order].blank?
-    print "ke;;;;;;;";
-    print params[:wc_search];
 
     if params[:ctrp_id].present? || params[:name].present? || params[:family_status].present? || params[:family_type].present?
-      @families = Family.all
+      @families = Family.all_families_data()
+
       @families = @families.matches('id', params[:ctrp_id]) if params[:ctrp_id].present?
-      @families = @families.matches_wc('name', params[:name],params[:wc_search]) if params[:name].present?
-      @families = @families.with_family_status(params[:family_status]) if params[:family_status].present?
+      @families = @families.matches('family_statuses.name', params[:family_status]) if params[:family_status].present?
+      @families = matches_wc(@families, 'families.name', params[:name],params[:wc_search]) if params[:name].present?
       @families = @families.with_family_type(params[:family_type]) if params[:family_type].present?
-      @families = @families.sort_by_col(params[:sort], params[:order]).group(:'families.id').page(params[:start]).per(params[:rows])
+      @families = @families.sort_by_col(params[:sort], params[:order])
+
+
+      if params[:rows] != nil
+        @families = @families.page(params[:start]).per(params[:rows])
+      end
     else
       @families = []
     end
@@ -103,20 +114,12 @@ class FamiliesController < ApplicationController
 
   #Method to check for Uniqueness while creating families - check on name. These are to be presented as warnings and not errors, hence cannot be part of before-save callback.
   def unique
-    print params[:family_name]
-    print params[:family_exists]
-    print "Family ID "
-    print params[:family_id]
-
     is_unique = true
     count = 0
 
     if params.has_key?(:family_name)
       count = Family.where("lower(name)=?", params[:family_name].downcase).count;
     end
-
-    print "count "
-    print count
 
     if params[:family_exists] == true
       @dbFamily = Family.find(params[:family_id]);
@@ -137,9 +140,6 @@ class FamiliesController < ApplicationController
     elsif params[:family_exists] == false && count > 0
       is_unique = false
     end
-
-    p " is unique? "
-    p is_unique
 
     respond_to do |format|
       format.json {render :json => {:name_unique => is_unique}}

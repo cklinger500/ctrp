@@ -1,5 +1,6 @@
 class ProtocolIdOriginsController < ApplicationController
   before_action :set_protocol_id_origin, only: [:show, :edit, :update, :destroy]
+  before_filter :wrapper_authenticate_user unless Rails.env.test?
 
   # GET /protocol_id_origins
   # GET /protocol_id_origins.json

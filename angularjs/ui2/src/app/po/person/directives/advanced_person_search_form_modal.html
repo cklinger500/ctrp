@@ -2,13 +2,13 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="modal-header">
-                <strong>Person Search</strong>
-                <button type="button" class="close" data-dismiss="modal" ng-click="advPersonSearchModalView.cancel()">&times;</button>
+                <h4 class="modal-title pull-left">Person Search</h4>
+                <button type="button" class="close pull-right" data-dismiss="modal" ng-click="advPersonSearchModalView.cancel()">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <!--TODO: should use $scope.maxRowSelectable -->
-                    <ctrp-advanced-person-search-form show-grid="true" max-row-selectable="advPersonSearchModalView.maxRowSelectable" curation-mode="false" used-in-modal="true"></ctrp-advanced-person-search-form>
+                    <ctrp-advanced-person-search-form show-grid="true" max-row-selectable="advPersonSearchModalView.maxRowSelectable" curation-mode="false" used-in-modal="true" source-context-only="advPersonSearchModalView.sourceContextOnly"></ctrp-advanced-person-search-form>
                 </div>
             </div>
             <div class="modal-footer">

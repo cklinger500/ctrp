@@ -6,21 +6,20 @@ Scenario: #1 I can view the Trail Overview and the Trial Identification Informat
 Given I am logged into the CTRP Protocol Abstraction application
 And I have selected a trial 
 And I have selected Trail Identification Overview
-Then the Trail Identification Overview and the Trial Identifications will be displayed
+Then the Trail Identification Overview and the Trial Identification sections will be displayed
 
 Scenario: #2 I can view the Trail Identification Information for a Trial
 Given I am logged into the CTRP Protocol Abstraction application
 And I have selected a trial 
 And I have selected Trail Identification Overview
-Then the Trail Identification Overview and the Trial Identification Information will be displayed 
-And the Trial Identification Information for a Trial will include the following fields:
-|Clinical Research Category |
+Then the Trail Identification Overview and the Trial Identification Information sections will be displayed 
+And the Trial Identification Information for the last active submission for the Trial will include the following fields:
 |NCI ID|
-|ClinicalTrials.Gov XML required|
-|Lead Organization Trail ID|
-|NCT ID|
-|Official Title|
+|Lead Organization Trial ID (Lead Protocol ID)|
+|Other Trial Identifiers (source: Protocol_ID_Source_ID and ID: Protocol_ID)|
+|Last Verification Date|
 |Submission Source|
+|Official Title|
 |Processing Priority|
 |Comments|
 

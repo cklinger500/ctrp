@@ -44,7 +44,7 @@ one:
   country: MyString
   email: MyString
   phone: MyString
-  fax: MyString
+  #fax: MyString
 
 two:
   source_id: MyString
@@ -57,7 +57,7 @@ two:
   country: MyString
   email: MyString
   phone: MyString
-  fax: MyString
+  #fax: MyString
 
 three:
   source_id: MD134
@@ -68,7 +68,7 @@ three:
   country: United States
   email: 12@123
   phone: 19834567
-  fax: 9826745
+  #fax: 9826745
 
 four:
   source_id: VA167
@@ -79,4 +79,4 @@ four:
   country: United States
   email: w5@2345
   phone: 92873456
-  fax: 23467
+  #fax: 23467

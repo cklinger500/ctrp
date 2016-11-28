@@ -1,0 +1,2 @@
+json.accepted_file_extensions @file_extensions
+json.accepted_file_types @file_types

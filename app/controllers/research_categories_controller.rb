@@ -1,5 +1,6 @@
 class ResearchCategoriesController < ApplicationController
   before_action :set_research_category, only: [:show, :edit, :update, :destroy]
+  before_filter :wrapper_authenticate_user unless Rails.env.test?
 
   # GET /research_categories
   # GET /research_categories.json

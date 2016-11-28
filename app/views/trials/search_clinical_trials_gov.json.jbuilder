@@ -1,0 +1,6 @@
+json.nct_id @search_result[:nct_id]
+json.official_title @search_result[:official_title]
+json.status @search_result[:status]
+json.condition @search_result[:condition]
+json.intervention @search_result[:intervention]
+json.error_msg @search_result[:error_msg]

@@ -11,8 +11,9 @@ var helperFunctions = require('../support/helper');
 
 var PoCommonBar = function(){
     this.home = element(by.css('a[href="#/main/welcome"]'));
-    var homeEnterOrganizations = element(by.css('a[href="#/main/organizations"]'));
+    this.homeEnterOrganizations = element(by.css('a[href="#/main/organizations"]'));
     this.organizations = element(by.linkText('Organizations & Families'));
+    this.justOrganization = element(by.linkText('Organizations'));
     this.listOrganizations = element(by.css('a[ui-sref="main.organizations"]')); //element(by.css('a[href="#/main/organizations"]'));
     this.addOrganizations = element(by.css('a[href="#/main/new_organization"]'));
     this.people = element(by.linkText('Persons'));
@@ -55,25 +56,34 @@ var PoCommonBar = function(){
     var edit_Person_Page_Text = 'Edit Person';
 
 
-
+    var self = this;
 
     this.clickHome = function(){
         helper.clickLink(this.home, "Home link");
     };
 
-
     this.clickHomeEnterOrganizations = function(){
-        homeEnterOrganizations.isPresent().then(function(retVal){
+        self.homeEnterOrganizations.isPresent().then(function(retVal){
             console.log('value of ret val : ' + retVal);
             if (retVal === true) {
-                helper.clickLink(homeEnterOrganizations, "Home link");
+                self.homeEnterOrganizations.isDisplayed().then(function(state){
+                    if(state) {
+                        helper.clickLink(self.homeEnterOrganizations, "Home link");
+                    }
+                    else{
+                        console.log('Home link not displayed');
+                    }
+                });
             }
         });
     };
 
-
     this.clickOrganizations = function(){
-        helper.clickLink(this.organizations, "Organization link");
+        helper.clickLink(this.organizations, "Organization & Family link");
+    };
+
+    this.clickJustOrganizations = function(){
+        helper.clickLink(this.justOrganization, "Just Organization link");
     };
 
     this.clickListOrganizations = function(){
@@ -83,7 +93,7 @@ var PoCommonBar = function(){
 
     this.clickAddOrganizations = function(){
         helper.clickLink(this.addOrganizations, "Add Organization link");
-        expect(this.add_Org_Page.getText()).to.eventually.equal(add_Org_Page_Text);
+     //  expect(this.add_Org_Page.getText()).to.eventually.equal(add_Org_Page_Text);
     };
 
     this.clickPeople = function(){

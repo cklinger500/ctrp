@@ -14,7 +14,8 @@ module Ctrp
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
-    # config.time_zone = 'Central Time (US & Canada)'
+#   config.time_zone = 'Kolkata'
+    config.time_zone = 'Eastern Time (US & Canada)'
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
@@ -24,10 +25,13 @@ module Ctrp
 
     # Application version to display site-wide. Increment after every production deployment.
     # Use 5.x for minor point releases such as for new features or upgrades. Use 5.0.x for patch/bugfix point releases.
+
+    # config.force_ssl = true
     config.application_version = "5.0"
     config.organizations_id_sequence_start_with = 65000000
     config.persons_id_sequence_start_with = 65000000
     config.families_id_sequence_start_with = 65000000
+    config.restful_service_pwd = "Welcome01"
 
     #config.serve_static_files = true
     #paths['public'] = File.join 'public', 'ctrp', 'ui2', 'src'
@@ -50,6 +54,11 @@ module Ctrp
     config.active_record.raise_in_transactional_callbacks = true
 
     config.paths["log"] = "../../logs/#{Rails.env}.log"
+
+    config.autoload_paths += %W(#{config.root}/lib)
+
+
+    #config.active_job.queue_adapter = :inline
 
   end
 end

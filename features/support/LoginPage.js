@@ -7,6 +7,8 @@ var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 var expect = require('chai').expect;
 var menuItemList = require('../support/PoCommonBar');
+var moment = require('moment');
+//var helperFunctions = require('../support/helper');
 
 var LoginPage = function(){
 
@@ -18,11 +20,16 @@ var LoginPage = function(){
     this.logoutButton = element(by.css('a[ng-click="headerView.logOut()"]'));
     this.rejectButton = element(by.buttonText('Reject'));
     this.acceptButton = element(by.buttonText('Accept'));
-    this.loginUser = element(by.css('.ng-binding:nth-child(1)'));
-    var loginPageVerifyText = element(by.css('.panel-title'));
+    this.loginUser = element(by.binding('headerView.username'));
+    this.loginPageVerification = element(by.css('.ng-binding.ng-scope'));
+    this.loginVerifyText = element(by.css('.panel-title'));
+    this.loginNewUsrSign = element(by.css('.pad-height'));
+  //  this.loginUser = element(by.css('.ng-binding:nth-child(1)'));
     var writeMode =  element(by.css('.md-thumb'));
     var params = browser.params;
     var login = new helper();
+    var getMemCrntUsrNm = '';
+ //   var helper = new helperFunctions();
 
     this.setUsername = function(){
         login.setValue(this.username,params.login.user,"Username field");
@@ -45,6 +52,9 @@ var LoginPage = function(){
     };
 
     this.login = function (userName, password){
+        //browser.takeScreenshot().then(function (png) {
+        //    login.writeScreenShot(png, process.env.TEST_RESULTS_DIR || process.cwd() + '/tests/testScreenShot/loginExc' + moment().format('MMMDoYY hmmss') + '.png');
+        //});
         this.logoutButton.isDisplayed().then(function(result) {
             if (result) {
                 //Whatever if it is true (displayed)
@@ -54,6 +64,7 @@ var LoginPage = function(){
                     }
                     else {
                         element(by.css('a[ng-click="headerView.logOut()"]')).click();
+                        login.alertDialog('OK', 'Are you sure you want to leave this page? You may have unsaved changes.');
                         element(by.model('userView.userObj.user.username')).sendKeys(userName);
                         element(by.model('userView.userObj.user.password')).sendKeys(password);
                         element(by.css('button[ng-click="userView.authenticate()"]')).click();
@@ -87,10 +98,21 @@ var LoginPage = function(){
 
     this.accept = function(){
         this.acceptButton.isPresent().then(function(retVal){
-            console.log('value of ret val : ' + retVal);
+            console.log('Accept Button is Present : ' + retVal);
             if (retVal === true) {
                 element(by.buttonText('Accept')).click();// element(by.css('.container.ng-scope>button:nth-child(2)')).click();
             }
+        });
+    };
+
+    this.getUserName = function(){
+        element(by.binding('headerView.username')).getText().then(function(userNameValue){
+            var crntUsrNm = userNameValue;
+            function getUsrNm(){
+                return crntUsrNm;
+            };
+            return getMemCrntUsrNm = getUsrNm();
+            //console.log('Current User Name : ' + getMemCrntUsrNm);
         });
     };
     //{
@@ -129,7 +151,8 @@ var LoginPage = function(){
     this.logout = function(){
         login.wait(this.logoutButton,"logout Button");
         this.logoutButton.click();
-       expect(browser.getCurrentUrl()).to.eventually.equal('http://ctrp-ci.nci.nih.gov/ctrp/ui/#/main/sign_in');
+        login.alertDialog('OK', 'Are you sure you want to leave this page? You may have unsaved changes.');
+        //expect(browser.getCurrentUrl()).to.eventually.equal('http://ctrp-ci.nci.nih.gov/ctrp/ui/#/main/sign_in');
     };
 
     this.clickWriteMode = function(writeModeOnOffValue){
