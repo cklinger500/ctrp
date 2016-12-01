@@ -58,25 +58,35 @@ And if there are no errors, I can select the option to Edit the trial informatio
     Given I am in the CTRP Registration Application 
      When I have selected the option to search My Trials in CTRP
      And I am the Trial Owner
-     When I have selected the Amend option after an original Submission
+     When I have selected the Amend option after a prior Submission
      Then the documents type will be displayed 
       
       |Protocol Document- Current Protocol |
-      |IRB Approval- Current IRB Approval  |
+       #Change Memo only viewed when prior submission is an amendment
+      |Change Memo -Current Change Memo|
+      #Change Memo only viewed when prior submission is an amendment
+      |Protocol Highlighted Document: Current Protocol Highlighted Document|
+      |IRB Approval-Current IRB Approval  |
+      |List of Participating Sites-Current Participating Sites|
       |Informed Consent Document- Current Informed Consent Document |
-      |Other- Current Other Documents |
-      |TSR- Current TSR    |
+      |Complete Sheet: All Complete Sheets|
+      |Other- All Other Documents |
+      |TSR- All TSR   |
+      
       
 
      When I have selected the Amend option after an Amendment 
      Then the documents type will be displayed 
       
       |Protocol Document- Current Protocol |
-      |IRB Approval- Current IRB Approval  |
       |Change Memo -Current Change Memo|
       |Protocol Highlighted Document: Current Protocol Highlighted Document|
-      |Other- Current Other Documents |
-      |TSR- Current TSR    |
+      |IRB Approval-Current IRB Approval  |
+      |List of Participating Sites-Current Participating Sites|
+      |Informed Consent Document- Current Informed Consent Document |
+      |Complete Sheet: All Complete Sheets|
+      |Other- All Other Documents |
+      |TSR- All TSR   |
       
       
 Scenario:#5 Delete option should not be included for existing documents 

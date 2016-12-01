@@ -13,19 +13,18 @@ As any CTRP User, I can view a CTRP clinical trial record after a Clinical Trial
     Given I am logged into the CTRP Registration application
       And I am on the Search Clinical Trials Screen
      When I select the option to search "All Trials"
-      And CTRP displays all protocol trials where I am listed as a Trial Owner
-      And CTRP displays all Imported Trials where my site was added as a Participating site
-      And CTRP displayed all protocol trials where I am not listed as an Owner
-      And CTRP displayed all imported trials where my site was not added as a Participating site
+      And CTRP displays all protocol trials 
+      And CTRP displays all Imported Trials 
       
       
-      Scenario: #1 Trials detail view for Protocol Trials when I am listed as a trial owner
+      Scenario: #1 Trials detail view for Protocol Trials when I am listed as a trial owner 
     Given I am logged into the CTRP Registration application
       And I am on the Search Clinical Trials Screen results
       When I select a protocol trial where I am listed as an owner
      Then I will be able to view the Trial Details type
-  
+      # Can be Viewed from "My Trials" or "All Trials"
       #All fields should be displayed even when no value exists
+      # Optional Documents should not be displayed when not uploaded
       
       #Section Header
       |Trials Identifiers |
@@ -38,6 +37,16 @@ As any CTRP User, I can view a CTRP clinical trial record after a Clinical Trial
       |Phase|
       |Pilot|
       |Clinical Research Category|
+      #Displayed when Clinical Research Category is " Interventional" or "Expanded Access"
+      |Intervention Model|
+       #Displayed when Clinical Research Category is " Interventional" or "Expanded Access"
+      |Masking|
+       #Displayed when Clinical Research Category is " Interventional" or "Expanded Access"
+      |Allocation|
+      #Displayed when Clinical Research Category is "Observational" or "Ancillary Correlative"
+      |Study Model|
+      #Displayed when Clinical Research Category is "Observational" or "Ancillary Correlative"
+      |Time Perspective|
       |Primary Purpose|
       #"Description of Other Primary Purpose" only displayed when Primary Purpose is "Other"
       |Description of Other Primary Purpose|
@@ -46,11 +55,11 @@ As any CTRP User, I can view a CTRP clinical trial record after a Clinical Trial
       |Description of Other Secondary Purpose|
       |Accrual Disease Terminology|
       #Section Header
-      |Lead Organization/Principal Investigator  |
+      |Lead Organization/Principal Investigator(Section)  |
       |Lead Organization|
       |Principal Investigator|
       #Section Header
-      |Sponsor|
+      |Sponsor(Header)|
       |Sponsor|
       #Section header
       |Data Table 4 Information |
@@ -91,14 +100,17 @@ As any CTRP User, I can view a CTRP clinical trial record after a Clinical Trial
       |Data Monitoring Committee Appointed Indicator  |
        #Section Header
       |Trial Related Documents  | 
-      |Protocol Document  |
-      |IRB Approval Document  |
-      |Informed Consent|
-      |List of Participating Sites|
-      |Change Memo Document  |
-      |Protocol Highlighted Document|
-      |TSR  |
-      |All Other|
+      |Protocol Document- Current Protocol |
+       #Change Memo only viewed when prior submission is an amendment
+      |Change Memo -Current Change Memo|
+      #Change Memo only viewed when prior submission is an amendment
+      |Protocol Highlighted Document: Current Protocol Highlighted Document|
+      |IRB Approval-Current IRB Approval  |
+      |List of Participating Sites-Current Participating Sites|
+      |Informed Consent Document- Current Informed Consent Document |
+      |Complete Sheet: All Complete Sheets|
+      |Other- All Other Documents |
+      |TSR- All TSR   |
        #Section Header
       |Participating Sites|
       |CTRP ID|
@@ -190,22 +202,6 @@ As any CTRP User, I can view a CTRP clinical trial record after a Clinical Trial
     |Investigator Title|
     |Investigator Affiliation|
     
-    Scenario: #1a Trial Design Display Rules 
-    Given I am logged into the CTRP Registration application
-    And I am on the view Trial Details screen 
-    When the "Clinical Trial Category" is 
-    |Interventional|
-    |Expanded Access|
-    Then the Trial Design fields type will be displayed
-    |Intervention Model|
-    |Maksing|
-    |Allocation|
-    When the "Clinical Trial Category" is
-    |Observational|
-    |Ancillary Correlative|
-    Then the Trial Design fields type will be displayed
-    |Study Model|
-    |Time Perspective|
     
     
     Scenario: #1 Trials detail view for Imported Trials 

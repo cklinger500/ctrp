@@ -47,7 +47,6 @@ Then I can view participating sites details
      # Principal Investigator Format (Last Name, First Name)
      |Principal Investigator|
      |Local Trial Identifier|
-     |Program Code|
      |Current Site Recruitment Status|
      |Current Site Recruitment Status Date|
      # Primary Contact format (Last Name, First Name)
@@ -139,54 +138,27 @@ And the "Current Verification Date" will be updated
 And an email entitled "Updated Trial" will be sent to the trial owner (Locate Email list on the shared drive under Functional/registration as: CTRP System Generated Emails)
 
 
-  Scenario: #9 Documents Displayed during Update after an Original Submission
+  Scenario: #9 Documents Displayed during an Update 
     Given I am logged into the CTRP Registration application
      When I have selected the option to search My Trials in CTRP
      And I am the Trial Owner
-     When I have selected the Update option before when Submission Accepted milestone is entered
+     And "Submission Accepted" milestone is entered
+     When I have selected the Update option 
      Then the documents type will be displayed during update
      
+     	|Protocol Document- Current Protocol |
+       #Change Memo only viewed when prior submission is an amendment
+      	|Change Memo -Current Change Memo|
+      #Change Memo only viewed when prior submission is an amendment
+      |Protocol Highlighted Document: Current Protocol Highlighted Document|
+      |IRB Approval-Current IRB Approval  |
+      |List of Participating Sites-Current Participating Sites|
+      |Informed Consent Document- Current Informed Consent Document |
+      |Complete Sheet: All Complete Sheets|
+      |Other- All Other Documents |
+      |TSR- All TSR   |
      
-      |Protocol Document- Current Protocol |
-      |IRB Approval- Current IRB Approval  |
-      |Informed Consent Document- Current Informed Consent Document |
-      |Other- All Other Documents |
-      
-
-      When I have selected the Update option when Trial Summary Report Date Milestone is entered
-      Then the documents type will be displayed during update
-       
-      |Protocol Document- Current Protocol |
-      |IRB Approval- Current IRB Approval  |
-      |Informed Consent Document- Current Informed Consent Document |
-      |Other- All Other Documents |
-      |TSR- Current TSR    |
-      
-
-
-    Scenario:#10 Documents Displayed during Updated after an Amendment
-    Given I am logged into the CTRP Registration application
-     When I have selected the option to search My Trials in CTRP
-     And I am the Trial Owner
-     When I have selected the Update option when Amendment Submission Accepted is entered
-     Then the documents type will be displayed during update
-      
-      |Protocol Document- Current Protocol |
-      |IRB Approval- Current IRB Approval  |
-      |Change Memo |
-      |Protocol Highlighted Document|
-      |Other- All Other Documents |
-      
-      When I have selected the Update option when Trial Summary Report Date Milestone is entered for an Amendment
-     Then the documents type will be displayed during update
-      |Protocol Document- Current Protocol |
-      |IRB Approval- Current IRB Approval  |
-      |Change Memo |
-      |Protocol Highlighted Document|
-      |Other- All Other Documents |
-      |TSR- Current TSR (Generated after Trial Summary report Date Milestone)   |   
-      
-
+  
          Scenario:#11 Delete option should not be included for existing documents 
     Given I am logged into the CTRP Registration application
      When I update a trial 
