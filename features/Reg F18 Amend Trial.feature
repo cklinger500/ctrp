@@ -105,7 +105,6 @@ Then I can view participating sites details
      |CTRP Organization Name|
      |Principal Investigator|# (Last Name, First Name)
      |Local Trial Identifier|
-     |Program Code|
      |Current Site Recruitment Status|
      |Current Site Recruitment Status Date|
      |Primary Contact|# (Last Name, First Name)
