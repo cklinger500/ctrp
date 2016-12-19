@@ -4,16 +4,37 @@
 class OrganizationsController < ApplicationController
   before_action :set_organization, only: [:show, :edit, :update, :destroy]
   ## Please comment the next two lines if you donot want the Authorization checks
-  before_filter :wrapper_authenticate_user, :except => [:search, :select] unless Rails.env.test?
+  before_filter :wrapper_authenticate_user, :except => [:search, :select, :index] unless Rails.env.test?
   before_action :set_glob_vars, only: [:create, :edit, :dis_associate, :update, :destroy, :clone]
   before_action :set_paper_trail_whodunnit, only: [:create,:update, :destroy, :curate, :clone, :dis_associate]
 
   respond_to :html, :json
 
+
+  swagger_controller :organizations, "Organizations"
+
+  swagger_api :index do
+    summary "Fetches all Organization items"
+    notes "This lists all organizations"
+    response :unauthorized
+    response :not_acceptable
+    response :requested_range_not_satisfiable
+  end
+
+  swagger_api :show do
+    summary "Fetches Organization by id"
+    notes "This gets an organization by id"
+    param :path, :id, :integer, :required, "Organization Id"
+    param :header, 'Authorization', :string, :required, 'Authentication token'
+    response :unauthorized
+    response :not_acceptable
+    response :requested_range_not_satisfiable
+  end
+
   # GET /organizations
   # GET /organizations.json
   def index
-    @organizations = filter_by_role Organization.all_orgs_data()
+    @organizations =  Organization.all
   end
 
   # GET /organizations/1
