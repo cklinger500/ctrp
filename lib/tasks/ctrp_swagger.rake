@@ -14,6 +14,6 @@ namespace :ctrp_swagger do
       # writing over file to make it Swagger UI version 2 friendly:
       File.open(file_loc, "w") {|file| file.puts file_in_json.to_json }
     end
+    p 'Updated paths for Swagger UI 2.0'
   end
-  p 'Updated paths for Swagger UI 2.0'
 end

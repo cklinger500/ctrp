@@ -30,6 +30,15 @@ class OrganizationsController < ApplicationController
     response :requested_range_not_satisfiable
   end
 
+  swagger_api :search do
+    summary "Search Organizations"
+    notes "Search organizations by parameter"
+    param :string, :name, :string, :optional, "Organization Name"
+    response :unauthorized
+    response :not_acceptable
+    response :requested_range_not_satisfiable
+  end
+
   # GET /organizations
   # GET /organizations.json
   def index
