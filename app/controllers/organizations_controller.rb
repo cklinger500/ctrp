@@ -25,7 +25,6 @@ class OrganizationsController < ApplicationController
     summary "Fetches Organization by id"
     notes "This gets an organization by id"
     param :path, :id, :integer, :required, "Organization Id"
-    #param :header, 'Authorization', :string, :required, 'Authentication token'
     response :unauthorized
     response :not_acceptable
     response :requested_range_not_satisfiable
