@@ -4,7 +4,7 @@
 class OrganizationsController < ApplicationController
   before_action :set_organization, only: [:show, :edit, :update, :destroy]
   ## Please comment the next two lines if you donot want the Authorization checks
-  before_filter :wrapper_authenticate_user, :except => [:search, :select, :index] unless Rails.env.test?
+  before_filter :wrapper_authenticate_user, :except => [:search, :select] unless Rails.env.test?
   before_action :set_glob_vars, only: [:create, :edit, :dis_associate, :update, :destroy, :clone]
   before_action :set_paper_trail_whodunnit, only: [:create,:update, :destroy, :curate, :clone, :dis_associate]
 
@@ -12,14 +12,6 @@ class OrganizationsController < ApplicationController
 
 
   swagger_controller :organizations, "Organizations"
-
-  swagger_api :index do
-    summary "Fetches all Organization items"
-    notes "This lists all organizations"
-    response :unauthorized
-    response :not_acceptable
-    response :requested_range_not_satisfiable
-  end
 
   swagger_api :show do
     summary "Fetches Organization by id"
@@ -30,19 +22,44 @@ class OrganizationsController < ApplicationController
     response :requested_range_not_satisfiable
   end
 
-  swagger_api :search do
-    summary "Search Organizations"
-    notes "Search organizations by parameter"
-    param :string, :name, :string, :optional, "Organization Name"
+  swagger_api :associated do
+    summary "Fetches associated organizations by member org id"
+    notes "This gets associated organizations"
+    param :path, :id, :integer, :required, "Organization Id"
     response :unauthorized
     response :not_acceptable
     response :requested_range_not_satisfiable
   end
 
+  swagger_api :update do
+    summary "Updates Organization by id"
+    notes "Updates organization by id"
+    param :path, :id, :integer, :required, "Organization Id"
+    param :body, :request, :string, :required, "Organization as JSON"
+  end
+
+  swagger_api :nullifiable do
+    summary "Fetches associated organizations by member org id"
+    notes "This gets associated organizations"
+    param :form, :id, :integer, :required, "Organization Id"
+  end
+
+  swagger_api :create do
+    summary "Add Organization"
+    notes "Create organization"
+    param :body, :request, :string, :required, "Organization as JSON"
+  end
+
+  swagger_api :search do
+    summary "Search Organizations"
+    notes "Search organizations by parameter"
+    param :body, :request, :string, :required, "Search Parameters by JSON"
+  end
+
   # GET /organizations
   # GET /organizations.json
   def index
-    @organizations =  Organization.all
+    @organizations = filter_by_role Organization.all_orgs_data()
   end
 
   # GET /organizations/1

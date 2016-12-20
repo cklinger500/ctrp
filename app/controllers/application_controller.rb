@@ -166,7 +166,7 @@ class ApplicationController < ActionController::Base
   ## TODO secret must be an environmental variable
   def create_token(token_data)
     hmac_secret = Rails.application.secrets.secret_key_base
-    exp = Time.now.to_i + 120*60 # 120 Minutes
+    exp = Time.now.to_i + 240*60 # 120 Minutes
     exp_payload = { :token => token_data, :exp => exp }
     JWT.encode(exp_payload, hmac_secret, 'HS256')
     #JWT.encode(token_data, secret)

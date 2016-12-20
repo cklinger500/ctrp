@@ -64,7 +64,6 @@ Rails.application.routes.draw do
     get '/ctrp/', :to => redirect('/index.html')
     resources :organizations do
       collection do
-        get 'search'
         get '/associated/:id', to: 'organizations#associated'
         post 'associated', to: 'organizations#associated', defaults: {format: 'json'}
         post 'nullifiable', to: 'organizations#nullifiable', defaults: {format: 'json'}
